@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>EmiMatch ❤️</title>
+  <title>Mi perfil - EmiMatch ❤️</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -19,65 +19,76 @@
       font-family: Arial, sans-serif;
       min-height: 100vh;
       background: linear-gradient(145deg, #07152f, #102d59);
-      display: flex;
-      align-items: center;
-      justify-content: center;
       padding: 20px;
     }
 
     .container {
       width: 100%;
-      max-width: 420px;
+      max-width: 500px;
+      margin: auto;
     }
 
-    .logo {
+    .header {
       text-align: center;
-      margin-bottom: 25px;
+      padding: 20px 0;
     }
 
-    .logo h1 {
+    .header h1 {
       color: #d9ad45;
-      font-size: 42px;
-      margin-bottom: 8px;
+      font-size: 36px;
     }
 
-    .logo p {
+    .header p {
       color: white;
-      font-size: 16px;
+      margin-top: 6px;
     }
 
     .card {
       background: white;
+      color: #15233d;
       border-radius: 24px;
-      padding: 30px 24px;
+      padding: 25px 20px;
       box-shadow: 0 15px 40px rgba(0,0,0,.35);
+    }
+
+    .avatar {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+      background: #d9ad45;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      font-weight: bold;
     }
 
     h2 {
       text-align: center;
-      color: #15233d;
       margin-bottom: 25px;
     }
 
     label {
       display: block;
-      color: #15233d;
-      font-weight: bold;
       margin-bottom: 7px;
+      font-weight: bold;
     }
 
-    input {
+    input,
+    textarea {
       width: 100%;
-      padding: 14px;
+      padding: 13px;
+      margin-bottom: 16px;
       border: 1px solid #d5dbe5;
       border-radius: 12px;
-      margin-bottom: 16px;
       font-size: 16px;
       outline: none;
     }
 
-    input:focus {
-      border-color: #d9ad45;
+    textarea {
+      min-height: 100px;
+      resize: vertical;
     }
 
     button {
@@ -94,11 +105,10 @@
     }
 
     button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
+      opacity: .6;
     }
 
-    .secondary {
+    .logout {
       background: #102d59;
       color: white;
       margin-top: 12px;
@@ -106,17 +116,18 @@
 
     .message {
       text-align: center;
-      margin-top: 18px;
+      margin-top: 15px;
       font-weight: bold;
       line-height: 1.4;
       word-break: break-word;
     }
 
-    .status {
+    .email {
       text-align: center;
       color: #667085;
-      font-size: 13px;
-      margin-top: 15px;
+      font-size: 14px;
+      margin-bottom: 20px;
+      word-break: break-word;
     }
   </style>
 </head>
@@ -125,55 +136,76 @@
 
 <div class="container">
 
-  <div class="logo">
+  <div class="header">
     <h1>EmiMatch ❤️</h1>
-    <p>Conectá. Conocé. Hacé Match.</p>
+    <p>Mi perfil</p>
   </div>
 
   <div class="card">
 
-    <h2>Bienvenido</h2>
+    <div class="avatar" id="avatar">?</div>
 
-    <label for="email">Email</label>
+    <div class="email" id="emailUsuario">
+      Cargando...
+    </div>
 
-    <input
-      type="email"
-      id="email"
-      placeholder="tu@email.com"
-      autocomplete="email"
-    >
+    <h2>Completá tu perfil</h2>
 
-    <label for="password">Contraseña</label>
+    <label for="nombre">Nombre</label>
 
     <input
-      type="password"
-      id="password"
-      placeholder="Tu contraseña"
-      autocomplete="current-password"
+      id="nombre"
+      type="text"
+      placeholder="Tu nombre"
     >
 
-    <button id="loginButton">
-      Iniciar sesión
+    <label for="edad">Edad</label>
+
+    <input
+      id="edad"
+      type="number"
+      min="18"
+      placeholder="Tu edad"
+    >
+
+    <label for="ciudad">Ciudad</label>
+
+    <input
+      id="ciudad"
+      type="text"
+      placeholder="Tu ciudad"
+    >
+
+    <label for="descripcion">Sobre mí</label>
+
+    <textarea
+      id="descripcion"
+      placeholder="Contanos un poco sobre vos"
+    ></textarea>
+
+    <label for="intereses">Intereses</label>
+
+    <input
+      id="intereses"
+      type="text"
+      placeholder="Ej: fútbol, música, viajes"
+    >
+
+    <button id="guardar">
+      💾 Guardar perfil
     </button>
 
     <button
-      class="secondary"
-      id="registerButton"
+      class="logout"
+      id="logout"
     >
-      Crear cuenta
+      Cerrar sesión
     </button>
 
     <div
       class="message"
       id="message"
     ></div>
-
-    <div
-      class="status"
-      id="status"
-    >
-      EmiMatch está listo ❤️
-    </div>
 
   </div>
 
@@ -187,66 +219,47 @@ const SUPABASE_URL =
 const SUPABASE_ANON_KEY =
   "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
 
-let supabaseClient;
-
-const emailInput =
-  document.getElementById("email");
-
-const passwordInput =
-  document.getElementById("password");
-
-const loginButton =
-  document.getElementById("loginButton");
-
-const registerButton =
-  document.getElementById("registerButton");
-
-const message =
-  document.getElementById("message");
-
-const status =
-  document.getElementById("status");
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
 
 
-function mostrarMensaje(texto, error = false) {
+let usuarioActual = null;
 
-  message.textContent = texto;
 
-  message.style.color =
+function mensaje(texto, error = false) {
+
+  const elemento =
+    document.getElementById("message");
+
+  elemento.textContent = texto;
+
+  elemento.style.color =
     error ? "#b42318" : "#16803c";
 }
 
 
-function bloquearBotones(bloquear) {
+function actualizarAvatar(nombre) {
 
-  loginButton.disabled = bloquear;
-  registerButton.disabled = bloquear;
+  const inicial =
+    nombre &&
+    nombre.trim()
+      ? nombre.trim().charAt(0).toUpperCase()
+      : "?";
 
+  document.getElementById(
+    "avatar"
+  ).textContent = inicial;
 }
 
 
-async function iniciarEmiMatch() {
+async function cargarPerfil() {
 
   try {
 
-    if (!window.supabase) {
-
-      mostrarMensaje(
-        "No se pudo cargar Supabase.",
-        true
-      );
-
-      return;
-    }
-
-    supabaseClient =
-      window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_ANON_KEY
-      );
-
-    status.textContent =
-      "Conexión con EmiMatch lista ❤️";
+    mensaje("Cargando perfil...");
 
     const {
       data,
@@ -255,31 +268,111 @@ async function iniciarEmiMatch() {
 
     if (error) {
 
-      console.error(error);
-
-      mostrarMensaje(
-        "Error de sesión: " + error.message,
+      mensaje(
+        "Error de sesión: " +
+        error.message,
         true
       );
 
       return;
     }
 
-    if (data.session) {
+    const session = data.session;
 
-      status.textContent =
-        "Sesión encontrada. Entrando...";
+    if (!session) {
 
-      window.location.href =
-        "perfil.html";
+      window.location.replace(
+        "index.html"
+      );
 
+      return;
     }
+
+    usuarioActual =
+      session.user;
+
+    document.getElementById(
+      "emailUsuario"
+    ).textContent =
+      session.user.email || "";
+
+    const {
+      data: perfil,
+      error: perfilError
+    } = await supabaseClient
+      .from("profiles")
+      .select("*")
+      .eq("id", session.user.id)
+      .maybeSingle();
+
+    if (perfilError) {
+
+      console.error(
+        "ERROR PERFIL:",
+        perfilError
+      );
+
+      mensaje(
+        "Error al cargar el perfil: " +
+        perfilError.message,
+        true
+      );
+
+      return;
+    }
+
+    if (perfil) {
+
+      document.getElementById(
+        "nombre"
+      ).value =
+        perfil.nombre || "";
+
+      document.getElementById(
+        "edad"
+      ).value =
+        perfil.edad || "";
+
+      document.getElementById(
+        "ciudad"
+      ).value =
+        perfil.ciudad || "";
+
+      document.getElementById(
+        "descripcion"
+      ).value =
+        perfil.descripcion || "";
+
+      document.getElementById(
+        "intereses"
+      ).value =
+        perfil.intereses || "";
+
+      actualizarAvatar(
+        perfil.nombre || "U"
+      );
+
+    } else {
+
+      const nombre =
+        session.user.user_metadata?.full_name ||
+        "";
+
+      document.getElementById(
+        "nombre"
+      ).value =
+        nombre;
+
+      actualizarAvatar(nombre);
+    }
+
+    mensaje("");
 
   } catch (error) {
 
     console.error(error);
 
-    mostrarMensaje(
+    mensaje(
       "Error: " + error.message,
       true
     );
@@ -289,275 +382,155 @@ async function iniciarEmiMatch() {
 }
 
 
-loginButton.addEventListener(
-  "click",
-  async function() {
+document
+  .getElementById("guardar")
+  .addEventListener(
+    "click",
+    async function() {
 
-    try {
+      if (!usuarioActual) {
 
-      const email =
-        emailInput.value.trim();
-
-      const password =
-        passwordInput.value;
-
-      if (!email) {
-
-        mostrarMensaje(
-          "Ingresá tu email.",
+        mensaje(
+          "No hay una sesión activa.",
           true
         );
-
-        emailInput.focus();
 
         return;
       }
 
-      if (!password) {
+      const nombre =
+        document
+          .getElementById("nombre")
+          .value
+          .trim();
 
-        mostrarMensaje(
-          "Ingresá tu contraseña.",
+      const edad =
+        document
+          .getElementById("edad")
+          .value;
+
+      const ciudad =
+        document
+          .getElementById("ciudad")
+          .value
+          .trim();
+
+      const descripcion =
+        document
+          .getElementById("descripcion")
+          .value
+          .trim();
+
+      const intereses =
+        document
+          .getElementById("intereses")
+          .value
+          .trim();
+
+      if (!nombre) {
+
+        mensaje(
+          "Ingresá tu nombre.",
           true
         );
-
-        passwordInput.focus();
 
         return;
       }
 
-      bloquearBotones(true);
+      const boton =
+        document.getElementById(
+          "guardar"
+        );
 
-      mostrarMensaje(
-        "Iniciando sesión..."
+      boton.disabled = true;
+
+      mensaje(
+        "Guardando perfil..."
       );
 
-      const {
-        data,
-        error
-      } = await supabaseClient.auth.signInWithPassword({
+      try {
 
-        email: email,
-
-        password: password
-
-      });
-
-      if (error) {
-
-        console.error(
-          "ERROR LOGIN:",
+        const {
           error
+        } = await supabaseClient
+          .from("profiles")
+          .upsert(
+            {
+              id: usuarioActual.id,
+              nombre: nombre,
+              edad: edad
+                ? parseInt(edad)
+                : null,
+              ciudad: ciudad,
+              descripcion: descripcion,
+              intereses: intereses
+            },
+            {
+              onConflict: "id"
+            }
+          );
+
+        if (error) {
+
+          console.error(
+            "ERROR GUARDAR:",
+            error
+          );
+
+          mensaje(
+            "Error al guardar: " +
+            error.message,
+            true
+          );
+
+          boton.disabled = false;
+
+          return;
+        }
+
+        actualizarAvatar(nombre);
+
+        mensaje(
+          "✅ Perfil guardado correctamente."
         );
 
-        mostrarMensaje(
-          "Error: " + error.message,
+      } catch (error) {
+
+        console.error(error);
+
+        mensaje(
+          "Error: " +
+          error.message,
           true
         );
 
-        bloquearBotones(false);
-
-        return;
       }
 
-      if (!data.session) {
-
-        mostrarMensaje(
-          "No se pudo crear la sesión.",
-          true
-        );
-
-        bloquearBotones(false);
-
-        return;
-      }
-
-      mostrarMensaje(
-        "✅ Inicio de sesión correcto."
-      );
-
-      status.textContent =
-        "Entrando a tu perfil...";
-
-      setTimeout(function() {
-
-        window.location.href =
-          "perfil.html";
-
-      }, 500);
-
-    } catch (error) {
-
-      console.error(error);
-
-      mostrarMensaje(
-        "Error: " + error.message,
-        true
-      );
-
-      bloquearBotones(false);
+      boton.disabled = false;
 
     }
-
-  }
-);
+  );
 
 
-registerButton.addEventListener(
-  "click",
-  async function() {
+document
+  .getElementById("logout")
+  .addEventListener(
+    "click",
+    async function() {
 
-    try {
+      await supabaseClient.auth.signOut();
 
-      const email =
-        emailInput.value.trim();
-
-      const password =
-        passwordInput.value;
-
-      if (!email) {
-
-        mostrarMensaje(
-          "Ingresá un email.",
-          true
-        );
-
-        emailInput.focus();
-
-        return;
-      }
-
-      if (!password) {
-
-        mostrarMensaje(
-          "Ingresá una contraseña.",
-          true
-        );
-
-        passwordInput.focus();
-
-        return;
-      }
-
-      if (password.length < 6) {
-
-        mostrarMensaje(
-          "La contraseña debe tener al menos 6 caracteres.",
-          true
-        );
-
-        return;
-      }
-
-      bloquearBotones(true);
-
-      mostrarMensaje(
-        "Creando cuenta..."
+      window.location.replace(
+        "index.html"
       );
 
-      const {
-        data,
-        error
-      } = await supabaseClient.auth.signUp({
-
-        email: email,
-
-        password: password
-
-      });
-
-      if (error) {
-
-        console.error(
-          "ERROR REGISTRO:",
-          error
-        );
-
-        mostrarMensaje(
-          "Error: " + error.message,
-          true
-        );
-
-        bloquearBotones(false);
-
-        return;
-      }
-
-      if (data.session) {
-
-        mostrarMensaje(
-          "✅ Cuenta creada correctamente."
-        );
-
-        status.textContent =
-          "Entrando a tu perfil...";
-
-        setTimeout(function() {
-
-          window.location.href =
-            "perfil.html";
-
-        }, 700);
-
-        return;
-      }
-
-      mostrarMensaje(
-        "✅ Cuenta creada. Revisá tu email para confirmar la cuenta."
-      );
-
-      status.textContent =
-        "Después de confirmar tu email, iniciá sesión.";
-
-      bloquearBotones(false);
-
-    } catch (error) {
-
-      console.error(error);
-
-      mostrarMensaje(
-        "Error: " + error.message,
-        true
-      );
-
-      bloquearBotones(false);
-
     }
-
-  }
-);
+  );
 
 
-emailInput.addEventListener(
-  "keydown",
-  function(event) {
-
-    if (event.key === "Enter") {
-
-      loginButton.click();
-
-    }
-
-  }
-);
-
-
-passwordInput.addEventListener(
-  "keydown",
-  function(event) {
-
-    if (event.key === "Enter") {
-
-      loginButton.click();
-
-    }
-
-  }
-);
-
-
-iniciarEmiMatch();
+cargarPerfil();
 
 </script>
 
 </body>
-</html>
+  </html>
