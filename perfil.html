@@ -2,20 +2,14 @@
 <html lang="es">
 
 <head>
-
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>EmiMatch - Mi perfil</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-
     * {
       box-sizing: border-box;
     }
@@ -28,19 +22,12 @@
     }
 
     header {
-      background: linear-gradient(
-        135deg,
-        #111827,
-        #7c3aed
-      );
-
+      background: linear-gradient(135deg, #111827, #7c3aed);
       color: white;
       padding: 18px;
-
       display: flex;
       justify-content: space-between;
       align-items: center;
-
       position: sticky;
       top: 0;
       z-index: 100;
@@ -187,11 +174,7 @@
     .match-box {
       display: none;
       text-align: center;
-      background: linear-gradient(
-        135deg,
-        #ec4899,
-        #7c3aed
-      );
+      background: linear-gradient(135deg, #ec4899, #7c3aed);
       color: white;
       padding: 25px;
       border-radius: 18px;
@@ -237,34 +220,20 @@
       color: #777;
       padding: 25px 10px;
     }
-
   </style>
-
 </head>
-
 
 <body>
 
 <header>
-
   <h1>💕 EmiMatch</h1>
 
-  <button
-    class="logout"
-    id="logoutButton"
-  >
+  <button class="logout" id="logoutButton">
     Cerrar sesión
   </button>
-
 </header>
 
-
 <main>
-
-
-  <!-- =========================
-       MI PERFIL
-  ========================== -->
 
   <section class="card">
 
@@ -273,13 +242,11 @@
     <img
       id="fotoPreview"
       class="foto-preview"
-      src=""
+      src="https://placehold.co/300x300?text=EmiMatch"
       alt="Foto de perfil"
     >
 
-    <label for="foto_url">
-      URL de foto
-    </label>
+    <label for="foto_url">URL de foto</label>
 
     <input
       type="url"
@@ -287,10 +254,7 @@
       placeholder="https://..."
     >
 
-
-    <label for="nombre">
-      Nombre
-    </label>
+    <label for="nombre">Nombre</label>
 
     <input
       type="text"
@@ -299,10 +263,7 @@
       placeholder="Tu nombre"
     >
 
-
-    <label for="edad">
-      Edad
-    </label>
+    <label for="edad">Edad</label>
 
     <input
       type="number"
@@ -312,10 +273,7 @@
       placeholder="Tu edad"
     >
 
-
-    <label for="ciudad">
-      Ciudad
-    </label>
+    <label for="ciudad">Ciudad</label>
 
     <input
       type="text"
@@ -324,10 +282,7 @@
       placeholder="Tu ciudad"
     >
 
-
-    <label for="descripcion">
-      Sobre mí
-    </label>
+    <label for="descripcion">Sobre mí</label>
 
     <textarea
       id="descripcion"
@@ -335,10 +290,7 @@
       placeholder="Contanos un poco sobre vos..."
     ></textarea>
 
-
-    <label for="intereses">
-      Intereses
-    </label>
+    <label for="intereses">Intereses</label>
 
     <input
       type="text"
@@ -347,7 +299,6 @@
       placeholder="Música, fútbol, viajes..."
     >
 
-
     <button
       class="btn btn-guardar"
       id="guardarButton"
@@ -355,19 +306,9 @@
       💾 Guardar perfil
     </button>
 
-
-    <div
-      id="mensajePerfil"
-      class="mensaje"
-    ></div>
+    <div id="mensajePerfil" class="mensaje"></div>
 
   </section>
-
-
-
-  <!-- =========================
-       MIS MATCHES
-  ========================== -->
 
   <section class="card">
 
@@ -387,38 +328,19 @@
 
   </section>
 
-
-
-  <!-- =========================
-       DESCUBRIR
-  ========================== -->
-
   <section class="card">
 
     <h2>🔎 Descubrir</h2>
 
-    <div
-      id="persona"
-      class="persona"
-    >
-
+    <div id="persona" class="persona">
       <div class="vacio">
         Cargando personas...
       </div>
-
     </div>
 
+    <div id="match" class="match-box">
 
-    <!-- MATCH -->
-
-    <div
-      id="match"
-      class="match-box"
-    >
-
-      <h2>
-        💕 ¡Hicieron Match!
-      </h2>
+      <h2>💕 ¡Hicieron Match!</h2>
 
       <p>
         Los dos se dieron Like.
@@ -436,167 +358,132 @@
 
   </section>
 
-
 </main>
-
 
 <script>
 
-
-/* =====================================================
-   SUPABASE
-===================================================== */
-
 const SUPABASE_URL =
-"https://kngiadwaesdbmvwivdev.supabase.co";
+  "https://kngiadwaesdbmvwivdev.supabase.co";
 
 const SUPABASE_ANON_KEY =
-"sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
+  "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
 
 const supabaseClient =
-window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
 
-
-
-/* =====================================================
-   VARIABLES
-===================================================== */
 
 let usuarioActual = null;
-
 let personas = [];
-
 let personaActual = null;
-
 let indicePersona = 0;
 
 
-
-/* =====================================================
-   ELEMENTOS
-===================================================== */
-
 const nombreInput =
-document.getElementById("nombre");
+  document.getElementById("nombre");
 
 const edadInput =
-document.getElementById("edad");
+  document.getElementById("edad");
 
 const ciudadInput =
-document.getElementById("ciudad");
+  document.getElementById("ciudad");
 
 const descripcionInput =
-document.getElementById("descripcion");
+  document.getElementById("descripcion");
 
 const interesesInput =
-document.getElementById("intereses");
+  document.getElementById("intereses");
 
 const fotoInput =
-document.getElementById("foto_url");
+  document.getElementById("foto_url");
 
 const fotoPreview =
-document.getElementById("fotoPreview");
+  document.getElementById("fotoPreview");
 
 const personaDiv =
-document.getElementById("persona");
+  document.getElementById("persona");
 
 const matchDiv =
-document.getElementById("match");
+  document.getElementById("match");
 
 const chatButton =
-document.getElementById("chatButton");
+  document.getElementById("chatButton");
 
 
-
-/* =====================================================
-   MENSAJE
-===================================================== */
-
-function mostrarMensaje(
-  texto,
-  error = false
-) {
+function mostrarMensaje(texto, error = false) {
 
   const elemento =
-    document.getElementById(
-      "mensajePerfil"
-    );
+    document.getElementById("mensajePerfil");
 
-  elemento.textContent =
-    texto;
+  elemento.textContent = texto;
 
   elemento.className =
     "mensaje " +
-    (
+    (error ? "error" : "ok");
+
+  elemento.style.display = "block";
+
+  setTimeout(() => {
+    elemento.style.display = "none";
+  }, 4000);
+}
+
+
+async function verificarSesion() {
+
+  const {
+    data,
+    error
+  } =
+  await supabaseClient.auth.getSession();
+
+  if (error) {
+
+    console.error(
+      "Error verificando sesión:",
       error
-        ? "error"
-        : "ok"
     );
 
-  elemento.style.display =
-    "block";
+    window.location.href =
+      "index.html";
 
-
-  setTimeout(
-    function() {
-
-      elemento.style.display =
-        "none";
-
-    },
-    4000
-  );
-}
-
-
-
-/* =====================================================
-   SESIÓN
-===================================================== */
-
-async function iniciar() {
-
-  console.log("EmiMatch: iniciando...");
-
-  const sesion =
-    await verificarSesion();
-
-  if (!sesion) {
-    console.log("EmiMatch: no hay sesión");
-    return;
+    return null;
   }
 
-  console.log("EmiMatch: sesión correcta");
+  if (
+    !data ||
+    !data.session ||
+    !data.session.user
+  ) {
 
-  await cargarPerfil();
+    window.location.href =
+      "index.html";
 
-  console.log("EmiMatch: perfil cargado");
+    return null;
+  }
 
-  await cargarPersonas();
+  usuarioActual =
+    data.session.user;
 
-  console.log("EmiMatch: personas cargadas");
+  return data.session;
 }
 
-iniciar();
-
-
-
-/* =====================================================
-   CARGAR PERFIL
-===================================================== */
 
 async function cargarPerfil() {
+
+  if (!usuarioActual) {
+    return;
+  }
 
   const {
     data,
     error
   } =
   await supabaseClient
-    .from("swipes")
-    .select("target_user_id")
+    .from("profiles")
+    .select(
       "id,nombre,edad,ciudad,descripcion,foto_url,intereses,created_at"
     )
     .eq(
@@ -604,7 +491,6 @@ async function cargarPerfil() {
       usuarioActual.id
     )
     .maybeSingle();
-
 
   if (error) {
 
@@ -621,11 +507,9 @@ async function cargarPerfil() {
     return;
   }
 
-
   if (!data) {
     return;
   }
-
 
   nombreInput.value =
     data.nombre || "";
@@ -645,34 +529,18 @@ async function cargarPerfil() {
   fotoInput.value =
     data.foto_url || "";
 
-
   actualizarFoto();
 }
 
-
-
-/* =====================================================
-   FOTO
-===================================================== */
 
 function actualizarFoto() {
 
   const url =
     fotoInput.value.trim();
 
-
-  if (url) {
-
-    fotoPreview.src =
-      url;
-
-  } else {
-
-    fotoPreview.src =
-      "https://placehold.co/300x300?text=EmiMatch";
-
-  }
-
+  fotoPreview.src =
+    url ||
+    "https://placehold.co/300x300?text=EmiMatch";
 
   fotoPreview.onerror =
     function() {
@@ -690,20 +558,23 @@ fotoInput.addEventListener(
 );
 
 
-
-/* =====================================================
-   GUARDAR PERFIL
-===================================================== */
-
 async function guardarPerfil() {
+
+  if (!usuarioActual) {
+
+    mostrarMensaje(
+      "No hay una sesión activa.",
+      true
+    );
+
+    return;
+  }
 
   const nombre =
     nombreInput.value.trim();
 
   const edad =
-    Number(
-      edadInput.value
-    );
+    Number(edadInput.value);
 
   const ciudad =
     ciudadInput.value.trim();
@@ -762,30 +633,16 @@ async function guardarPerfil() {
     .from("profiles")
     .upsert(
       {
-        id:
-          usuarioActual.id,
-
-        nombre:
-          nombre,
-
-        edad:
-          edad,
-
-        ciudad:
-          ciudad,
-
-        descripcion:
-          descripcion,
-
-        foto_url:
-          foto_url || null,
-
-        intereses:
-          intereses || null
+        id: usuarioActual.id,
+        nombre: nombre,
+        edad: edad,
+        ciudad: ciudad,
+        descripcion: descripcion,
+        foto_url: foto_url || null,
+        intereses: intereses || null
       },
       {
-        onConflict:
-          "id"
+        onConflict: "id"
       }
     );
 
@@ -807,21 +664,18 @@ async function guardarPerfil() {
 
 
   mostrarMensaje(
-    "Perfil guardado correctamente."
+    "✅ Perfil guardado correctamente."
   );
 
-
   await cargarPerfil();
-
 }
 
 
-
-/* =====================================================
-   CARGAR PERSONAS
-===================================================== */
-
 async function cargarPersonas() {
+
+  if (!usuarioActual) {
+    return;
+  }
 
   personaDiv.innerHTML = `
     <div class="vacio">
@@ -829,10 +683,6 @@ async function cargarPersonas() {
     </div>
   `;
 
-
-  /* ---------------------------------------------
-     OBTENER PERFILES
-  --------------------------------------------- */
 
   const {
     data: perfiles,
@@ -872,19 +722,13 @@ async function cargarPersonas() {
   }
 
 
-  /* ---------------------------------------------
-     OBTENER SWIPES DEL USUARIO
-  --------------------------------------------- */
-
   const {
     data: swipes,
     error: errorSwipes
   } =
   await supabaseClient
     .from("swipes")
-    .select(
-      "target_user_id"
-    )
+    .select("target_user_id")
     .eq(
       "user_id",
       usuarioActual.id
@@ -903,40 +747,27 @@ async function cargarPersonas() {
 
   const yaVistos =
     new Set(
-      (swipes || [])
-        .map(
-          swipe =>
-            swipe.target_user_id
+      (swipes || []).map(
+        swipe =>
+          swipe.target_user_id
+      )
+    );
+
+
+  personas =
+    (perfiles || []).filter(
+      perfil =>
+        !yaVistos.has(
+          perfil.id
         )
     );
 
 
-  /* ---------------------------------------------
-     FILTRAR PERSONAS YA VISTAS
-  --------------------------------------------- */
-
-  personas =
-    (perfiles || [])
-      .filter(
-        perfil =>
-          !yaVistos.has(
-            perfil.id
-          )
-      );
-
-
   indicePersona = 0;
 
-
   mostrarSiguientePersona();
-
 }
 
-
-
-/* =====================================================
-   MOSTRAR SIGUIENTE PERSONA
-===================================================== */
 
 function mostrarSiguientePersona() {
 
@@ -949,8 +780,7 @@ function mostrarSiguientePersona() {
     indicePersona >= personas.length
   ) {
 
-    personaActual =
-      null;
+    personaActual = null;
 
     personaDiv.innerHTML = `
       <div class="vacio">
@@ -963,9 +793,7 @@ function mostrarSiguientePersona() {
 
 
   personaActual =
-    personas[
-      indicePersona
-    ];
+    personas[indicePersona];
 
 
   const persona =
@@ -980,53 +808,29 @@ function mostrarSiguientePersona() {
   personaDiv.innerHTML = `
 
     <img
-      src="${foto}"
-      alt="Foto de ${persona.nombre || "usuario"}"
+      src="${escaparHTML(foto)}"
+      alt="Foto de ${escaparHTML(persona.nombre || "usuario")}"
       onerror="this.src='https://placehold.co/400x400?text=Foto'"
     >
 
     <h3>
-      ${escaparHTML(
-        persona.nombre ||
-        "Usuario"
-      )}
-
-      ${
-        persona.edad
-          ? ", " + persona.edad
-          : ""
-      }
+      ${escaparHTML(persona.nombre || "Usuario")}
+      ${persona.edad ? ", " + persona.edad : ""}
     </h3>
 
     <p>
-      📍
-      ${
-        escaparHTML(
-          persona.ciudad ||
-          "Sin ciudad"
-        )
-      }
+      📍 ${escaparHTML(persona.ciudad || "Sin ciudad")}
     </p>
 
     <p>
-      ${
-        escaparHTML(
-          persona.descripcion ||
-          "Sin descripción."
-        )
-      }
+      ${escaparHTML(persona.descripcion || "Sin descripción.")}
     </p>
 
     ${
       persona.intereses
         ? `
           <p>
-            ❤️
-            ${
-              escaparHTML(
-                persona.intereses
-              )
-            }
+            ❤️ ${escaparHTML(persona.intereses)}
           </p>
         `
         : ""
@@ -1053,82 +857,34 @@ function mostrarSiguientePersona() {
 
 
   document
-    .getElementById(
-      "passButton"
-    )
+    .getElementById("passButton")
     .addEventListener(
       "click",
-      function() {
-
-        registrarSwipe(
-          "pass"
-        );
-
-      }
+      () => registrarSwipe("pass")
     );
 
 
   document
-    .getElementById(
-      "likeButton"
-    )
+    .getElementById("likeButton")
     .addEventListener(
       "click",
-      function() {
-
-        registrarSwipe(
-          "like"
-        );
-
-      }
-    );
-
-}
-
-
-
-/* =====================================================
-   ESCAPAR HTML
-===================================================== */
-
-function escaparHTML(
-  texto
-) {
-
-  return String(
-    texto
-  )
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
+      () => registrarSwipe("like")
     );
 }
 
 
+function escaparHTML(texto) {
 
-/* =====================================================
-   LIKE / PASS
-===================================================== */
+  return String(texto)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
 
-async function registrarSwipe(
-  accion
-) {
+
+async function registrarSwipe(accion) {
 
   if (
     !personaActual ||
@@ -1147,18 +903,16 @@ async function registrarSwipe(
   } =
   await supabaseClient
     .from("swipes")
-    .insert(
-      {
-        user_id:
-          usuarioActual.id,
+    .insert({
+      user_id:
+        usuarioActual.id,
 
-        target_user_id:
-          personaId,
+      target_user_id:
+        personaId,
 
-        action:
-          accion
-      }
-    );
+      action:
+        accion
+    });
 
 
   if (error) {
@@ -1169,7 +923,7 @@ async function registrarSwipe(
     );
 
     mostrarMensaje(
-      "No se pudo registrar la acción.",
+      error.message,
       true
     );
 
@@ -1177,33 +931,17 @@ async function registrarSwipe(
   }
 
 
-  /* ---------------------------------------------
-     SI FUE LIKE, COMPROBAR MATCH
-  --------------------------------------------- */
-
-  if (
-    accion === "like"
-  ) {
+  if (accion === "like") {
 
     await comprobarMatch();
   }
 
 
-  /* ---------------------------------------------
-     PASAR A LA SIGUIENTE PERSONA
-  --------------------------------------------- */
-
   indicePersona++;
 
   mostrarSiguientePersona();
-
 }
 
-
-
-/* =====================================================
-   COMPROBAR MATCH
-===================================================== */
 
 async function comprobarMatch() {
 
@@ -1221,9 +959,7 @@ async function comprobarMatch() {
   } =
   await supabaseClient
     .from("matches")
-    .select(
-      "id"
-    )
+    .select("id")
     .or(
       `and(user1_id.eq.${usuarioActual.id},user2_id.eq.${personaActual.id}),and(user1_id.eq.${personaActual.id},user2_id.eq.${usuarioActual.id})`
     )
@@ -1233,7 +969,7 @@ async function comprobarMatch() {
   if (error) {
 
     console.error(
-      "Error al comprobar Match:",
+      "Error comprobando Match:",
       error
     );
 
@@ -1242,7 +978,6 @@ async function comprobarMatch() {
 
 
   if (!data) {
-
     return;
   }
 
@@ -1259,56 +994,39 @@ async function comprobarMatch() {
 
 
   matchDiv.scrollIntoView({
-    behavior:
-      "smooth"
+    behavior: "smooth"
   });
-
 }
 
 
-
-/* =====================================================
-   CERRAR SESIÓN
-===================================================== */
-
 document
-  .getElementById(
-    "logoutButton"
-  )
+  .getElementById("logoutButton")
   .addEventListener(
     "click",
-    async function() {
+    async () => {
 
       await supabaseClient.auth.signOut();
 
       window.location.href =
         "index.html";
-
     }
   );
 
 
-
-/* =====================================================
-   GUARDAR PERFIL
-===================================================== */
-
 document
-  .getElementById(
-    "guardarButton"
-  )
+  .getElementById("guardarButton")
   .addEventListener(
     "click",
     guardarPerfil
   );
 
 
-
-/* =====================================================
-   INICIO
-===================================================== */
-
 async function iniciar() {
+
+  console.log(
+    "EmiMatch iniciando..."
+  );
+
 
   const sesion =
     await verificarSesion();
@@ -1319,10 +1037,20 @@ async function iniciar() {
   }
 
 
+  console.log(
+    "Usuario conectado:",
+    usuarioActual.id
+  );
+
+
   await cargarPerfil();
 
   await cargarPersonas();
 
+
+  console.log(
+    "EmiMatch listo."
+  );
 }
 
 
@@ -1331,4 +1059,4 @@ iniciar();
 </script>
 
 </body>
-  </html>
+</html>
