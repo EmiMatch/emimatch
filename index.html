@@ -215,8 +215,9 @@ async () => {
   }
 
   if (data.session) {
-    window.location.href = "perfil.html";
-    return;
+  window.location.replace(
+    "https://emimatch.github.io/emimatch/perfil.html"
+  );
   }
 
   mostrarMensaje(
@@ -268,7 +269,9 @@ async function comprobarSesion() {
   } = await supabaseClient.auth.getSession();
 
   if (session) {
-    window.location.href = "perfil.html";
+    window.location.replace(
+      "https://emimatch.github.io/emimatch/perfil.html"
+    );
   }
 }
 
