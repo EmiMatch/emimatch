@@ -303,9 +303,11 @@ async () => {
 
     console.error(error);
 
+  
     mostrarMensaje(
-      "No se pudo guardar el perfil.",
-      true
+  "Error: " + error.message,
+  true
+);
     );
 
     return;
