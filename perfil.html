@@ -557,30 +557,30 @@ function mostrarMensaje(
    SESIÓN
 ===================================================== */
 
-async function verificarSesion() {
+async function iniciar() {
 
-  const {
-    data: {
-      session
-    }
-  } =
-  await supabaseClient.auth.getSession();
+  console.log("EmiMatch: iniciando...");
 
+  const sesion =
+    await verificarSesion();
 
-  if (!session) {
-
-    window.location.href =
-      "index.html";
-
-    return false;
+  if (!sesion) {
+    console.log("EmiMatch: no hay sesión");
+    return;
   }
 
+  console.log("EmiMatch: sesión correcta");
 
-  usuarioActual =
-    session.user;
+  await cargarPerfil();
 
-  return true;
+  console.log("EmiMatch: perfil cargado");
+
+  await cargarPersonas();
+
+  console.log("EmiMatch: personas cargadas");
 }
+
+iniciar();
 
 
 
@@ -595,8 +595,8 @@ async function cargarPerfil() {
     error
   } =
   await supabaseClient
-    .from("profiles")
-    .select(
+    .from("swipes")
+    .select("target_user_id")
       "id,nombre,edad,ciudad,descripcion,foto_url,intereses,created_at"
     )
     .eq(
