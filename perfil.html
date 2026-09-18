@@ -4,11 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Mi perfil - EmiMatch</title>
+  <title>EmiMatch - Mi perfil</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       font-family: Arial, sans-serif;
@@ -19,38 +23,41 @@
     header {
       background: #111827;
       color: white;
-      padding: 20px;
       text-align: center;
+      padding: 20px;
+    }
+
+    header h1 {
+      margin: 0;
     }
 
     .container {
-      max-width: 500px;
-      margin: 30px auto;
-      padding: 20px;
+      max-width: 520px;
+      margin: 25px auto;
+      padding: 15px;
     }
 
     .card {
       background: white;
-      border-radius: 18px;
       padding: 25px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+      border-radius: 18px;
+      box-shadow: 0 5px 20px rgba(0,0,0,.08);
+      margin-bottom: 25px;
     }
 
     h2 {
       text-align: center;
-      margin-bottom: 25px;
+      margin-top: 0;
     }
 
     label {
       display: block;
-      margin-top: 15px;
-      margin-bottom: 6px;
       font-weight: bold;
+      margin: 15px 0 6px;
     }
 
     input {
       width: 100%;
-      box-sizing: border-box;
       padding: 13px;
       border: 1px solid #ddd;
       border-radius: 10px;
@@ -60,12 +67,12 @@
     button {
       width: 100%;
       padding: 14px;
-      margin-top: 20px;
-      border: none;
-      border-radius: 10px;
+      border: 0;
+      border-radius: 12px;
       font-size: 16px;
       font-weight: bold;
       cursor: pointer;
+      margin-top: 15px;
     }
 
     #guardar {
@@ -78,18 +85,66 @@
       color: white;
     }
 
+    .email {
+      background: #f3f4f6;
+      padding: 12px;
+      border-radius: 10px;
+      word-break: break-word;
+    }
+
     #mensaje {
       text-align: center;
       margin-top: 15px;
       font-weight: bold;
     }
 
-    .email {
-      background: #f3f4f6;
-      padding: 12px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-      word-break: break-word;
+    .descubrir {
+      text-align: center;
+    }
+
+    .persona {
+      background: white;
+      padding: 25px;
+      border-radius: 18px;
+      box-shadow: 0 5px 20px rgba(0,0,0,.08);
+    }
+
+    #personaNombre {
+      font-size: 25px;
+      margin: 10px 0;
+    }
+
+    #personaEdad,
+    #personaCiudad {
+      font-size: 17px;
+      margin: 8px 0;
+    }
+
+    .acciones {
+      display: flex;
+      gap: 10px;
+      margin-top: 25px;
+    }
+
+    .acciones button {
+      flex: 1;
+      margin-top: 0;
+    }
+
+    #pasar {
+      background: #ef4444;
+      color: white;
+    }
+
+    #like {
+      background: #ec4899;
+      color: white;
+    }
+
+    #mensajeSwipe {
+      min-height: 24px;
+      font-weight: bold;
+      margin-top: 15px;
     }
   </style>
 </head>
@@ -102,6 +157,8 @@
 
 <div class="container">
 
+  <!-- MI PERFIL -->
+
   <div class="card">
 
     <h2>Mi perfil</h2>
@@ -112,6 +169,7 @@
     </div>
 
     <label for="nombre">Nombre</label>
+
     <input
       type="text"
       id="nombre"
@@ -119,6 +177,7 @@
     >
 
     <label for="edad">Edad</label>
+
     <input
       type="number"
       id="edad"
@@ -128,6 +187,7 @@
     >
 
     <label for="ciudad">Ciudad</label>
+
     <input
       type="text"
       id="ciudad"
@@ -143,70 +203,46 @@
     <button id="logout">
       🚪 Cerrar sesión
     </button>
-<hr style="margin:35px 0; border:0; border-top:1px solid #ddd;">
 
-<div id="descubrir" style="text-align:center;">
+  </div>
 
-  <h2>💕 Descubrir personas</h2>
 
-  <div id="perfilDescubierto"
-       style="
-       background:white;
-       padding:25px;
-       border-radius:18px;
-       box-shadow:0 5px 20px rgba(0,0,0,0.08);
-       ">
+  <!-- DESCUBRIR PERSONAS -->
 
-    <h3 id="personaNombre">Buscando personas...</h3>
+  <div class="card descubrir">
 
-    <p id="personaEdad"></p>
+    <h2>💕 Descubrir personas</h2>
 
-    <p id="personaCiudad"></p>
+    <div class="persona">
 
-    <div style="display:flex; gap:10px; margin-top:25px;">
+      <h3 id="personaNombre">
+        Buscando personas...
+      </h3>
 
-      <button
-        id="pasar"
-        style="
-        flex:1;
-        background:#ef4444;
-        color:white;
-        border:none;
-        border-radius:12px;
-        padding:14px;
-        font-size:18px;
-        font-weight:bold;
-        ">
-        ❌ Pasar
-      </button>
+      <p id="personaEdad"></p>
 
-      <button
-        id="like"
-        style="
-        flex:1;
-        background:#ec4899;
-        color:white;
-        border:none;
-        border-radius:12px;
-        padding:14px;
-        font-size:18px;
-        font-weight:bold;
-        ">
-        ❤️ Like
-      </button>
+      <p id="personaCiudad"></p>
+
+      <div class="acciones">
+
+        <button id="pasar">
+          ❌ Pasar
+        </button>
+
+        <button id="like">
+          ❤️ Like
+        </button>
+
+      </div>
 
     </div>
 
-  </div>
+    <p id="mensajeSwipe"></p>
 
-  <p id="mensajeSwipe"
-     style="font-weight:bold; margin-top:15px;">
-  </p>
-
-</div>
   </div>
 
 </div>
+
 
 <script>
 
@@ -225,17 +261,32 @@ const supabaseClient =
 
 let usuarioActual = null;
 
+let perfilesDisponibles = [];
 
-// ============================
+let perfilActual = 0;
+
+
+// =====================================
 // VERIFICAR SESIÓN
-// ============================
+// =====================================
 
 async function verificarSesion() {
 
-  const { data, error } =
-    await supabaseClient.auth.getSession();
+  const {
+    data,
+    error
+  } = await supabaseClient.auth.getSession();
 
-  if (error || !data.session) {
+  if (error) {
+
+    console.error(error);
+
+    window.location.href = "index.html";
+
+    return;
+  }
+
+  if (!data.session) {
 
     window.location.href = "index.html";
 
@@ -245,38 +296,47 @@ async function verificarSesion() {
   usuarioActual = data.session.user;
 
   document.getElementById("email").textContent =
-    usuarioActual.email;
+    usuarioActual.email || "";
 
-  cargarPerfil();
+  await cargarPerfil();
+
+  await cargarPersonas();
 }
 
 
-// ============================
-// CARGAR PERFIL
-// ============================
+// =====================================
+// CARGAR MI PERFIL
+// =====================================
 
 async function cargarPerfil() {
 
-  const { data, error } =
-    await supabaseClient
-      .from("profiles")
-      .select("id,nombre,edad,ciudad")
-      .eq("id", usuarioActual.id)
-      .maybeSingle();
+  const {
+    data,
+    error
+  } = await supabaseClient
+    .from("profiles")
+    .select("id,nombre,edad,ciudad")
+    .eq("id", usuarioActual.id)
+    .maybeSingle();
+
 
   if (error) {
 
     console.error(error);
 
     document.getElementById("mensaje").textContent =
-      "❌ Error al cargar el perfil.";
+      "❌ Error al cargar el perfil: " +
+      error.message;
 
     return;
   }
+
 
   if (!data) {
+
     return;
   }
+
 
   document.getElementById("nombre").value =
     data.nombre || "";
@@ -289,72 +349,83 @@ async function cargarPerfil() {
 }
 
 
-// ============================
-// GUARDAR PERFIL
-// ============================
+// =====================================
+// GUARDAR MI PERFIL
+// =====================================
 
 document
   .getElementById("guardar")
-  .addEventListener("click", async () => {
-
-    const nombre =
-      document.getElementById("nombre").value.trim();
-
-    const edad =
-      document.getElementById("edad").value;
-
-    const ciudad =
-      document.getElementById("ciudad").value.trim();
-
-    const mensaje =
-      document.getElementById("mensaje");
+  .addEventListener("click", guardarPerfil);
 
 
-    if (!nombre) {
+async function guardarPerfil() {
 
-      mensaje.textContent =
-        "⚠️ Escribí tu nombre.";
+  const mensaje =
+    document.getElementById("mensaje");
 
-      return;
-    }
+  const nombre =
+    document.getElementById("nombre")
+      .value
+      .trim();
+
+  const edad =
+    document.getElementById("edad")
+      .value;
+
+  const ciudad =
+    document.getElementById("ciudad")
+      .value
+      .trim();
 
 
-    if (!edad) {
-
-      mensaje.textContent =
-        "⚠️ Escribí tu edad.";
-
-      return;
-    }
-
-
-    if (!ciudad) {
-
-      mensaje.textContent =
-        "⚠️ Escribí tu ciudad.";
-
-      return;
-    }
-
+  if (!nombre) {
 
     mensaje.textContent =
-      "Guardando...";
+      "⚠️ Escribí tu nombre.";
+
+    return;
+  }
 
 
-    const { error } =
-      await supabaseClient
-        .from("profiles")
-        .upsert({
+  if (!edad) {
 
+    mensaje.textContent =
+      "⚠️ Escribí tu edad.";
+
+    return;
+  }
+
+
+  if (!ciudad) {
+
+    mensaje.textContent =
+      "⚠️ Escribí tu ciudad.";
+
+    return;
+  }
+
+
+  mensaje.textContent =
+    "Guardando...";
+
+
+  try {
+
+    const {
+      error
+    } = await supabaseClient
+      .from("profiles")
+      .upsert(
+        {
           id: usuarioActual.id,
-
           nombre: nombre,
-
-          edad: parseInt(edad),
-
+          edad: parseInt(edad, 10),
           ciudad: ciudad
-
-        });
+        },
+        {
+          onConflict: "id"
+        }
+      );
 
 
     if (error) {
@@ -371,12 +442,240 @@ document
     mensaje.textContent =
       "✅ Perfil guardado correctamente.";
 
+
+    // Actualizar perfiles después de guardar
+
+    await cargarPersonas();
+
+  } catch (error) {
+
+    console.error(error);
+
+    mensaje.textContent =
+      "❌ Error inesperado: " +
+      error.message;
+  }
+}
+
+
+// =====================================
+// CARGAR OTROS PERFILES
+// =====================================
+
+async function cargarPersonas() {
+
+  const {
+    data,
+    error
+  } = await supabaseClient
+    .from("profiles")
+    .select("id,nombre,edad,ciudad")
+    .neq("id", usuarioActual.id)
+    .order("id", {
+      ascending: true
+    });
+
+
+  if (error) {
+
+    console.error(error);
+
+    document.getElementById("personaNombre")
+      .textContent =
+      "❌ Error al cargar personas.";
+
+    document.getElementById("mensajeSwipe")
+      .textContent =
+      error.message;
+
+    return;
+  }
+
+
+  perfilesDisponibles =
+    data || [];
+
+  perfilActual = 0;
+
+
+  await mostrarPersona();
+}
+
+
+// =====================================
+// MOSTRAR PERSONA
+// =====================================
+
+async function mostrarPersona() {
+
+  const nombre =
+    document.getElementById("personaNombre");
+
+  const edad =
+    document.getElementById("personaEdad");
+
+  const ciudad =
+    document.getElementById("personaCiudad");
+
+  const botonLike =
+    document.getElementById("like");
+
+  const botonPasar =
+    document.getElementById("pasar");
+
+
+  if (
+    !perfilesDisponibles.length ||
+    perfilActual >= perfilesDisponibles.length
+  ) {
+
+    nombre.textContent =
+      "💕 No hay más perfiles por ahora.";
+
+    edad.textContent = "";
+
+    ciudad.textContent = "";
+
+    botonLike.style.display = "none";
+
+    botonPasar.style.display = "none";
+
+    return;
+  }
+
+
+  botonLike.style.display = "block";
+
+  botonPasar.style.display = "block";
+
+
+  const persona =
+    perfilesDisponibles[perfilActual];
+
+
+  nombre.textContent =
+    persona.nombre ||
+    "Sin nombre";
+
+
+  edad.textContent =
+    persona.edad
+      ? "🎂 " + persona.edad + " años"
+      : "";
+
+
+  ciudad.textContent =
+    persona.ciudad
+      ? "📍 " + persona.ciudad
+      : "";
+}
+
+
+// =====================================
+// LIKE / PASS
+// =====================================
+
+async function registrarSwipe(accion) {
+
+  if (
+    !usuarioActual ||
+    perfilActual >= perfilesDisponibles.length
+  ) {
+    return;
+  }
+
+
+  const persona =
+    perfilesDisponibles[perfilActual];
+
+
+  const mensaje =
+    document.getElementById("mensajeSwipe");
+
+
+  mensaje.textContent =
+    "Guardando...";
+
+
+  const {
+    error
+  } = await supabaseClient
+    .from("swipes")
+    .insert(
+      {
+        user_id: usuarioActual.id,
+        target_user_id: persona.id,
+        action: accion
+      }
+    );
+
+
+  if (error) {
+
+    console.error(error);
+
+    mensaje.textContent =
+      "❌ Error: " +
+      error.message;
+
+    return;
+  }
+
+
+  if (accion === "like") {
+
+    mensaje.textContent =
+      "❤️ ¡Like enviado!";
+
+  } else {
+
+    mensaje.textContent =
+      "❌ Perfil pasado.";
+  }
+
+
+  perfilActual++;
+
+
+  setTimeout(() => {
+
+    mensaje.textContent = "";
+
+    mostrarPersona();
+
+  }, 600);
+}
+
+
+// =====================================
+// BOTÓN LIKE
+// =====================================
+
+document
+  .getElementById("like")
+  .addEventListener("click", () => {
+
+    registrarSwipe("like");
+
   });
 
 
-// ============================
+// =====================================
+// BOTÓN PASAR
+// =====================================
+
+document
+  .getElementById("pasar")
+  .addEventListener("click", () => {
+
+    registrarSwipe("pass");
+
+  });
+
+
+// =====================================
 // CERRAR SESIÓN
-// ============================
+// =====================================
 
 document
   .getElementById("logout")
@@ -384,114 +683,15 @@ document
 
     await supabaseClient.auth.signOut();
 
-    window.location.href = "index.html";
+    window.location.href =
+      "index.html";
 
   });
 
 
-// INI// ============================
-// DESCUBRIR PERSONAS
-// ============================
-
-let perfilesDisponibles = [];
-let perfilActual = 0;
-
-async function cargarPersonas() {
-
-  const { data, error } = await supabaseClient
-    .from("profiles")
-    .select("id,nombre,edad,ciudad")
-    .neq("id", usuarioActual.id);
-
-  if (error) {
-    console.error(error);
-    document.getElementById("personaNombre").textContent =
-      "❌ Error al cargar perfiles.";
-    return;
-  }
-
-  perfilesDisponibles = data || [];
-  perfilActual = 0;
-
-  mostrarPersona();
-}
-
-
-function mostrarPersona() {
-
-  if (perfilActual >= perfilesDisponibles.length) {
-
-    document.getElementById("personaNombre").textContent =
-      "💕 No hay más perfiles por ahora.";
-
-    document.getElementById("personaEdad").textContent = "";
-    document.getElementById("personaCiudad").textContent = "";
-
-    return;
-  }
-
-  const persona = perfilesDisponibles[perfilActual];
-
-  document.getElementById("personaNombre").textContent =
-    persona.nombre || "Sin nombre";
-
-  document.getElementById("personaEdad").textContent =
-    persona.edad ? "🎂 " + persona.edad + " años" : "";
-
-  document.getElementById("personaCiudad").textContent =
-    persona.ciudad ? "📍 " + persona.ciudad : "";
-}
-
-
-async function registrarSwipe(accion) {
-
-  const persona = perfilesDisponibles[perfilActual];
-
-  if (!persona) return;
-
-  const { error } = await supabaseClient
-    .from("swipes")
-    .insert({
-      user_id: usuarioActual.id,
-      target_user_id: persona.id,
-      action: accion
-    });
-
-  if (error) {
-
-    console.error(error);
-
-    document.getElementById("mensajeSwipe").textContent =
-      "❌ Error: " + error.message;
-
-    return;
-  }
-
-  perfilActual++;
-
-  document.getElementById("mensajeSwipe").textContent =
-    accion === "like"
-      ? "❤️ ¡Like enviado!"
-      : "❌ Perfil pasado.";
-
-  setTimeout(() => {
-
-    document.getElementById("mensajeSwipe").textContent = "";
-
-    mostrarPersona();
-
-  }, 700);
-}
-
-
-document.getElementById("like").addEventListener("click", () => {
-  registrarSwipe("like");
-});
-
-
-document.getElementById("pasar").addEventListener("click", () => {
-  registrarSwipe("pass");
-});CIAR
+// =====================================
+// INICIAR
+// =====================================
 
 verificarSesion();
 
