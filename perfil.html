@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi perfil - EmiMatch</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(145deg, #07152f, #102d59);
+      color: white;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      padding: 25px 0;
+    }
+
+    .header h1 {
+      color: #d9ad45;
+      font-size: 34px;
+    }
+
+    .card {
+      background: white;
+      color: #15233d;
+      border-radius: 24px;
+      padding: 28px 22px;
+      box-shadow: 0 15px 40px rgba(0,0,0,.35);
+    }
+
+    .avatar {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+      background: #d9ad45;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 42px;
+      color: #10203d;
+      font-weight: bold;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .email {
+      text-align: center;
+      color: #68758a;
+      margin-bottom: 25px;
+    }
+
+    .info {
+      background: #f1f4f8;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+
+    .info strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .logout {
+      width: 100%;
+      border: none;
+      padding: 15px;
+      border-radius: 12px;
+      background: #d9ad45;
+      color: #101d34;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .message {
+      text-align: center;
+      margin-top: 15px;
+      color: #9d2222;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <h1>EmiMatch</h1>
+  </div>
+
+  <div class="card">
+
+    <div class="avatar" id="avatar">
+      ?
+    </div>
+
+    <h2 id="name">
+      Cargando...
+    </h2>
+
+    <p class="email" id="email">
+      Cargando...
+    </p>
+
+    <div class="info">
+      <strong>Mi perfil</strong>
+      <span>Bienvenido a EmiMatch.</span>
+    </div>
+
+    <div class="info">
+      <strong>Estado</strong>
+      <span>Cuenta activa</span>
+    </div>
+
+    <button class="logout" id="logoutButton">
+      Cerrar sesión
+    </button>
+
+    <div class="message" id="message"></div>
+
+  </div>
+
+</div>
+
+<script>
+
+const SUPABASE_URL =
+"https://kngiadwaesdbmvwivdev.supabase.co";
+
+const SUPABASE_ANON_KEY =
+"sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
+
+const supabaseClient =
+window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
+
+async function cargarPerfil() {
+
+  const {
+    data: { user },
+    error
+  } = await supabaseClient.auth.getUser();
+
+  if (error || !user) {
+    window.location.href = "index.html";
+    return;
+  }
+
+  const nombre =
+    user.user_metadata?.full_name ||
+    "Usuario EmiMatch";
+
+  document.getElementById("name").textContent =
+    nombre;
+
+  document.getElementById("email").textContent =
+    user.email || "";
+
+  document.getElementById("avatar").textContent =
+    nombre.charAt(0).toUpperCase();
+}
+
+document.getElementById("logoutButton").onclick =
+async () => {
+
+  await supabaseClient.auth.signOut();
+
+  window.location.href = "index.html";
+};
+
+cargarPerfil();
+
+</script>
+
+</body>
+</html>
