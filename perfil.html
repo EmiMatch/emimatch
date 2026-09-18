@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>EmiMatch - Mi perfil</title>
+  <title>Mi perfil - EmiMatch</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -16,15 +16,16 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f5f7fb;
-      color: #222;
+      background: linear-gradient(135deg, #071a3d, #102b5c);
+      color: white;
+      min-height: 100vh;
     }
 
     header {
-      background: linear-gradient(135deg, #111827, #1e3a8a);
-      color: white;
+      background: rgba(0,0,0,0.25);
+      padding: 18px;
       text-align: center;
-      padding: 22px 15px;
+      border-bottom: 1px solid rgba(255,255,255,0.15);
     }
 
     header h1 {
@@ -32,44 +33,40 @@
       font-size: 28px;
     }
 
-    header p {
-      margin: 7px 0 0;
-      opacity: .9;
-    }
-
-    .container {
-      max-width: 560px;
+    .contenedor {
+      width: 95%;
+      max-width: 900px;
       margin: 25px auto;
-      padding: 15px;
     }
 
-    .card {
+    .tarjeta {
       background: white;
-      padding: 24px;
+      color: #222;
       border-radius: 20px;
-      box-shadow: 0 5px 20px rgba(0,0,0,.08);
+      padding: 25px;
       margin-bottom: 25px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
     }
 
     h2 {
-      text-align: center;
+      color: #102b5c;
       margin-top: 0;
     }
 
     label {
       display: block;
+      margin-top: 15px;
+      margin-bottom: 6px;
       font-weight: bold;
-      margin: 15px 0 6px;
     }
 
     input,
     textarea {
       width: 100%;
       padding: 13px;
-      border: 1px solid #ddd;
+      border: 1px solid #ccc;
       border-radius: 10px;
       font-size: 16px;
-      font-family: Arial, sans-serif;
     }
 
     textarea {
@@ -77,165 +74,169 @@
       resize: vertical;
     }
 
+    input:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #d4af37;
+      box-shadow: 0 0 0 2px rgba(212,175,55,0.2);
+    }
+
     button {
-      width: 100%;
-      padding: 14px;
-      border: 0;
+      border: none;
       border-radius: 12px;
+      padding: 13px 20px;
       font-size: 16px;
       font-weight: bold;
       cursor: pointer;
       margin-top: 15px;
     }
 
-    #guardar {
-      background: #2563eb;
+    .btn-guardar {
+      background: #d4af37;
+      color: #071a3d;
+      width: 100%;
+    }
+
+    .btn-salir {
+      background: #dc3545;
       color: white;
-    }
-
-    #logout {
-      background: #ef4444;
-      color: white;
-    }
-
-    .email {
-      background: #f3f4f6;
-      padding: 12px;
-      border-radius: 10px;
-      word-break: break-word;
-    }
-
-    #mensaje {
-      text-align: center;
-      margin-top: 15px;
-      font-weight: bold;
-      min-height: 22px;
+      width: 100%;
     }
 
     .foto-preview {
       width: 150px;
       height: 150px;
       border-radius: 50%;
-      margin: 15px auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #e5e7eb;
-      overflow: hidden;
-      border: 4px solid #e5e7eb;
-    }
-
-    .foto-preview img {
-      width: 100%;
-      height: 100%;
       object-fit: cover;
+      display: block;
+      margin: 15px auto;
+      border: 5px solid #d4af37;
+      background: #eee;
     }
 
-    .foto-placeholder {
-      font-size: 55px;
+    .email {
+      background: #f1f3f5;
+      padding: 12px;
+      border-radius: 10px;
+      color: #555;
+      margin-bottom: 15px;
+      word-break: break-word;
     }
 
-    .descubrir {
+    .mensaje {
+      padding: 12px;
+      border-radius: 10px;
+      margin-top: 15px;
+      display: none;
       text-align: center;
+      font-weight: bold;
+    }
+
+    .exito {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .error {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .cargando {
+      text-align: center;
+      padding: 20px;
+      color: #666;
     }
 
     .persona {
-      background: #f9fafb;
-      padding: 20px;
-      border-radius: 18px;
-      border: 1px solid #eee;
+      text-align: center;
     }
 
-    .persona-foto {
+    .persona img {
       width: 180px;
       height: 180px;
       border-radius: 50%;
-      margin: 0 auto 15px;
-      overflow: hidden;
-      background: #e5e7eb;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 4px solid #e5e7eb;
-    }
-
-    .persona-foto img {
-      width: 100%;
-      height: 100%;
       object-fit: cover;
+      border: 5px solid #d4af37;
+      background: #eee;
     }
 
-    .persona-foto-placeholder {
-      font-size: 65px;
+    .persona h3 {
+      font-size: 25px;
+      color: #102b5c;
+      margin-bottom: 5px;
     }
 
-    #personaNombre {
-      font-size: 27px;
-      margin: 10px 0;
-    }
-
-    #personaEdad,
-    #personaCiudad,
-    #personaIntereses {
-      font-size: 17px;
-      margin: 9px 0;
-    }
-
-    #personaDescripcion {
-      font-size: 16px;
-      line-height: 1.5;
+    .persona p {
       color: #555;
-      margin: 15px 0;
+      line-height: 1.5;
+    }
+
+    .intereses {
+      display: inline-block;
+      background: #102b5c;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 20px;
+      margin-top: 5px;
     }
 
     .acciones {
       display: flex;
-      gap: 10px;
-      margin-top: 25px;
+      gap: 15px;
+      justify-content: center;
     }
 
-    .acciones button {
+    .btn-pasar {
+      background: #dc3545;
+      color: white;
       flex: 1;
-      margin-top: 0;
     }
 
-    #pasar {
-      background: #ef4444;
+    .btn-like {
+      background: #28a745;
       color: white;
+      flex: 1;
     }
 
-    #like {
-      background: #ec4899;
-      color: white;
-    }
-
-    #mensajeSwipe {
-      min-height: 24px;
-      font-weight: bold;
-      margin-top: 15px;
+    .sin-personas {
+      text-align: center;
+      color: #666;
+      padding: 30px 10px;
     }
 
     .match {
       display: none;
-      background: linear-gradient(135deg, #ec4899, #8b5cf6);
-      color: white;
-      padding: 25px;
-      border-radius: 20px;
+      background: linear-gradient(135deg, #d4af37, #f7df8b);
+      color: #071a3d;
       text-align: center;
+      padding: 25px;
+      border-radius: 18px;
       margin-top: 20px;
     }
 
     .match h2 {
-      margin-bottom: 10px;
+      color: #071a3d;
+      font-size: 30px;
     }
 
-    .match-icon {
-      font-size: 55px;
-    }
+    @media (max-width: 600px) {
+      .contenedor {
+        width: 92%;
+      }
 
-    .sin-perfiles {
-      padding: 20px;
-      color: #666;
+      .tarjeta {
+        padding: 20px;
+      }
+
+      .acciones {
+        flex-direction: column;
+      }
+
+      .persona img {
+        width: 150px;
+        height: 150px;
+      }
     }
   </style>
 </head>
@@ -244,34 +245,32 @@
 
 <header>
   <h1>💕 EmiMatch</h1>
-  <p>Conocé personas y encontrá tu Match</p>
 </header>
 
-<div class="container">
+<div class="contenedor">
 
-  <!-- ========================= -->
-  <!-- MI PERFIL -->
-  <!-- ========================= -->
-
-  <div class="card">
+  <!-- PERFIL -->
+  <div class="tarjeta">
 
     <h2>Mi perfil</h2>
 
-    <div class="email">
-      <strong>Email:</strong>
-      <span id="email"></span>
+    <div id="emailUsuario" class="email">
+      Cargando usuario...
     </div>
 
-    <div class="foto-preview" id="miFotoPreview">
-      <div class="foto-placeholder">👤</div>
-    </div>
+    <label for="fotoURL">Foto de perfil</label>
 
-    <label for="foto_url">URL de foto</label>
+    <img
+      id="fotoPreview"
+      class="foto-preview"
+      src="https://via.placeholder.com/150"
+      alt="Foto de perfil"
+    >
 
     <input
       type="url"
-      id="foto_url"
-      placeholder="https://..."
+      id="fotoURL"
+      placeholder="Pegá aquí la URL de tu foto"
     >
 
     <label for="nombre">Nombre</label>
@@ -287,9 +286,9 @@
     <input
       type="number"
       id="edad"
-      placeholder="Tu edad"
       min="18"
       max="100"
+      placeholder="Tu edad"
     >
 
     <label for="ciudad">Ciudad</label>
@@ -297,14 +296,14 @@
     <input
       type="text"
       id="ciudad"
-      placeholder="Tu ciudad"
+      placeholder="Ej: Pilar"
     >
 
     <label for="descripcion">Descripción</label>
 
     <textarea
       id="descripcion"
-      placeholder="Contá un poco sobre vos..."
+      placeholder="Contanos un poco sobre vos..."
     ></textarea>
 
     <label for="intereses">Intereses</label>
@@ -312,78 +311,117 @@
     <input
       type="text"
       id="intereses"
-      placeholder="Ej: fútbol, música, viajes..."
+      placeholder="Ej: fútbol, música, viajes"
     >
 
-    <button id="guardar">
+    <button
+      id="guardarButton"
+      class="btn-guardar"
+    >
       💾 Guardar perfil
     </button>
 
-    <div id="mensaje"></div>
+    <div
+      id="mensaje"
+      class="mensaje"
+    ></div>
 
-    <button id="logout">
+    <button
+      id="salirButton"
+      class="btn-salir"
+    >
       🚪 Cerrar sesión
     </button>
 
   </div>
 
 
-  <!-- ========================= -->
   <!-- DESCUBRIR PERSONAS -->
-  <!-- ========================= -->
-
-  <div class="card descubrir">
+  <div class="tarjeta">
 
     <h2>💕 Descubrir personas</h2>
 
-    <div class="persona">
+    <div
+      id="cargandoPersonas"
+      class="cargando"
+    >
+      Buscando personas...
+    </div>
 
-      <div class="persona-foto" id="personaFoto">
-        <div class="persona-foto-placeholder">👤</div>
-      </div>
+    <div
+      id="persona"
+      class="persona"
+      style="display:none;"
+    >
+
+      <img
+        id="personaFoto"
+        src="https://via.placeholder.com/180"
+        alt="Foto"
+      >
 
       <h3 id="personaNombre">
-        Buscando personas...
+        -
       </h3>
 
-      <p id="personaEdad"></p>
+      <p id="personaCiudad">
+        -
+      </p>
 
-      <p id="personaCiudad"></p>
+      <p id="personaDescripcion">
+        -
+      </p>
 
-      <p id="personaIntereses"></p>
-
-      <p id="personaDescripcion"></p>
+      <div
+        id="personaIntereses"
+        class="intereses"
+      >
+        -
+      </div>
 
       <div class="acciones">
 
-        <button id="pasar">
+        <button
+          id="pasarButton"
+          class="btn-pasar"
+        >
           ❌ Pasar
         </button>
 
-        <button id="like">
-          ❤️ Like
+        <button
+          id="likeButton"
+          class="btn-like"
+        >
+          ❤️ Me gusta
         </button>
 
       </div>
 
     </div>
 
-    <p id="mensajeSwipe"></p>
+    <div
+      id="sinPersonas"
+      class="sin-personas"
+      style="display:none;"
+    >
+      <h3>No hay más perfiles por ahora.</h3>
+      <p>Volvé más tarde para descubrir nuevas personas.</p>
+    </div>
 
-    <!-- MATCH -->
 
-    <div class="match" id="match">
+    <div
+      id="match"
+      class="match"
+    >
 
-      <div class="match-icon">💕</div>
-
-      <h2>¡Es un Match!</h2>
+      <h2>🎉 ¡Es un Match!</h2>
 
       <p>
-        Los dos se dieron Like.
+        ¡A ambos les gustaron sus perfiles!
       </p>
 
       <p>
-        Próximamente podrán comenzar a chatear.
+        Pronto podremos agregar el chat de EmiMatch.
       </p>
 
     </div>
@@ -395,697 +433,752 @@
 
 <script>
 
-const SUPABASE_URL =
-  "https://kngiadwaesdbmvwivdev.supabase.co";
+  /* =========================
+     SUPABASE
+  ========================= */
 
-const SUPABASE_KEY =
-  "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
+  const SUPABASE_URL =
+    "https://kngiadwaesdbmvwivdev.supabase.co";
 
-const supabaseClient =
-  window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
+  const SUPABASE_ANON_KEY =
+    "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
 
-
-let usuarioActual = null;
-
-let perfilesDisponibles = [];
-
-let perfilActual = 0;
+  const supabaseClient =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
 
 
-// =====================================
-// VERIFICAR SESIÓN
-// =====================================
+  /* =========================
+     VARIABLES
+  ========================= */
 
-async function verificarSesion() {
+  let usuarioActual = null;
+  let personaActual = null;
 
-  try {
+
+  /* =========================
+     ELEMENTOS
+  ========================= */
+
+  const emailUsuario =
+    document.getElementById("emailUsuario");
+
+  const fotoURL =
+    document.getElementById("fotoURL");
+
+  const fotoPreview =
+    document.getElementById("fotoPreview");
+
+  const nombre =
+    document.getElementById("nombre");
+
+  const edad =
+    document.getElementById("edad");
+
+  const ciudad =
+    document.getElementById("ciudad");
+
+  const descripcion =
+    document.getElementById("descripcion");
+
+  const intereses =
+    document.getElementById("intereses");
+
+  const guardarButton =
+    document.getElementById("guardarButton");
+
+  const salirButton =
+    document.getElementById("salirButton");
+
+  const mensaje =
+    document.getElementById("mensaje");
+
+  const cargandoPersonas =
+    document.getElementById("cargandoPersonas");
+
+  const persona =
+    document.getElementById("persona");
+
+  const sinPersonas =
+    document.getElementById("sinPersonas");
+
+  const personaFoto =
+    document.getElementById("personaFoto");
+
+  const personaNombre =
+    document.getElementById("personaNombre");
+
+  const personaCiudad =
+    document.getElementById("personaCiudad");
+
+  const personaDescripcion =
+    document.getElementById("personaDescripcion");
+
+  const personaIntereses =
+    document.getElementById("personaIntereses");
+
+  const pasarButton =
+    document.getElementById("pasarButton");
+
+  const likeButton =
+    document.getElementById("likeButton");
+
+  const match =
+    document.getElementById("match");
+
+
+  /* =========================
+     MENSAJES
+  ========================= */
+
+  function mostrarMensaje(texto, esError = false) {
+
+    mensaje.textContent = texto;
+
+    mensaje.className =
+      "mensaje " +
+      (esError ? "error" : "exito");
+
+    mensaje.style.display = "block";
+
+  }
+
+
+  /* =========================
+     SESIÓN
+  ========================= */
+
+  async function verificarSesion() {
 
     const {
       data,
       error
-    } = await supabaseClient.auth.getSession();
+    } =
+      await supabaseClient.auth.getSession();
 
     if (error) {
 
       console.error(error);
 
-      window.location.href = "index.html";
+      mostrarMensaje(
+        "Error al verificar la sesión.",
+        true
+      );
 
       return;
+
     }
 
     if (!data.session) {
 
-      window.location.href = "index.html";
+      window.location.href =
+        "index.html";
 
       return;
+
     }
 
-    usuarioActual = data.session.user;
+    usuarioActual =
+      data.session.user;
 
-    document.getElementById("email").textContent =
-      usuarioActual.email || "";
+    emailUsuario.textContent =
+      "📧 " + usuarioActual.email;
 
     await cargarPerfil();
 
     await cargarPersonas();
 
-  } catch (error) {
-
-    console.error(error);
-
-    document.getElementById("mensaje").textContent =
-      "❌ Error al iniciar el perfil: " +
-      error.message;
-  }
-}
-
-
-// =====================================
-// CARGAR MI PERFIL
-// =====================================
-
-async function cargarPerfil() {
-
-  const {
-    data,
-    error
-  } = await supabaseClient
-    .from("profiles")
-    .select(
-      'id,nombre,edad,ciudad,"descripción",foto_url,intereses,created_at'
-    )
-    .eq("id", usuarioActual.id)
-    .maybeSingle();
-
-
-  if (error) {
-
-    console.error(error);
-
-    document.getElementById("mensaje").textContent =
-      "❌ Error al cargar el perfil: " +
-      error.message;
-
-    return;
   }
 
 
-  if (!data) {
-
-    return;
-  }
-
-
-  document.getElementById("nombre").value =
-    data.nombre || "";
-
-  document.getElementById("edad").value =
-    data.edad || "";
-
-  document.getElementById("ciudad").value =
-    data.ciudad || "";
-
-  document.getElementById("descripcion").value =
-    data["descripción"] || "";
-
-  document.getElementById("foto_url").value =
-    data.foto_url || "";
-
-  document.getElementById("intereses").value =
-    data.intereses || "";
-
-
-  actualizarMiFoto(data.foto_url);
-}
-
-
-// =====================================
-// FOTO DE MI PERFIL
-// =====================================
-
-function actualizarMiFoto(url) {
-
-  const contenedor =
-    document.getElementById("miFotoPreview");
-
-
-  if (!url) {
-
-    contenedor.innerHTML =
-      '<div class="foto-placeholder">👤</div>';
-
-    return;
-  }
-
-
-  contenedor.innerHTML =
-    '<img src="' +
-    escaparHTML(url) +
-    '" alt="Mi foto" onerror="this.parentElement.innerHTML=\'<div class=&quot;foto-placeholder&quot;>👤</div>\'">';
-}
-
-
-// =====================================
-// ESCAPAR HTML
-// =====================================
-
-function escaparHTML(texto) {
-
-  return String(texto)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
-
-
-// =====================================
-// GUARDAR MI PERFIL
-// =====================================
-
-document
-  .getElementById("guardar")
-  .addEventListener(
-    "click",
-    guardarPerfil
-  );
-
-
-async function guardarPerfil() {
-
-  const mensaje =
-    document.getElementById("mensaje");
-
-
-  const nombre =
-    document.getElementById("nombre")
-      .value
-      .trim();
-
-
-  const edad =
-    document.getElementById("edad")
-      .value;
-
-
-  const ciudad =
-    document.getElementById("ciudad")
-      .value
-      .trim();
-
-
-  const descripcion =
-    document.getElementById("descripcion")
-      .value
-      .trim();
-
-
-  const fotoURL =
-    document.getElementById("foto_url")
-      .value
-      .trim();
-
-
-  const intereses =
-    document.getElementById("intereses")
-      .value
-      .trim();
-
-
-  if (!nombre) {
-
-    mensaje.textContent =
-      "⚠️ Escribí tu nombre.";
-
-    return;
-  }
-
-
-  if (!edad) {
-
-    mensaje.textContent =
-      "⚠️ Escribí tu edad.";
-
-    return;
-  }
-
-
-  const edadNumero =
-    parseInt(edad, 10);
-
-
-  if (
-    isNaN(edadNumero) ||
-    edadNumero < 18 ||
-    edadNumero > 100
-  ) {
-
-    mensaje.textContent =
-      "⚠️ La edad debe estar entre 18 y 100 años.";
-
-    return;
-  }
-
-
-  if (!ciudad) {
-
-    mensaje.textContent =
-      "⚠️ Escribí tu ciudad.";
-
-    return;
-  }
-
-
-  mensaje.textContent =
-    "Guardando...";
-
-
-  try {
+  /* =========================
+     CARGAR PERFIL
+  ========================= */
+
+  async function cargarPerfil() {
 
     const {
+      data,
       error
-    } = await supabaseClient
-      .from("profiles")
-      .upsert(
-        {
-          id: usuarioActual.id,
-          nombre: nombre,
-          edad: edadNumero,
-          ciudad: ciudad,
-          "descripción": descripcion,
-          foto_url: fotoURL || null,
-          intereses: intereses || null
-        },
-        {
-          onConflict: "id"
-        }
-      );
+    } =
+      await supabaseClient
+        .from("profiles")
+        .select(
+          "id,nombre,edad,ciudad,descripcion,foto_url,intereses,created_at"
+        )
+        .eq(
+          "id",
+          usuarioActual.id
+        )
+        .maybeSingle();
 
 
     if (error) {
 
-      console.error(error);
+      console.error(
+        "Error al cargar el perfil:",
+        error
+      );
 
-      mensaje.textContent =
-        "❌ Error: " +
-        error.message;
+      mostrarMensaje(
+        "❌ Error al cargar el perfil: " +
+        error.message,
+        true
+      );
 
       return;
+
     }
 
 
-    actualizarMiFoto(fotoURL);
+    if (!data) {
 
-    mensaje.textContent =
-      "✅ Perfil guardado correctamente.";
+      return;
+
+    }
 
 
-    await cargarPersonas();
+    nombre.value =
+      data.nombre || "";
 
-  } catch (error) {
+    edad.value =
+      data.edad || "";
 
-    console.error(error);
+    ciudad.value =
+      data.ciudad || "";
 
-    mensaje.textContent =
-      "❌ Error inesperado: " +
-      error.message;
+    descripcion.value =
+      data.descripcion || "";
+
+    intereses.value =
+      data.intereses || "";
+
+    fotoURL.value =
+      data.foto_url || "";
+
+
+    if (data.foto_url) {
+
+      fotoPreview.src =
+        data.foto_url;
+
+    }
+
   }
-}
 
 
-// =====================================
-// CARGAR OTROS PERFILES
-// =====================================
+  /* =========================
+     PREVISUALIZAR FOTO
+  ========================= */
 
-async function cargarPersonas() {
+  fotoURL.addEventListener(
+    "input",
+    () => {
 
-  const {
-    data,
-    error
-  } = await supabaseClient
-    .from("profiles")
-    .select(
-      'id,nombre,edad,ciudad,"descripción",foto_url,intereses'
-    )
-    .neq(
-      "id",
-      usuarioActual.id
-    )
-    .order(
-      "created_at",
-      {
-        ascending: false
+      const url =
+        fotoURL.value.trim();
+
+      if (url) {
+
+        fotoPreview.src = url;
+
+      } else {
+
+        fotoPreview.src =
+          "https://via.placeholder.com/150";
+
       }
-    );
+
+    }
+  );
 
 
-  if (error) {
+  /* =========================
+     GUARDAR PERFIL
+  ========================= */
 
-    console.error(error);
+  guardarButton.onclick =
+    async () => {
 
-    document.getElementById("personaNombre")
-      .textContent =
-      "❌ Error al cargar personas.";
+      if (!usuarioActual) {
 
-    document.getElementById("mensajeSwipe")
-      .textContent =
-      error.message;
+        mostrarMensaje(
+          "No hay una sesión activa.",
+          true
+        );
 
-    return;
-  }
+        return;
 
-
-  perfilesDisponibles =
-    data || [];
-
-  perfilActual = 0;
+      }
 
 
-  mostrarPersona();
-}
+      const nombreValor =
+        nombre.value.trim();
+
+      const edadValor =
+        edad.value.trim();
+
+      const ciudadValor =
+        ciudad.value.trim();
+
+      const descripcionValor =
+        descripcion.value.trim();
+
+      const interesesValor =
+        intereses.value.trim();
+
+      const fotoURLValor =
+        fotoURL.value.trim();
 
 
-// =====================================
-// MOSTRAR PERSONA
-// =====================================
+      if (!nombreValor) {
 
-function mostrarPersona() {
+        mostrarMensaje(
+          "Completá tu nombre.",
+          true
+        );
 
-  const nombre =
-    document.getElementById("personaNombre");
+        return;
 
-  const edad =
-    document.getElementById("personaEdad");
-
-  const ciudad =
-    document.getElementById("personaCiudad");
-
-  const descripcion =
-    document.getElementById("personaDescripcion");
-
-  const intereses =
-    document.getElementById("personaIntereses");
-
-  const foto =
-    document.getElementById("personaFoto");
-
-  const botonLike =
-    document.getElementById("like");
-
-  const botonPasar =
-    document.getElementById("pasar");
+      }
 
 
-  if (
-    !perfilesDisponibles.length ||
-    perfilActual >= perfilesDisponibles.length
-  ) {
+      if (!edadValor) {
 
-    nombre.textContent =
-      "💕 No hay más perfiles por ahora.";
+        mostrarMensaje(
+          "Completá tu edad.",
+          true
+        );
 
-    edad.textContent = "";
+        return;
 
-    ciudad.textContent = "";
+      }
 
-    descripcion.textContent = "";
 
-    intereses.textContent = "";
+      const edadNumero =
+        Number(edadValor);
 
-    foto.innerHTML =
-      '<div class="persona-foto-placeholder">👤</div>';
 
-    botonLike.style.display =
+      if (
+        edadNumero < 18 ||
+        edadNumero > 100
+      ) {
+
+        mostrarMensaje(
+          "La edad debe estar entre 18 y 100 años.",
+          true
+        );
+
+        return;
+
+      }
+
+
+      guardarButton.disabled = true;
+
+      guardarButton.textContent =
+        "Guardando...";
+
+
+      const {
+        error
+      } =
+        await supabaseClient
+          .from("profiles")
+          .upsert(
+            {
+              id: usuarioActual.id,
+
+              nombre: nombreValor,
+
+              edad: edadNumero,
+
+              ciudad: ciudadValor,
+
+              descripcion:
+                descripcionValor,
+
+              foto_url:
+                fotoURLValor || null,
+
+              intereses:
+                interesesValor || null
+
+            },
+            {
+              onConflict: "id"
+            }
+          );
+
+
+      guardarButton.disabled = false;
+
+      guardarButton.textContent =
+        "💾 Guardar perfil";
+
+
+      if (error) {
+
+        console.error(
+          "Error al guardar:",
+          error
+        );
+
+        mostrarMensaje(
+          "❌ Error al guardar: " +
+          error.message,
+          true
+        );
+
+        return;
+
+      }
+
+
+      mostrarMensaje(
+        "✅ Perfil guardado correctamente."
+      );
+
+
+      await cargarPersonas();
+
+    };
+
+
+  /* =========================
+     CARGAR PERSONAS
+  ========================= */
+
+  async function cargarPersonas() {
+
+    cargandoPersonas.style.display =
+      "block";
+
+    persona.style.display =
       "none";
 
-    botonPasar.style.display =
+    sinPersonas.style.display =
       "none";
 
-    return;
-  }
+    match.style.display =
+      "none";
 
-
-  botonLike.style.display =
-    "block";
-
-  botonPasar.style.display =
-    "block";
-
-
-  const persona =
-    perfilesDisponibles[perfilActual];
-
-
-  nombre.textContent =
-    persona.nombre ||
-    "Sin nombre";
-
-
-  edad.textContent =
-    persona.edad
-      ? "🎂 " + persona.edad + " años"
-      : "";
-
-
-  ciudad.textContent =
-    persona.ciudad
-      ? "📍 " + persona.ciudad
-      : "";
-
-
-  intereses.textContent =
-    persona.intereses
-      ? "❤️ " + persona.intereses
-      : "";
-
-
-  descripcion.textContent =
-    persona["descripción"] || "";
-
-
-  if (persona.foto_url) {
-
-    foto.innerHTML =
-      '<img src="' +
-      escaparHTML(persona.foto_url) +
-      '" alt="Foto de perfil" onerror="this.parentElement.innerHTML=\'<div class=&quot;persona-foto-placeholder&quot;>👤</div>\'">';
-
-  } else {
-
-    foto.innerHTML =
-      '<div class="persona-foto-placeholder">👤</div>';
-  }
-}
-
-
-// =====================================
-// REGISTRAR LIKE / PASS
-// =====================================
-
-async function registrarSwipe(accion) {
-
-  if (
-    !usuarioActual ||
-    perfilActual >= perfilesDisponibles.length
-  ) {
-
-    return;
-  }
-
-
-  const persona =
-    perfilesDisponibles[perfilActual];
-
-
-  const mensaje =
-    document.getElementById("mensajeSwipe");
-
-
-  const botonLike =
-    document.getElementById("like");
-
-  const botonPasar =
-    document.getElementById("pasar");
-
-
-  mensaje.textContent =
-    "Guardando...";
-
-
-  botonLike.disabled = true;
-
-  botonPasar.disabled = true;
-
-
-  try {
 
     const {
+      data,
       error
-    } = await supabaseClient
-      .from("swipes")
-      .insert(
-        {
-          user_id: usuarioActual.id,
-          target_user_id: persona.id,
-          action: accion
-        }
-      );
+    } =
+      await supabaseClient
+        .from("profiles")
+        .select(
+          "id,nombre,edad,ciudad,descripcion,foto_url,intereses,created_at"
+        )
+        .neq(
+          "id",
+          usuarioActual.id
+        )
+        .order(
+          "created_at",
+          {
+            ascending: false
+          }
+        );
+
+
+    cargandoPersonas.style.display =
+      "none";
 
 
     if (error) {
 
-      console.error(error);
+      console.error(
+        "Error al cargar personas:",
+        error
+      );
 
-      mensaje.textContent =
-        "❌ Error: " +
-        error.message;
+      sinPersonas.style.display =
+        "block";
 
-      botonLike.disabled = false;
-
-      botonPasar.disabled = false;
+      sinPersonas.innerHTML =
+        "<h3>❌ Error</h3>" +
+        "<p>" +
+        error.message +
+        "</p>";
 
       return;
+
+    }
+
+
+    if (
+      !data ||
+      data.length === 0
+    ) {
+
+      sinPersonas.style.display =
+        "block";
+
+      return;
+
+    }
+
+
+    mostrarPersona(data[0]);
+
+  }
+
+
+  /* =========================
+     MOSTRAR PERSONA
+  ========================= */
+
+  function mostrarPersona(personaData) {
+
+    personaActual =
+      personaData;
+
+
+    persona.style.display =
+      "block";
+
+    sinPersonas.style.display =
+      "none";
+
+
+    if (personaData.foto_url) {
+
+      personaFoto.src =
+        personaData.foto_url;
+
+    } else {
+
+      personaFoto.src =
+        "https://via.placeholder.com/180";
+
+    }
+
+
+    personaNombre.textContent =
+      (
+        personaData.nombre ||
+        "Usuario"
+      ) +
+      (
+        personaData.edad
+          ? ", " + personaData.edad
+          : ""
+      );
+
+
+    personaCiudad.textContent =
+      personaData.ciudad
+        ? "📍 " + personaData.ciudad
+        : "";
+
+
+    personaDescripcion.textContent =
+      personaData.descripcion ||
+      "Sin descripción todavía.";
+
+
+    personaIntereses.textContent =
+      personaData.intereses
+        ? "❤️ " + personaData.intereses
+        : "Sin intereses indicados.";
+
+  }
+
+
+  /* =========================
+     REGISTRAR SWIPE
+  ========================= */
+
+  async function registrarSwipe(
+    accion
+  ) {
+
+    if (!personaActual) {
+
+      return;
+
+    }
+
+
+    const {
+      error
+    } =
+      await supabaseClient
+        .from("swipes")
+        .insert(
+          {
+            user_id:
+              usuarioActual.id,
+
+            target_user_id:
+              personaActual.id,
+
+            action:
+              accion
+
+          }
+        );
+
+
+    if (error) {
+
+      console.error(
+        "Error al registrar swipe:",
+        error
+      );
+
+      mostrarMensaje(
+        "❌ Error: " +
+        error.message,
+        true
+      );
+
+      return;
+
     }
 
 
     if (accion === "like") {
 
-      mensaje.textContent =
-        "❤️ ¡Like enviado!";
+      await comprobarMatch();
 
-      /*
-       * Comprobamos si existe un Like
-       * de la otra persona.
-       *
-       * Esto funcionará cuando la tabla
-       * swipes permita SELECT para usuarios
-       * autenticados.
-       */
+    }
 
-      const {
-        data: matchData,
-        error: matchError
-      } = await supabaseClient
+
+    persona.style.display =
+      "none";
+
+
+    mostrarMensaje(
+      accion === "like"
+        ? "❤️ ¡Me gusta enviado!"
+        : "❌ Perfil pasado."
+    );
+
+  }
+
+
+  /* =========================
+     COMPROBAR MATCH
+  ========================= */
+
+  async function comprobarMatch() {
+
+    if (!personaActual) {
+
+      return;
+
+    }
+
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
         .from("swipes")
         .select("id")
-        .eq("user_id", persona.id)
-        .eq("target_user_id", usuarioActual.id)
-        .eq("action", "like")
+        .eq(
+          "user_id",
+          personaActual.id
+        )
+        .eq(
+          "target_user_id",
+          usuarioActual.id
+        )
+        .eq(
+          "action",
+          "like"
+        )
         .maybeSingle();
 
 
-      if (!matchError && matchData) {
+    if (error) {
 
-        document.getElementById("match")
-          .style.display =
-          "block";
+      console.error(
+        "Error al comprobar match:",
+        error
+      );
 
-        mensaje.textContent =
-          "💕 ¡Es un Match!";
+      return;
 
-      }
-
-    } else {
-
-      mensaje.textContent =
-        "❌ Perfil pasado.";
     }
 
 
-    perfilActual++;
+    if (data) {
 
+      match.style.display =
+        "block";
 
-    setTimeout(() => {
+      match.scrollIntoView({
+        behavior: "smooth"
+      });
 
-      mensaje.textContent = "";
+    }
 
-      botonLike.disabled = false;
-
-      botonPasar.disabled = false;
-
-      mostrarPersona();
-
-    }, 900);
-
-
-  } catch (error) {
-
-    console.error(error);
-
-    mensaje.textContent =
-      "❌ Error inesperado: " +
-      error.message;
-
-    botonLike.disabled = false;
-
-    botonPasar.disabled = false;
   }
-}
 
 
-// =====================================
-// BOTÓN LIKE
-// =====================================
+  /* =========================
+     BOTONES
+  ========================= */
 
-document
-  .getElementById("like")
-  .addEventListener(
-    "click",
-    () => {
-
-      registrarSwipe("like");
-
-    }
-  );
-
-
-// =====================================
-// BOTÓN PASAR
-// =====================================
-
-document
-  .getElementById("pasar")
-  .addEventListener(
-    "click",
-    () => {
-
-      registrarSwipe("pass");
-
-    }
-  );
-
-
-// =====================================
-// CERRAR SESIÓN
-// =====================================
-
-document
-  .getElementById("logout")
-  .addEventListener(
-    "click",
+  pasarButton.onclick =
     async () => {
 
-      await supabaseClient
-        .auth
-        .signOut();
+      await registrarSwipe(
+        "pass"
+      );
+
+      setTimeout(
+        cargarPersonas,
+        500
+      );
+
+    };
+
+
+  likeButton.onclick =
+    async () => {
+
+      await registrarSwipe(
+        "like"
+      );
+
+      setTimeout(
+        cargarPersonas,
+        500
+      );
+
+    };
+
+
+  /* =========================
+     CERRAR SESIÓN
+  ========================= */
+
+  salirButton.onclick =
+    async () => {
+
+      await supabaseClient.auth.signOut();
 
       window.location.href =
         "index.html";
 
-    }
-  );
+    };
 
 
-// =====================================
-// INICIAR
-// =====================================
+  /* =========================
+     INICIAR
+  ========================= */
 
-verificarSesion();
+  verificarSesion();
 
 </script>
 
