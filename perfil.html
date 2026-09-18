@@ -196,12 +196,16 @@ async function cargarPerfil() {
     .maybeSingle();
 
   if (perfilError) {
-    mostrarMensaje(
-      "Error al cargar el perfil.",
-      true
-    );
-    return;
+  console.error("ERROR PERFIL:", perfilError);
+
+  mostrarMensaje(
+    "Error: " + perfilError.message,
+    true
+  );
+
+  return;
   }
+  
 
   if (perfil) {
 
