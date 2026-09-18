@@ -143,7 +143,67 @@
     <button id="logout">
       🚪 Cerrar sesión
     </button>
+<hr style="margin:35px 0; border:0; border-top:1px solid #ddd;">
 
+<div id="descubrir" style="text-align:center;">
+
+  <h2>💕 Descubrir personas</h2>
+
+  <div id="perfilDescubierto"
+       style="
+       background:white;
+       padding:25px;
+       border-radius:18px;
+       box-shadow:0 5px 20px rgba(0,0,0,0.08);
+       ">
+
+    <h3 id="personaNombre">Buscando personas...</h3>
+
+    <p id="personaEdad"></p>
+
+    <p id="personaCiudad"></p>
+
+    <div style="display:flex; gap:10px; margin-top:25px;">
+
+      <button
+        id="pasar"
+        style="
+        flex:1;
+        background:#ef4444;
+        color:white;
+        border:none;
+        border-radius:12px;
+        padding:14px;
+        font-size:18px;
+        font-weight:bold;
+        ">
+        ❌ Pasar
+      </button>
+
+      <button
+        id="like"
+        style="
+        flex:1;
+        background:#ec4899;
+        color:white;
+        border:none;
+        border-radius:12px;
+        padding:14px;
+        font-size:18px;
+        font-weight:bold;
+        ">
+        ❤️ Like
+      </button>
+
+    </div>
+
+  </div>
+
+  <p id="mensajeSwipe"
+     style="font-weight:bold; margin-top:15px;">
+  </p>
+
+</div>
   </div>
 
 </div>
@@ -329,7 +389,109 @@ document
   });
 
 
-// INICIAR
+// INI// ============================
+// DESCUBRIR PERSONAS
+// ============================
+
+let perfilesDisponibles = [];
+let perfilActual = 0;
+
+async function cargarPersonas() {
+
+  const { data, error } = await supabaseClient
+    .from("profiles")
+    .select("id,nombre,edad,ciudad")
+    .neq("id", usuarioActual.id);
+
+  if (error) {
+    console.error(error);
+    document.getElementById("personaNombre").textContent =
+      "❌ Error al cargar perfiles.";
+    return;
+  }
+
+  perfilesDisponibles = data || [];
+  perfilActual = 0;
+
+  mostrarPersona();
+}
+
+
+function mostrarPersona() {
+
+  if (perfilActual >= perfilesDisponibles.length) {
+
+    document.getElementById("personaNombre").textContent =
+      "💕 No hay más perfiles por ahora.";
+
+    document.getElementById("personaEdad").textContent = "";
+    document.getElementById("personaCiudad").textContent = "";
+
+    return;
+  }
+
+  const persona = perfilesDisponibles[perfilActual];
+
+  document.getElementById("personaNombre").textContent =
+    persona.nombre || "Sin nombre";
+
+  document.getElementById("personaEdad").textContent =
+    persona.edad ? "🎂 " + persona.edad + " años" : "";
+
+  document.getElementById("personaCiudad").textContent =
+    persona.ciudad ? "📍 " + persona.ciudad : "";
+}
+
+
+async function registrarSwipe(accion) {
+
+  const persona = perfilesDisponibles[perfilActual];
+
+  if (!persona) return;
+
+  const { error } = await supabaseClient
+    .from("swipes")
+    .insert({
+      user_id: usuarioActual.id,
+      target_user_id: persona.id,
+      action: accion
+    });
+
+  if (error) {
+
+    console.error(error);
+
+    document.getElementById("mensajeSwipe").textContent =
+      "❌ Error: " + error.message;
+
+    return;
+  }
+
+  perfilActual++;
+
+  document.getElementById("mensajeSwipe").textContent =
+    accion === "like"
+      ? "❤️ ¡Like enviado!"
+      : "❌ Perfil pasado.";
+
+  setTimeout(() => {
+
+    document.getElementById("mensajeSwipe").textContent = "";
+
+    mostrarPersona();
+
+  }, 700);
+}
+
+
+document.getElementById("like").addEventListener("click", () => {
+  registrarSwipe("like");
+});
+
+
+document.getElementById("pasar").addEventListener("click", () => {
+  registrarSwipe("pass");
+});CIAR
 
 verificarSesion();
 
