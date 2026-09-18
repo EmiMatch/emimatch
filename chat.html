@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Chat - EmiMatch</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f7fb;
+      color: #222;
+    }
+
+    header {
+      background: #111d3b;
+      color: white;
+      padding: 18px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .contenedor {
+      max-width: 700px;
+      margin: 20px auto;
+      padding: 15px;
+    }
+
+    #nombreUsuario {
+      background: white;
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      font-weight: bold;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    }
+
+    #mensajes {
+      height: 55vh;
+      overflow-y: auto;
+      background: white;
+      border-radius: 15px;
+      padding: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    }
+
+    .mensaje {
+      margin-bottom: 12px;
+      padding: 10px 14px;
+      border-radius: 15px;
+      max-width: 75%;
+      word-wrap: break-word;
+    }
+
+    .mio {
+      margin-left: auto;
+      background: #dce8ff;
+      text-align: right;
+    }
+
+    .suyo {
+      margin-right: auto;
+      background: #eeeeee;
+    }
+
+    .formulario {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    #mensaje {
+      flex: 1;
+      padding: 14px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      font-size: 16px;
+    }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 0 20px;
+      background: #d4af37;
+      color: #111;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .volver {
+      display: block;
+      margin-top: 15px;
+      text-align: center;
+      text-decoration: none;
+      color: #111d3b;
+      font-weight: bold;
+    }
+
+    #estado {
+      text-align: center;
+      margin: 15px 0;
+      color: #777;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>💕 EmiMatch</h1>
+</header>
+
+<div class="contenedor">
+
+  <div id="nombreUsuario">
+    💬 Conversación
+  </div>
+
+  <div id="estado">
+    Cargando chat...
+  </div>
+
+  <div id="mensajes"></div>
+
+  <div class="formulario">
+    <input
+      type="text"
+      id="mensaje"
+      placeholder="Escribí un mensaje..."
+      autocomplete="off"
+    >
+
+    <button onclick="enviarMensaje()">
+      Enviar
+    </button>
+  </div>
+
+  <a class="volver" href="matches.html">
+    ← Volver a mis Matches
+  </a>
+
+</div>
+
+<script>
+
+const SUPABASE_URL = "https://kngiadwaesdbmvwivdev.supabase.co";
+
+const SUPABASE_ANON_KEY = "TU_CLAVE_SUPABASE";
+
+const supabaseClient = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
+
+let usuarioActual = null;
+let otroUsuario = null;
+let matchActual = null;
+
+async function iniciar() {
+
+  const { data: sessionData } =
+    await supabaseClient.auth.getSession();
+
+  if (!sessionData.session) {
+    window.location.href = "index.html";
+    return;
+  }
+
+  usuarioActual = sessionData.session.user;
+
+  const parametros = new URLSearchParams(
+    window.location.search
+  );
+
+  otroUsuario = parametros.get("user");
+
+  if (!otroUsuario) {
+    document.getElementById("estado").textContent =
+      "No se encontró el usuario del chat.";
+    return;
+  }
+
+  await buscarMatch();
+}
+
+async function buscarMatch() {
+
+  const { data, error } = await supabaseClient
+    .from("matches")
+    .select("*")
+    .or(
+      `and(user1_id.eq.${usuarioActual.id},user2_id.eq.${otroUsuario}),and(user1_id.eq.${otroUsuario},user2_id.eq.${usuarioActual.id})`
+    )
+    .limit(1);
+
+  if (error) {
+    console.error(error);
+
+    document.getElementById("estado").textContent =
+      "Error buscando el Match.";
+
+    return;
+  }
+
+  if (!data || data.length === 0) {
+
+    document.getElementById("estado").textContent =
+      "Este usuario todavía no tiene un Match con vos.";
+
+    return;
+  }
+
+  matchActual = data[0];
+
+  document.getElementById("estado").textContent = "";
+
+  await cargarNombre();
+  await cargarMensajes();
+}
+
+async function cargarNombre() {
+
+  const { data, error } = await supabaseClient
+    .from("profiles")
+    .select("nombre")
+    .eq("id", otroUsuario)
+    .single();
+
+  if (!error && data) {
+
+    document.getElementById("nombreUsuario").textContent =
+      "💕 Chat con " + (data.nombre || "Usuario");
+  }
+}
+
+async function cargarMensajes() {
+
+  const { data, error } = await supabaseClient
+    .from("messages")
+    .select("*")
+    .eq("match_id", matchActual.id)
+    .order("created_at", {
+      ascending: true
+    });
+
+  if (error) {
+
+    console.error(error);
+
+    document.getElementById("estado").textContent =
+      "Todavía falta configurar la tabla de mensajes.";
+
+    return;
+  }
+
+  mostrarMensajes(data || []);
+}
+
+function mostrarMensajes(lista) {
+
+  const contenedor =
+    document.getElementById("mensajes");
+
+  contenedor.innerHTML = "";
+
+  lista.forEach(mensaje => {
+
+    const div = document.createElement("div");
+
+    div.className =
+      "mensaje " +
+      (mensaje.sender_id === usuarioActual.id
+        ? "mio"
+        : "suyo");
+
+    div.textContent = mensaje.content;
+
+    contenedor.appendChild(div);
+  });
+
+  contenedor.scrollTop =
+    contenedor.scrollHeight;
+}
+
+async function enviarMensaje() {
+
+  const input =
+    document.getElementById("mensaje");
+
+  const texto =
+    input.value.trim();
+
+  if (!texto) return;
+
+  if (!matchActual) return;
+
+  const { error } =
+    await supabaseClient
+      .from("messages")
+      .insert({
+        match_id: matchActual.id,
+        sender_id: usuarioActual.id,
+        content: texto
+      });
+
+  if (error) {
+
+    console.error(error);
+
+    alert(
+      "No se pudo enviar el mensaje: " +
+      error.message
+    );
+
+    return;
+  }
+
+  input.value = "";
+
+  await cargarMensajes();
+}
+
+document
+  .getElementById("mensaje")
+  .addEventListener("keydown", function(event) {
+
+    if (event.key === "Enter") {
+      enviarMensaje();
+    }
+
+  });
+
+iniciar();
+
+</script>
+
+</body>
+</html>
