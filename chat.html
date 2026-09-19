@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>EmiMatch - Matches y Chat</title>
+  <title>EmiMatch - Chat</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-
     * {
       box-sizing: border-box;
     }
@@ -22,950 +20,993 @@
       color: #222;
     }
 
-    header {
-      background: linear-gradient(135deg, #111d3b, #7c3aed);
+    .header {
+      background: #111b3a;
       color: white;
       padding: 18px;
       text-align: center;
     }
 
-    header h1 {
+    .header h1 {
       margin: 0;
       font-size: 24px;
     }
 
-    .contenedor {
-      width: 100%;
+    .container {
+      width: 95%;
       max-width: 700px;
       margin: 20px auto;
-      padding: 15px;
     }
 
     .card {
       background: white;
-      border-radius: 18px;
+      border-radius: 15px;
       padding: 20px;
-      margin-bottom: 18px;
-      box-shadow: 0 3px 15px rgba(0,0,0,.08);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
     }
 
-    .titulo {
-      margin-top: 0;
-      color: #111827;
-    }
-
-    .estado {
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 10px;
+      background: #111b3a;
+      color: white;
+      text-decoration: none;
       text-align: center;
-      color: #777;
-      padding: 20px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
     }
 
-    /* LISTA DE MATCHES */
+    .btn:hover {
+      opacity: 0.9;
+    }
 
-    .match-item {
+    .match {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 15px;
       padding: 14px;
-      margin-bottom: 12px;
-      background: #f9fafb;
-      border-radius: 15px;
-      border: 1px solid #eee;
+      border-bottom: 1px solid #eee;
       cursor: pointer;
-      transition: .2s;
     }
 
-    .match-item:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 3px 10px rgba(0,0,0,.08);
+    .match:last-child {
+      border-bottom: none;
     }
 
-    .match-foto {
-      width: 65px;
-      height: 65px;
+    .match:hover {
+      background: #f7f8fc;
+    }
+
+    .match img {
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
       object-fit: cover;
-      background: #eee;
-      border: 3px solid #ec4899;
+      background: #ddd;
     }
 
     .match-info {
       flex: 1;
     }
 
-    .match-nombre {
+    .match-info strong {
+      display: block;
       font-size: 18px;
-      font-weight: bold;
       margin-bottom: 5px;
     }
 
-    .match-ciudad {
+    .match-info span {
       color: #777;
       font-size: 14px;
     }
 
-    .boton-chat {
-      background: #ec4899;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      padding: 9px 12px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    /* CHAT */
-
-    #chatSeccion {
+    #chatSection {
       display: none;
     }
 
-    #nombreUsuario {
-      background: white;
-      padding: 15px;
-      border-radius: 12px;
-      margin-bottom: 15px;
-      font-weight: bold;
-      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    #matchesSection {
+      display: block;
     }
 
-    #mensajes {
-      height: 55vh;
-      overflow-y: auto;
-      background: white;
-      border-radius: 15px;
-      padding: 15px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.08);
-    }
-
-    .mensaje {
-      margin-bottom: 12px;
-      padding: 10px 14px;
-      border-radius: 15px;
-      max-width: 75%;
-      word-wrap: break-word;
-    }
-
-    .mio {
-      margin-left: auto;
-      background: #dce8ff;
-      text-align: right;
-    }
-
-    .suyo {
-      margin-right: auto;
-      background: #eeeeee;
-    }
-
-    .formulario {
+    .chat-header {
       display: flex;
-      gap: 10px;
-      margin-top: 15px;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 15px;
     }
 
-    #mensaje {
-      flex: 1;
-      padding: 14px;
-      border: 1px solid #ddd;
+    .chat-header img {
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .chat-header h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    #messages {
+      height: 420px;
+      overflow-y: auto;
+      background: #f1f3f8;
       border-radius: 12px;
-      font-size: 16px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+
+    .message {
+      max-width: 80%;
+      padding: 10px 13px;
+      margin-bottom: 10px;
+      border-radius: 14px;
+      word-wrap: break-word;
+      clear: both;
+    }
+
+    .mine {
+      background: #111b3a;
+      color: white;
+      float: right;
+      border-bottom-right-radius: 4px;
+    }
+
+    .theirs {
+      background: white;
+      color: #222;
+      float: left;
+      border-bottom-left-radius: 4px;
+    }
+
+    .message-time {
+      display: block;
+      font-size: 10px;
+      opacity: 0.7;
+      margin-top: 4px;
+    }
+
+    .input-area {
+      display: flex;
+      gap: 8px;
+    }
+
+    #messageInput {
+      flex: 1;
+      padding: 13px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      font-size: 15px;
       outline: none;
     }
 
-    .btn-enviar {
+    #sendButton {
+      width: 90px;
       border: none;
-      border-radius: 12px;
-      padding: 0 20px;
-      background: #d4af37;
-      color: #111;
-      font-weight: bold;
+      border-radius: 10px;
+      background: #111b3a;
+      color: white;
       cursor: pointer;
+      font-size: 15px;
     }
 
-    .volver {
-      display: block;
-      margin-top: 15px;
+    .empty {
       text-align: center;
-      text-decoration: none;
-      color: #111d3b;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .vacio {
-      text-align: center;
-      padding: 30px 15px;
+      padding: 30px 10px;
       color: #777;
     }
 
     .error {
-      background: #fee2e2;
-      color: #991b1b;
-      padding: 14px;
-      border-radius: 12px;
-      text-align: center;
+      background: #ffe8e8;
+      color: #b00020;
+      padding: 12px;
+      border-radius: 10px;
+      margin-top: 10px;
     }
 
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #777;
+    }
   </style>
 </head>
 
 <body>
 
-<header>
-  <h1>💕 EmiMatch</h1>
-</header>
+  <div class="header">
+    <h1>💕 EmiMatch</h1>
+  </div>
 
+  <div class="container">
 
-<div class="contenedor">
+    <!-- ============================= -->
+    <!-- LISTA DE MATCHES -->
+    <!-- ============================= -->
 
+    <div id="matchesSection" class="card">
 
-  <!-- ========================= -->
-  <!-- LISTA DE MATCHES -->
-  <!-- ========================= -->
+      <h2>💕 Mis Matches</h2>
 
-  <section id="matchesSeccion" class="card">
+      <p>
+        Elegí una persona para comenzar a conversar.
+      </p>
 
-    <h2 class="titulo">
-      💕 Mis Matches
-    </h2>
-
-    <p>
-      Elegí una persona para comenzar una conversación.
-    </p>
-
-    <div id="listaMatches">
-
-      <div class="estado">
-        Cargando tus Matches...
+      <div id="matchesList">
+        <div class="loading">
+          Cargando matches...
+        </div>
       </div>
 
-    </div>
-
-    <a
-      class="volver"
-      href="perfil.html"
-    >
-      ← Volver a mi perfil
-    </a>
-
-  </section>
-
-
-  <!-- ========================= -->
-  <!-- CHAT -->
-  <!-- ========================= -->
-
-  <section id="chatSeccion">
-
-    <div id="nombreUsuario">
-      💬 Conversación
-    </div>
-
-    <div
-      id="estadoChat"
-      class="estado"
-    >
-      Cargando conversación...
-    </div>
-
-    <div id="mensajes"></div>
-
-    <div class="formulario">
-
-      <input
-        type="text"
-        id="mensaje"
-        placeholder="Escribí un mensaje..."
-        autocomplete="off"
-      >
-
-      <button
-        class="btn-enviar"
-        id="enviarButton"
-      >
-        Enviar
-      </button>
+      <a href="perfil.html" class="btn">
+        ← Volver a mi Perfil
+      </a>
 
     </div>
 
-    <a
-      class="volver"
-      id="volverMatches"
-    >
-      ← Volver a mis Matches
-    </a>
 
-  </section>
+    <!-- ============================= -->
+    <!-- CHAT -->
+    <!-- ============================= -->
+
+    <div id="chatSection" class="card">
+
+      <div class="chat-header">
+
+        <img
+          id="chatPhoto"
+          src="https://via.placeholder.com/100"
+          alt="Foto"
+        >
+
+        <div>
+          <h2 id="chatName">
+            Chat
+          </h2>
+        </div>
+
+      </div>
 
 
-</div>
+      <div id="messages">
+
+        <div class="loading">
+          Cargando mensajes...
+        </div>
+
+      </div>
+
+
+      <div class="input-area">
+
+        <input
+          type="text"
+          id="messageInput"
+          placeholder="Escribí un mensaje..."
+          autocomplete="off"
+        >
+
+        <button id="sendButton">
+          Enviar
+        </button>
+
+      </div>
+
+
+      <a href="chat.html" class="btn">
+        ← Volver a mis Matches
+      </a>
+
+    </div>
+
+  </div>
 
 
 <script>
 
-const SUPABASE_URL =
-  "https://kngiadwaesdbmvwivdev.supabase.co";
+  // ==========================================
+  // CONFIGURACIÓN SUPABASE
+  // ==========================================
 
-const SUPABASE_ANON_KEY =
-  "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
+  const SUPABASE_URL =
+    "https://kngiadwaesdbmvwivdev.supabase.co";
+
+  const SUPABASE_ANON_KEY =
+    "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
 
 
-const supabaseClient =
-  window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
+  const supabaseClient =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
+
+
+  // ==========================================
+  // VARIABLES
+  // ==========================================
+
+  let currentUser = null;
+
+  let currentMatchId = null;
+
+  let currentOtherUserId = null;
+
+  let realtimeChannel = null;
+
+
+  // ==========================================
+  // INICIO
+  // ==========================================
+
+  document.addEventListener(
+    "DOMContentLoaded",
+    iniciar
   );
 
 
-let usuarioActual = null;
-
-let otroUsuario = null;
-
-let matchActual = null;
-
-
-/* ========================= */
-/* INICIAR */
-/* ========================= */
-
-async function iniciar() {
-
-  const {
-    data,
-    error
-  } =
-  await supabaseClient.auth.getSession();
-
-
-  if (error) {
-
-    console.error(error);
-
-    window.location.href =
-      "index.html";
-
-    return;
-  }
-
-
-  if (
-    !data ||
-    !data.session ||
-    !data.session.user
-  ) {
-
-    window.location.href =
-      "index.html";
-
-    return;
-  }
-
-
-  usuarioActual =
-    data.session.user;
-
-
-  const parametros =
-    new URLSearchParams(
-      window.location.search
-    );
-
-
-  otroUsuario =
-    parametros.get("user");
-
-
-  /*
-    Si existe ?user=...
-    abrimos directamente el chat.
-
-    Si no existe,
-    mostramos todos los Matches.
-  */
-
-  if (otroUsuario) {
-
-    document
-      .getElementById("matchesSeccion")
-      .style.display = "none";
-
-    document
-      .getElementById("chatSeccion")
-      .style.display = "block";
-
-    await buscarMatch();
-
-  } else {
-
-    document
-      .getElementById("matchesSeccion")
-      .style.display = "block";
-
-    document
-      .getElementById("chatSeccion")
-      .style.display = "none";
-
-    await cargarMatches();
-
-  }
-
-}
-
-
-/* ========================= */
-/* CARGAR MATCHES */
-/* ========================= */
-
-async function cargarMatches() {
-
-  const lista =
-    document.getElementById(
-      "listaMatches"
-    );
-
-
-  lista.innerHTML = `
-    <div class="estado">
-      Buscando tus Matches...
-    </div>
-  `;
-
-
-  const {
-    data: matches,
-    error
-  } =
-  await supabaseClient
-    .from("matches")
-    .select("*")
-    .or(
-      `user1_id.eq.${usuarioActual.id},user2_id.eq.${usuarioActual.id}`
-    );
-
-
-  if (error) {
-
-    console.error(
-      "Error cargando Matches:",
-      error
-    );
-
-
-    lista.innerHTML = `
-      <div class="error">
-        No se pudieron cargar tus Matches.<br><br>
-        ${escaparHTML(error.message)}
-      </div>
-    `;
-
-    return;
-  }
-
-
-  if (
-    !matches ||
-    matches.length === 0
-  ) {
-
-    lista.innerHTML = `
-      <div class="vacio">
-        💕 Todavía no tenés Matches.<br><br>
-        Seguí descubriendo personas y dando Likes.
-      </div>
-    `;
-
-    return;
-  }
-
-
-  lista.innerHTML = "";
-
-
-  for (
-    const match of matches
-  ) {
-
-    const otroId =
-      match.user1_id === usuarioActual.id
-        ? match.user2_id
-        : match.user1_id;
-
+  async function iniciar() {
 
     const {
-      data: perfil,
-      error: errorPerfil
-    } =
-    await supabaseClient
-      .from("profiles")
-      .select(
-        "id,nombre,edad,ciudad,foto_url"
+      data: {
+        session
+      }
+    } = await supabaseClient.auth.getSession();
+
+
+    if (!session) {
+
+      window.location.href =
+        "index.html";
+
+      return;
+
+    }
+
+
+    currentUser =
+      session.user;
+
+
+    const params =
+      new URLSearchParams(
+        window.location.search
+      );
+
+
+    const userId =
+      params.get("user");
+
+
+    if (userId) {
+
+      await abrirChat(userId);
+
+    } else {
+
+      await cargarMatches();
+
+    }
+
+  }
+
+
+  // ==========================================
+  // CARGAR MATCHES
+  // ==========================================
+
+  async function cargarMatches() {
+
+    document.getElementById(
+      "matchesSection"
+    ).style.display = "block";
+
+
+    document.getElementById(
+      "chatSection"
+    ).style.display = "none";
+
+
+    const matchesList =
+      document.getElementById(
+        "matchesList"
+      );
+
+
+    matchesList.innerHTML =
+      '<div class="loading">Cargando matches...</div>';
+
+
+    try {
+
+      const {
+        data: matches,
+        error
+      } = await supabaseClient
+        .from("matches")
+        .select("*")
+        .or(
+          `user1_id.eq.${currentUser.id},user2_id.eq.${currentUser.id}`
+        )
+        .order(
+          "created_at",
+          {
+            ascending: false
+          }
+        );
+
+
+      if (error) {
+
+        console.error(error);
+
+        matchesList.innerHTML =
+          '<div class="error">Error al cargar los matches: ' +
+          error.message +
+          '</div>';
+
+        return;
+
+      }
+
+
+      if (!matches || matches.length === 0) {
+
+        matchesList.innerHTML =
+          '<div class="empty">💔 Todavía no tenés matches.</div>';
+
+        return;
+
+      }
+
+
+      matchesList.innerHTML = "";
+
+
+      for (const match of matches) {
+
+        const otherUserId =
+          match.user1_id === currentUser.id
+            ? match.user2_id
+            : match.user1_id;
+
+
+        const {
+          data: profile,
+          error: profileError
+        } = await supabaseClient
+          .from("profiles")
+          .select("*")
+          .eq(
+            "id",
+            otherUserId
+          )
+          .maybeSingle();
+
+
+        if (profileError) {
+
+          console.error(
+            profileError
+          );
+
+          continue;
+
+        }
+
+
+        if (!profile) {
+
+          continue;
+
+        }
+
+
+        const div =
+          document.createElement(
+            "div"
+          );
+
+
+        div.className =
+          "match";
+
+
+        const photo =
+          profile.photo_url ||
+          "https://via.placeholder.com/100";
+
+
+        const name =
+          profile.name ||
+          "Usuario";
+
+
+        const age =
+          profile.age
+            ? `, ${profile.age}`
+            : "";
+
+
+        const city =
+          profile.city ||
+          "";
+
+
+        div.innerHTML = `
+
+          <img
+            src="${escapeHtml(photo)}"
+            alt="Foto de ${escapeHtml(name)}"
+          >
+
+          <div class="match-info">
+
+            <strong>
+              ${escapeHtml(name)}${age}
+            </strong>
+
+            <span>
+              ${escapeHtml(city)}
+            </span>
+
+          </div>
+
+          <div>
+            💬
+          </div>
+
+        `;
+
+
+        div.addEventListener(
+          "click",
+          function() {
+
+            window.location.href =
+              "chat.html?user=" +
+              encodeURIComponent(
+                otherUserId
+              );
+
+          }
+        );
+
+
+        matchesList.appendChild(
+          div
+        );
+
+      }
+
+
+      if (
+        matchesList.children.length === 0
+      ) {
+
+        matchesList.innerHTML =
+          '<div class="empty">No se pudieron cargar los perfiles de tus matches.</div>';
+
+      }
+
+    } catch (error) {
+
+      console.error(error);
+
+      matchesList.innerHTML =
+        '<div class="error">Ocurrió un error inesperado.</div>';
+
+    }
+
+  }
+
+
+  // ==========================================
+  // ABRIR CHAT
+  // ==========================================
+
+  async function abrirChat(
+    otherUserId
+  ) {
+
+    document.getElementById(
+      "matchesSection"
+    ).style.display = "none";
+
+
+    document.getElementById(
+      "chatSection"
+    ).style.display = "block";
+
+
+    currentOtherUserId =
+      otherUserId;
+
+
+    try {
+
+      // --------------------------------------
+      // BUSCAR MATCH
+      // --------------------------------------
+
+      const {
+        data: match,
+        error: matchError
+      } = await buscarMatch(
+        otherUserId
+      );
+
+
+      if (
+        matchError ||
+        !match
+      ) {
+
+        document.getElementById(
+          "messages"
+        ).innerHTML =
+          '<div class="error">No se encontró el match entre estos usuarios.</div>';
+
+        return;
+
+      }
+
+
+      currentMatchId =
+        match.id;
+
+
+      // --------------------------------------
+      // PERFIL DEL OTRO USUARIO
+      // --------------------------------------
+
+      const {
+        data: profile,
+        error: profileError
+      } = await supabaseClient
+        .from("profiles")
+        .select("*")
+        .eq(
+          "id",
+          otherUserId
+        )
+        .maybeSingle();
+
+
+      if (profileError) {
+
+        console.error(
+          profileError
+        );
+
+      }
+
+
+      if (profile) {
+
+        document.getElementById(
+          "chatName"
+        ).textContent =
+          profile.name ||
+          "Usuario";
+
+
+        document.getElementById(
+          "chatPhoto"
+        ).src =
+          profile.photo_url ||
+          "https://via.placeholder.com/100";
+
+      }
+
+
+      // --------------------------------------
+      // CARGAR MENSAJES
+      // --------------------------------------
+
+      await cargarMensajes();
+
+
+      // --------------------------------------
+      // ACTIVAR REALTIME
+      // --------------------------------------
+
+      activarRealtime();
+
+    } catch (error) {
+
+      console.error(error);
+
+      document.getElementById(
+        "messages"
+      ).innerHTML =
+        '<div class="error">No se pudo abrir el chat.</div>';
+
+    }
+
+  }
+
+
+  // ==========================================
+  // BUSCAR MATCH
+  // ==========================================
+
+  async function buscarMatch(
+    otherUserId
+  ) {
+
+    const {
+      data: match1,
+      error: error1
+    } = await supabaseClient
+      .from("matches")
+      .select("*")
+      .eq(
+        "user1_id",
+        currentUser.id
       )
       .eq(
-        "id",
-        otroId
+        "user2_id",
+        otherUserId
       )
       .maybeSingle();
 
 
-    if (errorPerfil) {
+    if (match1) {
 
-      console.error(
-        "Error cargando perfil del Match:",
-        errorPerfil
+      return {
+        data: match1,
+        error: null
+      };
+
+    }
+
+
+    const {
+      data: match2,
+      error: error2
+    } = await supabaseClient
+      .from("matches")
+      .select("*")
+      .eq(
+        "user1_id",
+        otherUserId
+      )
+      .eq(
+        "user2_id",
+        currentUser.id
+      )
+      .maybeSingle();
+
+
+    if (match2) {
+
+      return {
+        data: match2,
+        error: null
+      };
+
+    }
+
+
+    return {
+      data: null,
+      error:
+        error1 ||
+        error2 ||
+        new Error(
+          "Match no encontrado"
+        )
+    };
+
+  }
+
+
+  // ==========================================
+  // CARGAR MENSAJES
+  // ==========================================
+
+  async function cargarMensajes() {
+
+    const messagesDiv =
+      document.getElementById(
+        "messages"
       );
 
-      continue;
+
+    messagesDiv.innerHTML =
+      '<div class="loading">Cargando mensajes...</div>';
+
+
+    if (!currentMatchId) {
+
+      return;
+
     }
 
 
-    if (!perfil) {
-      continue;
+    const {
+      data: messages,
+      error
+    } = await supabaseClient
+      .from("messages")
+      .select("*")
+      .eq(
+        "match_id",
+        currentMatchId
+      )
+      .order(
+        "created_at",
+        {
+          ascending: true
+        }
+      );
+
+
+    if (error) {
+
+      console.error(error);
+
+      messagesDiv.innerHTML =
+        '<div class="error">Error al cargar mensajes: ' +
+        error.message +
+        '</div>';
+
+      return;
+
     }
 
 
-    const item =
-      document.createElement("div");
+    messagesDiv.innerHTML = "";
 
 
-    item.className =
-      "match-item";
+    if (
+      !messages ||
+      messages.length === 0
+    ) {
+
+      messagesDiv.innerHTML =
+        '<div class="empty">💬 Todavía no hay mensajes.<br>¡Sé el primero en escribir!</div>';
+
+      return;
+
+    }
 
 
-    const foto =
-      perfil.foto_url ||
-      "https://placehold.co/150x150?text=EmiMatch";
+    messages.forEach(
+      mostrarMensaje
+    );
 
 
-    item.innerHTML = `
+    scrollMensajes();
 
-      <img
-        class="match-foto"
-        src="${escaparHTML(foto)}"
-        alt="Foto"
-        onerror="this.src='https://placehold.co/150x150?text=Foto'"
-      >
+  }
 
-      <div class="match-info">
 
-        <div class="match-nombre">
-          ${escaparHTML(
-            perfil.nombre || "Usuario"
-          )}
-          ${
-            perfil.edad
-              ? ", " + perfil.edad
-              : ""
-          }
-        </div>
+  // ==========================================
+  // MOSTRAR MENSAJE
+  // ==========================================
 
-        <div class="match-ciudad">
-          📍 ${
-            escaparHTML(
-              perfil.ciudad || "Sin ciudad"
-            )
-          }
-        </div>
+  function mostrarMensaje(
+    message
+  ) {
 
-      </div>
+    const messagesDiv =
+      document.getElementById(
+        "messages"
+      );
 
-      <button
-        class="boton-chat"
-      >
-        💬 Chat
-      </button>
+
+    // Evitar duplicados
+    const existing =
+      document.querySelector(
+        `[data-message-id="${message.id}"]`
+      );
+
+
+    if (existing) {
+
+      return;
+
+    }
+
+
+    const div =
+      document.createElement(
+        "div"
+      );
+
+
+    div.classList.add(
+      "message"
+    );
+
+
+    if (
+      message.sender_id ===
+      currentUser.id
+    ) {
+
+      div.classList.add(
+        "mine"
+      );
+
+    } else {
+
+      div.classList.add(
+        "theirs"
+      );
+
+    }
+
+
+    const fecha =
+      message.created_at
+        ? new Date(
+            message.created_at
+          ).toLocaleTimeString(
+            "es-AR",
+            {
+              hour: "2-digit",
+              minute: "2-digit"
+            }
+          )
+        : "";
+
+
+    div.dataset.messageId =
+      message.id;
+
+
+    div.innerHTML = `
+
+      ${escapeHtml(
+        message.content
+      )}
+
+      <span class="message-time">
+        ${fecha}
+      </span>
 
     `;
 
 
-    item.addEventListener(
-      "click",
-      function() {
-
-        abrirChat(
-          perfil.id
-        );
-
-      }
+    messagesDiv.appendChild(
+      div
     );
 
 
-    lista.appendChild(item);
+    scrollMensajes();
 
   }
 
-}
 
+  // ==========================================
+  // ENVIAR MENSAJE
+  // ==========================================
 
-/* ========================= */
-/* ABRIR CHAT */
-/* ========================= */
-
-function abrirChat(usuarioId) {
-
-  window.location.href =
-    "chat.html?user=" +
-    encodeURIComponent(
-      usuarioId
-    );
-
-}
-
-
-/* ========================= */
-/* BUSCAR MATCH */
-/* ========================= */
-
-async function buscarMatch() {
-
-  const estado =
-    document.getElementById(
-      "estadoChat"
-    );
-
-
-  estado.textContent =
-    "Buscando conversación...";
-
-
-  const {
-    data,
-    error
-  } =
-  await supabaseClient
-    .from("matches")
-    .select("*")
-    .or(
-      `and(user1_id.eq.${usuarioActual.id},user2_id.eq.${otroUsuario}),and(user1_id.eq.${otroUsuario},user2_id.eq.${usuarioActual.id})`
-    )
-    .limit(1);
-
-
-  if (error) {
-
-    console.error(error);
-
-    estado.textContent =
-      "Error buscando el Match.";
-
-    return;
-  }
-
-
-  if (
-    !data ||
-    data.length === 0
-  ) {
-
-    estado.textContent =
-      "Este usuario todavía no tiene un Match con vos.";
-
-    return;
-  }
-
-
-  matchActual =
-    data[0];
-
-
-  estado.textContent = "";
-
-
-  await cargarNombre();
-
-  await cargarMensajes();
-
-}
-
-
-/* ========================= */
-/* NOMBRE */
-/* ========================= */
-
-async function cargarNombre() {
-
-  const {
-    data,
-    error
-  } =
-  await supabaseClient
-    .from("profiles")
-    .select("nombre")
-    .eq(
-      "id",
-      otroUsuario
-    )
-    .maybeSingle();
-
-
-  if (
-    !error &&
-    data
-  ) {
-
-    document
-      .getElementById(
-        "nombreUsuario"
-      )
-      .textContent =
-      "💕 Chat con " +
-      (
-        data.nombre ||
-        "Usuario"
-      );
-
-  }
-
-}
-
-
-/* ========================= */
-/* MENSAJES */
-/* ========================= */
-
-async function cargarMensajes() {
-
-  const {
-    data,
-    error
-  } =
-  await supabaseClient
-    .from("messages")
-    .select("*")
-    .eq(
-      "match_id",
-      matchActual.id
-    )
-    .order(
-      "created_at",
-      {
-        ascending: true
-      }
-    );
-
-
-  if (error) {
-
-    console.error(error);
-
-
-    document
-      .getElementById(
-        "estadoChat"
-      )
-      .textContent =
-      "No se pudieron cargar los mensajes: " +
-      error.message;
-
-    return;
-  }
-
-
-  mostrarMensajes(
-    data || []
-  );
-
-}
-
-
-/* ========================= */
-/* MOSTRAR MENSAJES */
-/* ========================= */
-
-function mostrarMensajes(
-  lista
-) {
-
-  const contenedor =
-    document.getElementById(
-      "mensajes"
-    );
-
-
-  contenedor.innerHTML = "";
-
-
-  if (
-    !lista ||
-    lista.length === 0
-  ) {
-
-    contenedor.innerHTML = `
-      <div class="vacio">
-        💬 Todavía no hay mensajes.<br>
-        ¡Escribí el primero!
-      </div>
-    `;
-
-    return;
-  }
-
-
-  lista.forEach(
-    mensaje => {
-
-      const div =
-        document.createElement(
-          "div"
-        );
-
-
-      div.className =
-        "mensaje " +
-        (
-          mensaje.sender_id ===
-          usuarioActual.id
-            ? "mio"
-            : "suyo"
-        );
-
-
-      div.textContent =
-        mensaje.content;
-
-
-      contenedor.appendChild(
-        div
-      );
-
-    }
-  );
-
-
-  contenedor.scrollTop =
-    contenedor.scrollHeight;
-
-}
-
-
-/* ========================= */
-/* ENVIAR MENSAJE */
-/* ========================= */
-
-async function enviarMensaje() {
-
-  const input =
-    document.getElementById(
-      "mensaje"
-    );
-
-
-  const texto =
-    input.value.trim();
-
-
-  if (!texto) {
-    return;
-  }
-
-
-  if (!matchActual) {
-
-    alert(
-      "No hay una conversación activa."
-    );
-
-    return;
-  }
-
-
-  const {
-    error
-  } =
-  await supabaseClient
-    .from("messages")
-    .insert({
-
-      match_id:
-        matchActual.id,
-
-      sender_id:
-        usuarioActual.id,
-
-      content:
-        texto
-
-    });
-
-
-  if (error) {
-
-    console.error(error);
-
-
-    alert(
-      "No se pudo enviar el mensaje:\n" +
-      error.message
-    );
-
-    return;
-  }
-
-
-  input.value = "";
-
-
-  await cargarMensajes();
-
-}
-
-
-/* ========================= */
-/* ESCAPAR HTML */
-/* ========================= */
-
-function escaparHTML(
-  texto
-) {
-
-  return String(texto)
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
-
-}
-
-
-/* ========================= */
-/* BOTONES */
-/* ========================= */
-
-document
-  .getElementById(
-    "enviarButton"
-  )
-  .addEventListener(
+  document.getElementById(
+    "sendButton"
+  ).addEventListener(
     "click",
     enviarMensaje
   );
 
 
-document
-  .getElementById(
-    "mensaje"
-  )
-  .addEventListener(
+  document.getElementById(
+    "messageInput"
+  ).addEventListener(
     "keydown",
     function(event) {
 
       if (
-        event.key === "Enter"
+        event.key ===
+        "Enter"
       ) {
 
         event.preventDefault();
@@ -978,28 +1019,224 @@ document
   );
 
 
-document
-  .getElementById(
-    "volverMatches"
-  )
-  .addEventListener(
-    "click",
-    function() {
+  async function enviarMensaje() {
 
-      window.location.href =
-        "chat.html";
+    const input =
+      document.getElementById(
+        "messageInput"
+      );
+
+
+    const content =
+      input.value.trim();
+
+
+    if (!content) {
+
+      return;
 
     }
-  );
 
 
-/* ========================= */
-/* INICIAR APP */
-/* ========================= */
+    if (!currentMatchId) {
 
-iniciar();
+      alert(
+        "No se encontró el match."
+      );
+
+      return;
+
+    }
+
+
+    const button =
+      document.getElementById(
+        "sendButton"
+      );
+
+
+    button.disabled =
+      true;
+
+
+    try {
+
+      const {
+        data,
+        error
+      } = await supabaseClient
+        .from("messages")
+        .insert({
+
+          match_id:
+            currentMatchId,
+
+          sender_id:
+            currentUser.id,
+
+          content:
+            content
+
+        })
+        .select()
+        .single();
+
+
+      if (error) {
+
+        console.error(error);
+
+        alert(
+          "No se pudo enviar el mensaje: " +
+          error.message
+        );
+
+        return;
+
+      }
+
+
+      input.value =
+        "";
+
+
+      mostrarMensaje(
+        data
+      );
+
+
+      input.focus();
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert(
+        "Ocurrió un error al enviar el mensaje."
+      );
+
+    } finally {
+
+      button.disabled =
+        false;
+
+    }
+
+  }
+
+
+  // ==========================================
+  // REALTIME
+  // ==========================================
+
+  function activarRealtime() {
+
+    if (
+      realtimeChannel
+    ) {
+
+      supabaseClient
+        .removeChannel(
+          realtimeChannel
+        );
+
+    }
+
+
+    realtimeChannel =
+      supabaseClient
+        .channel(
+          "chat-" +
+          currentMatchId
+        )
+        .on(
+
+          "postgres_changes",
+
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "messages",
+            filter:
+              "match_id=eq." +
+              currentMatchId
+          },
+
+          function(payload) {
+
+            mostrarMensaje(
+              payload.new
+            );
+
+          }
+
+        )
+        .subscribe();
+
+  }
+
+
+  // ==========================================
+  // SCROLL
+  // ==========================================
+
+  function scrollMensajes() {
+
+    const messagesDiv =
+      document.getElementById(
+        "messages"
+      );
+
+
+    messagesDiv.scrollTop =
+      messagesDiv.scrollHeight;
+
+  }
+
+
+  // ==========================================
+  // SEGURIDAD HTML
+  // ==========================================
+
+  function escapeHtml(
+    text
+  ) {
+
+    if (
+      text === null ||
+      text === undefined
+    ) {
+
+      return "";
+
+    }
+
+
+    return String(text)
+      .replace(
+        /&/g,
+        "&amp;"
+      )
+      .replace(
+        /</g,
+        "&lt;"
+      )
+      .replace(
+        />/g,
+        "&gt;"
+      )
+      .replace(
+        /"/g,
+        "&quot;"
+      )
+      .replace(
+        /'/g,
+        "&#039;"
+      );
+
+  }
 
 </script>
 
 </body>
-  </html>
+</html>
