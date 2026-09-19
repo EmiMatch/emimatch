@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Chat - EmiMatch</title>
+  <title>EmiMatch - Matches y Chat</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
+
     * {
       box-sizing: border-box;
     }
@@ -21,7 +23,7 @@
     }
 
     header {
-      background: #111d3b;
+      background: linear-gradient(135deg, #111d3b, #7c3aed);
       color: white;
       padding: 18px;
       text-align: center;
@@ -33,9 +35,89 @@
     }
 
     .contenedor {
+      width: 100%;
       max-width: 700px;
       margin: 20px auto;
       padding: 15px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 3px 15px rgba(0,0,0,.08);
+    }
+
+    .titulo {
+      margin-top: 0;
+      color: #111827;
+    }
+
+    .estado {
+      text-align: center;
+      color: #777;
+      padding: 20px;
+    }
+
+    /* LISTA DE MATCHES */
+
+    .match-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
+      background: #f9fafb;
+      border-radius: 15px;
+      border: 1px solid #eee;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .match-item:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 10px rgba(0,0,0,.08);
+    }
+
+    .match-foto {
+      width: 65px;
+      height: 65px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #eee;
+      border: 3px solid #ec4899;
+    }
+
+    .match-info {
+      flex: 1;
+    }
+
+    .match-nombre {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .match-ciudad {
+      color: #777;
+      font-size: 14px;
+    }
+
+    .boton-chat {
+      background: #ec4899;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 9px 12px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* CHAT */
+
+    #chatSeccion {
+      display: none;
     }
 
     #nombreUsuario {
@@ -87,9 +169,10 @@
       border: 1px solid #ddd;
       border-radius: 12px;
       font-size: 16px;
+      outline: none;
     }
 
-    button {
+    .btn-enviar {
       border: none;
       border-radius: 12px;
       padding: 0 20px;
@@ -106,13 +189,23 @@
       text-decoration: none;
       color: #111d3b;
       font-weight: bold;
+      cursor: pointer;
     }
 
-    #estado {
+    .vacio {
       text-align: center;
-      margin: 15px 0;
+      padding: 30px 15px;
       color: #777;
     }
+
+    .error {
+      background: #fee2e2;
+      color: #991b1b;
+      padding: 14px;
+      border-radius: 12px;
+      text-align: center;
+    }
+
   </style>
 </head>
 
@@ -122,82 +215,423 @@
   <h1>💕 EmiMatch</h1>
 </header>
 
+
 <div class="contenedor">
 
-  <div id="nombreUsuario">
-    💬 Conversación
-  </div>
 
-  <div id="estado">
-    Cargando chat...
-  </div>
+  <!-- ========================= -->
+  <!-- LISTA DE MATCHES -->
+  <!-- ========================= -->
 
-  <div id="mensajes"></div>
+  <section id="matchesSeccion" class="card">
 
-  <div class="formulario">
-    <input
-      type="text"
-      id="mensaje"
-      placeholder="Escribí un mensaje..."
-      autocomplete="off"
+    <h2 class="titulo">
+      💕 Mis Matches
+    </h2>
+
+    <p>
+      Elegí una persona para comenzar una conversación.
+    </p>
+
+    <div id="listaMatches">
+
+      <div class="estado">
+        Cargando tus Matches...
+      </div>
+
+    </div>
+
+    <a
+      class="volver"
+      href="perfil.html"
     >
+      ← Volver a mi perfil
+    </a>
 
-    <button onclick="enviarMensaje()">
-      Enviar
-    </button>
-  </div>
+  </section>
 
-  <a class="volver" href="matches.html">
-    ← Volver a mis Matches
-  </a>
+
+  <!-- ========================= -->
+  <!-- CHAT -->
+  <!-- ========================= -->
+
+  <section id="chatSeccion">
+
+    <div id="nombreUsuario">
+      💬 Conversación
+    </div>
+
+    <div
+      id="estadoChat"
+      class="estado"
+    >
+      Cargando conversación...
+    </div>
+
+    <div id="mensajes"></div>
+
+    <div class="formulario">
+
+      <input
+        type="text"
+        id="mensaje"
+        placeholder="Escribí un mensaje..."
+        autocomplete="off"
+      >
+
+      <button
+        class="btn-enviar"
+        id="enviarButton"
+      >
+        Enviar
+      </button>
+
+    </div>
+
+    <a
+      class="volver"
+      id="volverMatches"
+    >
+      ← Volver a mis Matches
+    </a>
+
+  </section>
+
 
 </div>
 
+
 <script>
 
-const SUPABASE_URL = "https://kngiadwaesdbmvwivdev.supabase.co";
+const SUPABASE_URL =
+  "https://kngiadwaesdbmvwivdev.supabase.co";
 
-const SUPABASE_ANON_KEY = "TU_CLAVE_SUPABASE";
+const SUPABASE_ANON_KEY =
+  "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
 
-const supabaseClient = supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
+
 
 let usuarioActual = null;
+
 let otroUsuario = null;
+
 let matchActual = null;
+
+
+/* ========================= */
+/* INICIAR */
+/* ========================= */
 
 async function iniciar() {
 
-  const { data: sessionData } =
-    await supabaseClient.auth.getSession();
+  const {
+    data,
+    error
+  } =
+  await supabaseClient.auth.getSession();
 
-  if (!sessionData.session) {
-    window.location.href = "index.html";
+
+  if (error) {
+
+    console.error(error);
+
+    window.location.href =
+      "index.html";
+
     return;
   }
 
-  usuarioActual = sessionData.session.user;
 
-  const parametros = new URLSearchParams(
-    window.location.search
-  );
+  if (
+    !data ||
+    !data.session ||
+    !data.session.user
+  ) {
 
-  otroUsuario = parametros.get("user");
+    window.location.href =
+      "index.html";
 
-  if (!otroUsuario) {
-    document.getElementById("estado").textContent =
-      "No se encontró el usuario del chat.";
     return;
   }
 
-  await buscarMatch();
+
+  usuarioActual =
+    data.session.user;
+
+
+  const parametros =
+    new URLSearchParams(
+      window.location.search
+    );
+
+
+  otroUsuario =
+    parametros.get("user");
+
+
+  /*
+    Si existe ?user=...
+    abrimos directamente el chat.
+
+    Si no existe,
+    mostramos todos los Matches.
+  */
+
+  if (otroUsuario) {
+
+    document
+      .getElementById("matchesSeccion")
+      .style.display = "none";
+
+    document
+      .getElementById("chatSeccion")
+      .style.display = "block";
+
+    await buscarMatch();
+
+  } else {
+
+    document
+      .getElementById("matchesSeccion")
+      .style.display = "block";
+
+    document
+      .getElementById("chatSeccion")
+      .style.display = "none";
+
+    await cargarMatches();
+
+  }
+
 }
+
+
+/* ========================= */
+/* CARGAR MATCHES */
+/* ========================= */
+
+async function cargarMatches() {
+
+  const lista =
+    document.getElementById(
+      "listaMatches"
+    );
+
+
+  lista.innerHTML = `
+    <div class="estado">
+      Buscando tus Matches...
+    </div>
+  `;
+
+
+  const {
+    data: matches,
+    error
+  } =
+  await supabaseClient
+    .from("matches")
+    .select("*")
+    .or(
+      `user1_id.eq.${usuarioActual.id},user2_id.eq.${usuarioActual.id}`
+    );
+
+
+  if (error) {
+
+    console.error(
+      "Error cargando Matches:",
+      error
+    );
+
+
+    lista.innerHTML = `
+      <div class="error">
+        No se pudieron cargar tus Matches.<br><br>
+        ${escaparHTML(error.message)}
+      </div>
+    `;
+
+    return;
+  }
+
+
+  if (
+    !matches ||
+    matches.length === 0
+  ) {
+
+    lista.innerHTML = `
+      <div class="vacio">
+        💕 Todavía no tenés Matches.<br><br>
+        Seguí descubriendo personas y dando Likes.
+      </div>
+    `;
+
+    return;
+  }
+
+
+  lista.innerHTML = "";
+
+
+  for (
+    const match of matches
+  ) {
+
+    const otroId =
+      match.user1_id === usuarioActual.id
+        ? match.user2_id
+        : match.user1_id;
+
+
+    const {
+      data: perfil,
+      error: errorPerfil
+    } =
+    await supabaseClient
+      .from("profiles")
+      .select(
+        "id,nombre,edad,ciudad,foto_url"
+      )
+      .eq(
+        "id",
+        otroId
+      )
+      .maybeSingle();
+
+
+    if (errorPerfil) {
+
+      console.error(
+        "Error cargando perfil del Match:",
+        errorPerfil
+      );
+
+      continue;
+    }
+
+
+    if (!perfil) {
+      continue;
+    }
+
+
+    const item =
+      document.createElement("div");
+
+
+    item.className =
+      "match-item";
+
+
+    const foto =
+      perfil.foto_url ||
+      "https://placehold.co/150x150?text=EmiMatch";
+
+
+    item.innerHTML = `
+
+      <img
+        class="match-foto"
+        src="${escaparHTML(foto)}"
+        alt="Foto"
+        onerror="this.src='https://placehold.co/150x150?text=Foto'"
+      >
+
+      <div class="match-info">
+
+        <div class="match-nombre">
+          ${escaparHTML(
+            perfil.nombre || "Usuario"
+          )}
+          ${
+            perfil.edad
+              ? ", " + perfil.edad
+              : ""
+          }
+        </div>
+
+        <div class="match-ciudad">
+          📍 ${
+            escaparHTML(
+              perfil.ciudad || "Sin ciudad"
+            )
+          }
+        </div>
+
+      </div>
+
+      <button
+        class="boton-chat"
+      >
+        💬 Chat
+      </button>
+
+    `;
+
+
+    item.addEventListener(
+      "click",
+      function() {
+
+        abrirChat(
+          perfil.id
+        );
+
+      }
+    );
+
+
+    lista.appendChild(item);
+
+  }
+
+}
+
+
+/* ========================= */
+/* ABRIR CHAT */
+/* ========================= */
+
+function abrirChat(usuarioId) {
+
+  window.location.href =
+    "chat.html?user=" +
+    encodeURIComponent(
+      usuarioId
+    );
+
+}
+
+
+/* ========================= */
+/* BUSCAR MATCH */
+/* ========================= */
 
 async function buscarMatch() {
 
-  const { data, error } = await supabaseClient
+  const estado =
+    document.getElementById(
+      "estadoChat"
+    );
+
+
+  estado.textContent =
+    "Buscando conversación...";
+
+
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
     .from("matches")
     .select("*")
     .or(
@@ -205,146 +639,367 @@ async function buscarMatch() {
     )
     .limit(1);
 
+
   if (error) {
+
     console.error(error);
 
-    document.getElementById("estado").textContent =
+    estado.textContent =
       "Error buscando el Match.";
 
     return;
   }
 
-  if (!data || data.length === 0) {
 
-    document.getElementById("estado").textContent =
+  if (
+    !data ||
+    data.length === 0
+  ) {
+
+    estado.textContent =
       "Este usuario todavía no tiene un Match con vos.";
 
     return;
   }
 
-  matchActual = data[0];
 
-  document.getElementById("estado").textContent = "";
+  matchActual =
+    data[0];
+
+
+  estado.textContent = "";
+
 
   await cargarNombre();
+
   await cargarMensajes();
+
 }
+
+
+/* ========================= */
+/* NOMBRE */
+/* ========================= */
 
 async function cargarNombre() {
 
-  const { data, error } = await supabaseClient
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
     .from("profiles")
     .select("nombre")
-    .eq("id", otroUsuario)
-    .single();
+    .eq(
+      "id",
+      otroUsuario
+    )
+    .maybeSingle();
 
-  if (!error && data) {
 
-    document.getElementById("nombreUsuario").textContent =
-      "💕 Chat con " + (data.nombre || "Usuario");
+  if (
+    !error &&
+    data
+  ) {
+
+    document
+      .getElementById(
+        "nombreUsuario"
+      )
+      .textContent =
+      "💕 Chat con " +
+      (
+        data.nombre ||
+        "Usuario"
+      );
+
   }
+
 }
+
+
+/* ========================= */
+/* MENSAJES */
+/* ========================= */
 
 async function cargarMensajes() {
 
-  const { data, error } = await supabaseClient
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
     .from("messages")
     .select("*")
-    .eq("match_id", matchActual.id)
-    .order("created_at", {
-      ascending: true
-    });
+    .eq(
+      "match_id",
+      matchActual.id
+    )
+    .order(
+      "created_at",
+      {
+        ascending: true
+      }
+    );
+
 
   if (error) {
 
     console.error(error);
 
-    document.getElementById("estado").textContent =
-      "Todavía falta configurar la tabla de mensajes.";
+
+    document
+      .getElementById(
+        "estadoChat"
+      )
+      .textContent =
+      "No se pudieron cargar los mensajes: " +
+      error.message;
 
     return;
   }
 
-  mostrarMensajes(data || []);
+
+  mostrarMensajes(
+    data || []
+  );
+
 }
 
-function mostrarMensajes(lista) {
+
+/* ========================= */
+/* MOSTRAR MENSAJES */
+/* ========================= */
+
+function mostrarMensajes(
+  lista
+) {
 
   const contenedor =
-    document.getElementById("mensajes");
+    document.getElementById(
+      "mensajes"
+    );
+
 
   contenedor.innerHTML = "";
 
-  lista.forEach(mensaje => {
 
-    const div = document.createElement("div");
+  if (
+    !lista ||
+    lista.length === 0
+  ) {
 
-    div.className =
-      "mensaje " +
-      (mensaje.sender_id === usuarioActual.id
-        ? "mio"
-        : "suyo");
+    contenedor.innerHTML = `
+      <div class="vacio">
+        💬 Todavía no hay mensajes.<br>
+        ¡Escribí el primero!
+      </div>
+    `;
 
-    div.textContent = mensaje.content;
+    return;
+  }
 
-    contenedor.appendChild(div);
-  });
+
+  lista.forEach(
+    mensaje => {
+
+      const div =
+        document.createElement(
+          "div"
+        );
+
+
+      div.className =
+        "mensaje " +
+        (
+          mensaje.sender_id ===
+          usuarioActual.id
+            ? "mio"
+            : "suyo"
+        );
+
+
+      div.textContent =
+        mensaje.content;
+
+
+      contenedor.appendChild(
+        div
+      );
+
+    }
+  );
+
 
   contenedor.scrollTop =
     contenedor.scrollHeight;
+
 }
+
+
+/* ========================= */
+/* ENVIAR MENSAJE */
+/* ========================= */
 
 async function enviarMensaje() {
 
   const input =
-    document.getElementById("mensaje");
+    document.getElementById(
+      "mensaje"
+    );
+
 
   const texto =
     input.value.trim();
 
-  if (!texto) return;
 
-  if (!matchActual) return;
+  if (!texto) {
+    return;
+  }
 
-  const { error } =
-    await supabaseClient
-      .from("messages")
-      .insert({
-        match_id: matchActual.id,
-        sender_id: usuarioActual.id,
-        content: texto
-      });
+
+  if (!matchActual) {
+
+    alert(
+      "No hay una conversación activa."
+    );
+
+    return;
+  }
+
+
+  const {
+    error
+  } =
+  await supabaseClient
+    .from("messages")
+    .insert({
+
+      match_id:
+        matchActual.id,
+
+      sender_id:
+        usuarioActual.id,
+
+      content:
+        texto
+
+    });
+
 
   if (error) {
 
     console.error(error);
 
+
     alert(
-      "No se pudo enviar el mensaje: " +
+      "No se pudo enviar el mensaje:\n" +
       error.message
     );
 
     return;
   }
 
+
   input.value = "";
 
+
   await cargarMensajes();
+
 }
 
+
+/* ========================= */
+/* ESCAPAR HTML */
+/* ========================= */
+
+function escaparHTML(
+  texto
+) {
+
+  return String(texto)
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
+
+}
+
+
+/* ========================= */
+/* BOTONES */
+/* ========================= */
+
 document
-  .getElementById("mensaje")
-  .addEventListener("keydown", function(event) {
+  .getElementById(
+    "enviarButton"
+  )
+  .addEventListener(
+    "click",
+    enviarMensaje
+  );
 
-    if (event.key === "Enter") {
-      enviarMensaje();
+
+document
+  .getElementById(
+    "mensaje"
+  )
+  .addEventListener(
+    "keydown",
+    function(event) {
+
+      if (
+        event.key === "Enter"
+      ) {
+
+        event.preventDefault();
+
+        enviarMensaje();
+
+      }
+
     }
+  );
 
-  });
+
+document
+  .getElementById(
+    "volverMatches"
+  )
+  .addEventListener(
+    "click",
+    function() {
+
+      window.location.href =
+        "chat.html";
+
+    }
+  );
+
+
+/* ========================= */
+/* INICIAR APP */
+/* ========================= */
 
 iniciar();
 
 </script>
 
 </body>
-</html>
+  </html>
