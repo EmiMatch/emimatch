@@ -1,20 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Descubrir - EmiMatch</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-
     * {
       box-sizing: border-box;
     }
@@ -23,21 +17,12 @@
       margin: 0;
       min-height: 100vh;
       font-family: Arial, sans-serif;
-
-      background:
-        linear-gradient(
-          135deg,
-          #111827,
-          #1e3a8a
-        );
-
+      background: linear-gradient(135deg, #07152f, #102b55);
       color: white;
-
       padding: 20px;
     }
 
     .contenedor {
-      width: 100%;
       max-width: 430px;
       margin: auto;
     }
@@ -49,497 +34,289 @@
 
     .subtitulo {
       text-align: center;
-      color: #dbeafe;
+      color: #cbd5e1;
       margin-bottom: 20px;
     }
 
     .volver {
-      width: 100%;
-      border: none;
-      border-radius: 12px;
-
-      padding: 13px;
-      margin-bottom: 18px;
-
-      background: rgba(255,255,255,.12);
-
+      display: inline-block;
       color: white;
-
-      font-size: 16px;
-
-      cursor: pointer;
+      text-decoration: none;
+      margin-bottom: 15px;
+      font-size: 15px;
     }
 
     .card {
       background: white;
-      color: #111827;
-
-      border-radius: 24px;
-
+      color: #172033;
+      border-radius: 22px;
       overflow: hidden;
-
-      box-shadow:
-        0 15px 40px
-        rgba(0,0,0,.35);
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
     }
 
     .foto {
       width: 100%;
-      height: 420px;
-
+      height: 390px;
       object-fit: cover;
-
       display: block;
-
       background: #e5e7eb;
     }
 
-    .sin-foto {
-      width: 100%;
-      height: 420px;
-
+    .sinFoto {
+      height: 390px;
       display: flex;
-
       align-items: center;
       justify-content: center;
-
-      background:
-        linear-gradient(
-          135deg,
-          #dbeafe,
-          #e5e7eb
-        );
-
-      font-size: 90px;
-    }
-
-    .datos {
-      padding: 22px;
-    }
-
-    .nombre {
-      font-size: 28px;
-      font-weight: bold;
+      background: #e5e7eb;
+      color: #64748b;
+      font-size: 70px;
     }
 
     .info {
-      margin-top: 8px;
+      padding: 20px;
+    }
 
-      color: #4b5563;
+    .nombre {
+      font-size: 26px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
 
-      font-size: 16px;
+    .datos {
+      color: #64748b;
+      margin-bottom: 12px;
     }
 
     .descripcion {
-      margin-top: 15px;
-
       line-height: 1.5;
-
-      color: #374151;
+      margin-bottom: 12px;
     }
 
     .intereses {
-      margin-top: 15px;
-
-      padding: 12px;
-
-      background: #f3f4f6;
-
-      border-radius: 12px;
-
-      color: #374151;
+      color: #475569;
+      font-size: 14px;
+      margin-bottom: 5px;
     }
 
-    .acciones {
+    .botones {
       display: flex;
-
-      gap: 15px;
-
-      padding: 20px;
-
-      background: #f9fafb;
+      gap: 12px;
+      padding: 0 20px 20px;
     }
 
-    .accion {
+    button {
       flex: 1;
-
       border: none;
-
-      border-radius: 50px;
-
-      padding: 16px;
-
-      font-size: 28px;
-
+      padding: 15px;
+      border-radius: 14px;
+      font-size: 18px;
+      font-weight: bold;
       cursor: pointer;
-
-      transition:
-        transform .15s,
-        opacity .15s;
-    }
-
-    .accion:active {
-      transform: scale(.92);
-    }
-
-    .accion:disabled {
-      opacity: .5;
-      cursor: wait;
     }
 
     .pasar {
       background: #e5e7eb;
+      color: #334155;
     }
 
     .like {
-      background: #fee2e2;
+      background: #ec4899;
+      color: white;
+    }
+
+    .reiniciar {
+      width: 100%;
+      margin-top: 18px;
+      background: #d4af37;
+      color: #07152f;
     }
 
     .mensaje {
-      background: white;
-
-      color: #111827;
-
-      border-radius: 24px;
-
-      padding: 40px 20px;
-
       text-align: center;
+      padding: 30px 15px;
+      background: rgba(255,255,255,.08);
+      border-radius: 20px;
+      line-height: 1.6;
     }
 
-    .mensaje-icono {
-      font-size: 70px;
+    .emoji {
+      font-size: 60px;
+      margin-bottom: 10px;
+    }
+
+    .volverPerfil {
+      display: block;
+      margin-top: 18px;
+      text-align: center;
+      color: white;
+      text-decoration: none;
     }
 
     .cargando {
       text-align: center;
-
-      padding: 50px 10px;
-
-      font-size: 18px;
+      padding: 40px;
     }
-
-    .error {
-      margin-top: 15px;
-
-      padding: 15px;
-
-      border-radius: 12px;
-
-      background: #fee2e2;
-
-      color: #991b1b;
-
-      display: none;
-    }
-
   </style>
-
 </head>
-
 
 <body>
 
-
 <div class="contenedor">
 
+  <a class="volver" href="./perfil.html">← Volver</a>
+
   <h1>🔎 Descubrir</h1>
-
-  <div class="subtitulo">
-    Encontrá nuevas personas
-  </div>
-
-
-  <button
-    class="volver"
-    onclick="volver()">
-
-    ← Volver
-
-  </button>
-
+  <div class="subtitulo">Encontrá nuevas personas</div>
 
   <div id="contenido">
-
     <div class="cargando">
       Cargando perfiles...
     </div>
-
   </div>
-
-
-  <div
-    id="error"
-    class="error">
-  </div>
-
 
 </div>
 
-
-
 <script>
-
-
-/* ==================================================
-   SUPABASE
-================================================== */
 
 const SUPABASE_URL =
   "https://kngiadwaesdbmvwivdev.supabase.co";
 
-
 const SUPABASE_KEY =
   "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
 
-
 const supabaseClient =
-  window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
-
-
-
-/* ==================================================
-   VARIABLES
-================================================== */
+  supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let usuarioActual = null;
-
 let perfiles = [];
-
-let indice = 0;
-
-let procesando = false;
+let indiceActual = 0;
 
 
-
-/* ==================================================
-   INICIAR
-================================================== */
+// ================================
+// INICIAR
+// ================================
 
 async function iniciar() {
 
-  try {
+  const {
+    data: { session },
+    error
+  } = await supabaseClient.auth.getSession();
 
-    const {
-      data: {
-        session
-      },
-      error
-    } =
-      await supabaseClient.auth.getSession();
-
-
-    if (error) {
-
-      mostrarError(
-        "Error de sesión: " +
-        error.message
-      );
-
-      return;
-    }
-
-
-    if (!session) {
-
-      window.location.href =
-        "./index.html";
-
-      return;
-    }
-
-
-    usuarioActual =
-      session.user;
-
-
-    await cargarPerfiles();
-
-
-  } catch (error) {
-
-    console.error(error);
-
-    mostrarError(
-      "No se pudo iniciar Descubrir."
-    );
-
+  if (error || !session) {
+    window.location.replace("./index.html");
+    return;
   }
 
+  usuarioActual = session.user;
+
+  await cargarPerfiles();
 }
 
 
-
-/* ==================================================
-   CARGAR PERFILES
-================================================== */
+// ================================
+// CARGAR PERFILES
+// ================================
 
 async function cargarPerfiles() {
 
-  try {
+  const contenido =
+    document.getElementById("contenido");
 
-    const {
-      data,
-      error
-    } =
-      await supabaseClient
-        .from("profiles")
-        .select(`
-          id,
-          nombre,
-          edad,
-          ciudad,
-          descripcion,
-          foto_url,
-          intereses,
-          created_at
-        `)
-        .neq(
-          "id",
-          usuarioActual.id
-        )
-        .order(
-          "created_at",
-          {
-            ascending: false
-          }
-        );
+  contenido.innerHTML =
+    `<div class="cargando">Cargando perfiles...</div>`;
 
+  const { data: todos, error } =
+    await supabaseClient
+      .from("profiles")
+      .select("*")
+      .neq("id", usuarioActual.id)
+      .order("created_at", { ascending: false });
 
-    if (error) {
+  if (error) {
 
-      console.error(error);
-
-      mostrarError(
-        "Error cargando perfiles: " +
-        error.message
-      );
-
-      return;
-    }
-
-
-    perfiles = data || [];
-
-
-    /*
-      Buscamos los perfiles que
-      ya fueron marcados por este usuario.
-    */
-
-    const {
-      data: swipes,
-      error: swipesError
-    } =
-      await supabaseClient
-        .from("swipes")
-        .select(
-          "target_user_id"
-        )
-        .eq(
-          "user_id",
-          usuarioActual.id
-        );
-
-
-    if (swipesError) {
-
-      console.error(
-        "Error cargando swipes:",
-        swipesError
-      );
-
-    } else {
-
-      const vistos =
-        new Set(
-          (swipes || []).map(
-            swipe =>
-              swipe.target_user_id
-          )
-        );
-
-
-      perfiles =
-        perfiles.filter(
-          perfil =>
-            !vistos.has(
-              perfil.id
-            )
-        );
-
-    }
-
-
-    indice = 0;
-
-    mostrarPerfil();
-
-
-  } catch (error) {
+    contenido.innerHTML = `
+      <div class="mensaje">
+        <div class="emoji">⚠️</div>
+        <h2>Error</h2>
+        <p>No se pudieron cargar los perfiles.</p>
+      </div>
+    `;
 
     console.error(error);
-
-    mostrarError(
-      "Error cargando perfiles."
-    );
-
+    return;
   }
 
+
+  const { data: swipes, error: errorSwipes } =
+    await supabaseClient
+      .from("swipes")
+      .select("target_user_id")
+      .eq("user_id", usuarioActual.id);
+
+
+  if (errorSwipes) {
+
+    console.error(errorSwipes);
+
+    perfiles = todos || [];
+
+  } else {
+
+    const vistos = new Set(
+      (swipes || []).map(
+        s => s.target_user_id
+      )
+    );
+
+    perfiles = (todos || []).filter(
+      perfil => !vistos.has(perfil.id)
+    );
+  }
+
+
+  indiceActual = 0;
+
+  mostrarPerfil();
 }
 
 
-
-/* ==================================================
-   MOSTRAR PERFIL
-================================================== */
+// ================================
+// MOSTRAR PERFIL
+// ================================
 
 function mostrarPerfil() {
 
   const contenido =
-    document.getElementById(
-      "contenido"
-    );
+    document.getElementById("contenido");
 
-
-  if (
-    !perfiles.length ||
-    indice >= perfiles.length
-  ) {
+  if (indiceActual >= perfiles.length) {
 
     contenido.innerHTML = `
 
       <div class="mensaje">
 
-        <div class="mensaje-icono">
-          💕
-        </div>
+        <div class="emoji">💕</div>
 
-        <h2>
-          No hay más perfiles
-        </h2>
+        <h2>No hay más perfiles</h2>
 
         <p>
-          Por ahora viste todos los
-          perfiles disponibles.
+          Por ahora viste todos los perfiles disponibles.
         </p>
 
         <button
-          class="volver"
-          onclick="volver()"
-          style="
-            background:#1e3a8a;
-            margin-top:15px;
-          ">
-
-          Volver al perfil
-
+          class="reiniciar"
+          onclick="reiniciarPerfiles()">
+          🔄 Reiniciar perfiles
         </button>
 
       </div>
+
+      <a
+        class="volverPerfil"
+        href="./perfil.html">
+        Volver al perfil
+      </a>
 
     `;
 
@@ -547,54 +324,35 @@ function mostrarPerfil() {
   }
 
 
-  const perfil =
-    perfiles[indice];
+  const perfil = perfiles[indiceActual];
 
 
-  let fotoHTML;
-
+  let fotoHTML = "";
 
   if (perfil.foto_url) {
 
     fotoHTML = `
-
       <img
         class="foto"
-        src="${escaparHTML(
-          perfil.foto_url
-        )}"
-        alt="Foto de perfil"
-        onerror="
-          this.style.display='none';
-          document
-            .getElementById('sinFoto')
-            .style.display='flex';
-        "
+        src="${escapeHTML(perfil.foto_url)}"
+        alt="Foto de ${escapeHTML(perfil.nombre || "usuario")}"
+        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
       >
 
       <div
-        id="sinFoto"
-        class="sin-foto"
+        class="sinFoto"
         style="display:none;">
-
         👤
-
       </div>
-
     `;
 
   } else {
 
     fotoHTML = `
-
-      <div class="sin-foto">
-
+      <div class="sinFoto">
         👤
-
       </div>
-
     `;
-
   }
 
 
@@ -604,98 +362,52 @@ function mostrarPerfil() {
 
       ${fotoHTML}
 
-
-      <div class="datos">
+      <div class="info">
 
         <div class="nombre">
-
-          ${
-            escaparHTML(
-              perfil.nombre ||
-              "Usuario"
-            )
-          }
-
-          ${
-            perfil.edad
-              ? ", " +
-                escaparHTML(
-                  perfil.edad
-                )
-              : ""
-          }
-
+          ${escapeHTML(perfil.nombre || "Sin nombre")}
+          ${perfil.edad ? ", " + escapeHTML(perfil.edad) : ""}
         </div>
-
 
         ${
           perfil.ciudad
-            ? `
-              <div class="info">
-
-                📍
-                ${escaparHTML(
-                  perfil.ciudad
-                )}
-
-              </div>
-            `
-            : ""
+          ? `<div class="datos">
+              📍 ${escapeHTML(perfil.ciudad)}
+             </div>`
+          : ""
         }
-
 
         ${
           perfil.descripcion
-            ? `
-              <div class="descripcion">
-
-                ${escaparHTML(
-                  perfil.descripcion
-                )}
-
-              </div>
-            `
-            : ""
+          ? `<div class="descripcion">
+              ${escapeHTML(perfil.descripcion)}
+             </div>`
+          : ""
         }
-
 
         ${
           perfil.intereses
-            ? `
-              <div class="intereses">
-
-                ❤️
-                ${escaparHTML(
-                  perfil.intereses
-                )}
-
-              </div>
-            `
-            : ""
+          ? `<div class="intereses">
+              ❤️ ${escapeHTML(perfil.intereses)}
+             </div>`
+          : ""
         }
 
       </div>
 
 
-      <div class="acciones">
+      <div class="botones">
 
         <button
-          id="btnPasar"
-          class="accion pasar"
+          class="pasar"
           onclick="pasarPerfil()">
-
-          ❌
-
+          ❌ Pasar
         </button>
 
-
         <button
-          id="btnLike"
-          class="accion like"
+          class="like"
           onclick="darLike()">
-
-          ❤️
-
+          ❤️ Me gusta
         </button>
 
       </div>
@@ -703,430 +415,184 @@ function mostrarPerfil() {
     </div>
 
   `;
-
 }
 
 
-
-/* ==================================================
-   LIKE
-================================================== */
+// ================================
+// LIKE
+// ================================
 
 async function darLike() {
 
-  if (procesando) return;
-
+  if (!usuarioActual) return;
 
   const perfil =
-    perfiles[indice];
+    perfiles[indiceActual];
+
+  if (!perfil) return;
 
 
-  if (
-    !perfil ||
-    !usuarioActual
-  ) {
+  const { data: existente } =
+    await supabaseClient
+      .from("swipes")
+      .select("id")
+      .eq("user_id", usuarioActual.id)
+      .eq("target_user_id", perfil.id)
+      .maybeSingle();
+
+
+  if (existente) {
+
+    indiceActual++;
+    mostrarPerfil();
+    return;
+  }
+
+
+  const { error } =
+    await supabaseClient
+      .from("swipes")
+      .insert({
+        user_id: usuarioActual.id,
+        target_user_id: perfil.id,
+        action: "like"
+      });
+
+
+  if (error) {
+
+    console.error(error);
+
+    alert(
+      "No se pudo registrar el Me gusta."
+    );
 
     return;
   }
 
 
-  procesando = true;
+  indiceActual++;
 
-
-  bloquearBotones(true);
-
-
-  try {
-
-    /*
-      Primero comprobamos si ya existe.
-      Esto evita duplicate key.
-    */
-
-    const {
-      data: existente,
-      error: buscarError
-    } =
-      await supabaseClient
-        .from("swipes")
-        .select("id, action")
-        .eq(
-          "user_id",
-          usuarioActual.id
-        )
-        .eq(
-          "target_user_id",
-          perfil.id
-        )
-        .maybeSingle();
-
-
-    if (buscarError) {
-
-      console.error(
-        buscarError
-      );
-
-      mostrarError(
-        "No se pudo comprobar el Like: " +
-        buscarError.message
-      );
-
-      return;
-    }
-
-
-    /*
-      Si ya existe un registro,
-      no intentamos insertarlo nuevamente.
-    */
-
-    if (!existente) {
-
-      const {
-        error
-      } =
-        await supabaseClient
-          .from("swipes")
-          .insert({
-
-            user_id:
-              usuarioActual.id,
-
-            target_user_id:
-              perfil.id,
-
-            action:
-              "like"
-
-          });
-
-
-      if (error) {
-
-        /*
-          Si otro intento creó el registro
-          simultáneamente, simplemente
-          continuamos.
-        */
-
-        if (
-          !String(
-            error.message
-          )
-          .toLowerCase()
-          .includes(
-            "duplicate"
-          )
-        ) {
-
-          console.error(error);
-
-          mostrarError(
-            "No se pudo guardar el Like: " +
-            error.message
-          );
-
-          return;
-        }
-
-      }
-
-    }
-
-
-    /*
-      Pasamos al siguiente perfil.
-    */
-
-    indice++;
-
-    mostrarPerfil();
-
-
-  } catch (error) {
-
-    console.error(error);
-
-    mostrarError(
-      "Ocurrió un error al registrar el Like."
-    );
-
-  } finally {
-
-    procesando = false;
-
-    bloquearBotones(false);
-
-  }
-
+  mostrarPerfil();
 }
 
 
-
-/* ==================================================
-   PASAR PERFIL
-================================================== */
+// ================================
+// PASS
+// ================================
 
 async function pasarPerfil() {
 
-  if (procesando) return;
-
+  if (!usuarioActual) return;
 
   const perfil =
-    perfiles[indice];
+    perfiles[indiceActual];
+
+  if (!perfil) return;
 
 
-  if (
-    !perfil ||
-    !usuarioActual
-  ) {
+  const { data: existente } =
+    await supabaseClient
+      .from("swipes")
+      .select("id")
+      .eq("user_id", usuarioActual.id)
+      .eq("target_user_id", perfil.id)
+      .maybeSingle();
+
+
+  if (!existente) {
+
+    const { error } =
+      await supabaseClient
+        .from("swipes")
+        .insert({
+          user_id: usuarioActual.id,
+          target_user_id: perfil.id,
+          action: "pass"
+        });
+
+
+    if (error) {
+
+      console.error(error);
+
+      alert(
+        "No se pudo registrar el perfil."
+      );
+
+      return;
+    }
+  }
+
+
+  indiceActual++;
+
+  mostrarPerfil();
+}
+
+
+// ================================
+// REINICIAR
+// ================================
+
+async function reiniciarPerfiles() {
+
+  if (!usuarioActual) return;
+
+
+  const confirmar =
+    confirm(
+      "¿Querés volver a mostrar todos los perfiles?"
+    );
+
+  if (!confirmar) return;
+
+
+  const { error } =
+    await supabaseClient
+      .from("swipes")
+      .delete()
+      .eq("user_id", usuarioActual.id);
+
+
+  if (error) {
+
+    console.error(error);
+
+    alert(
+      "No se pudieron reiniciar los perfiles."
+    );
 
     return;
   }
 
 
-  procesando = true;
-
-
-  bloquearBotones(true);
-
-
-  try {
-
-    /*
-      Comprobamos si ya existe.
-    */
-
-    const {
-      data: existente,
-      error: buscarError
-    } =
-      await supabaseClient
-        .from("swipes")
-        .select("id, action")
-        .eq(
-          "user_id",
-          usuarioActual.id
-        )
-        .eq(
-          "target_user_id",
-          perfil.id
-        )
-        .maybeSingle();
-
-
-    if (buscarError) {
-
-      console.error(
-        buscarError
-      );
-
-      mostrarError(
-        "No se pudo comprobar el perfil: " +
-        buscarError.message
-      );
-
-      return;
-    }
-
-
-    if (!existente) {
-
-      const {
-        error
-      } =
-        await supabaseClient
-          .from("swipes")
-          .insert({
-
-            user_id:
-              usuarioActual.id,
-
-            target_user_id:
-              perfil.id,
-
-            action:
-              "pass"
-
-          });
-
-
-      if (error) {
-
-        if (
-          !String(
-            error.message
-          )
-          .toLowerCase()
-          .includes(
-            "duplicate"
-          )
-        ) {
-
-          console.error(error);
-
-          mostrarError(
-            "No se pudo guardar la acción: " +
-            error.message
-          );
-
-          return;
-        }
-
-      }
-
-    }
-
-
-    indice++;
-
-    mostrarPerfil();
-
-
-  } catch (error) {
-
-    console.error(error);
-
-    mostrarError(
-      "Ocurrió un error."
-    );
-
-  } finally {
-
-    procesando = false;
-
-    bloquearBotones(false);
-
-  }
-
+  await cargarPerfiles();
 }
 
 
+// ================================
+// SEGURIDAD HTML
+// ================================
 
-/* ==================================================
-   BLOQUEAR BOTONES
-================================================== */
-
-function bloquearBotones(
-  estado
-) {
-
-  const like =
-    document.getElementById(
-      "btnLike"
-    );
-
-  const pasar =
-    document.getElementById(
-      "btnPasar"
-    );
-
-
-  if (like) {
-
-    like.disabled =
-      estado;
-
-  }
-
-
-  if (pasar) {
-
-    pasar.disabled =
-      estado;
-
-  }
-
-}
-
-
-
-/* ==================================================
-   ESCAPAR HTML
-================================================== */
-
-function escaparHTML(
-  valor
-) {
+function escapeHTML(valor) {
 
   return String(valor)
-
-    .replaceAll(
-      "&",
-      "&amp;"
-    )
-
-    .replaceAll(
-      "<",
-      "&lt;"
-    )
-
-    .replaceAll(
-      ">",
-      "&gt;"
-    )
-
-    .replaceAll(
-      '"',
-      "&quot;"
-    )
-
-    .replaceAll(
-      "'",
-      "&#039;"
-    );
-
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 
-
-/* ==================================================
-   ERROR
-================================================== */
-
-function mostrarError(
-  mensaje
-) {
-
-  const elemento =
-    document.getElementById(
-      "error"
-    );
-
-
-  elemento.textContent =
-    mensaje;
-
-
-  elemento.style.display =
-    "block";
-
-}
-
-
-
-/* ==================================================
-   VOLVER
-================================================== */
-
-function volver() {
-
-  window.location.href =
-    "./perfil.html";
-
-}
-
-
-
-/* ==================================================
-   INICIAR
-================================================== */
+// ================================
+// INICIAR APP
+// ================================
 
 iniciar();
 
 </script>
 
 </body>
-
 </html>
