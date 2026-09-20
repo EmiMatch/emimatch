@@ -8,7 +8,9 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
 
 body{
   margin:0;
@@ -68,7 +70,7 @@ body{
 .messages{
   flex:1;
   overflow-y:auto;
-  padding:15px 12px 85px;
+  padding:15px 12px 90px;
 }
 
 .loading{
@@ -120,9 +122,21 @@ body{
 
 .time{
   font-size:9px;
-  opacity:.6;
+  opacity:.7;
   text-align:right;
   margin-top:4px;
+}
+
+.read{
+  color:#62d8ff;
+}
+
+.typing{
+  height:25px;
+  padding:0 15px;
+  color:#777;
+  font-size:12px;
+  font-style:italic;
 }
 
 .input{
@@ -136,6 +150,7 @@ body{
   padding:9px;
   display:flex;
   gap:8px;
+  z-index:10;
 }
 
 .input input{
@@ -147,6 +162,10 @@ body{
   outline:none;
 }
 
+.input input:focus{
+  border-color:#123b80;
+}
+
 .input button{
   width:46px;
   height:46px;
@@ -155,6 +174,11 @@ body{
   background:#123b80;
   color:white;
   font-size:20px;
+  cursor:pointer;
+}
+
+.input button:disabled{
+  opacity:.5;
 }
 </style>
 </head>
@@ -165,25 +189,52 @@ body{
 
   <div class="header">
 
-    <button class="back" onclick="location.href='chat.html'">
+    <button
+      class="back"
+      onclick="location.href='chat.html'">
       ‹
     </button>
 
-    <img id="foto" class="avatar"
-         src="https://via.placeholder.com/100">
+    <img
+      id="foto"
+      class="avatar"
+      src="https://via.placeholder.com/100">
 
     <div class="info">
-      <div id="nombre" class="name">Cargando...</div>
-      <div id="estado" class="status">Conectando...</div>
+
+      <div
+        id="nombre"
+        class="name">
+        Cargando...
+      </div>
+
+      <div
+        id="estado"
+        class="status">
+        Conectando...
+      </div>
+
     </div>
 
   </div>
 
-  <div id="mensajes" class="messages">
+
+  <div
+    id="mensajes"
+    class="messages">
+
     <div class="loading">
       Cargando conversación...
     </div>
+
   </div>
+
+
+  <div
+    id="typing"
+    class="typing">
+  </div>
+
 
   <div class="input">
 
@@ -191,16 +242,18 @@ body{
       id="texto"
       type="text"
       placeholder="Escribí un mensaje..."
-      autocomplete="off"
-    >
+      autocomplete="off">
 
-    <button onclick="enviar()">
+    <button
+      id="botonEnviar"
+      onclick="enviar()">
       ➤
     </button>
 
   </div>
 
 </div>
+
 
 <script>
 
@@ -216,9 +269,13 @@ supabase.createClient(
   SUPABASE_KEY
 );
 
+
 let yo = null;
 let otro = null;
 let match = null;
+
+let typingTimer = null;
+
 
 const params =
 new URLSearchParams(location.search);
@@ -234,15 +291,17 @@ function escapeHTML(text){
     .replace(/>/g,"&gt;")
     .replace(/"/g,"&quot;")
     .replace(/'/g,"&#039;");
+
 }
 
 
-function error(mensaje){
+function mostrarError(mensaje){
 
   document.getElementById("mensajes").innerHTML =
   `<div class="error">
     ⚠️ ${escapeHTML(mensaje)}
   </div>`;
+
 }
 
 
@@ -251,7 +310,11 @@ async function iniciar(){
   try{
 
     if(!otro){
-      error("No se recibió el usuario.");
+
+      mostrarError(
+        "No se recibió el usuario."
+      );
+
       return;
     }
 
@@ -264,21 +327,32 @@ async function iniciar(){
     } =
     await supabaseClient.auth.getSession();
 
+
     if(sessionError){
-      error(sessionError.message);
+
+      mostrarError(
+        sessionError.message
+      );
+
       return;
     }
+
 
     yo =
     sessionData.session?.user;
 
+
     if(!yo){
-      error("No hay una sesión iniciada.");
+
+      mostrarError(
+        "No hay una sesión iniciada."
+      );
+
       return;
     }
 
 
-    /* PERFIL */
+    /* PERFIL DEL OTRO USUARIO */
 
     const {
       data:perfil,
@@ -290,36 +364,45 @@ async function iniciar(){
       .eq("id",otro)
       .maybeSingle();
 
+
     if(perfilError){
-      error(
+
+      mostrarError(
         "Error del perfil: " +
         perfilError.message
       );
+
       return;
     }
 
+
     if(!perfil){
-      error("No se encontró el perfil.");
+
+      mostrarError(
+        "No se encontró el perfil."
+      );
+
       return;
     }
+
 
     document.getElementById("nombre")
       .textContent =
       perfil.nombre || "Usuario";
 
+
     if(perfil.foto_url){
+
       document.getElementById("foto").src =
       perfil.foto_url;
+
     }
 
-    document.getElementById("estado")
-      .textContent =
-      perfil.online
-      ? "🟢 En línea"
-      : "Desconectado";
+
+    actualizarEstado(perfil);
 
 
-    /* MATCH */
+    /* BUSCAR MATCH */
 
     const {
       data:matches,
@@ -327,39 +410,65 @@ async function iniciar(){
     } =
     await supabaseClient
       .from("matches")
-      .select("id,user1_id,user2_id")
+      .select(
+        "id,user1_id,user2_id"
+      )
       .or(
-        "and(user1_id.eq." + yo.id +
-        ",user2_id.eq." + otro +
-        "),and(user1_id.eq." + otro +
-        ",user2_id.eq." + yo.id + ")"
+        "and(user1_id.eq." +
+        yo.id +
+        ",user2_id.eq." +
+        otro +
+        "),and(user1_id.eq." +
+        otro +
+        ",user2_id.eq." +
+        yo.id +
+        ")"
       )
       .limit(1);
 
+
     if(matchError){
-      error(
+
+      mostrarError(
         "Error buscando match: " +
         matchError.message
       );
+
       return;
     }
 
-    if(!matches || matches.length===0){
-      error("No existe un match entre estas cuentas.");
+
+    if(!matches || matches.length === 0){
+
+      mostrarError(
+        "No existe un match entre estas cuentas."
+      );
+
       return;
     }
+
 
     match = matches[0];
 
 
-    /* MENSAJES */
+    /* CARGAR MENSAJES */
 
     await cargar();
 
 
+    /* CREAR ESTADO DE TYPING */
+
+    await prepararTyping();
+
+
+    /* TIEMPO REAL */
+
+    iniciarRealtime();
+
+
   }catch(e){
 
-    error(
+    mostrarError(
       "Error inesperado: " +
       e.message
     );
@@ -369,9 +478,55 @@ async function iniciar(){
 }
 
 
+/* ESTADO DEL PERFIL */
+
+function actualizarEstado(perfil){
+
+  const estado =
+  document.getElementById("estado");
+
+
+  if(perfil.online){
+
+    estado.textContent =
+    "🟢 En línea";
+
+  }else{
+
+    if(perfil.last_seen){
+
+      const fecha =
+      new Date(perfil.last_seen);
+
+      estado.textContent =
+      "Última vez " +
+      fecha.toLocaleString(
+        "es-AR",
+        {
+          day:"2-digit",
+          month:"2-digit",
+          hour:"2-digit",
+          minute:"2-digit"
+        }
+      );
+
+    }else{
+
+      estado.textContent =
+      "Desconectado";
+
+    }
+
+  }
+
+}
+
+
+/* CARGAR MENSAJES */
+
 async function cargar(){
 
-  if(!match) return;
+  if(!match || !yo) return;
 
 
   const {
@@ -381,18 +536,23 @@ async function cargar(){
   await supabaseClient
     .from("messages")
     .select(
-      "id,sender_id,content,created_at,read_at"
+      "id,sender_id,content,created_at,read_at,delivered_at"
     )
-    .eq("match_id",match.id)
+    .eq(
+      "match_id",
+      match.id
+    )
     .order(
       "created_at",
-      {ascending:true}
+      {
+        ascending:true
+      }
     );
 
 
   if(msgError){
 
-    error(
+    mostrarError(
       "Error cargando mensajes: " +
       msgError.message
     );
@@ -404,10 +564,11 @@ async function cargar(){
   const contenedor =
   document.getElementById("mensajes");
 
+
   contenedor.innerHTML = "";
 
 
-  if(!data || data.length===0){
+  if(!data || data.length === 0){
 
     contenedor.innerHTML =
     `<div class="loading">
@@ -416,6 +577,7 @@ async function cargar(){
     </div>`;
 
     return;
+
   }
 
 
@@ -424,12 +586,15 @@ async function cargar(){
     const mio =
     m.sender_id === yo.id;
 
+
     const row =
     document.createElement("div");
 
     row.className =
     "row " +
-    (mio ? "mine" : "theirs");
+    (mio
+      ? "mine"
+      : "theirs");
 
 
     const bubble =
@@ -451,12 +616,37 @@ async function cargar(){
     );
 
 
+    let estadoMensaje = "";
+
+
+    if(mio){
+
+      if(m.read_at){
+
+        estadoMensaje =
+        `<span class="read">✓✓</span>`;
+
+      }else if(m.delivered_at){
+
+        estadoMensaje =
+        `<span>✓✓</span>`;
+
+      }else{
+
+        estadoMensaje =
+        `<span>✓</span>`;
+
+      }
+
+    }
+
+
     bubble.innerHTML =
-    escapeHTML(m.content) +
-    `<div class="time">
-      ${hora}
-      ${mio ? (m.read_at ? " ✓✓" : " ✓") : ""}
-    </div>`;
+      escapeHTML(m.content) +
+      `<div class="time">
+        ${hora}
+        ${estadoMensaje}
+      </div>`;
 
 
     row.appendChild(bubble);
@@ -470,13 +660,13 @@ async function cargar(){
   contenedor.scrollHeight;
 
 
-  /* MARCAR COMO LEÍDOS */
+  /* MARCAR MENSAJES RECIBIDOS COMO ENTREGADOS */
 
   const recibidos =
   data.filter(
     m =>
     m.sender_id !== yo.id &&
-    !m.read_at
+    !m.delivered_at
   );
 
 
@@ -485,20 +675,55 @@ async function cargar(){
     await supabaseClient
       .from("messages")
       .update({
+        delivered_at:
+        new Date().toISOString()
+      })
+      .eq(
+        "id",
+        m.id
+      );
+
+  }
+
+
+  /* MARCAR COMO LEÍDOS */
+
+  const noLeidos =
+  data.filter(
+    m =>
+    m.sender_id !== yo.id &&
+    !m.read_at
+  );
+
+
+  for(const m of noLeidos){
+
+    await supabaseClient
+      .from("messages")
+      .update({
         read_at:
         new Date().toISOString()
       })
-      .eq("id",m.id);
+      .eq(
+        "id",
+        m.id
+      );
 
   }
 
 }
 
 
+/* ENVIAR MENSAJE */
+
 async function enviar(){
 
   const input =
   document.getElementById("texto");
+
+  const boton =
+  document.getElementById("botonEnviar");
+
 
   const contenido =
   input.value.trim();
@@ -506,31 +731,43 @@ async function enviar(){
 
   if(!contenido) return;
 
+
   if(!match){
-    alert("El match todavía no está cargado.");
+
+    alert(
+      "El match todavía no está cargado."
+    );
+
     return;
   }
 
 
-  input.disabled = true;
+  boton.disabled = true;
 
 
   const {
-    data,
     error:sendError
   } =
   await supabaseClient
     .from("messages")
     .insert({
-      match_id:match.id,
-      sender_id:yo.id,
-      content:contenido
-    })
-    .select()
-    .single();
+
+      match_id:
+      match.id,
+
+      sender_id:
+      yo.id,
+
+      content:
+      contenido,
+
+      delivered_at:
+      new Date().toISOString()
+
+    });
 
 
-  input.disabled = false;
+  boton.disabled = false;
 
 
   if(sendError){
@@ -546,9 +783,169 @@ async function enviar(){
 
   input.value = "";
 
+
+  await actualizarTyping(false);
+
   await cargar();
 
 }
+
+
+/* TYPING */
+
+async function prepararTyping(){
+
+  if(!match || !yo) return;
+
+
+  const {
+    error
+  } =
+  await supabaseClient
+    .from("typing_status")
+    .upsert(
+      {
+        match_id:match.id,
+        user_id:yo.id,
+        is_typing:false,
+        updated_at:
+        new Date().toISOString()
+      },
+      {
+        onConflict:
+        "match_id,user_id"
+      }
+    );
+
+
+  if(error){
+
+    console.log(
+      "Typing:",
+      error.message
+    );
+
+  }
+
+}
+
+
+async function actualizarTyping(valor){
+
+  if(!match || !yo) return;
+
+
+  await supabaseClient
+    .from("typing_status")
+    .upsert(
+      {
+        match_id:match.id,
+        user_id:yo.id,
+        is_typing:valor,
+        updated_at:
+        new Date().toISOString()
+      },
+      {
+        onConflict:
+        "match_id,user_id"
+      }
+    );
+
+}
+
+
+async function comprobarTyping(){
+
+  if(!match || !yo) return;
+
+
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
+    .from("typing_status")
+    .select(
+      "is_typing,updated_at"
+    )
+    .eq(
+      "match_id",
+      match.id
+    )
+    .eq(
+      "user_id",
+      otro
+    )
+    .maybeSingle();
+
+
+  if(error) return;
+
+
+  const elemento =
+  document.getElementById("typing");
+
+
+  if(
+    data &&
+    data.is_typing &&
+    data.updated_at
+  ){
+
+    const diferencia =
+    Date.now() -
+    new Date(
+      data.updated_at
+    ).getTime();
+
+
+    if(diferencia < 5000){
+
+      elemento.textContent =
+      "✍️ Está escribiendo...";
+
+      return;
+
+    }
+
+  }
+
+
+  elemento.textContent = "";
+
+}
+
+
+/* INPUT TYPING */
+
+document
+.getElementById("texto")
+.addEventListener(
+  "input",
+  async function(){
+
+    await actualizarTyping(
+      this.value.trim().length > 0
+    );
+
+
+    clearTimeout(
+      typingTimer
+    );
+
+
+    typingTimer =
+    setTimeout(
+      async function(){
+
+        await actualizarTyping(false);
+
+      },
+      2500
+    );
+
+  }
+);
 
 
 /* ENTER */
@@ -559,21 +956,81 @@ document
   "keydown",
   function(e){
 
-    if(e.key === "Enter"){
+    if(
+      e.key === "Enter" &&
+      !e.shiftKey
+    ){
+
       e.preventDefault();
+
       enviar();
+
     }
 
   }
 );
 
 
-/* ACTUALIZAR MENSAJES */
+/* REALTIME */
 
-setInterval(
-  cargar,
-  3000
-);
+function iniciarRealtime(){
+
+  supabaseClient
+    .channel(
+      "chat-" + match.id
+    )
+
+    .on(
+      "postgres_changes",
+      {
+        event:"*",
+        schema:"public",
+        table:"messages",
+        filter:
+        "match_id=eq." +
+        match.id
+      },
+      async function(){
+
+        await cargar();
+
+      }
+    )
+
+    .on(
+      "postgres_changes",
+      {
+        event:"*",
+        schema:"public",
+        table:"typing_status",
+        filter:
+        "match_id=eq." +
+        match.id
+      },
+      async function(){
+
+        await comprobarTyping();
+
+      }
+    )
+
+    .subscribe();
+
+
+  /* RESPALDO POR CONSULTA */
+
+  setInterval(
+    async function(){
+
+      await cargar();
+
+      await comprobarTyping();
+
+    },
+    3000
+  );
+
+}
 
 
 /* INICIO */
