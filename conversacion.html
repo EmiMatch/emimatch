@@ -10,19 +10,51 @@
 
   <style>
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
       background: #f5f7fb;
-      padding: 20px;
+      color: #222;
+    }
+
+    header {
+      background: linear-gradient(135deg, #071a3d, #123b78);
+      color: white;
+      padding: 18px;
       text-align: center;
     }
 
     .caja {
       background: white;
-      padding: 25px;
-      border-radius: 15px;
       max-width: 500px;
       margin: 30px auto;
+      padding: 25px;
+      border-radius: 18px;
       box-shadow: 0 3px 15px rgba(0,0,0,.1);
+      text-align: center;
+    }
+
+    .foto {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #ddd;
+      margin-bottom: 15px;
+    }
+
+    .nombre {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .datos {
+      margin-top: 8px;
+      color: #666;
+    }
+
+    .descripcion {
+      margin-top: 20px;
+      line-height: 1.5;
     }
 
     .ok {
@@ -35,29 +67,74 @@
       font-weight: bold;
     }
 
-    .dato {
+    .id {
+      margin-top: 20px;
       background: #f0f2f5;
-      padding: 12px;
+      padding: 10px;
       border-radius: 8px;
       word-break: break-all;
-      margin-top: 15px;
+      font-size: 12px;
+      color: #777;
+    }
+
+    .volver {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 11px 18px;
+      background: #123b78;
+      color: white;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: bold;
     }
   </style>
 </head>
 
 <body>
 
+<header>
+  <h1>💕 EmiMatch</h1>
+  <div>Conversación</div>
+</header>
+
 <div class="caja">
 
-  <h1>💕 EmiMatch</h1>
-
-  <h2>Conversación</h2>
-
   <p id="estado">
-    🔄 Conectando con Supabase...
+    🔄 Cargando perfil...
   </p>
 
-  <div id="usuario" class="dato"></div>
+  <img
+    id="foto"
+    class="foto"
+    src="https://via.placeholder.com/110"
+    alt="Foto de perfil"
+  >
+
+  <div
+    id="nombre"
+    class="nombre">
+  </div>
+
+  <div
+    id="datos"
+    class="datos">
+  </div>
+
+  <div
+    id="descripcion"
+    class="descripcion">
+  </div>
+
+  <div
+    id="idUsuario"
+    class="id">
+  </div>
+
+  <a
+    href="./chat.html"
+    class="volver">
+    ← Volver a Matches
+  </a>
 
 </div>
 
@@ -76,13 +153,10 @@ const supabaseClient =
   );
 
 
-async function probar() {
+async function cargarPerfil() {
 
   const estado =
     document.getElementById("estado");
-
-  const usuario =
-    document.getElementById("usuario");
 
 
   try {
@@ -92,6 +166,7 @@ async function probar() {
         window.location.search
       );
 
+
     const otherUserId =
       params.get("user");
 
@@ -99,26 +174,52 @@ async function probar() {
     if (!otherUserId) {
 
       throw new Error(
-        "No se recibió el ID del usuario."
+        "No se recibió el usuario del Match."
       );
 
     }
 
 
-    usuario.textContent =
-      "Usuario del Match: " +
-      otherUserId;
+    const {
+      data: sessionData,
+      error: sessionError
+    } =
+      await supabaseClient.auth.getSession();
+
+
+    if (sessionError) {
+      throw sessionError;
+    }
+
+
+    if (!sessionData.session) {
+
+      throw new Error(
+        "No hay una sesión activa."
+      );
+
+    }
 
 
     estado.textContent =
-      "🔄 Comprobando sesión...";
+      "🔄 Buscando perfil...";
 
 
     const {
-      data,
+      data: perfil,
       error
     } =
-      await supabaseClient.auth.getSession();
+      await supabaseClient
+
+        .from("profiles")
+
+        .select(
+          "id,nombre,edad,ciudad,descripcion,foto_url,intereses"
+        )
+
+        .eq("id", otherUserId)
+
+        .maybeSingle();
 
 
     if (error) {
@@ -126,25 +227,72 @@ async function probar() {
     }
 
 
-    if (!data.session) {
+    if (!perfil) {
 
       throw new Error(
-        "No hay una sesión iniciada en EmiMatch."
+        "No se encontró el perfil del usuario."
       );
 
     }
 
 
+    document.getElementById("nombre")
+      .textContent =
+        perfil.nombre || "Usuario";
+
+
+    let datos = "";
+
+
+    if (perfil.edad) {
+
+      datos +=
+        perfil.edad + " años";
+
+    }
+
+
+    if (perfil.ciudad) {
+
+      if (datos) {
+        datos += " • ";
+      }
+
+      datos += perfil.ciudad;
+
+    }
+
+
+    document.getElementById("datos")
+      .textContent =
+        datos;
+
+
+    document.getElementById("descripcion")
+      .textContent =
+        perfil.descripcion ||
+        "Sin descripción";
+
+
+    document.getElementById("idUsuario")
+      .textContent =
+        "ID: " + perfil.id;
+
+
+    if (perfil.foto_url) {
+
+      document.getElementById("foto")
+        .src =
+        perfil.foto_url;
+
+    }
+
+
     estado.textContent =
-      "✅ Supabase conectado y sesión activa.";
+      "✅ Perfil cargado correctamente.";
 
     estado.className =
       "ok";
-
-
-    usuario.innerHTML +=
-      "<br><br>Usuario actual:<br>" +
-      data.session.user.id;
 
 
   } catch (error) {
@@ -162,7 +310,7 @@ async function probar() {
 }
 
 
-probar();
+cargarPerfil();
 
 </script>
 
