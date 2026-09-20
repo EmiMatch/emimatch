@@ -1,347 +1,604 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>Descubrir - EmiMatch</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
+
     * {
       box-sizing: border-box;
     }
 
     body {
       margin: 0;
+      min-height: 100vh;
       font-family: Arial, sans-serif;
-      background: #f5f7fb;
-      color: #222;
-    }
-
-    header {
-      background: linear-gradient(135deg, #071a3d, #123b78);
+      background:
+        linear-gradient(
+          135deg,
+          #07152f,
+          #102b55
+        );
       color: white;
-      padding: 18px;
-      text-align: center;
+      padding: 20px;
+      padding-bottom: 105px;
     }
 
-    header h1 {
-      margin: 0;
-      font-size: 25px;
-    }
-
-    header p {
-      margin: 6px 0 0;
-      opacity: .9;
-    }
-
-    .container {
-      max-width: 600px;
+    .contenedor {
+      max-width: 500px;
       margin: auto;
-      padding: 15px;
     }
 
-    .volver {
-      display: block;
-      text-decoration: none;
-      background: white;
-      color: #123b78;
-      padding: 12px;
-      border-radius: 12px;
-      margin-bottom: 15px;
-      font-weight: bold;
+    .cabecera {
       text-align: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,.08);
-    }
-
-    .filtros {
-      background: white;
-      border-radius: 16px;
-      padding: 18px;
-      box-shadow: 0 3px 12px rgba(0,0,0,.08);
       margin-bottom: 18px;
     }
 
-    .filtros h2 {
-      margin-top: 0;
-      color: #123b78;
+    .cabecera h1 {
+      margin: 5px 0;
+      font-size: 30px;
     }
 
-    label {
-      display: block;
-      font-weight: bold;
-      margin-top: 12px;
-      margin-bottom: 5px;
+    .cabecera p {
+      margin: 0;
+      color: #cbd5e1;
     }
 
-    input {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      font-size: 15px;
+    .estado {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 7px 13px;
+      border-radius: 20px;
+      background: rgba(34,197,94,.15);
+      color: #4ade80;
+      font-size: 14px;
     }
 
-    .fila {
-      display: flex;
+    .filtros {
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 20px;
+      padding: 15px;
+      margin-bottom: 18px;
+      backdrop-filter: blur(10px);
+    }
+
+    .filtros h3 {
+      margin: 0 0 12px;
+      font-size: 16px;
+    }
+
+    .filtro-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 10px;
     }
 
-    .fila > div {
-      flex: 1;
+    .filtro {
+      width: 100%;
+      padding: 11px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 14px;
+      outline: none;
     }
 
-    .check {
+    .filtro:focus {
+      border-color: #d4af37;
+    }
+
+    .btn-filtros {
+      width: 100%;
+      margin-top: 10px;
+      padding: 11px;
+      border: none;
+      border-radius: 12px;
+      background: #d4af37;
+      color: #07152f;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .estado-carga {
+      text-align: center;
+      padding: 30px 15px;
+      color: #cbd5e1;
+    }
+
+    .perfil-card {
+      background: white;
+      color: #172033;
+      border-radius: 25px;
+      overflow: hidden;
+      box-shadow: 0 18px 40px rgba(0,0,0,.35);
+    }
+
+    .foto-perfil {
+      width: 100%;
+      height: 390px;
+      object-fit: cover;
+      display: block;
+      background: #e5e7eb;
+    }
+
+    .foto-sin {
+      width: 100%;
+      height: 390px;
+      background:
+        linear-gradient(
+          135deg,
+          #e5e7eb,
+          #cbd5e1
+        );
       display: flex;
       align-items: center;
-      gap: 8px;
-      margin-top: 15px;
+      justify-content: center;
+      font-size: 110px;
     }
 
-    .check input {
-      width: auto;
-    }
-
-    button {
-      border: none;
-      cursor: pointer;
-      border-radius: 10px;
-      padding: 12px 16px;
-      font-weight: bold;
-      font-size: 15px;
-    }
-
-    .btn-principal {
-      width: 100%;
-      background: #123b78;
-      color: white;
-      margin-top: 15px;
-    }
-
-    .btn-limpiar {
-      width: 100%;
-      background: #eee;
-      color: #333;
-      margin-top: 8px;
-    }
-
-    #estado {
-      text-align: center;
-      padding: 18px;
-      font-weight: bold;
-    }
-
-    .error {
-      background: #ffe8e8;
-      color: #a40000;
-      border-radius: 12px;
-      padding: 15px;
-      margin-bottom: 15px;
-      text-align: center;
-    }
-
-    .card {
-      background: white;
-      border-radius: 18px;
-      overflow: hidden;
-      box-shadow: 0 4px 16px rgba(0,0,0,.1);
-      margin-bottom: 20px;
-    }
-
-    .foto {
-      width: 100%;
-      height: 360px;
-      object-fit: cover;
-      background: #ddd;
-    }
-
-    .contenido {
-      padding: 18px;
+    .info {
+      padding: 20px;
     }
 
     .nombre {
-      font-size: 25px;
-      font-weight: bold;
-      color: #123b78;
-    }
-
-    .ciudad {
-      color: #666;
-      margin-top: 5px;
-    }
-
-    .descripcion {
-      margin-top: 12px;
-      line-height: 1.5;
-    }
-
-    .intereses {
-      margin-top: 12px;
-      color: #555;
-    }
-
-    .acciones {
       display: flex;
-      gap: 12px;
-      padding: 0 18px 18px;
-    }
-
-    .btn-pasar {
-      flex: 1;
-      background: #eee;
-    }
-
-    .btn-like {
-      flex: 1;
-      background: #d4af37;
-      color: white;
+      align-items: center;
+      gap: 8px;
+      font-size: 27px;
+      font-weight: bold;
+      margin-bottom: 7px;
     }
 
     .online {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: #22c55e;
       display: inline-block;
-      background: #e2f8e8;
-      color: #16833b;
-      padding: 5px 9px;
-      border-radius: 20px;
-      font-size: 13px;
-      margin-top: 10px;
     }
 
-    .offline {
-      display: inline-block;
-      background: #eee;
-      color: #666;
-      padding: 5px 9px;
-      border-radius: 20px;
-      font-size: 13px;
-      margin-top: 10px;
+    .dato {
+      color: #64748b;
+      margin: 5px 0;
+      font-size: 15px;
     }
 
-    .sin-resultados {
-      background: white;
-      padding: 25px;
+    .descripcion {
+      margin-top: 15px;
+      line-height: 1.5;
+      color: #334155;
+    }
+
+    .intereses {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .interes {
+      padding: 7px 10px;
+      border-radius: 20px;
+      background: #eef2ff;
+      color: #3730a3;
+      font-size: 13px;
+    }
+
+    .acciones {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      padding: 0 20px 20px;
+    }
+
+    .accion {
+      border: none;
       border-radius: 16px;
-      text-align: center;
-      box-shadow: 0 3px 12px rgba(0,0,0,.08);
+      padding: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
     }
 
-    .match {
-      background: linear-gradient(135deg, #071a3d, #123b78);
-      color: white;
-      padding: 25px;
-      border-radius: 18px;
-      text-align: center;
-      margin-bottom: 20px;
+    .pasar {
+      background: #fee2e2;
+      color: #b91c1c;
     }
 
-    .match button {
-      background: #d4af37;
-      color: white;
-      margin-top: 12px;
+    .like {
+      background: #fce7f3;
+      color: #be185d;
     }
+
+    .accion:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+
+    .mensaje {
+      text-align: center;
+      margin: 15px 0;
+      min-height: 20px;
+      color: #cbd5e1;
+    }
+
+    .sin-perfiles {
+      background: rgba(255,255,255,.08);
+      border-radius: 22px;
+      padding: 35px 20px;
+      text-align: center;
+      color: #cbd5e1;
+    }
+
+    .sin-perfiles .emoji {
+      font-size: 55px;
+      margin-bottom: 12px;
+    }
+
+    .limpiar {
+      margin-top: 15px;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 18px;
+      background: rgba(255,255,255,.12);
+      color: white;
+      cursor: pointer;
+    }
+
+    /* NAV INFERIOR */
+
+    .bottom-nav {
+      position: fixed;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      height: 72px;
+      max-width: 500px;
+      margin: auto;
+      z-index: 1000;
+
+      display: grid;
+      grid-template-columns:
+        repeat(5, 1fr);
+
+      background:
+        rgba(7,21,47,.96);
+
+      border:
+        1px solid rgba(255,255,255,.14);
+
+      border-radius: 22px;
+
+      box-shadow:
+        0 12px 35px
+        rgba(0,0,0,.45);
+
+      backdrop-filter: blur(14px);
+    }
+
+    .nav-item {
+      position: relative;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      gap: 3px;
+
+      color: #cbd5e1;
+      text-decoration: none;
+
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    .nav-item .icon {
+      font-size: 22px;
+      line-height: 22px;
+    }
+
+    .nav-item.activo {
+      color: #d4af37;
+    }
+
+    .badge {
+      position: absolute;
+
+      top: 5px;
+      right: 17%;
+
+      min-width: 19px;
+      height: 19px;
+
+      padding: 2px 5px;
+
+      border-radius: 20px;
+
+      background: #ef4444;
+      color: white;
+
+      font-size: 11px;
+
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 95px;
+
+      transform:
+        translateX(-50%)
+        translateY(20px);
+
+      background: #111827;
+      color: white;
+
+      padding: 13px 18px;
+
+      border-radius: 14px;
+
+      opacity: 0;
+      pointer-events: none;
+
+      transition:
+        .25s ease;
+
+      z-index: 2000;
+
+      max-width: 90%;
+      text-align: center;
+    }
+
+    .toast.mostrar {
+      opacity: 1;
+      transform:
+        translateX(-50%)
+        translateY(0);
+    }
+
+    @media (max-width: 400px) {
+
+      body {
+        padding: 12px;
+        padding-bottom: 100px;
+      }
+
+      .foto-perfil,
+      .foto-sin {
+        height: 350px;
+      }
+
+      .bottom-nav {
+        left: 6px;
+        right: 6px;
+      }
+
+      .nav-item {
+        font-size: 10px;
+      }
+
+      .nav-item .icon {
+        font-size: 20px;
+      }
+
+    }
+
   </style>
+
 </head>
 
 <body>
 
-<header>
-  <h1>🔎 Descubrir</h1>
-  <p>Encontrá personas compatibles con vos</p>
-</header>
+<div class="contenedor">
 
-<div class="container">
+  <div class="cabecera">
 
-  <a href="perfil.html" class="volver">
-    ← Volver a mi perfil
-  </a>
+    <h1>🔎 Descubrir</h1>
+
+    <p>
+      Encontrá personas compatibles con vos
+    </p>
+
+    <div class="estado">
+      🟢 En línea
+    </div>
+
+  </div>
+
+
+  <!-- FILTROS -->
 
   <div class="filtros">
 
-    <h2>🎯 Filtrar perfiles</h2>
+    <h3>
+      🎯 Filtros
+    </h3>
 
-    <div class="fila">
-
-      <div>
-        <label>Edad mínima</label>
-        <input
-          type="number"
-          id="edadMin"
-          value="18"
-          min="18"
-          max="100"
-        >
-      </div>
-
-      <div>
-        <label>Edad máxima</label>
-        <input
-          type="number"
-          id="edadMax"
-          value="80"
-          min="18"
-          max="100"
-        >
-      </div>
-
-    </div>
-
-    <label>📍 Ciudad</label>
-
-    <input
-      type="text"
-      id="ciudadFiltro"
-      placeholder="Ej: Buenos Aires"
-    >
-
-    <label>❤️ Intereses</label>
-
-    <input
-      type="text"
-      id="interesesFiltro"
-      placeholder="Ej: fútbol, música, viajes"
-    >
-
-    <div class="check">
+    <div class="filtro-grid">
 
       <input
-        type="checkbox"
-        id="soloOnline"
+        id="edadMin"
+        class="filtro"
+        type="number"
+        min="18"
+        max="100"
+        placeholder="Edad mínima"
       >
 
-      <label
-        for="soloOnline"
-        style="margin:0;"
+      <input
+        id="edadMax"
+        class="filtro"
+        type="number"
+        min="18"
+        max="100"
+        placeholder="Edad máxima"
       >
-        🟢 Mostrar solamente personas online
-      </label>
+
+      <input
+        id="ciudadFiltro"
+        class="filtro"
+        type="text"
+        placeholder="Ciudad"
+      >
+
+      <select
+        id="estadoFiltro"
+        class="filtro"
+      >
+
+        <option value="todos">
+          Todos
+        </option>
+
+        <option value="online">
+          🟢 En línea
+        </option>
+
+      </select>
 
     </div>
 
     <button
-      class="btn-principal"
+      class="btn-filtros"
       onclick="aplicarFiltros()"
     >
       🔎 Aplicar filtros
     </button>
 
-    <button
-      class="btn-limpiar"
-      onclick="limpiarFiltros()"
-    >
-      🧹 Limpiar
-    </button>
-
   </div>
 
-  <div id="estado">
-    ⏳ Cargando EmiMatch...
+
+  <!-- CONTENIDO -->
+
+  <div
+    id="contenido"
+    class="estado-carga"
+  >
+    ⏳ Cargando perfiles...
   </div>
 
-  <div id="resultado"></div>
+
+  <div
+    id="mensaje"
+    class="mensaje"
+  ></div>
 
 </div>
+
+
+<!-- NAV INFERIOR -->
+
+<nav class="bottom-nav">
+
+  <a
+    class="nav-item"
+    href="./perfil.html"
+  >
+
+    <span class="icon">
+      👤
+    </span>
+
+    <span>
+      Perfil
+    </span>
+
+  </a>
+
+
+  <a
+    class="nav-item activo"
+    href="./descubrir.html"
+  >
+
+    <span class="icon">
+      🔎
+    </span>
+
+    <span>
+      Descubrir
+    </span>
+
+  </a>
+
+
+  <a
+    class="nav-item"
+    href="./likes.html"
+  >
+
+    <span class="icon">
+      ❤️
+    </span>
+
+    <span>
+      Me gustas
+    </span>
+
+  </a>
+
+
+  <a
+    class="nav-item"
+    href="./chat.html"
+  >
+
+    <span class="icon">
+      💕
+    </span>
+
+    <span>
+      Matches
+    </span>
+
+  </a>
+
+
+  <a
+    class="nav-item"
+    href="./notificaciones.html"
+  >
+
+    <span class="icon">
+      🔔
+    </span>
+
+    <span>
+      Notificaciones
+    </span>
+
+    <span
+      id="badgeNotificaciones"
+      class="badge"
+    >
+      0
+    </span>
+
+  </a>
+
+</nav>
+
+
+<div
+  id="toast"
+  class="toast"
+></div>
+
 
 <script>
 
@@ -351,123 +608,65 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
   "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
 
-let supabaseClient;
+
+const supabaseClient =
+  supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
 
 let usuarioActual = null;
 
 let perfiles = [];
 
+let perfilesFiltrados = [];
+
 let indiceActual = 0;
 
+let bloqueados = new Set();
 
-/* =========================
-   INICIAR SUPABASE
-========================= */
-
-function iniciarSupabase() {
-
-  if (
-    typeof window.supabase === "undefined"
-  ) {
-
-    mostrarError(
-      "No se pudo cargar Supabase. Revisá tu conexión a Internet."
-    );
-
-    return false;
-  }
-
-  supabaseClient =
-    window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    );
-
-  return true;
-}
-
-
-/* =========================
-   MOSTRAR ERROR
-========================= */
-
-function mostrarError(mensaje) {
-
-  document.getElementById("estado").innerHTML =
-    "";
-
-  document.getElementById("resultado").innerHTML =
-
-    `<div class="error">
-      ❌ ${mensaje}
-    </div>`;
-
-}
+let swipesRealizados = new Set();
 
 
 /* =========================
    INICIO
 ========================= */
 
-async function iniciarEmiMatch() {
+async function iniciar() {
 
   try {
 
-    document.getElementById("estado").innerHTML =
-      "⏳ Verificando sesión...";
-
-
-    if (!iniciarSupabase()) {
-      return;
-    }
-
-
     const {
-      data,
-      error
+      data: {
+        session
+      }
     } =
-      await supabaseClient.auth.getSession();
+      await supabaseClient
+        .auth
+        .getSession();
 
 
-    if (error) {
+    if (!session) {
 
-      mostrarError(
-        "Error al verificar la sesión: " +
-        error.message
-      );
-
-      return;
-    }
-
-
-    if (!data.session) {
-
-      document.getElementById("estado").innerHTML =
-        "";
-
-      document.getElementById("resultado").innerHTML =
-
-        `<div class="error">
-          🔐 Tenés que iniciar sesión para descubrir perfiles.
-          <br><br>
-          <a href="index.html">
-            Iniciar sesión
-          </a>
-        </div>`;
+      window.location.href =
+        "./index.html";
 
       return;
     }
 
 
     usuarioActual =
-      data.session.user;
+      session.user;
 
 
-    document.getElementById("estado").innerHTML =
-      "⏳ Cargando perfiles...";
+    await cargarBloqueados();
 
+    await cargarSwipes();
 
     await cargarPerfiles();
+
+    await cargarNotificaciones();
 
   }
 
@@ -476,8 +675,7 @@ async function iniciarEmiMatch() {
     console.error(error);
 
     mostrarError(
-      "Error inesperado: " +
-      error.message
+      "No se pudo iniciar EmiMatch."
     );
 
   }
@@ -486,143 +684,195 @@ async function iniciarEmiMatch() {
 
 
 /* =========================
-   CARGAR PERFILES
+   BLOQUEADOS
+========================= */
+
+async function cargarBloqueados() {
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("user_blocks")
+      .select(
+        "blocker_id, blocked_id"
+      )
+      .or(
+        `blocker_id.eq.${usuarioActual.id},blocked_id.eq.${usuarioActual.id}`
+      );
+
+
+  if (error) {
+
+    console.error(
+      "Error cargando bloqueados:",
+      error
+    );
+
+    return;
+  }
+
+
+  bloqueados =
+    new Set();
+
+
+  (data || []).forEach(
+    bloqueo => {
+
+      if (
+        bloqueo.blocker_id ===
+        usuarioActual.id
+      ) {
+
+        bloqueados.add(
+          bloqueo.blocked_id
+        );
+
+      }
+      else {
+
+        bloqueados.add(
+          bloqueo.blocker_id
+        );
+
+      }
+
+    }
+  );
+
+}
+
+
+/* =========================
+   SWIPES
+========================= */
+
+async function cargarSwipes() {
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("swipes")
+      .select(
+        "target_user_id, action"
+      )
+      .eq(
+        "user_id",
+        usuarioActual.id
+      );
+
+
+  if (error) {
+
+    console.error(
+      "Error cargando swipes:",
+      error
+    );
+
+    return;
+  }
+
+
+  swipesRealizados =
+    new Set(
+      (data || []).map(
+        swipe =>
+          swipe.target_user_id
+      )
+    );
+
+}
+
+
+/* =========================
+   PERFILES
 ========================= */
 
 async function cargarPerfiles() {
 
-  try {
-
-    const {
-      data,
-      error
-    } =
-      await supabaseClient
-        .from("profiles")
-        .select("*")
-        .neq("id", usuarioActual.id);
+  mostrarCarga(
+    "⏳ Buscando personas..."
+  );
 
 
-    if (error) {
-
-      console.error(error);
-
-      mostrarError(
-        "No se pudieron cargar los perfiles: " +
-        error.message
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("profiles")
+      .select(
+        `
+        id,
+        nombre,
+        edad,
+        ciudad,
+        descripcion,
+        foto_url,
+        intereses,
+        online,
+        last_seen
+        `
+      )
+      .neq(
+        "id",
+        usuarioActual.id
+      )
+      .order(
+        "created_at",
+        {
+          ascending: false
+        }
       );
 
-      return;
-    }
 
-
-    perfiles = data || [];
-
-
-    /* =========================
-       BLOQUEADOS
-    ========================= */
-
-    const {
-      data: bloqueos,
-      error: errorBloqueos
-    } =
-      await supabaseClient
-        .from("user_blocks")
-        .select("blocker_id, blocked_id");
-
-
-    if (!errorBloqueos && bloqueos) {
-
-      const bloqueados =
-        new Set();
-
-      bloqueos.forEach(b => {
-
-        if (
-          b.blocker_id === usuarioActual.id
-        ) {
-
-          bloqueados.add(
-            b.blocked_id
-          );
-
-        }
-
-        if (
-          b.blocked_id === usuarioActual.id
-        ) {
-
-          bloqueados.add(
-            b.blocker_id
-          );
-
-        }
-
-      });
-
-
-      perfiles =
-        perfiles.filter(
-          p => !bloqueados.has(p.id)
-        );
-
-    }
-
-
-    /* =========================
-       SWIPES
-    ========================= */
-
-    const {
-      data: swipes,
-      error: errorSwipes
-    } =
-      await supabaseClient
-        .from("swipes")
-        .select(
-          "target_user_id, action"
-        )
-        .eq(
-          "user_id",
-          usuarioActual.id
-        );
-
-
-    if (!errorSwipes && swipes) {
-
-      const yaVistos =
-        new Set(
-          swipes.map(
-            s => s.target_user_id
-          )
-        );
-
-
-      perfiles =
-        perfiles.filter(
-          p => !yaVistos.has(p.id)
-        );
-
-    }
-
-
-    indiceActual = 0;
-
-    aplicarFiltros();
-
-  }
-
-  catch (error) {
+  if (error) {
 
     console.error(error);
 
     mostrarError(
-      "Error cargando perfiles: " +
-      error.message
+      "No se pudieron cargar los perfiles."
     );
 
+    return;
   }
+
+
+  perfiles =
+    (data || []).filter(
+      perfil => {
+
+        if (
+          bloqueados.has(
+            perfil.id
+          )
+        ) {
+
+          return false;
+        }
+
+
+        if (
+          swipesRealizados.has(
+            perfil.id
+          )
+        ) {
+
+          return false;
+        }
+
+
+        return true;
+
+      }
+    );
+
+
+  aplicarFiltros();
 
 }
 
@@ -633,16 +883,6 @@ async function cargarPerfiles() {
 
 function aplicarFiltros() {
 
-  if (!perfiles.length) {
-
-    mostrarSinResultados(
-      "No hay perfiles disponibles."
-    );
-
-    return;
-  }
-
-
   const edadMin =
     parseInt(
       document.getElementById(
@@ -667,63 +907,27 @@ function aplicarFiltros() {
       .toLowerCase();
 
 
-  const intereses =
+  const estado =
     document.getElementById(
-      "interesesFiltro"
-    ).value
-      .trim()
-      .toLowerCase();
+      "estadoFiltro"
+    ).value;
 
 
-  const soloOnline =
-    document.getElementById(
-      "soloOnline"
-    ).checked;
+  perfilesFiltrados =
+    perfiles.filter(
+      perfil => {
 
-
-  const filtrados =
-    perfiles.filter(p => {
-
-      const edad =
-        Number(p.edad) || 0;
-
-
-      if (
-        edad < edadMin ||
-        edad > edadMax
-      ) {
-
-        return false;
-
-      }
-
-
-      if (
-        ciudad &&
-        !String(
-          p.ciudad || ""
-        )
-        .toLowerCase()
-        .includes(ciudad)
-      ) {
-
-        return false;
-
-      }
-
-
-      if (intereses) {
-
-        const textoIntereses =
-          String(
-            p.intereses || ""
-          )
-          .toLowerCase();
+        const edad =
+          Number(
+            perfil.edad
+          );
 
 
         if (
-          !textoIntereses.includes(
-            intereses
+          edad &&
+          (
+            edad < edadMin ||
+            edad > edadMax
           )
         ) {
 
@@ -731,40 +935,42 @@ function aplicarFiltros() {
 
         }
 
+
+        if (
+          ciudad &&
+          !String(
+            perfil.ciudad || ""
+          )
+            .toLowerCase()
+            .includes(
+              ciudad
+            )
+        ) {
+
+          return false;
+
+        }
+
+
+        if (
+          estado === "online" &&
+          !perfil.online
+        ) {
+
+          return false;
+
+        }
+
+
+        return true;
+
       }
-
-
-      if (
-        soloOnline &&
-        p.online !== true
-      ) {
-
-        return false;
-
-      }
-
-
-      return true;
-
-    });
-
-
-  if (!filtrados.length) {
-
-    mostrarSinResultados(
-      "No encontramos perfiles con esos filtros."
     );
-
-    return;
-
-  }
 
 
   indiceActual = 0;
 
-  mostrarPerfil(
-    filtrados
-  );
+  mostrarPerfil();
 
 }
 
@@ -773,114 +979,226 @@ function aplicarFiltros() {
    MOSTRAR PERFIL
 ========================= */
 
-function mostrarPerfil(lista) {
+function mostrarPerfil() {
 
-  if (
-    indiceActual >=
-    lista.length
-  ) {
-
-    mostrarSinResultados(
-      "Ya viste todos los perfiles disponibles."
+  const contenido =
+    document.getElementById(
+      "contenido"
     );
 
+
+  if (
+    !perfilesFiltrados.length ||
+    indiceActual >=
+      perfilesFiltrados.length
+  ) {
+
+    contenido.innerHTML = `
+
+      <div class="sin-perfiles">
+
+        <div class="emoji">
+          🔎
+        </div>
+
+        <h2>
+          No hay perfiles disponibles.
+        </h2>
+
+        <p>
+          Probá cambiar los filtros
+          o volvé más tarde.
+        </p>
+
+        <button
+          class="limpiar"
+          onclick="limpiarFiltros()"
+        >
+          🧹 Limpiar filtros
+        </button>
+
+      </div>
+
+    `;
+
     return;
+  }
+
+
+  const perfil =
+    perfilesFiltrados[
+      indiceActual
+    ];
+
+
+  const nombre =
+    escaparHTML(
+      perfil.nombre ||
+      "Usuario"
+    );
+
+
+  const edad =
+    perfil.edad
+      ? `, ${perfil.edad}`
+      : "";
+
+
+  const ciudad =
+    perfil.ciudad
+      ? `📍 ${escaparHTML(
+          perfil.ciudad
+        )}`
+      : "";
+
+
+  const descripcion =
+    escaparHTML(
+      perfil.descripcion ||
+      "Sin descripción."
+    );
+
+
+  let interesesHTML = "";
+
+
+  if (
+    perfil.intereses
+  ) {
+
+    const intereses =
+      String(
+        perfil.intereses
+      )
+        .split(",")
+        .map(
+          item =>
+            item.trim()
+        )
+        .filter(Boolean);
+
+
+    interesesHTML =
+      intereses
+        .map(
+          interes =>
+            `
+              <span class="interes">
+                ${escaparHTML(
+                  interes
+                )}
+              </span>
+            `
+        )
+        .join("");
 
   }
 
 
-  const p =
-    lista[indiceActual];
+  let fotoHTML;
 
 
-  const foto =
-    p.foto_url ||
-    "https://via.placeholder.com/600x600?text=EmiMatch";
+  if (
+    perfil.foto_url
+  ) {
 
-
-  const estadoOnline =
-    p.online === true
-      ? `<span class="online">🟢 En línea</span>`
-      : `<span class="offline">⚪ Desconectado</span>`;
-
-
-  document.getElementById(
-    "estado"
-  ).innerHTML =
-    `Perfil ${indiceActual + 1} de ${lista.length}`;
-
-
-  document.getElementById(
-    "resultado"
-  ).innerHTML =
-
-    `
-    <div class="card">
+    fotoHTML = `
 
       <img
-        class="foto"
-        src="${foto}"
-        alt="Foto de ${p.nombre || "usuario"}"
-        onerror="this.src='https://via.placeholder.com/600x600?text=EmiMatch'"
+        class="foto-perfil"
+        src="${escaparHTML(
+          perfil.foto_url
+        )}"
+        alt="Foto de ${nombre}"
+        onerror="
+          this.style.display='none';
+          document.getElementById('fotoSin').style.display='flex';
+        "
       >
 
-      <div class="contenido">
+      <div
+        id="fotoSin"
+        class="foto-sin"
+        style="display:none;"
+      >
+        👤
+      </div>
+
+    `;
+
+  }
+  else {
+
+    fotoHTML = `
+
+      <div class="foto-sin">
+        👤
+      </div>
+
+    `;
+
+  }
+
+
+  contenido.innerHTML = `
+
+    <div class="perfil-card">
+
+      ${fotoHTML}
+
+      <div class="info">
 
         <div class="nombre">
 
-          ${escapeHtml(
-            p.nombre || "Sin nombre"
-          )}
+          ${nombre}${edad}
 
-          ${p.edad
-            ? ", " + escapeHtml(p.edad)
-            : ""
+          ${
+            perfil.online
+              ? '<span class="online"></span>'
+              : ''
           }
 
         </div>
 
-        <div class="ciudad">
-
-          📍 ${escapeHtml(
-            p.ciudad || "Sin ciudad"
-          )}
-
-        </div>
-
-        ${estadoOnline}
+        ${
+          ciudad
+            ? `
+              <div class="dato">
+                ${ciudad}
+              </div>
+            `
+            : ''
+        }
 
         <div class="descripcion">
-
-          ${escapeHtml(
-            p.descripcion ||
-            "Sin descripción."
-          )}
-
+          ${descripcion}
         </div>
 
-        <div class="intereses">
-
-          ❤️ ${escapeHtml(
-            p.intereses ||
-            "Sin intereses indicados."
-          )}
-
-        </div>
+        ${
+          interesesHTML
+            ? `
+              <div class="intereses">
+                ${interesesHTML}
+              </div>
+            `
+            : ''
+        }
 
       </div>
+
 
       <div class="acciones">
 
         <button
-          class="btn-pasar"
-          onclick="pasar()"
+          class="accion pasar"
+          onclick="registrarSwipe('pass')"
         >
           ❌ Pasar
         </button>
 
         <button
-          class="btn-like"
-          onclick="darLike()"
+          class="accion like"
+          onclick="registrarSwipe('like')"
         >
           ❤️ Me gusta
         </button>
@@ -888,104 +1206,46 @@ function mostrarPerfil(lista) {
       </div>
 
     </div>
-    `;
+
+  `;
 
 }
 
 
 /* =========================
-   ESCAPE HTML
-========================= */
-
-function escapeHtml(valor) {
-
-  return String(valor)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-
-}
-
-
-/* =========================
-   PASAR
-========================= */
-
-async function pasar() {
-
-  await registrarSwipe(
-    "pass"
-  );
-
-}
-
-
-/* =========================
-   LIKE
-========================= */
-
-async function darLike() {
-
-  await registrarSwipe(
-    "like"
-  );
-
-}
-
-
-/* =========================
-   REGISTRAR SWIPE
+   SWIPE
 ========================= */
 
 async function registrarSwipe(
   accion
 ) {
 
-  if (!usuarioActual) {
+  if (
+    indiceActual >=
+    perfilesFiltrados.length
+  ) {
+
     return;
+
   }
 
 
-  const tarjetas =
-    document.querySelectorAll(
-      ".card"
-    );
-
-
-  if (!tarjetas.length) {
-    return;
-  }
-
-
-  const estadoAnterior =
-    document.getElementById(
-      "estado"
-    ).innerHTML;
-
-
-  document.getElementById(
-    "estado"
-  ).innerHTML =
-    "⏳ Guardando...";
-
-
-  const nombre =
-    document.querySelector(
-      ".nombre"
-    )?.innerText || "";
-
-
-  const perfilActual =
-    perfiles[
+  const perfil =
+    perfilesFiltrados[
       indiceActual
     ];
 
 
-  if (!perfilActual) {
-    return;
-  }
+  const botones =
+    document.querySelectorAll(
+      ".accion"
+    );
+
+
+  botones.forEach(
+    boton =>
+      boton.disabled = true
+  );
 
 
   const {
@@ -993,36 +1253,31 @@ async function registrarSwipe(
   } =
     await supabaseClient
       .from("swipes")
-      .upsert(
-        {
-          user_id:
-            usuarioActual.id,
+      .insert({
 
-          target_user_id:
-            perfilActual.id,
+        user_id:
+          usuarioActual.id,
 
-          action:
-            accion
-        },
-        {
-          onConflict:
-            "user_id,target_user_id"
-        }
-      );
+        target_user_id:
+          perfil.id,
+
+        action:
+          accion
+
+      });
 
 
   if (error) {
 
     console.error(error);
 
-    document.getElementById(
-      "estado"
-    ).innerHTML =
-      estadoAnterior;
+    botones.forEach(
+      boton =>
+        boton.disabled = false
+    );
 
-    mostrarError(
-      "No se pudo guardar la acción: " +
-      error.message
+    mostrarToast(
+      "No se pudo guardar la acción."
     );
 
     return;
@@ -1030,144 +1285,25 @@ async function registrarSwipe(
   }
 
 
+  swipesRealizados.add(
+    perfil.id
+  );
+
+
   if (
     accion === "like"
   ) {
 
-    const {
-      data: match
-    } =
-      await supabaseClient
-        .from("matches")
-        .select("id")
-        .or(
-          `and(user1_id.eq.${usuarioActual.id},user2_id.eq.${perfilActual.id}),and(user1_id.eq.${perfilActual.id},user2_id.eq.${usuarioActual.id})`
-        )
-        .limit(1);
-
-
-    if (
-      match &&
-      match.length
-    ) {
-
-      mostrarMatch(
-        perfilActual
-      );
-
-      return;
-
-    }
+    await comprobarMatch(
+      perfil.id
+    );
 
   }
 
 
   indiceActual++;
 
-  avanzar();
-
-}
-
-
-/* =========================
-   SIGUIENTE
-========================= */
-
-function avanzar() {
-
-  const ciudad =
-    document.getElementById(
-      "ciudadFiltro"
-    ).value
-      .trim()
-      .toLowerCase();
-
-
-  const intereses =
-    document.getElementById(
-      "interesesFiltro"
-    ).value
-      .trim()
-      .toLowerCase();
-
-
-  const edadMin =
-    parseInt(
-      document.getElementById(
-        "edadMin"
-      ).value
-    ) || 18;
-
-
-  const edadMax =
-    parseInt(
-      document.getElementById(
-        "edadMax"
-      ).value
-    ) || 100;
-
-
-  const soloOnline =
-    document.getElementById(
-      "soloOnline"
-    ).checked;
-
-
-  const filtrados =
-    perfiles.filter(p => {
-
-      const edad =
-        Number(p.edad) || 0;
-
-
-      if (
-        edad < edadMin ||
-        edad > edadMax
-      ) {
-        return false;
-      }
-
-
-      if (
-        ciudad &&
-        !String(
-          p.ciudad || ""
-        )
-        .toLowerCase()
-        .includes(ciudad)
-      ) {
-        return false;
-      }
-
-
-      if (
-        intereses &&
-        !String(
-          p.intereses || ""
-        )
-        .toLowerCase()
-        .includes(intereses)
-      ) {
-        return false;
-      }
-
-
-      if (
-        soloOnline &&
-        p.online !== true
-      ) {
-        return false;
-      }
-
-
-      return true;
-
-    });
-
-
-  mostrarPerfil(
-    filtrados
-  );
+  mostrarPerfil();
 
 }
 
@@ -1176,104 +1312,54 @@ function avanzar() {
    MATCH
 ========================= */
 
-function mostrarMatch(
-  perfil
+async function comprobarMatch(
+  targetId
 ) {
 
-  document.getElementById(
-    "estado"
-  ).innerHTML =
-    "";
-
-  document.getElementById(
-    "resultado"
-  ).innerHTML =
-
-    `
-    <div class="match">
-
-      <h2>💕 ¡Es un Match!</h2>
-
-      <p>
-        Vos y
-        <strong>
-          ${escapeHtml(
-            perfil.nombre || "esta persona"
-          )}
-        </strong>
-        se gustan.
-      </p>
-
-      <button
-        onclick="window.location.href='chat.html'"
-      >
-        💬 Ver mis Matches
-      </button>
-
-      <br>
-
-      <button
-        onclick="continuarDescubriendo()"
-      >
-        🔎 Seguir descubriendo
-      </button>
-
-    </div>
-    `;
-
-}
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("matches")
+      .select(
+        "id"
+      )
+      .or(
+        `and(user1_id.eq.${usuarioActual.id},user2_id.eq.${targetId}),and(user1_id.eq.${targetId},user2_id.eq.${usuarioActual.id})`
+      )
+      .limit(1);
 
 
-/* =========================
-   CONTINUAR
-========================= */
+  if (error) {
 
-function continuarDescubriendo() {
+    console.error(
+      "Error comprobando match:",
+      error
+    );
 
-  indiceActual++;
+    return;
 
-  avanzar();
-
-}
+  }
 
 
-/* =========================
-   SIN RESULTADOS
-========================= */
+  if (
+    data &&
+    data.length
+  ) {
 
-function mostrarSinResultados(
-  mensaje
-) {
+    mostrarToast(
+      "💕 ¡Es un Match! Ya pueden hablar."
+    );
 
-  document.getElementById(
-    "estado"
-  ).innerHTML =
-    "";
+  }
+  else {
 
-  document.getElementById(
-    "resultado"
-  ).innerHTML =
+    mostrarToast(
+      "❤️ Me gusta enviado"
+    );
 
-    `
-    <div class="sin-resultados">
-
-      <h2>🔎</h2>
-
-      <p>
-        ${escapeHtml(
-          mensaje
-        )}
-      </p>
-
-      <button
-        class="btn-principal"
-        onclick="limpiarFiltros()"
-      >
-        🧹 Limpiar filtros
-      </button>
-
-    </div>
-    `;
+  }
 
 }
 
@@ -1286,30 +1372,20 @@ function limpiarFiltros() {
 
   document.getElementById(
     "edadMin"
-  ).value = 18;
-
+  ).value = "";
 
   document.getElementById(
     "edadMax"
-  ).value = 80;
-
+  ).value = "";
 
   document.getElementById(
     "ciudadFiltro"
   ).value = "";
 
-
   document.getElementById(
-    "interesesFiltro"
-  ).value = "";
+    "estadoFiltro"
+  ).value = "todos";
 
-
-  document.getElementById(
-    "soloOnline"
-  ).checked = false;
-
-
-  indiceActual = 0;
 
   aplicarFiltros();
 
@@ -1317,19 +1393,69 @@ function limpiarFiltros() {
 
 
 /* =========================
-   INICIAR
+   NOTIFICACIONES
 ========================= */
 
-document.addEventListener(
-  "DOMContentLoaded",
-  function() {
+async function cargarNotificaciones() {
 
-    iniciarEmiMatch();
+  try {
 
-  }
-);
+    const {
+      data: matches,
+      error
+    } =
+      await supabaseClient
+        .from("matches")
+        .select(
+          "id, user1_id, user2_id"
+        )
+        .or(
+          `user1_id.eq.${usuarioActual.id},user2_id.eq.${usuarioActual.id}`
+        );
 
-</script>
 
-</body>
-</html>
+    if (error) {
+
+      console.error(
+        "Error matches:",
+        error
+      );
+
+      return;
+
+    }
+
+
+    if (
+      !matches ||
+      !matches.length
+    ) {
+
+      return;
+
+    }
+
+
+    const matchIds =
+      matches.map(
+        match =>
+          match.id
+      );
+
+
+    const {
+      data: mensajes,
+      error: errorMensajes
+    } =
+      await supabaseClient
+        .from("messages")
+        .select(
+          "id"
+        )
+        .in(
+          "match_id",
+          matchIds
+        )
+        .neq(
+          "sender_id",
+          usuarioActua
