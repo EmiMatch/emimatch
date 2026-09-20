@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
+
     * {
       box-sizing: border-box;
     }
@@ -19,12 +21,13 @@
       min-height: 100vh;
       background: linear-gradient(135deg, #667eea, #764ba2);
       color: #222;
+      padding-bottom: 95px;
     }
 
     .contenedor {
       max-width: 600px;
       margin: auto;
-      padding: 20px 15px 40px;
+      padding: 20px 15px 30px;
     }
 
     .cabecera {
@@ -57,6 +60,11 @@
       cursor: pointer;
       box-shadow: 0 6px 18px rgba(0,0,0,.12);
       position: relative;
+      transition: transform .15s;
+    }
+
+    .notificacion:active {
+      transform: scale(.98);
     }
 
     .foto {
@@ -119,19 +127,68 @@
       color: #c62828;
     }
 
-    .volver {
-      width: 100%;
-      border: none;
-      background: white;
-      color: #764ba2;
-      padding: 14px;
-      border-radius: 15px;
-      font-size: 16px;
-      font-weight: bold;
-      margin-top: 8px;
-      cursor: pointer;
+    /* =========================
+       NAVEGACIÓN
+    ========================= */
+
+    .navegacion {
+      position: fixed;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 20px);
+      max-width: 600px;
+      background: rgba(255,255,255,.97);
+      border-radius: 22px;
+      box-shadow: 0 8px 30px rgba(0,0,0,.25);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 10px 5px;
+      z-index: 9999;
+      backdrop-filter: blur(10px);
     }
+
+    .nav-item {
+      position: relative;
+      flex: 1;
+      text-align: center;
+      text-decoration: none;
+      color: #777;
+      font-size: 11px;
+      font-weight: bold;
+      padding: 4px 2px;
+    }
+
+    .nav-item .icono {
+      display: block;
+      font-size: 22px;
+      line-height: 25px;
+      margin-bottom: 2px;
+    }
+
+    .nav-item.activo {
+      color: #764ba2;
+    }
+
+    .badge {
+      position: absolute;
+      top: -2px;
+      right: 25%;
+      min-width: 17px;
+      height: 17px;
+      padding: 0 4px;
+      border-radius: 20px;
+      background: #ff3040;
+      color: white;
+      font-size: 10px;
+      line-height: 17px;
+      font-weight: bold;
+      display: none;
+    }
+
   </style>
+
 </head>
 
 <body>
@@ -139,21 +196,85 @@
 <div class="contenedor">
 
   <div class="cabecera">
+
     <h1>🔔 Notificaciones</h1>
-    <p>Tus mensajes y novedades</p>
+
+    <p>
+      Tus mensajes y novedades
+    </p>
+
   </div>
 
+
   <div id="lista">
+
     <div class="cargando">
       Cargando notificaciones...
     </div>
+
   </div>
 
-  <button class="volver" onclick="volver()">
-    ← Volver
-  </button>
-
 </div>
+
+
+<!-- =========================
+     NAVEGACIÓN
+========================= -->
+
+<nav class="navegacion">
+
+  <a href="./perfil.html"
+     class="nav-item">
+
+    <span class="icono">👤</span>
+    Perfil
+
+  </a>
+
+
+  <a href="./descubrir.html"
+     class="nav-item">
+
+    <span class="icono">🔎</span>
+    Descubrir
+
+  </a>
+
+
+  <a href="./likes.html"
+     class="nav-item">
+
+    <span class="icono">❤️</span>
+    Me gustas
+
+  </a>
+
+
+  <a href="./chat.html"
+     class="nav-item">
+
+    <span class="icono">💕</span>
+    Matches
+
+  </a>
+
+
+  <a href="./notificaciones.html"
+     class="nav-item activo">
+
+    <span class="icono">🔔</span>
+    Notificaciones
+
+    <span
+      id="badgeNotificaciones"
+      class="badge">
+      0
+    </span>
+
+  </a>
+
+</nav>
+
 
 <script>
 
@@ -163,11 +284,13 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
 "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
 
+
 const supabaseClient =
 supabase.createClient(
   SUPABASE_URL,
   SUPABASE_KEY
 );
+
 
 let usuarioActual = null;
 
@@ -181,20 +304,26 @@ async function iniciar() {
   const { data } =
     await supabaseClient.auth.getSession();
 
+
   if (!data.session) {
 
     window.location.href =
       "./index.html";
 
     return;
+
   }
+
 
   usuarioActual =
     data.session.user;
 
+
   await cargarNotificaciones();
 
   escucharMensajes();
+
+  actualizarBadge();
 
 }
 
@@ -208,6 +337,7 @@ async function cargarNotificaciones() {
   const lista =
     document.getElementById("lista");
 
+
   const { data: matches, error } =
     await supabaseClient
       .from("matches")
@@ -216,29 +346,37 @@ async function cargarNotificaciones() {
         `user1_id.eq.${usuarioActual.id},user2_id.eq.${usuarioActual.id}`
       );
 
+
   if (error) {
 
     console.error(error);
 
-    lista.innerHTML =
-      `<div class="error">
+    lista.innerHTML = `
+      <div class="error">
         No se pudieron cargar las notificaciones.
-      </div>`;
+      </div>
+    `;
 
     return;
+
   }
+
 
   if (!matches || matches.length === 0) {
 
-    lista.innerHTML =
-      `<div class="vacio">
+    lista.innerHTML = `
+      <div class="vacio">
         🔔 No tenés notificaciones todavía.
-      </div>`;
+      </div>
+    `;
 
     return;
+
   }
 
+
   let notificaciones = [];
+
 
   for (const match of matches) {
 
@@ -247,6 +385,10 @@ async function cargarNotificaciones() {
         ? match.user2_id
         : match.user1_id;
 
+
+    /* =========================
+       MENSAJES DEL OTRO USUARIO
+    ========================= */
 
     const { data: mensajes } =
       await supabaseClient
@@ -262,10 +404,17 @@ async function cargarNotificaciones() {
         .limit(20);
 
 
-    if (!mensajes || mensajes.length === 0) {
+    if (!mensajes ||
+        mensajes.length === 0) {
+
       continue;
+
     }
 
+
+    /* =========================
+       PERFIL
+    ========================= */
 
     const { data: perfil } =
       await supabaseClient
@@ -277,16 +426,23 @@ async function cargarNotificaciones() {
         .single();
 
 
+    /* =========================
+       CREAR NOTIFICACIONES
+    ========================= */
+
     for (const mensaje of mensajes) {
 
       notificaciones.push({
 
-        matchId: match.id,
+        matchId:
+          match.id,
 
-        usuarioId: otroUsuario,
+        usuarioId:
+          otroUsuario,
 
         nombre:
-          perfil?.nombre || "Usuario",
+          perfil?.nombre ||
+          "Usuario",
 
         foto:
           perfil?.foto_url ||
@@ -308,35 +464,65 @@ async function cargarNotificaciones() {
   }
 
 
+  /* =========================
+     ORDENAR
+  ========================= */
+
   notificaciones.sort(
-    (a, b) =>
+    (a,b) =>
       new Date(b.fecha) -
       new Date(a.fecha)
   );
 
 
+  /* =========================
+     CONTADOR
+  ========================= */
+
+  const noLeidas =
+    notificaciones.filter(
+      n => !n.leido
+    ).length;
+
+
+  actualizarBadge(noLeidas);
+
+
+  /* =========================
+     SIN NOTIFICACIONES
+  ========================= */
+
   if (notificaciones.length === 0) {
 
-    lista.innerHTML =
-      `<div class="vacio">
+    lista.innerHTML = `
+      <div class="vacio">
         🔔 No tenés mensajes nuevos.
-      </div>`;
+      </div>
+    `;
 
     return;
+
   }
 
 
   lista.innerHTML = "";
 
+
+  /* =========================
+     MOSTRAR
+  ========================= */
+
   notificaciones
-    .slice(0, 50)
+    .slice(0,50)
     .forEach(n => {
 
       const elemento =
         document.createElement("div");
 
+
       elemento.className =
         "notificacion";
+
 
       elemento.innerHTML = `
 
@@ -346,21 +532,31 @@ async function cargarNotificaciones() {
           onerror="this.src='https://via.placeholder.com/150?text=💕'"
         >
 
+
         <div class="contenido">
 
           <div class="titulo">
+
             💬 ${escapeHtml(n.nombre)}
+
           </div>
+
 
           <div class="mensaje">
+
             ${escapeHtml(n.contenido)}
+
           </div>
 
+
           <div class="hora">
+
             ${formatearFecha(n.fecha)}
+
           </div>
 
         </div>
+
 
         ${
           !n.leido
@@ -373,7 +569,34 @@ async function cargarNotificaciones() {
 
       elemento.addEventListener(
         "click",
-        () => {
+        async () => {
+
+          /*
+           * Marcamos como leído
+           * antes de entrar al chat.
+           */
+
+          try {
+
+            await supabaseClient
+              .from("messages")
+              .update({
+                read_at:
+                  new Date().toISOString()
+              })
+              .eq("match_id", n.matchId)
+              .eq("sender_id", n.usuarioId)
+              .is("read_at", null);
+
+          } catch(error) {
+
+            console.error(
+              "Error marcando mensajes:",
+              error
+            );
+
+          }
+
 
           window.location.href =
             "./conversacion.html?user=" +
@@ -393,6 +616,82 @@ async function cargarNotificaciones() {
 
 
 /* =========================
+   BADGE
+========================= */
+
+async function actualizarBadge(
+  cantidad = null
+) {
+
+  const badge =
+    document.getElementById(
+      "badgeNotificaciones"
+    );
+
+
+  if (!badge) return;
+
+
+  if (cantidad === null) {
+
+    try {
+
+      const { data: mensajes } =
+        await supabaseClient
+          .from("messages")
+          .select(
+            "id,match_id,sender_id,read_at"
+          )
+          .eq(
+            "read_at",
+            null
+          )
+          .neq(
+            "sender_id",
+            usuarioActual.id
+          );
+
+
+      cantidad =
+        mensajes
+          ? mensajes.length
+          : 0;
+
+    } catch(error) {
+
+      console.error(
+        "Error badge:",
+        error
+      );
+
+      cantidad = 0;
+
+    }
+
+  }
+
+
+  if (cantidad > 0) {
+
+    badge.textContent =
+      cantidad > 99
+        ? "99+"
+        : cantidad;
+
+    badge.style.display =
+      "block";
+
+  } else {
+
+    badge.style.display =
+      "none";
+
+  }
+
+}
+
+
+/* =========================
    TIEMPO
 ========================= */
 
@@ -401,8 +700,10 @@ function formatearFecha(fecha) {
   const d =
     new Date(fecha);
 
+
   const ahora =
     new Date();
+
 
   const diferencia =
     Math.floor(
@@ -411,8 +712,11 @@ function formatearFecha(fecha) {
 
 
   if (diferencia < 60) {
+
     return "Ahora";
+
   }
+
 
   if (diferencia < 3600) {
 
@@ -424,6 +728,7 @@ function formatearFecha(fecha) {
 
   }
 
+
   if (diferencia < 86400) {
 
     return (
@@ -433,6 +738,7 @@ function formatearFecha(fecha) {
     );
 
   }
+
 
   return d.toLocaleDateString(
     "es-AR",
@@ -452,9 +758,11 @@ function formatearFecha(fecha) {
 function escucharMensajes() {
 
   supabaseClient
+
     .channel(
       "notificaciones-globales"
     )
+
     .on(
       "postgres_changes",
       {
@@ -462,6 +770,7 @@ function escucharMensajes() {
         schema: "public",
         table: "messages"
       },
+
       async payload => {
 
         if (
@@ -474,7 +783,9 @@ function escucharMensajes() {
         }
 
       }
+
     )
+
     .on(
       "postgres_changes",
       {
@@ -482,12 +793,15 @@ function escucharMensajes() {
         schema: "public",
         table: "messages"
       },
+
       async () => {
 
         await cargarNotificaciones();
 
       }
+
     )
+
     .subscribe();
 
 }
@@ -503,30 +817,63 @@ function escapeHtml(texto) {
     texto === null ||
     texto === undefined
   ) {
+
     return "";
+
   }
 
+
   return String(texto)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+
+    .replace(
+      /</g,
+      "&lt;"
+    )
+
+    .replace(
+      />/g,
+      "&gt;"
+    )
+
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+
+    .replace(
+      /'/g,
+      "&#039;"
+    );
 
 }
 
 
 /* =========================
-   VOLVER
+   ACTUALIZACIÓN AUTOMÁTICA
 ========================= */
 
-function volver() {
+setInterval(
+  async () => {
 
-  window.location.href =
-    "./chat.html";
+    if (usuarioActual) {
 
-}
+      await cargarNotificaciones();
 
+    }
+
+  },
+  5000
+);
+
+
+/* =========================
+   ARRANCAR
+========================= */
 
 iniciar();
 
