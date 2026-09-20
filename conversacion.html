@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>EmiMatch - Conversación</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f5f7fb;
+  color: #222;
+}
+
+header {
+  background: #111827;
+  color: white;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.back {
+  border: none;
+  background: transparent;
+  color: white;
+  font-size: 26px;
+  cursor: pointer;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #ddd;
+}
+
+.profile-info h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.profile-info p {
+  margin: 3px 0 0;
+  font-size: 13px;
+  opacity: .8;
+}
+
+#status {
+  padding: 12px;
+  text-align: center;
+  background: white;
+  color: #666;
+}
+
+#messages {
+  padding: 15px;
+  padding-bottom: 90px;
+  max-width: 700px;
+  margin: auto;
+}
+
+.message {
+  max-width: 80%;
+  padding: 10px 13px;
+  border-radius: 16px;
+  margin-bottom: 10px;
+  word-wrap: break-word;
+}
+
+.mine {
+  margin-left: auto;
+  background: #111827;
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.theirs {
+  margin-right: auto;
+  background: white;
+  color: #222;
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 1px 5px rgba(0,0,0,.08);
+}
+
+.time {
+  font-size: 10px;
+  opacity: .65;
+  margin-top: 4px;
+}
+
+.composer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  padding: 10px;
+  border-top: 1px solid #ddd;
+}
+
+.composer-inner {
+  max-width: 700px;
+  margin: auto;
+  display: flex;
+  gap: 8px;
+}
+
+#messageInput {
+  flex: 1;
+  border: 1px solid #ccc;
+  border-radius: 22px;
+  padding: 12px 15px;
+  font-size: 16px;
+  outline: none;
+}
+
+#sendButton {
+  width: auto;
+  margin: 0;
+  padding: 0 20px;
+  border: none;
+  border-radius: 22px;
+  background: #111827;
+  color: white;
+  font-size: 15px;
+}
+
+.error {
+  color: #b91c1c !important;
+  background: #fee2e2 !important;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+  <button
+    class="back"
+    onclick="volverMatches()"
+  >
+    ←
+  </button>
+
+  <div class="profile">
+
+    <img
+      id="profilePhoto"
+      src="https://via.placeholder.com/100"
+      alt="Foto"
+    >
+
+    <div class="profile-info">
+
+      <h2 id="profileName">
+        Cargando...
+      </h2>
+
+      <p id="profileCity"></p>
+
+    </div>
+
+  </div>
+
+</header>
+
+<div id="status">
+  🔄 Cargando conversación...
+</div>
+
+<div id="messages"></div>
+
+<div class="composer">
+
+  <div class="composer-inner">
+
+    <input
+      id="messageInput"
+      type="text"
+      placeholder="Escribí un mensaje..."
+      autocomplete="off"
+    >
+
+    <button
+      id="sendButton"
+      onclick="enviarMensaje()"
+    >
+      Enviar
+    </button>
+
+  </div>
+
+</div>
+
+<script>
+
+const SUPABASE_URL =
+"https://kngiadwaesdbmvwivdev.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
+
+const supabaseClient =
+window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+
+let currentUser = null;
+let otherUserId = null;
+let matchId = null;
+let channel = null;
+
+
+async function iniciar() {
+
+  try {
+
+    const params =
+      new URLSearchParams(
+        window.location.search
+      );
+
+
+    otherUserId =
+      params.get("user");
+
+
+    if (!otherUserId) {
+
+      mostrarError(
+        "No se encontró el usuario del Match."
+      );
+
+      return;
+    }
+
+
+    const {
+      data: sessionData,
+      error: sessionError
+    } = await supabaseClient.auth.getSession();
+
+
+    if (sessionError) {
+
+      throw new Error(
+        sessionError.message
+      );
+
+    }
+
+
+    if (!sessionData.session) {
+
+      mostrarError(
+        "No hay una sesión iniciada."
+      );
+
+      return;
+    }
+
+
+    currentUser =
+      sessionData.session.user;
+
+
+    await cargarPerfil();
+
+    await buscarMatch();
+
+    await cargarMensajes();
+
+    activarTiempoReal();
+
+
+    document.getElementById("status")
+      .style.display = "none";
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    mostrarError(
+      error.message
+    );
+
+  }
+
+}
+
+
+async function cargarPerfil() {
+
+  const {
+    data: profile,
+    error
+  } = await supabaseClient
+    .from("profiles")
+    .select(
+      "id,nombre,edad,ciudad,descripcion,foto_url,intereses"
+    )
+    .eq("id", otherUserId)
+    .maybeSingle();
+
+
+  if (error) {
+
+    throw new Error(
+      "Error cargando perfil: " +
+      error.message
+    );
+
+  }
+
+
+  if (!profile) {
+
+    throw new Error(
+      "No se encontró el perfil."
+    );
+
+  }
+
+
+  document.getElementById(
+    "profileName"
+  ).textContent =
+    profile.nombre || "Usuario";
+
+
+  document.getElementById(
+    "profileCity"
+  ).textContent =
+    profile.ciudad
+      ? "📍 " + profile.ciudad
+      : "";
+
+
+  if (profile.foto_url) {
+
+    document.getElementById(
+      "profilePhoto"
+    ).src =
+      profile.foto_url;
+
+  }
+
+}
+
+
+async function buscarMatch() {
+
+  const userId =
+    currentUser.id;
+
+
+  const {
+    data: matches,
+    error
+  } = await supabaseClient
+    .from("matches")
+    .select("*")
+    .or(
+      `and(user1_id.eq.${userId},user2_id.eq.${otherUserId}),and(user1_id.eq.${otherUserId},user2_id.eq.${userId})`
+    );
+
+
+  if (error) {
+
+    throw new Error(
+      "Error buscando Match: " +
+      error.message
+    );
+
+  }
+
+
+  if (!matches ||
+      matches
