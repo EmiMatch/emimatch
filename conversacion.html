@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -21,29 +22,42 @@ body{
   height:100vh;
   display:flex;
   flex-direction:column;
+  overflow:hidden;
 }
 
-/* HEADER */
+/* ================= HEADER ================= */
 
 header{
-  height:70px;
+  height:72px;
+  flex-shrink:0;
   background:linear-gradient(135deg,#7c3aed,#ec4899);
   color:white;
   display:flex;
   align-items:center;
-  padding:10px 15px;
+  padding:10px 14px;
   gap:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
 }
 
 .btn-volver{
   border:0;
-  background:rgba(255,255,255,.20);
+  background:rgba(255,255,255,.18);
   color:white;
   width:42px;
   height:42px;
   border-radius:50%;
-  font-size:25px;
+  font-size:27px;
   cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.foto-container{
+  position:relative;
+  width:48px;
+  height:48px;
+  flex-shrink:0;
 }
 
 .foto{
@@ -52,32 +66,50 @@ header{
   border-radius:50%;
   object-fit:cover;
   background:white;
+  border:2px solid rgba(255,255,255,.7);
+}
+
+.punto-online{
+  position:absolute;
+  right:0;
+  bottom:1px;
+  width:13px;
+  height:13px;
+  border-radius:50%;
+  background:#22c55e;
+  border:2px solid white;
+  display:none;
 }
 
 .info{
   flex:1;
+  min-width:0;
 }
 
 .nombre{
   font-size:18px;
   font-weight:bold;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 
 .estado{
   font-size:13px;
-  margin-top:3px;
-  opacity:.9;
+  margin-top:4px;
+  opacity:.95;
 }
 
-/* CHAT */
+/* ================= CHAT ================= */
 
 .chat{
   flex:1;
   overflow-y:auto;
-  padding:18px 12px 90px;
+  padding:15px 12px 85px;
   display:flex;
   flex-direction:column;
   gap:8px;
+  scroll-behavior:smooth;
 }
 
 .mensaje{
@@ -87,6 +119,7 @@ header{
   font-size:15px;
   line-height:1.4;
   word-wrap:break-word;
+  overflow-wrap:anywhere;
 }
 
 .mio{
@@ -106,7 +139,7 @@ header{
 
 .hora{
   font-size:10px;
-  opacity:.70;
+  opacity:.72;
   margin-top:4px;
   text-align:right;
 }
@@ -114,56 +147,65 @@ header{
 .check{
   margin-left:5px;
   font-weight:bold;
+  letter-spacing:-2px;
 }
 
 .check.leido{
   color:#38bdf8;
 }
 
-/* ESCRIBIENDO */
+/* ================= ESCRIBIENDO ================= */
 
 .escribiendo{
   position:fixed;
-  bottom:68px;
-  left:15px;
-  font-size:13px;
-  color:#777;
+  left:14px;
+  bottom:69px;
   display:none;
   background:white;
+  color:#777;
   padding:5px 10px;
-  border-radius:12px;
+  border-radius:13px;
+  font-size:12px;
+  box-shadow:0 1px 5px rgba(0,0,0,.12);
+  z-index:10;
 }
 
-/* INPUT */
+/* ================= COMPOSER ================= */
 
 .composer{
   position:fixed;
   bottom:0;
   left:0;
   right:0;
+  height:65px;
   background:white;
-  padding:10px;
+  padding:8px 10px;
   display:flex;
   gap:8px;
   border-top:1px solid #ddd;
+  z-index:20;
 }
 
 .input{
   flex:1;
+  min-width:0;
   border:1px solid #ddd;
   border-radius:25px;
-  padding:12px 16px;
+  padding:11px 16px;
   font-size:15px;
   outline:none;
+  background:#fafafa;
 }
 
 .input:focus{
   border-color:#8b5cf6;
+  background:white;
 }
 
 .enviar{
   width:48px;
   height:48px;
+  flex-shrink:0;
   border:0;
   border-radius:50%;
   background:#7c3aed;
@@ -173,10 +215,14 @@ header{
 }
 
 .enviar:active{
-  transform:scale(.95);
+  transform:scale(.94);
 }
 
-/* MENSAJES ESPECIALES */
+.enviar:disabled{
+  opacity:.6;
+}
+
+/* ================= ESTADOS ================= */
 
 .vacio{
   text-align:center;
@@ -188,26 +234,59 @@ header{
   color:#dc2626;
   text-align:center;
   padding:20px;
+  margin:auto;
+}
+
+.cargando{
+  color:#777;
+  text-align:center;
+  margin:auto;
+}
+
+/* ================= SCROLLBAR ================= */
+
+.chat::-webkit-scrollbar{
+  width:5px;
+}
+
+.chat::-webkit-scrollbar-thumb{
+  background:#ccc;
+  border-radius:10px;
 }
 
 </style>
+
 </head>
 
 <body>
+
+
+<!-- ================= HEADER ================= -->
 
 <header>
 
 <button
   class="btn-volver"
-  onclick="history.back()">
+  onclick="volver()">
   ‹
 </button>
+
+
+<div class="foto-container">
 
 <img
   id="foto"
   class="foto"
   src="https://via.placeholder.com/100"
   alt="Foto">
+
+<div
+  id="puntoOnline"
+  class="punto-online">
+</div>
+
+</div>
+
 
 <div class="info">
 
@@ -228,23 +307,31 @@ header{
 </header>
 
 
+<!-- ================= CHAT ================= -->
+
 <div
   id="chat"
   class="chat">
 
-<div class="vacio">
+<div class="cargando">
 Cargando conversación...
 </div>
 
 </div>
 
 
+<!-- ================= ESCRIBIENDO ================= -->
+
 <div
   id="escribiendo"
   class="escribiendo">
-Está escribiendo...
+
+✍️ Está escribiendo...
+
 </div>
 
+
+<!-- ================= INPUT ================= -->
 
 <div class="composer">
 
@@ -258,7 +345,9 @@ Está escribiendo...
 <button
   id="enviar"
   class="enviar">
+
 ➤
+
 </button>
 
 </div>
@@ -266,15 +355,16 @@ Está escribiendo...
 
 <script>
 
-/* =========================
-   SUPABASE
-========================= */
+/* =====================================================
+   CONFIGURACIÓN SUPABASE
+===================================================== */
 
 const SUPABASE_URL =
 "https://kngiadwaesdbmvwivdev.supabase.co";
 
 const SUPABASE_KEY =
 "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
+
 
 const supabaseClient =
 window.supabase.createClient(
@@ -283,20 +373,30 @@ window.supabase.createClient(
 );
 
 
-/* =========================
+/* =====================================================
    VARIABLES
-========================= */
+===================================================== */
 
 let currentUser = null;
+
 let otherUserId = null;
+
 let matchId = null;
 
 let canalMensajes = null;
 
+let canalTyping = null;
 
-/* =========================
-   USUARIO DE LA URL
-========================= */
+let canalEstado = null;
+
+let typingTimer = null;
+
+let usuarioEstaEscribiendo = false;
+
+
+/* =====================================================
+   URL
+===================================================== */
 
 const params =
 new URLSearchParams(
@@ -307,9 +407,9 @@ otherUserId =
 params.get("user");
 
 
-/* =========================
+/* =====================================================
    INICIAR
-========================= */
+===================================================== */
 
 async function iniciar(){
 
@@ -352,20 +452,32 @@ async function iniciar(){
 
     await cargarPerfil();
 
+    await actualizarEstado();
+
     await buscarMatch();
 
     await cargarMensajes();
 
-    await marcarMensajesLeidos();
+    await marcarMensajesEntregados();
 
-    escucharMensajes();
+    await marcarMensajesLeidos();
 
     prepararInput();
 
+    escucharMensajes();
+
+    escucharTyping();
+
+    escucharEstado();
+
   }
+
   catch(error){
 
-    console.error(error);
+    console.error(
+      "ERROR INICIAR:",
+      error
+    );
 
     mostrarError(
       "Error: " +
@@ -377,9 +489,9 @@ async function iniciar(){
 }
 
 
-/* =========================
-   PERFIL
-========================= */
+/* =====================================================
+   CARGAR PERFIL
+===================================================== */
 
 async function cargarPerfil(){
 
@@ -390,9 +502,12 @@ async function cargarPerfil(){
   await supabaseClient
     .from("profiles")
     .select(
-      "id,nombre,edad,ciudad,descripcion,foto_url,intereses"
+      "id,nombre,edad,ciudad,descripcion,foto_url,intereses,online,last_seen"
     )
-    .eq("id",otherUserId)
+    .eq(
+      "id",
+      otherUserId
+    )
     .maybeSingle();
 
 
@@ -400,10 +515,13 @@ async function cargarPerfil(){
     throw error;
 
 
-  if(!data)
+  if(!data){
+
     throw new Error(
       "No se encontró el perfil."
     );
+
+  }
 
 
   document
@@ -421,12 +539,190 @@ async function cargarPerfil(){
 
   }
 
+
+  mostrarEstado(
+    data
+  );
+
 }
 
 
-/* =========================
+/* =====================================================
+   ESTADO ONLINE
+===================================================== */
+
+function mostrarEstado(data){
+
+  const estado =
+  document.getElementById(
+    "estado"
+  );
+
+  const punto =
+  document.getElementById(
+    "puntoOnline"
+  );
+
+
+  if(data.online === true){
+
+    estado.textContent =
+      "🟢 En línea";
+
+    punto.style.display =
+      "block";
+
+    return;
+
+  }
+
+
+  punto.style.display =
+    "none";
+
+
+  if(data.last_seen){
+
+    estado.textContent =
+      "Última vez " +
+      formatearUltimaConexion(
+        data.last_seen
+      );
+
+  }
+  else{
+
+    estado.textContent =
+      "Desconectado";
+
+  }
+
+}
+
+
+/* =====================================================
+   FORMATEAR ÚLTIMA VEZ
+===================================================== */
+
+function formatearUltimaConexion(
+  fecha
+){
+
+  const ahora =
+  new Date();
+
+  const ultima =
+  new Date(fecha);
+
+
+  const diferencia =
+  Math.floor(
+    (ahora - ultima) / 1000
+  );
+
+
+  if(diferencia < 60){
+
+    return "hace unos segundos";
+
+  }
+
+
+  const minutos =
+  Math.floor(
+    diferencia / 60
+  );
+
+
+  if(minutos < 60){
+
+    return (
+      "hace " +
+      minutos +
+      " min."
+    );
+
+  }
+
+
+  const horas =
+  Math.floor(
+    minutos / 60
+  );
+
+
+  if(horas < 24){
+
+    return (
+      "hace " +
+      horas +
+      " h."
+    );
+
+  }
+
+
+  return ultima.toLocaleString(
+    [],
+    {
+      day:"2-digit",
+      month:"2-digit",
+      hour:"2-digit",
+      minute:"2-digit"
+    }
+  );
+
+}
+
+
+/* =====================================================
+   ACTUALIZAR ESTADO
+===================================================== */
+
+async function actualizarEstado(){
+
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
+    .from("profiles")
+    .select(
+      "online,last_seen"
+    )
+    .eq(
+      "id",
+      otherUserId
+    )
+    .maybeSingle();
+
+
+  if(error){
+
+    console.error(
+      "Error estado:",
+      error
+    );
+
+    return;
+
+  }
+
+
+  if(data){
+
+    mostrarEstado(
+      data
+    );
+
+  }
+
+}
+
+
+/* =====================================================
    BUSCAR MATCH
-========================= */
+===================================================== */
 
 async function buscarMatch(){
 
@@ -454,8 +750,6 @@ async function buscarMatch(){
   let data =
   resultado.data;
 
-
-  /* Buscar en sentido contrario */
 
   if(!data){
 
@@ -501,9 +795,9 @@ async function buscarMatch(){
 }
 
 
-/* =========================
+/* =====================================================
    CARGAR MENSAJES
-========================= */
+===================================================== */
 
 async function cargarMensajes(){
 
@@ -538,10 +832,14 @@ async function cargarMensajes(){
   );
 
 
-  chat.innerHTML = "";
+  chat.innerHTML =
+    "";
 
 
-  if(!data || data.length===0){
+  if(
+    !data ||
+    data.length === 0
+  ){
 
     chat.innerHTML =
       '<div class="vacio">Todavía no hay mensajes 💬</div>';
@@ -567,11 +865,13 @@ async function cargarMensajes(){
 }
 
 
-/* =========================
+/* =====================================================
    MOSTRAR MENSAJE
-========================= */
+===================================================== */
 
-function mostrarMensaje(mensaje){
+function mostrarMensaje(
+  mensaje
+){
 
   const chat =
   document.getElementById(
@@ -579,13 +879,13 @@ function mostrarMensaje(mensaje){
   );
 
 
-  /* Evitar duplicados */
+  const existente =
+  chat.querySelector(
+    `[data-id="${mensaje.id}"]`
+  );
 
-  if(
-    chat.querySelector(
-      `[data-id="${mensaje.id}"]`
-    )
-  ){
+
+  if(existente){
 
     actualizarMensajeVisual(
       mensaje
@@ -632,7 +932,8 @@ function mostrarMensaje(mensaje){
   );
 
 
-  let checks = "";
+  let checks =
+    "";
 
 
   if(mio){
@@ -643,7 +944,9 @@ function mostrarMensaje(mensaje){
         '<span class="check leido">✓✓</span>';
 
     }
-    else if(mensaje.delivered_at){
+    else if(
+      mensaje.delivered_at
+    ){
 
       checks =
         '<span class="check">✓✓</span>';
@@ -661,9 +964,11 @@ function mostrarMensaje(mensaje){
 
   div.innerHTML =
 
-  `<div>${escapeHTML(
-    mensaje.content
-  )}</div>
+  `<div>
+    ${escapeHTML(
+      mensaje.content
+    )}
+  </div>
 
   <div class="hora">
     ${hora}
@@ -678,9 +983,9 @@ function mostrarMensaje(mensaje){
 }
 
 
-/* =========================
-   ACTUALIZAR VISUAL
-========================= */
+/* =====================================================
+   ACTUALIZAR INDICADOR DEL MENSAJE
+===================================================== */
 
 function actualizarMensajeVisual(
   mensaje
@@ -703,19 +1008,8 @@ function actualizarMensajeVisual(
     return;
 
 
-  const hora =
-  new Date(
-    mensaje.created_at
-  ).toLocaleTimeString(
-    [],
-    {
-      hour:"2-digit",
-      minute:"2-digit"
-    }
-  );
-
-
-  let checks = "";
+  let checks =
+    "";
 
 
   if(mensaje.read_at){
@@ -724,7 +1018,9 @@ function actualizarMensajeVisual(
       '<span class="check leido">✓✓</span>';
 
   }
-  else if(mensaje.delivered_at){
+  else if(
+    mensaje.delivered_at
+  ){
 
     checks =
       '<span class="check">✓✓</span>';
@@ -736,6 +1032,18 @@ function actualizarMensajeVisual(
       '<span class="check">✓</span>';
 
   }
+
+
+  const hora =
+  new Date(
+    mensaje.created_at
+  ).toLocaleTimeString(
+    [],
+    {
+      hour:"2-digit",
+      minute:"2-digit"
+    }
+  );
 
 
   const horaDiv =
@@ -754,9 +1062,9 @@ function actualizarMensajeVisual(
 }
 
 
-/* =========================
-   ENVIAR
-========================= */
+/* =====================================================
+   ENVIAR MENSAJE
+===================================================== */
 
 async function enviarMensaje(){
 
@@ -778,7 +1086,13 @@ async function enviarMensaje(){
     return;
 
 
-  input.disabled =
+  const boton =
+  document.getElementById(
+    "enviar"
+  );
+
+
+  boton.disabled =
     true;
 
 
@@ -800,17 +1114,22 @@ async function enviarMensaje(){
       contenido
 
     })
-    .select()
+    .select(
+      "id,match_id,sender_id,content,created_at,delivered_at,read_at"
+    )
     .single();
 
 
-  input.disabled =
+  boton.disabled =
     false;
 
 
   if(error){
 
-    console.error(error);
+    console.error(
+      "Error enviando:",
+      error
+    );
 
     alert(
       "No se pudo enviar el mensaje."
@@ -821,7 +1140,8 @@ async function enviarMensaje(){
   }
 
 
-  input.value = "";
+  input.value =
+    "";
 
 
   mostrarMensaje(
@@ -834,11 +1154,11 @@ async function enviarMensaje(){
 }
 
 
-/* =========================
+/* =====================================================
    MARCAR ENTREGADOS
-========================= */
+===================================================== */
 
-async function marcarMensajesRecibidos(){
+async function marcarMensajesEntregados(){
 
   const {
     data,
@@ -875,8 +1195,15 @@ async function marcarMensajesRecibidos(){
   }
 
 
-  if(!data)
+  if(
+    !data ||
+    data.length === 0
+  )
     return;
+
+
+  const ahora =
+  new Date().toISOString();
 
 
   for(
@@ -887,7 +1214,7 @@ async function marcarMensajesRecibidos(){
       .from("messages")
       .update({
         delivered_at:
-        new Date().toISOString()
+        ahora
       })
       .eq(
         "id",
@@ -899,9 +1226,9 @@ async function marcarMensajesRecibidos(){
 }
 
 
-/* =========================
-   MARCAR COMO LEÍDOS
-========================= */
+/* =====================================================
+   MARCAR LEÍDOS
+===================================================== */
 
 async function marcarMensajesLeidos(){
 
@@ -931,7 +1258,7 @@ async function marcarMensajesLeidos(){
   if(error){
 
     console.error(
-      "Error buscando mensajes para leer:",
+      "Error buscando mensajes:",
       error
     );
 
@@ -940,7 +1267,10 @@ async function marcarMensajesLeidos(){
   }
 
 
-  if(!data || data.length===0)
+  if(
+    !data ||
+    data.length === 0
+  )
     return;
 
 
@@ -956,8 +1286,11 @@ async function marcarMensajesLeidos(){
     await supabaseClient
       .from("messages")
       .update({
-        delivered_at:ahora,
-        read_at:ahora
+        delivered_at:
+        ahora,
+
+        read_at:
+        ahora
       })
       .eq(
         "id",
@@ -979,16 +1312,17 @@ async function marcarMensajesLeidos(){
 }
 
 
-/* =========================
-   TIEMPO REAL
-========================= */
+/* =====================================================
+   TIEMPO REAL - MENSAJES
+===================================================== */
 
 function escucharMensajes(){
 
   canalMensajes =
   supabaseClient
     .channel(
-      "chat-" + matchId
+      "mensajes-" +
+      matchId
     );
 
 
@@ -1000,8 +1334,8 @@ function escucharMensajes(){
         schema:"public",
         table:"messages",
         filter:
-        "match_id=eq." +
-        matchId
+          "match_id=eq." +
+          matchId
       },
       async payload => {
 
@@ -1017,21 +1351,23 @@ function escucharMensajes(){
         bajarChat();
 
 
-        /* Si lo recibimos,
-           marcar entregado */
-
         if(
           mensaje.sender_id !==
           currentUser.id
         ){
 
+          const ahora =
+          new Date().toISOString();
+
+
           await supabaseClient
             .from("messages")
             .update({
               delivered_at:
-              new Date().toISOString(),
+              ahora,
+
               read_at:
-              new Date().toISOString()
+              ahora
             })
             .eq(
               "id",
@@ -1049,8 +1385,8 @@ function escucharMensajes(){
         schema:"public",
         table:"messages",
         filter:
-        "match_id=eq." +
-        matchId
+          "match_id=eq." +
+          matchId
       },
       payload => {
 
@@ -1065,15 +1401,21 @@ function escucharMensajes(){
 }
 
 
-/* =========================
-   INPUT
-========================= */
+/* =====================================================
+   ESCRIBIENDO
+===================================================== */
 
 function prepararInput(){
 
   const input =
   document.getElementById(
     "mensajeInput"
+  );
+
+
+  input.addEventListener(
+    "input",
+    manejarEscritura
   );
 
 
@@ -1106,79 +1448,113 @@ function prepararInput(){
 }
 
 
-/* =========================
-   ESCAPAR HTML
-========================= */
+/* =====================================================
+   CAMBIAR ESTADO ESCRIBIENDO
+===================================================== */
 
-function escapeHTML(text){
+async function manejarEscritura(){
 
-  const div =
-  document.createElement(
-    "div"
-  );
-
-
-  div.textContent =
-  text;
-
-
-  return div.innerHTML;
-
-}
-
-
-/* =========================
-   SCROLL
-========================= */
-
-function bajarChat(){
-
-  const chat =
+  const input =
   document.getElementById(
-    "chat"
+    "mensajeInput"
   );
 
 
-  setTimeout(
-    () => {
+  const escribiendo =
+  input.value.trim().length > 0;
 
-      chat.scrollTop =
-      chat.scrollHeight;
 
-    },
-    50
+  const indicador =
+  document.getElementById(
+    "escribiendo"
   );
+
+
+  if(escribiendo){
+
+    indicador.style.display =
+      "block";
+
+
+    indicador.textContent =
+      "✍️ Está escribiendo...";
+
+
+    await actualizarTyping(
+      true
+    );
+
+
+    clearTimeout(
+      typingTimer
+    );
+
+
+    typingTimer =
+      setTimeout(
+        () => {
+
+          actualizarTyping(
+            false
+          );
+
+        },
+        1800
+      );
+
+  }
+  else{
+
+    indicador.style.display =
+      "none";
+
+
+    await actualizarTyping(
+      false
+    );
+
+  }
 
 }
 
 
-/* =========================
-   ERROR
-========================= */
+/* =====================================================
+   ACTUALIZAR TYPING
+===================================================== */
 
-function mostrarError(
-  texto
+async function actualizarTyping(
+  escribiendo
 ){
 
-  document
-    .getElementById(
-      "chat"
-    )
-    .innerHTML =
-    `<div class="error">
-      ${escapeHTML(texto)}
-    </div>`;
-
-}
+  if(!matchId)
+    return;
 
 
-/* =========================
-   INICIAR APP
-========================= */
+  const resultado =
+  await supabaseClient
+    .from("typing_status")
+    .upsert(
+      {
+        match_id:
+        matchId,
 
-iniciar();
+        user_id:
+        currentUser.id,
 
-</script>
+        is_typing:
+        escribiendo,
 
-</body>
-</html>
+        updated_at:
+        new Date().toISOString()
+      },
+      {
+        onConflict:
+        "match_id,user_id"
+      }
+    );
+
+
+  if(resultado.error){
+
+    console.error(
+  
