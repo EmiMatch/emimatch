@@ -1,14 +1,20 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>EmiMatch</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -18,10 +24,16 @@
     body {
       font-family: Arial, sans-serif;
       min-height: 100vh;
-      background: linear-gradient(145deg, #07152f, #102d59);
+      background: linear-gradient(
+        145deg,
+        #07152f,
+        #102d59
+      );
+
       display: flex;
       align-items: center;
       justify-content: center;
+
       padding: 20px;
     }
 
@@ -49,7 +61,9 @@
       background: white;
       border-radius: 24px;
       padding: 30px 24px;
-      box-shadow: 0 15px 40px rgba(0,0,0,.35);
+
+      box-shadow:
+        0 15px 40px rgba(0,0,0,.35);
     }
 
     h2 {
@@ -67,11 +81,18 @@
 
     input {
       width: 100%;
+
       padding: 14px;
-      border: 1px solid #d5dbe5;
+
+      border:
+        1px solid #d5dbe5;
+
       border-radius: 12px;
+
       margin-bottom: 16px;
+
       font-size: 16px;
+
       outline: none;
     }
 
@@ -81,15 +102,29 @@
 
     button {
       width: 100%;
+
       border: none;
+
       padding: 15px;
+
       border-radius: 12px;
+
       background: #d9ad45;
+
       color: #101d34;
+
       font-size: 16px;
+
       font-weight: bold;
+
       cursor: pointer;
+
       margin-top: 5px;
+    }
+
+    button:disabled {
+      opacity: .6;
+      cursor: not-allowed;
     }
 
     .secondary {
@@ -98,28 +133,112 @@
       margin-top: 12px;
     }
 
+    .third {
+      background: #f1f3f7;
+      color: #15233d;
+      margin-top: 12px;
+    }
+
     .message {
       text-align: center;
+
       margin-top: 18px;
+
       font-weight: bold;
+
+      line-height: 1.4;
     }
+
+    .session-box {
+      display: none;
+
+      background: #eef5ff;
+
+      border:
+        1px solid #cbdcf5;
+
+      border-radius: 14px;
+
+      padding: 14px;
+
+      margin-bottom: 20px;
+
+      text-align: center;
+
+      color: #15233d;
+    }
+
+    .session-box strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .small {
+      font-size: 12px;
+      color: #667085;
+    }
+
   </style>
+
 </head>
+
 
 <body>
 
+
 <div class="container">
 
+
   <div class="logo">
-    <h1>EmiMatch ❤️</h1>
-    <p>Conectá. Conocé. Hacé Match.</p>
+
+    <h1>
+      EmiMatch ❤️
+    </h1>
+
+    <p>
+      Conectá. Conocé. Hacé Match.
+    </p>
+
   </div>
+
 
   <div class="card">
 
-    <h2>Bienvenido</h2>
 
-    <label for="email">Email</label>
+    <h2>
+      Bienvenido
+    </h2>
+
+
+    <!-- SESIÓN ACTUAL -->
+
+    <div
+      id="sessionBox"
+      class="session-box"
+    >
+
+      <strong>
+        Hay una cuenta iniciada
+      </strong>
+
+      <div
+        id="sessionEmail"
+      ></div>
+
+      <div class="small">
+        Podés entrar con esta cuenta
+        o crear otra.
+      </div>
+
+    </div>
+
+
+    <!-- EMAIL -->
+
+    <label for="email">
+      Email
+    </label>
+
     <input
       type="email"
       id="email"
@@ -127,7 +246,13 @@
       autocomplete="email"
     >
 
-    <label for="password">Contraseña</label>
+
+    <!-- PASSWORD -->
+
+    <label for="password">
+      Contraseña
+    </label>
+
     <input
       type="password"
       id="password"
@@ -135,149 +260,553 @@
       autocomplete="current-password"
     >
 
-    <button id="loginButton">
-      Iniciar sesión
+
+    <!-- LOGIN -->
+
+    <button
+      id="loginButton"
+    >
+      🔐 Iniciar sesión
     </button>
 
-    <button class="secondary" id="registerButton">
-      Crear cuenta
+
+    <!-- REGISTRO -->
+
+    <button
+      class="secondary"
+      id="registerButton"
+    >
+      ➕ Crear cuenta nueva
     </button>
 
-    <div class="message" id="message"></div>
+
+    <!-- IR AL PERFIL -->
+
+    <button
+      class="third"
+      id="profileButton"
+      style="display:none;"
+    >
+      👤 Continuar con mi cuenta
+    </button>
+
+
+    <div
+      class="message"
+      id="message"
+    ></div>
+
 
   </div>
 
+
 </div>
+
 
 <script>
 
+
+/* =========================
+   SUPABASE
+========================= */
+
+
 const SUPABASE_URL =
-"https://kngiadwaesdbmvwivdev.supabase.co";
+  "https://kngiadwaesdbmvwivdev.supabase.co";
+
 
 const SUPABASE_ANON_KEY =
-"sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
+  "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
+
 
 const supabaseClient =
-window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
+
+
+/* =========================
+   ELEMENTOS
+========================= */
+
 
 const emailInput =
-document.getElementById("email");
+  document.getElementById(
+    "email"
+  );
+
 
 const passwordInput =
-document.getElementById("password");
+  document.getElementById(
+    "password"
+  );
+
 
 const message =
-document.getElementById("message");
+  document.getElementById(
+    "message"
+  );
 
-function mostrarMensaje(texto, error = false) {
-  message.textContent = texto;
-  message.style.color = error ? "#b42318" : "#16803c";
+
+const sessionBox =
+  document.getElementById(
+    "sessionBox"
+  );
+
+
+const sessionEmail =
+  document.getElementById(
+    "sessionEmail"
+  );
+
+
+const loginButton =
+  document.getElementById(
+    "loginButton"
+  );
+
+
+const registerButton =
+  document.getElementById(
+    "registerButton"
+  );
+
+
+const profileButton =
+  document.getElementById(
+    "profileButton"
+  );
+
+
+/* =========================
+   MENSAJES
+========================= */
+
+
+function mostrarMensaje(
+  texto,
+  error = false
+) {
+
+  message.textContent =
+    texto;
+
+  message.style.color =
+    error
+      ? "#b42318"
+      : "#16803c";
+
 }
 
-document.getElementById("registerButton").onclick =
-async () => {
 
-  const email = emailInput.value.trim();
-  const password = passwordInput.value;
+/* =========================
+   COMPROBAR SESIÓN
+========================= */
+
+
+async function comprobarSesion() {
+
+  try {
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+        .auth
+        .getSession();
+
+
+    if (error) {
+
+      console.error(
+        error
+      );
+
+      return;
+    }
+
+
+    const session =
+      data.session;
+
+
+    if (session) {
+
+      sessionBox.style.display =
+        "block";
+
+
+      sessionEmail.textContent =
+        session.user.email ||
+        "Cuenta actual";
+
+
+      profileButton.style.display =
+        "block";
+
+    } else {
+
+      sessionBox.style.display =
+        "none";
+
+
+      profileButton.style.display =
+        "none";
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Error comprobando sesión:",
+      error
+    );
+
+  }
+
+}
+
+
+/* =========================
+   INICIAR SESIÓN
+========================= */
+
+
+loginButton.onclick =
+async function() {
+
+  const email =
+    emailInput.value.trim();
+
+
+  const password =
+    passwordInput.value;
+
 
   if (!email || !password) {
+
     mostrarMensaje(
       "Completá email y contraseña.",
       true
     );
+
     return;
   }
 
+
+  loginButton.disabled =
+    true;
+
+
+  mostrarMensaje(
+    "Iniciando sesión..."
+  );
+
+
+  try {
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+        .auth
+        .signInWithPassword({
+
+          email:
+            email,
+
+          password:
+            password
+
+        });
+
+
+    if (error) {
+
+      mostrarMensaje(
+        error.message,
+        true
+      );
+
+      return;
+    }
+
+
+    if (data.session) {
+
+      mostrarMensaje(
+        "Sesión iniciada correctamente."
+      );
+
+
+      setTimeout(
+        function() {
+
+          window.location.href =
+            "perfil.html";
+
+        },
+        500
+      );
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      error
+    );
+
+    mostrarMensaje(
+      "Ocurrió un error al iniciar sesión.",
+      true
+    );
+
+  } finally {
+
+    loginButton.disabled =
+      false;
+
+  }
+
+};
+
+
+/* =========================
+   CREAR CUENTA NUEVA
+========================= */
+
+
+registerButton.onclick =
+async function() {
+
+  const email =
+    emailInput.value.trim();
+
+
+  const password =
+    passwordInput.value;
+
+
+  if (!email || !password) {
+
+    mostrarMensaje(
+      "Para crear la cuenta completá email y contraseña.",
+      true
+    );
+
+    return;
+  }
+
+
   if (password.length < 6) {
+
     mostrarMensaje(
       "La contraseña debe tener al menos 6 caracteres.",
       true
     );
+
     return;
   }
 
-  mostrarMensaje("Creando cuenta...");
 
-  const {
-    data,
-    error
-  } = await supabaseClient.auth.signUp({
-    email: email,
-    password: password
-  });
+  registerButton.disabled =
+    true;
 
-  if (error) {
-    mostrarMensaje(error.message, true);
-    return;
-  }
-
-  if (data.session) {
-  window.location.replace(
-    "https://emimatch.github.io/emimatch/perfil.html"
-  );
-  }
 
   mostrarMensaje(
-    "Cuenta creada. Revisá tu email para confirmar la cuenta."
+    "Preparando nueva cuenta..."
   );
-};
 
-document.getElementById("loginButton").onclick =
-async () => {
 
-  const email = emailInput.value.trim();
-  const password = passwordInput.value;
+  try {
 
-  if (!email || !password) {
+    /*
+      IMPORTANTE:
+
+      Cerramos la sesión actual
+      solamente cuando el usuario
+      eligió "Crear cuenta nueva".
+    */
+
+    const {
+      error: logoutError
+    } =
+      await supabaseClient
+        .auth
+        .signOut();
+
+
+    if (logoutError) {
+
+      console.warn(
+        "Aviso al cerrar sesión:",
+        logoutError
+      );
+
+    }
+
+
+    /*
+      Ahora registramos la
+      segunda cuenta.
+    */
+
+
     mostrarMensaje(
-      "Completá email y contraseña.",
+      "Creando cuenta nueva..."
+    );
+
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+        .auth
+        .signUp({
+
+          email:
+            email,
+
+          password:
+            password
+
+        });
+
+
+    if (error) {
+
+      mostrarMensaje(
+        error.message,
+        true
+      );
+
+      await comprobarSesion();
+
+      return;
+    }
+
+
+    /*
+      Si Supabase devuelve sesión,
+      podemos ir directamente
+      al perfil.
+    */
+
+
+    if (data.session) {
+
+      mostrarMensaje(
+        "Cuenta creada correctamente."
+      );
+
+
+      setTimeout(
+        function() {
+
+          window.location.href =
+            "perfil.html";
+
+        },
+        700
+      );
+
+
+      return;
+    }
+
+
+    /*
+      Si está activada la
+      confirmación por email.
+    */
+
+
+    mostrarMensaje(
+      "Cuenta creada. Revisá tu correo para confirmar la cuenta."
+    );
+
+
+    await comprobarSesion();
+
+
+  } catch (error) {
+
+    console.error(
+      "Error creando cuenta:",
+      error
+    );
+
+
+    mostrarMensaje(
+      error.message ||
+      "No se pudo crear la cuenta.",
       true
     );
-    return;
+
+
+    await comprobarSesion();
+
+  } finally {
+
+    registerButton.disabled =
+      false;
+
   }
 
-  mostrarMensaje("Iniciando sesión...");
-
-  const {
-    data,
-    error
-  } = await supabaseClient.auth.signInWithPassword({
-    email: email,
-    password: password
-  });
-
-  if (error) {
-    mostrarMensaje(
-      error.message,
-      true
-    );
-    return;
-  }
-
-  if (data.session) {
-    window.location.href = "perfil.html";
-  }
 };
 
-async function comprobarSesion() {
 
-  const {
-    data: { session }
-  } = await supabaseClient.auth.getSession();
+/* =========================
+   CONTINUAR CON CUENTA
+========================= */
 
-  if (session) {
-    window.location.replace(
-      "https://emimatch.github.io/emimatch/perfil.html"
-    );
+
+profileButton.onclick =
+function() {
+
+  window.location.href =
+    "perfil.html";
+
+};
+
+
+/* =========================
+   ENTER
+========================= */
+
+
+passwordInput.addEventListener(
+  "keydown",
+  function(event) {
+
+    if (
+      event.key ===
+      "Enter"
+    ) {
+
+      loginButton.click();
+
+    }
+
   }
-}
+);
+
+
+/* =========================
+   INICIO
+========================= */
+
 
 comprobarSesion();
 
+
 </script>
+
 
 </body>
 </html>
