@@ -1,14 +1,21 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>Conversación - EmiMatch</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
+
     * {
       box-sizing: border-box;
     }
@@ -45,8 +52,9 @@
       border: none;
       background: transparent;
       color: white;
-      font-size: 28px;
+      font-size: 30px;
       cursor: pointer;
+      padding: 0 5px;
     }
 
     .foto-header {
@@ -144,7 +152,7 @@
     }
 
     .escribiendo {
-      height: 20px;
+      min-height: 20px;
       padding-left: 15px;
       font-size: 12px;
       color: #777;
@@ -197,23 +205,34 @@
       border-radius: 10px;
       text-align: center;
     }
+
   </style>
+
 </head>
+
 
 <body>
 
 <div class="app">
 
+
   <div class="header">
 
-    <button class="volver" onclick="volver()">‹</button>
+    <button
+      class="volver"
+      onclick="volver()"
+    >
+      ‹
+    </button>
+
 
     <img
       id="fotoPerfil"
       class="foto-header"
-      src=""
+      src="https://placehold.co/100x100?text=Foto"
       alt="Foto"
     >
+
 
     <div class="datos-header">
 
@@ -223,6 +242,7 @@
       >
         Cargando...
       </div>
+
 
       <div
         id="estadoPerfil"
@@ -260,6 +280,7 @@
       autocomplete="off"
     >
 
+
     <button
       id="btnEnviar"
       onclick="enviarMensaje()"
@@ -269,16 +290,25 @@
 
   </div>
 
+
 </div>
 
 
 <script>
 
+
+/* =========================
+   SUPABASE
+========================= */
+
+
 const SUPABASE_URL =
   "https://kngiadwaesdbmvwivdev.supabase.co";
 
+
 const SUPABASE_KEY =
   "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
+
 
 const supabaseClient =
   window.supabase.createClient(
@@ -287,44 +317,69 @@ const supabaseClient =
   );
 
 
+/* =========================
+   VARIABLES
+========================= */
+
+
 let usuarioActual = null;
+
 let otroUsuario = null;
+
 let matchActual = null;
+
 let canalMensajes = null;
+
 let canalTyping = null;
+
 let canalPerfil = null;
 
 let escribiendoTimer = null;
 
 
 /* =========================
-   INICIO
+   INICIAR
 ========================= */
+
 
 async function iniciar() {
 
   try {
 
-    console.log("EMIMATCH: iniciando conversación...");
+    console.log(
+      "EmiMatch: iniciando conversación..."
+    );
 
-    const { data, error } =
-      await supabaseClient.auth.getSession();
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+        .auth
+        .getSession();
+
 
     if (error) {
+
       throw error;
+
     }
+
 
     if (!data.session) {
 
-      console.log("No hay sesión.");
-
-      window.location.href = "./index.html";
+      window.location.href =
+        "./index.html";
 
       return;
+
     }
+
 
     usuarioActual =
       data.session.user;
+
 
     console.log(
       "Usuario actual:",
@@ -337,12 +392,13 @@ async function iniciar() {
         window.location.search
       );
 
+
     otroUsuario =
       parametros.get("user");
 
 
     console.log(
-      "Usuario de la conversación:",
+      "Usuario conversación:",
       otroUsuario
     );
 
@@ -354,6 +410,21 @@ async function iniciar() {
       );
 
       return;
+
+    }
+
+
+    if (
+      otroUsuario ===
+      usuarioActual.id
+    ) {
+
+      mostrarError(
+        "No podés abrir una conversación con tu propia cuenta."
+      );
+
+      return;
+
     }
 
 
@@ -361,21 +432,25 @@ async function iniciar() {
 
     await buscarMatch();
 
+
     if (!matchActual) {
 
       mostrarError(
-        "No se encontró el match entre estos usuarios."
+        "No se encontró el Match entre estos usuarios."
       );
 
       return;
+
     }
 
 
     await cargarMensajes();
 
+
     await marcarMensajesEntregados();
 
     await marcarMensajesLeidos();
+
 
     prepararInput();
 
@@ -385,6 +460,7 @@ async function iniciar() {
 
     escucharEstado();
 
+
     desplazarAbajo();
 
 
@@ -392,16 +468,22 @@ async function iniciar() {
       "CONVERSACIÓN CARGADA CORRECTAMENTE"
     );
 
-  } catch (error) {
+  }
+
+  catch (error) {
 
     console.error(
-      "Error al iniciar:",
+      "Error al iniciar conversación:",
       error
     );
 
+
     mostrarError(
       "Error al cargar la conversación: " +
-      (error.message || error)
+      (
+        error.message ||
+        error
+      )
     );
 
   }
@@ -410,18 +492,25 @@ async function iniciar() {
 
 
 /* =========================
-   PERFIL
+   CARGAR PERFIL
 ========================= */
+
 
 async function cargarPerfil() {
 
-  const { data, error } =
+  const {
+    data,
+    error
+  } =
     await supabaseClient
       .from("profiles")
       .select(
         "id,nombre,edad,ciudad,descripcion,foto_url,intereses,online,last_seen"
       )
-      .eq("id", otroUsuario)
+      .eq(
+        "id",
+        otroUsuario
+      )
       .maybeSingle();
 
 
@@ -433,22 +522,17 @@ async function cargarPerfil() {
     );
 
     throw error;
+
   }
 
 
   if (!data) {
 
     throw new Error(
-      "No se encontró el perfil."
+      "No se encontró el perfil del usuario."
     );
 
   }
-
-
-  console.log(
-    "Perfil cargado:",
-    data
-  );
 
 
   const nombre =
@@ -475,11 +559,6 @@ async function cargarPerfil() {
     foto.src =
       data.foto_url;
 
-  } else {
-
-    foto.src =
-      "https://placehold.co/100x100?text=Foto";
-
   }
 
 
@@ -492,6 +571,7 @@ async function cargarPerfil() {
    ESTADO ONLINE
 ========================= */
 
+
 function mostrarEstado(data) {
 
   const elemento =
@@ -500,22 +580,25 @@ function mostrarEstado(data) {
     );
 
 
+  elemento.classList.remove(
+    "online"
+  );
+
+
   if (data.online === true) {
 
     elemento.textContent =
       "🟢 En línea";
 
+
     elemento.classList.add(
       "online"
     );
 
+
     return;
+
   }
-
-
-  elemento.classList.remove(
-    "online"
-  );
 
 
   if (data.last_seen) {
@@ -532,7 +615,9 @@ function mostrarEstado(data) {
         fecha
       );
 
-  } else {
+  }
+
+  else {
 
     elemento.textContent =
       "Desconectado";
@@ -542,7 +627,14 @@ function mostrarEstado(data) {
 }
 
 
-function formatearUltimaConexion(fecha) {
+/* =========================
+   ÚLTIMA CONEXIÓN
+========================= */
+
+
+function formatearUltimaConexion(
+  fecha
+) {
 
   if (
     isNaN(
@@ -572,10 +664,11 @@ function formatearUltimaConexion(fecha) {
    BUSCAR MATCH
 ========================= */
 
+
 async function buscarMatch() {
 
   console.log(
-    "Buscando match..."
+    "Buscando Match..."
   );
 
 
@@ -596,12 +689,10 @@ async function buscarMatch() {
       .maybeSingle();
 
 
-  if (
-    resultado.error
-  ) {
+  if (resultado.error) {
 
     console.error(
-      "Error buscando match 1:",
+      "Error buscando Match:",
       resultado.error
     );
 
@@ -617,10 +708,11 @@ async function buscarMatch() {
 
     console.log(
       "Match encontrado:",
-      matchActual
+      matchActual.id
     );
 
     return;
+
   }
 
 
@@ -641,12 +733,10 @@ async function buscarMatch() {
       .maybeSingle();
 
 
-  if (
-    resultado.error
-  ) {
+  if (resultado.error) {
 
     console.error(
-      "Error buscando match 2:",
+      "Error buscando Match inverso:",
       resultado.error
     );
 
@@ -662,7 +752,7 @@ async function buscarMatch() {
 
     console.log(
       "Match encontrado:",
-      matchActual
+      matchActual.id
     );
 
   }
@@ -674,14 +764,20 @@ async function buscarMatch() {
    CARGAR MENSAJES
 ========================= */
 
+
 async function cargarMensajes() {
 
   if (!matchActual) {
+
     return;
+
   }
 
 
-  const { data, error } =
+  const {
+    data,
+    error
+  } =
     await supabaseClient
       .from("messages")
       .select(
@@ -707,15 +803,8 @@ async function cargarMensajes() {
     );
 
     throw error;
+
   }
-
-
-  console.log(
-    "Mensajes cargados:",
-    data
-      ? data.length
-      : 0
-  );
 
 
   const contenedor =
@@ -724,7 +813,8 @@ async function cargarMensajes() {
     );
 
 
-  contenedor.innerHTML = "";
+  contenedor.innerHTML =
+    "";
 
 
   if (
@@ -740,11 +830,18 @@ async function cargarMensajes() {
     `;
 
     return;
+
   }
 
 
   data.forEach(
-    mostrarMensaje
+    mensaje => {
+
+      mostrarMensaje(
+        mensaje
+      );
+
+    }
   );
 
 
@@ -757,12 +854,26 @@ async function cargarMensajes() {
    MOSTRAR MENSAJE
 ========================= */
 
-function mostrarMensaje(mensaje) {
+
+function mostrarMensaje(
+  mensaje
+) {
 
   const contenedor =
     document.getElementById(
       "mensajes"
     );
+
+
+  if (
+    document.querySelector(
+      `[data-message-id="${mensaje.id}"]`
+    )
+  ) {
+
+    return;
+
+  }
 
 
   const esMio =
@@ -783,6 +894,10 @@ function mostrarMensaje(mensaje) {
         ? "mio"
         : "otro"
     );
+
+
+  div.dataset.messageId =
+    mensaje.id;
 
 
   const burbuja =
@@ -813,7 +928,8 @@ function mostrarMensaje(mensaje) {
     );
 
 
-  let checks = "";
+  let checks =
+    "";
 
 
   if (esMio) {
@@ -821,19 +937,23 @@ function mostrarMensaje(mensaje) {
     if (mensaje.read_at) {
 
       checks =
-        `<span class="check leido">✓✓</span>`;
+        '<span class="check leido">✓✓</span>';
 
-    } else if (
+    }
+
+    else if (
       mensaje.delivered_at
     ) {
 
       checks =
-        `<span class="check">✓✓</span>`;
+        '<span class="check">✓✓</span>';
 
-    } else {
+    }
+
+    else {
 
       checks =
-        `<span class="check">✓</span>`;
+        '<span class="check">✓</span>';
 
     }
 
@@ -842,9 +962,13 @@ function mostrarMensaje(mensaje) {
 
   burbuja.innerHTML = `
     ${texto}
+
     <span class="hora">
+
       ${hora}
+
       ${checks}
+
     </span>
   `;
 
@@ -865,12 +989,14 @@ function mostrarMensaje(mensaje) {
    ENVIAR MENSAJE
 ========================= */
 
+
 async function enviarMensaje() {
 
   const input =
     document.getElementById(
       "mensajeInput"
     );
+
 
   const boton =
     document.getElementById(
@@ -883,26 +1009,33 @@ async function enviarMensaje() {
 
 
   if (!contenido) {
+
     return;
+
   }
 
 
   if (!matchActual) {
 
     alert(
-      "Todavía no se cargó el match."
+      "Todavía no se cargó el Match."
     );
 
     return;
+
   }
 
 
-  boton.disabled = true;
+  boton.disabled =
+    true;
 
 
   try {
 
-    const { data, error } =
+    const {
+      data,
+      error
+    } =
       await supabaseClient
         .from("messages")
         .insert({
@@ -921,22 +1054,13 @@ async function enviarMensaje() {
 
     if (error) {
 
-      console.error(
-        "Error enviando:",
-        error
-      );
-
       throw error;
+
     }
 
 
-    console.log(
-      "Mensaje enviado:",
-      data
-    );
-
-
-    input.value = "";
+    input.value =
+      "";
 
 
     await actualizarTyping(
@@ -946,35 +1070,34 @@ async function enviarMensaje() {
 
     if (data) {
 
-      const existente =
-        document.querySelector(
-          `[data-message-id="${data.id}"]`
-        );
+      mostrarMensaje(
+        data
+      );
 
-
-      if (!existente) {
-
-        mostrarMensaje(data);
-
-        desplazarAbajo();
-
-      }
+      desplazarAbajo();
 
     }
 
-  } catch (error) {
+  }
+
+  catch (error) {
 
     console.error(
+      "Error enviando mensaje:",
       error
     );
+
 
     alert(
       "No se pudo enviar el mensaje."
     );
 
-  } finally {
+  }
 
-    boton.disabled = false;
+  finally {
+
+    boton.disabled =
+      false;
 
     input.focus();
 
@@ -984,17 +1107,22 @@ async function enviarMensaje() {
 
 
 /* =========================
-   MENSAJES ENTREGADOS
+   ENTREGADOS
 ========================= */
+
 
 async function marcarMensajesEntregados() {
 
   if (!matchActual) {
+
     return;
+
   }
 
 
-  const { error } =
+  const {
+    error
+  } =
     await supabaseClient
       .from("messages")
       .update({
@@ -1018,7 +1146,7 @@ async function marcarMensajesEntregados() {
   if (error) {
 
     console.warn(
-      "No se pudieron marcar como entregados:",
+      "Error marcando entregados:",
       error
     );
 
@@ -1028,17 +1156,22 @@ async function marcarMensajesEntregados() {
 
 
 /* =========================
-   MENSAJES LEÍDOS
+   LEÍDOS
 ========================= */
+
 
 async function marcarMensajesLeidos() {
 
   if (!matchActual) {
+
     return;
+
   }
 
 
-  const { error } =
+  const {
+    error
+  } =
     await supabaseClient
       .from("messages")
       .update({
@@ -1062,7 +1195,7 @@ async function marcarMensajesLeidos() {
   if (error) {
 
     console.warn(
-      "No se pudieron marcar como leídos:",
+      "Error marcando leídos:",
       error
     );
 
@@ -1075,10 +1208,13 @@ async function marcarMensajesLeidos() {
    REALTIME MENSAJES
 ========================= */
 
+
 function escucharMensajes() {
 
   if (!matchActual) {
+
     return;
+
   }
 
 
@@ -1086,12 +1222,14 @@ function escucharMensajes() {
     supabaseClient
       .channel(
         "mensajes-" +
-        matchActual.id
+        matchActual.id +
+        "-" +
+        usuarioActual.id
       )
       .on(
         "postgres_changes",
         {
-          event: "*",
+          event: "INSERT",
           schema: "public",
           table: "messages",
           filter:
@@ -1100,51 +1238,44 @@ function escucharMensajes() {
         },
         async payload => {
 
-          console.log(
-            "Realtime mensaje:",
-            payload
+          const mensaje =
+            payload.new;
+
+
+          mostrarMensaje(
+            mensaje
           );
 
 
-          if (
-            payload.eventType ===
-            "INSERT"
-          ) {
-
-            const mensaje =
-              payload.new;
-
-
-            mostrarMensaje(
-              mensaje
-            );
-
-
-            desplazarAbajo();
-
-
-            if (
-              mensaje.sender_id ===
-              otroUsuario
-            ) {
-
-              await marcarMensajesEntregados();
-
-              await marcarMensajesLeidos();
-
-            }
-
-          }
+          desplazarAbajo();
 
 
           if (
-            payload.eventType ===
-            "UPDATE"
+            mensaje.sender_id ===
+            otroUsuario
           ) {
 
-            await cargarMensajes();
+            await marcarMensajesEntregados();
+
+            await marcarMensajesLeidos();
 
           }
+
+        }
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "messages",
+          filter:
+            "match_id=eq." +
+            matchActual.id
+        },
+        async () => {
+
+          await cargarMensajes();
 
         }
       )
@@ -1156,6 +1287,7 @@ function escucharMensajes() {
 /* =========================
    INPUT
 ========================= */
+
 
 function prepararInput() {
 
@@ -1193,8 +1325,9 @@ function prepararInput() {
 
 
 /* =========================
-   ESCRIBIENDO
+   TYPING
 ========================= */
+
 
 async function manejarEscritura() {
 
@@ -1221,9 +1354,11 @@ async function manejarEscritura() {
   escribiendoTimer =
     setTimeout(
       () => {
+
         actualizarTyping(
           false
         );
+
       },
       1500
     );
@@ -1245,7 +1380,9 @@ async function actualizarTyping(
   }
 
 
-  const { error } =
+  const {
+    error
+  } =
     await supabaseClient
       .from("typing_status")
       .upsert(
@@ -1285,10 +1422,13 @@ async function actualizarTyping(
    REALTIME TYPING
 ========================= */
 
+
 function escucharTyping() {
 
   if (!matchActual) {
+
     return;
+
   }
 
 
@@ -1296,7 +1436,9 @@ function escucharTyping() {
     supabaseClient
       .channel(
         "typing-" +
-        matchActual.id
+        matchActual.id +
+        "-" +
+        usuarioActual.id
       )
       .on(
         "postgres_changes",
@@ -1339,7 +1481,9 @@ function escucharTyping() {
             elemento.textContent =
               "✍️ Está escribiendo...";
 
-          } else {
+          }
+
+          else {
 
             elemento.textContent =
               "";
@@ -1354,8 +1498,9 @@ function escucharTyping() {
 
 
 /* =========================
-   REALTIME ESTADO
+   REALTIME PERFIL
 ========================= */
+
 
 function escucharEstado() {
 
@@ -1363,7 +1508,9 @@ function escucharEstado() {
     supabaseClient
       .channel(
         "perfil-" +
-        otroUsuario
+        otroUsuario +
+        "-" +
+        usuarioActual.id
       )
       .on(
         "postgres_changes",
@@ -1377,12 +1524,6 @@ function escucharEstado() {
         },
         payload => {
 
-          console.log(
-            "Estado actualizado:",
-            payload.new
-          );
-
-
           mostrarEstado(
             payload.new
           );
@@ -1395,8 +1536,9 @@ function escucharEstado() {
 
 
 /* =========================
-   DESPLAZAR ABAJO
+   SCROLL
 ========================= */
+
 
 function desplazarAbajo() {
 
@@ -1409,8 +1551,12 @@ function desplazarAbajo() {
         );
 
 
-      contenedor.scrollTop =
-        contenedor.scrollHeight;
+      if (contenedor) {
+
+        contenedor.scrollTop =
+          contenedor.scrollHeight;
+
+      }
 
     },
     100
@@ -1423,6 +1569,10 @@ function desplazarAbajo() {
    ESCAPAR HTML
 ========================= */
 
-function escapeHTML(texto) {
 
-  const
+function escapeHTML(
+  texto
+) {
+
+  const div =
+    document.createEleme
