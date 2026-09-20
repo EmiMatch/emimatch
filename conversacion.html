@@ -6,11 +6,13 @@
 
   <title>EmiMatch - Conversación</title>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
     body {
       font-family: Arial, sans-serif;
       background: #f5f7fb;
-      padding: 25px;
+      padding: 20px;
       text-align: center;
     }
 
@@ -19,12 +21,17 @@
       padding: 25px;
       border-radius: 15px;
       max-width: 500px;
-      margin: 40px auto;
+      margin: 30px auto;
       box-shadow: 0 3px 15px rgba(0,0,0,.1);
     }
 
     .ok {
       color: green;
+      font-weight: bold;
+    }
+
+    .error {
+      color: #d32f2f;
       font-weight: bold;
     }
 
@@ -47,7 +54,7 @@
   <h2>Conversación</h2>
 
   <p id="estado">
-    Probando usuario...
+    🔄 Conectando con Supabase...
   </p>
 
   <div id="usuario" class="dato"></div>
@@ -56,29 +63,106 @@
 
 <script>
 
-const params =
-  new URLSearchParams(window.location.search);
+const SUPABASE_URL =
+  "https://kngiadwaesdbmvwivdev.supabase.co";
 
-const userId =
-  params.get("user");
+const SUPABASE_KEY =
+  "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
 
-if (userId) {
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
-  document.getElementById("estado").innerHTML =
-    "✅ El usuario del Match fue recibido correctamente.";
 
-  document.getElementById("estado").className =
-    "ok";
+async function probar() {
 
-  document.getElementById("usuario").textContent =
-    userId;
+  const estado =
+    document.getElementById("estado");
 
-} else {
+  const usuario =
+    document.getElementById("usuario");
 
-  document.getElementById("estado").textContent =
-    "❌ No se recibió ningún usuario.";
+
+  try {
+
+    const params =
+      new URLSearchParams(
+        window.location.search
+      );
+
+    const otherUserId =
+      params.get("user");
+
+
+    if (!otherUserId) {
+
+      throw new Error(
+        "No se recibió el ID del usuario."
+      );
+
+    }
+
+
+    usuario.textContent =
+      "Usuario del Match: " +
+      otherUserId;
+
+
+    estado.textContent =
+      "🔄 Comprobando sesión...";
+
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient.auth.getSession();
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    if (!data.session) {
+
+      throw new Error(
+        "No hay una sesión iniciada en EmiMatch."
+      );
+
+    }
+
+
+    estado.textContent =
+      "✅ Supabase conectado y sesión activa.";
+
+    estado.className =
+      "ok";
+
+
+    usuario.innerHTML +=
+      "<br><br>Usuario actual:<br>" +
+      data.session.user.id;
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    estado.textContent =
+      "❌ " + error.message;
+
+    estado.className =
+      "error";
+
+  }
 
 }
+
+
+probar();
 
 </script>
 
