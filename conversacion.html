@@ -10,7 +10,7 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>Conversación - EmiMatch</title>
+  <title>EmiMatch - Conversación</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -20,41 +20,52 @@
       box-sizing: border-box;
     }
 
+    html,
     body {
       margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
       font-family: Arial, sans-serif;
-      background: #f4f6fb;
-      color: #222;
+      background: #eef1f6;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
     }
 
     .app {
+      width: 100%;
       max-width: 700px;
-      margin: auto;
-      min-height: 100vh;
-      background: white;
+      height: 100vh;
+      background: #fff;
       display: flex;
       flex-direction: column;
     }
 
+    /* HEADER */
+
     .header {
-      background: #111b3d;
+      height: 70px;
+      background: #101b3c;
       color: white;
-      padding: 12px;
       display: flex;
       align-items: center;
-      gap: 12px;
-      position: sticky;
-      top: 0;
-      z-index: 10;
+      padding: 10px 12px;
+      gap: 10px;
+      flex-shrink: 0;
     }
 
     .volver {
-      border: none;
+      width: 40px;
+      height: 40px;
+      border: 0;
       background: transparent;
       color: white;
-      font-size: 30px;
+      font-size: 34px;
+      line-height: 1;
       cursor: pointer;
-      padding: 0 5px;
     }
 
     .foto-header {
@@ -63,40 +74,61 @@
       border-radius: 50%;
       object-fit: cover;
       background: #ddd;
+      border: 2px solid rgba(255,255,255,.5);
     }
 
     .datos-header {
-      flex: 1;
       min-width: 0;
+      flex: 1;
     }
 
     .nombre {
       font-size: 17px;
       font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .estado {
+      margin-top: 4px;
       font-size: 12px;
-      margin-top: 3px;
-      color: #b9c2d9;
+      color: #c7ccda;
     }
 
     .estado.online {
-      color: #55e68a;
+      color: #4ee27f;
     }
+
+    /* MENSAJES */
 
     #mensajes {
       flex: 1;
-      padding: 15px;
       overflow-y: auto;
-      background: #eef1f7;
-      min-height: calc(100vh - 130px);
+      padding: 15px;
+      background:
+        linear-gradient(
+          rgba(238,241,247,.95),
+          rgba(238,241,247,.95)
+        );
     }
 
     .cargando {
       text-align: center;
       color: #777;
-      padding: 30px 10px;
+      padding: 35px 15px;
+      line-height: 1.6;
+    }
+
+    .error {
+      margin: 20px 5px;
+      padding: 15px;
+      border-radius: 12px;
+      background: #fff0f0;
+      color: #b42318;
+      text-align: center;
+      line-height: 1.5;
+      word-break: break-word;
     }
 
     .mensaje {
@@ -115,14 +147,14 @@
     .burbuja {
       max-width: 78%;
       padding: 10px 13px;
-      border-radius: 17px;
+      border-radius: 18px;
       font-size: 15px;
       line-height: 1.4;
-      word-wrap: break-word;
+      word-break: break-word;
     }
 
     .mio .burbuja {
-      background: #111b3d;
+      background: #101b3c;
       color: white;
       border-bottom-right-radius: 5px;
     }
@@ -131,63 +163,68 @@
       background: white;
       color: #222;
       border-bottom-left-radius: 5px;
-      box-shadow: 0 1px 3px rgba(0,0,0,.08);
+      box-shadow: 0 1px 4px rgba(0,0,0,.08);
     }
 
     .hora {
       display: block;
-      font-size: 10px;
-      margin-top: 4px;
-      opacity: .65;
       text-align: right;
+      margin-top: 4px;
+      font-size: 10px;
+      opacity: .65;
     }
 
     .check {
-      font-size: 11px;
       margin-left: 4px;
+      font-size: 11px;
     }
 
     .check.leido {
-      color: #4da6ff;
+      color: #55aaff;
     }
+
+    /* TYPING */
 
     .escribiendo {
-      min-height: 20px;
-      padding-left: 15px;
-      font-size: 12px;
-      color: #777;
+      min-height: 22px;
+      padding: 0 15px 3px;
       background: #eef1f7;
+      color: #777;
+      font-size: 12px;
     }
 
+    /* INPUT */
+
     .input-area {
+      width: 100%;
       display: flex;
       gap: 8px;
       padding: 10px;
       background: white;
       border-top: 1px solid #ddd;
-      position: sticky;
-      bottom: 0;
+      flex-shrink: 0;
     }
 
     #mensajeInput {
       flex: 1;
+      min-width: 0;
       border: 1px solid #ccd2df;
-      border-radius: 22px;
-      padding: 12px 15px;
+      border-radius: 24px;
+      padding: 12px 16px;
       font-size: 15px;
       outline: none;
     }
 
     #mensajeInput:focus {
-      border-color: #111b3d;
+      border-color: #101b3c;
     }
 
     #btnEnviar {
       width: 48px;
       height: 48px;
-      border: none;
+      border: 0;
       border-radius: 50%;
-      background: #111b3d;
+      background: #101b3c;
       color: white;
       font-size: 21px;
       cursor: pointer;
@@ -197,15 +234,6 @@
       opacity: .5;
     }
 
-    .error {
-      color: #c62828;
-      background: #ffebee;
-      padding: 15px;
-      margin: 20px;
-      border-radius: 10px;
-      text-align: center;
-    }
-
   </style>
 
 </head>
@@ -213,14 +241,18 @@
 
 <body>
 
+
 <div class="app">
 
+
+  <!-- HEADER -->
 
   <div class="header">
 
     <button
       class="volver"
       onclick="volver()"
+      aria-label="Volver"
     >
       ‹
     </button>
@@ -256,6 +288,8 @@
   </div>
 
 
+  <!-- MENSAJES -->
+
   <div id="mensajes">
 
     <div class="cargando">
@@ -265,11 +299,15 @@
   </div>
 
 
+  <!-- TYPING -->
+
   <div
     id="escribiendo"
     class="escribiendo"
   ></div>
 
+
+  <!-- INPUT -->
 
   <div class="input-area">
 
@@ -297,9 +335,9 @@
 <script>
 
 
-/* =========================
+/* =====================================================
    SUPABASE
-========================= */
+===================================================== */
 
 
 const SUPABASE_URL =
@@ -317,9 +355,9 @@ const supabaseClient =
   );
 
 
-/* =========================
+/* =====================================================
    VARIABLES
-========================= */
+===================================================== */
 
 
 let usuarioActual = null;
@@ -334,12 +372,59 @@ let canalTyping = null;
 
 let canalPerfil = null;
 
-let escribiendoTimer = null;
+let typingTimer = null;
 
 
-/* =========================
+/* =====================================================
+   ELEMENTOS
+===================================================== */
+
+
+const nombrePerfil =
+  document.getElementById(
+    "nombrePerfil"
+  );
+
+
+const estadoPerfil =
+  document.getElementById(
+    "estadoPerfil"
+  );
+
+
+const fotoPerfil =
+  document.getElementById(
+    "fotoPerfil"
+  );
+
+
+const mensajes =
+  document.getElementById(
+    "mensajes"
+  );
+
+
+const mensajeInput =
+  document.getElementById(
+    "mensajeInput"
+  );
+
+
+const btnEnviar =
+  document.getElementById(
+    "btnEnviar"
+  );
+
+
+const escribiendo =
+  document.getElementById(
+    "escribiendo"
+  );
+
+
+/* =====================================================
    INICIAR
-========================= */
+===================================================== */
 
 
 async function iniciar() {
@@ -347,27 +432,38 @@ async function iniciar() {
   try {
 
     console.log(
-      "EmiMatch: iniciando conversación..."
+      "=== EmiMatch conversación ==="
     );
 
 
+    /*
+      1. COMPROBAR SESIÓN
+    */
+
+
     const {
-      data,
-      error
+      data: sessionData,
+      error: sessionError
     } =
       await supabaseClient
         .auth
         .getSession();
 
 
-    if (error) {
+    if (sessionError) {
 
-      throw error;
+      throw new Error(
+        "Error de sesión: " +
+        sessionError.message
+      );
 
     }
 
 
-    if (!data.session) {
+    if (
+      !sessionData ||
+      !sessionData.session
+    ) {
 
       window.location.href =
         "./index.html";
@@ -378,7 +474,7 @@ async function iniciar() {
 
 
     usuarioActual =
-      data.session.user;
+      sessionData.session.user;
 
 
     console.log(
@@ -387,18 +483,23 @@ async function iniciar() {
     );
 
 
-    const parametros =
+    /*
+      2. OBTENER USER DE LA URL
+    */
+
+
+    const params =
       new URLSearchParams(
         window.location.search
       );
 
 
     otroUsuario =
-      parametros.get("user");
+      params.get("user");
 
 
     console.log(
-      "Usuario conversación:",
+      "Usuario destino:",
       otroUsuario
     );
 
@@ -406,7 +507,7 @@ async function iniciar() {
     if (!otroUsuario) {
 
       mostrarError(
-        "No se encontró el usuario de la conversación."
+        "Falta el usuario en la dirección de la conversación."
       );
 
       return;
@@ -420,7 +521,7 @@ async function iniciar() {
     ) {
 
       mostrarError(
-        "No podés abrir una conversación con tu propia cuenta."
+        "La conversación no puede ser con tu propia cuenta."
       );
 
       return;
@@ -428,7 +529,18 @@ async function iniciar() {
     }
 
 
+    /*
+      3. BUSCAR PERFIL
+    */
+
+
     await cargarPerfil();
+
+
+    /*
+      4. BUSCAR MATCH
+    */
+
 
     await buscarMatch();
 
@@ -436,7 +548,7 @@ async function iniciar() {
     if (!matchActual) {
 
       mostrarError(
-        "No se encontró el Match entre estos usuarios."
+        "No se encontró el Match entre estas dos cuentas."
       );
 
       return;
@@ -444,28 +556,49 @@ async function iniciar() {
     }
 
 
+    /*
+      5. CARGAR MENSAJES
+    */
+
+
     await cargarMensajes();
 
 
-    await marcarMensajesEntregados();
+    /*
+      6. MARCAR MENSAJES
+    */
 
-    await marcarMensajesLeidos();
+
+    await marcarEntregados();
+
+    await marcarLeidos();
+
+
+    /*
+      7. ACTIVAR INPUT
+    */
 
 
     prepararInput();
+
+
+    /*
+      8. REALTIME
+    */
+
 
     escucharMensajes();
 
     escucharTyping();
 
-    escucharEstado();
+    escucharPerfil();
 
 
     desplazarAbajo();
 
 
     console.log(
-      "CONVERSACIÓN CARGADA CORRECTAMENTE"
+      "=== CONVERSACIÓN LISTA ==="
     );
 
   }
@@ -473,16 +606,16 @@ async function iniciar() {
   catch (error) {
 
     console.error(
-      "Error al iniciar conversación:",
+      "ERROR GENERAL:",
       error
     );
 
 
     mostrarError(
-      "Error al cargar la conversación: " +
-      (
+      "No se pudo cargar la conversación.<br><br>" +
+      escapeHTML(
         error.message ||
-        error
+        String(error)
       )
     );
 
@@ -491,12 +624,17 @@ async function iniciar() {
 }
 
 
-/* =========================
+/* =====================================================
    CARGAR PERFIL
-========================= */
+===================================================== */
 
 
 async function cargarPerfil() {
+
+  console.log(
+    "Buscando perfil..."
+  );
+
 
   const {
     data,
@@ -516,12 +654,10 @@ async function cargarPerfil() {
 
   if (error) {
 
-    console.error(
-      "Error perfil:",
-      error
+    throw new Error(
+      "Error cargando perfil: " +
+      error.message
     );
-
-    throw error;
 
   }
 
@@ -529,116 +665,116 @@ async function cargarPerfil() {
   if (!data) {
 
     throw new Error(
-      "No se encontró el perfil del usuario."
+      "El usuario no tiene un perfil creado todavía."
     );
 
   }
 
 
-  const nombre =
-    data.nombre ||
-    "Usuario";
+  console.log(
+    "Perfil encontrado:",
+    data
+  );
 
 
-  document.getElementById(
-    "nombrePerfil"
-  ).textContent =
+  nombrePerfil.textContent =
     data.edad
-      ? nombre + ", " + data.edad
-      : nombre;
-
-
-  const foto =
-    document.getElementById(
-      "fotoPerfil"
-    );
+      ? (
+          data.nombre ||
+          "Usuario"
+        ) +
+        ", " +
+        data.edad
+      : (
+          data.nombre ||
+          "Usuario"
+        );
 
 
   if (data.foto_url) {
 
-    foto.src =
+    fotoPerfil.src =
       data.foto_url;
 
   }
 
 
-  mostrarEstado(data);
+  actualizarEstado(
+    data
+  );
 
 }
 
 
-/* =========================
-   ESTADO ONLINE
-========================= */
+/* =====================================================
+   ESTADO
+===================================================== */
 
 
-function mostrarEstado(data) {
+function actualizarEstado(
+  perfil
+) {
 
-  const elemento =
-    document.getElementById(
-      "estadoPerfil"
-    );
-
-
-  elemento.classList.remove(
+  estadoPerfil.classList.remove(
     "online"
   );
 
 
-  if (data.online === true) {
+  if (
+    perfil.online === true
+  ) {
 
-    elemento.textContent =
+    estadoPerfil.textContent =
       "🟢 En línea";
 
-
-    elemento.classList.add(
+    estadoPerfil.classList.add(
       "online"
     );
-
 
     return;
 
   }
 
 
-  if (data.last_seen) {
+  if (
+    perfil.last_seen
+  ) {
 
-    const fecha =
-      new Date(
-        data.last_seen
-      );
-
-
-    elemento.textContent =
+    estadoPerfil.textContent =
       "Última vez " +
-      formatearUltimaConexion(
-        fecha
+      formatearFecha(
+        perfil.last_seen
       );
 
-  }
-
-  else {
-
-    elemento.textContent =
-      "Desconectado";
+    return;
 
   }
+
+
+  estadoPerfil.textContent =
+    "Desconectado";
 
 }
 
 
-/* =========================
-   ÚLTIMA CONEXIÓN
-========================= */
+/* =====================================================
+   FORMATEAR FECHA
+===================================================== */
 
 
-function formatearUltimaConexion(
+function formatearFecha(
   fecha
 ) {
 
+  const d =
+    new Date(
+      fecha
+    );
+
+
   if (
     isNaN(
-      fecha.getTime()
+      d.getTime()
     )
   ) {
 
@@ -647,7 +783,7 @@ function formatearUltimaConexion(
   }
 
 
-  return fecha.toLocaleString(
+  return d.toLocaleString(
     "es-AR",
     {
       day: "2-digit",
@@ -660,9 +796,9 @@ function formatearUltimaConexion(
 }
 
 
-/* =========================
+/* =====================================================
    BUSCAR MATCH
-========================= */
+===================================================== */
 
 
 async function buscarMatch() {
@@ -672,104 +808,91 @@ async function buscarMatch() {
   );
 
 
-  let resultado =
+  /*
+    Buscamos las dos posibilidades
+    sin usar maybeSingle().
+  */
+
+
+  const {
+    data,
+    error
+  } =
     await supabaseClient
       .from("matches")
       .select(
         "id,user1_id,user2_id,created_at"
       )
-      .eq(
-        "user1_id",
-        usuarioActual.id
+      .or(
+        "and(user1_id.eq." +
+        usuarioActual.id +
+        ",user2_id.eq." +
+        otroUsuario +
+        "),and(user1_id.eq." +
+        otroUsuario +
+        ",user2_id.eq." +
+        usuarioActual.id +
+        ")"
       )
-      .eq(
-        "user2_id",
-        otroUsuario
-      )
-      .maybeSingle();
+      .limit(1);
 
 
-  if (resultado.error) {
+  if (error) {
 
-    console.error(
-      "Error buscando Match:",
-      resultado.error
+    throw new Error(
+      "Error buscando Match: " +
+      error.message
     );
-
-    throw resultado.error;
 
   }
 
 
-  if (resultado.data) {
+  if (
+    !data ||
+    data.length === 0
+  ) {
+
+    console.warn(
+      "No existe Match."
+    );
 
     matchActual =
-      resultado.data;
-
-    console.log(
-      "Match encontrado:",
-      matchActual.id
-    );
+      null;
 
     return;
 
   }
 
 
-  resultado =
-    await supabaseClient
-      .from("matches")
-      .select(
-        "id,user1_id,user2_id,created_at"
-      )
-      .eq(
-        "user1_id",
-        otroUsuario
-      )
-      .eq(
-        "user2_id",
-        usuarioActual.id
-      )
-      .maybeSingle();
+  matchActual =
+    data[0];
 
 
-  if (resultado.error) {
-
-    console.error(
-      "Error buscando Match inverso:",
-      resultado.error
-    );
-
-    throw resultado.error;
-
-  }
-
-
-  if (resultado.data) {
-
-    matchActual =
-      resultado.data;
-
-    console.log(
-      "Match encontrado:",
-      matchActual.id
-    );
-
-  }
+  console.log(
+    "MATCH ENCONTRADO:",
+    matchActual
+  );
 
 }
 
 
-/* =========================
+/* =====================================================
    CARGAR MENSAJES
-========================= */
+===================================================== */
 
 
 async function cargarMensajes() {
 
+  console.log(
+    "Cargando mensajes..."
+  );
+
+
   if (!matchActual) {
 
-    return;
+    throw new Error(
+      "No existe un Match válido."
+    );
 
   }
 
@@ -797,23 +920,15 @@ async function cargarMensajes() {
 
   if (error) {
 
-    console.error(
-      "Error cargando mensajes:",
-      error
+    throw new Error(
+      "Error cargando mensajes: " +
+      error.message
     );
-
-    throw error;
 
   }
 
 
-  const contenedor =
-    document.getElementById(
-      "mensajes"
-    );
-
-
-  contenedor.innerHTML =
+  mensajes.innerHTML =
     "";
 
 
@@ -822,7 +937,7 @@ async function cargarMensajes() {
     data.length === 0
   ) {
 
-    contenedor.innerHTML = `
+    mensajes.innerHTML = `
       <div class="cargando">
         No hay mensajes todavía.<br>
         ¡Comenzá la conversación! 💬
@@ -850,24 +965,20 @@ async function cargarMensajes() {
 }
 
 
-/* =========================
+/* =====================================================
    MOSTRAR MENSAJE
-========================= */
+===================================================== */
 
 
 function mostrarMensaje(
   mensaje
 ) {
 
-  const contenedor =
-    document.getElementById(
-      "mensajes"
-    );
-
-
   if (
     document.querySelector(
-      `[data-message-id="${mensaje.id}"]`
+      '[data-message-id="' +
+      mensaje.id +
+      '"]'
     )
   ) {
 
@@ -881,13 +992,13 @@ function mostrarMensaje(
     usuarioActual.id;
 
 
-  const div =
+  const contenedor =
     document.createElement(
       "div"
     );
 
 
-  div.className =
+  contenedor.className =
     "mensaje " +
     (
       esMio
@@ -896,7 +1007,7 @@ function mostrarMensaje(
     );
 
 
-  div.dataset.messageId =
+  contenedor.dataset.messageId =
     mensaje.id;
 
 
@@ -910,31 +1021,15 @@ function mostrarMensaje(
     "burbuja";
 
 
-  const texto =
-    escapeHTML(
-      mensaje.content
-    );
-
-
-  const hora =
-    new Date(
-      mensaje.created_at
-    ).toLocaleTimeString(
-      "es-AR",
-      {
-        hour: "2-digit",
-        minute: "2-digit"
-      }
-    );
-
-
   let checks =
     "";
 
 
   if (esMio) {
 
-    if (mensaje.read_at) {
+    if (
+      mensaje.read_at
+    ) {
 
       checks =
         '<span class="check leido">✓✓</span>';
@@ -960,55 +1055,54 @@ function mostrarMensaje(
   }
 
 
-  burbuja.innerHTML = `
-    ${texto}
+  const hora =
+    new Date(
+      mensaje.created_at
+    ).toLocaleTimeString(
+      "es-AR",
+      {
+        hour: "2-digit",
+        minute: "2-digit"
+      }
+    );
 
-    <span class="hora">
 
-      ${hora}
+  burbuja.innerHTML =
+    escapeHTML(
+      mensaje.content
+    ) +
+    `
+      <span class="hora">
+        ${hora}
+        ${checks}
+      </span>
+    `;
 
-      ${checks}
 
-    </span>
-  `;
-
-
-  div.appendChild(
+  contenedor.appendChild(
     burbuja
   );
 
 
-  contenedor.appendChild(
-    div
+  mensajes.appendChild(
+    contenedor
   );
 
 }
 
 
-/* =========================
+/* =====================================================
    ENVIAR MENSAJE
-========================= */
+===================================================== */
 
 
 async function enviarMensaje() {
 
-  const input =
-    document.getElementById(
-      "mensajeInput"
-    );
+  const texto =
+    mensajeInput.value.trim();
 
 
-  const boton =
-    document.getElementById(
-      "btnEnviar"
-    );
-
-
-  const contenido =
-    input.value.trim();
-
-
-  if (!contenido) {
+  if (!texto) {
 
     return;
 
@@ -1018,7 +1112,7 @@ async function enviarMensaje() {
   if (!matchActual) {
 
     alert(
-      "Todavía no se cargó el Match."
+      "No hay un Match válido."
     );
 
     return;
@@ -1026,7 +1120,7 @@ async function enviarMensaje() {
   }
 
 
-  boton.disabled =
+  btnEnviar.disabled =
     true;
 
 
@@ -1046,7 +1140,7 @@ async function enviarMensaje() {
             usuarioActual.id,
 
           content:
-            contenido
+            texto
         })
         .select()
         .single();
@@ -1054,12 +1148,15 @@ async function enviarMensaje() {
 
     if (error) {
 
-      throw error;
+      throw new Error(
+        "Error enviando mensaje: " +
+        error.message
+      );
 
     }
 
 
-    input.value =
+    mensajeInput.value =
       "";
 
 
@@ -1083,12 +1180,12 @@ async function enviarMensaje() {
   catch (error) {
 
     console.error(
-      "Error enviando mensaje:",
       error
     );
 
 
     alert(
+      error.message ||
       "No se pudo enviar el mensaje."
     );
 
@@ -1096,22 +1193,22 @@ async function enviarMensaje() {
 
   finally {
 
-    boton.disabled =
+    btnEnviar.disabled =
       false;
 
-    input.focus();
+    mensajeInput.focus();
 
   }
 
 }
 
 
-/* =========================
+/* =====================================================
    ENTREGADOS
-========================= */
+===================================================== */
 
 
-async function marcarMensajesEntregados() {
+async function marcarEntregados() {
 
   if (!matchActual) {
 
@@ -1146,7 +1243,7 @@ async function marcarMensajesEntregados() {
   if (error) {
 
     console.warn(
-      "Error marcando entregados:",
+      "No se pudieron marcar entregados:",
       error
     );
 
@@ -1155,12 +1252,12 @@ async function marcarMensajesEntregados() {
 }
 
 
-/* =========================
+/* =====================================================
    LEÍDOS
-========================= */
+===================================================== */
 
 
-async function marcarMensajesLeidos() {
+async function marcarLeidos() {
 
   if (!matchActual) {
 
@@ -1195,7 +1292,7 @@ async function marcarMensajesLeidos() {
   if (error) {
 
     console.warn(
-      "Error marcando leídos:",
+      "No se pudieron marcar leídos:",
       error
     );
 
@@ -1204,9 +1301,9 @@ async function marcarMensajesLeidos() {
 }
 
 
-/* =========================
+/* =====================================================
    REALTIME MENSAJES
-========================= */
+===================================================== */
 
 
 function escucharMensajes() {
@@ -1221,7 +1318,7 @@ function escucharMensajes() {
   canalMensajes =
     supabaseClient
       .channel(
-        "mensajes-" +
+        "messages-" +
         matchActual.id +
         "-" +
         usuarioActual.id
@@ -1238,12 +1335,8 @@ function escucharMensajes() {
         },
         async payload => {
 
-          const mensaje =
-            payload.new;
-
-
           mostrarMensaje(
-            mensaje
+            payload.new
           );
 
 
@@ -1251,13 +1344,13 @@ function escucharMensajes() {
 
 
           if (
-            mensaje.sender_id ===
+            payload.new.sender_id ===
             otroUsuario
           ) {
 
-            await marcarMensajesEntregados();
+            await marcarEntregados();
 
-            await marcarMensajesLeidos();
+            await marcarLeidos();
 
           }
 
@@ -1279,25 +1372,28 @@ function escucharMensajes() {
 
         }
       )
-      .subscribe();
+      .subscribe(
+        status => {
+
+          console.log(
+            "Realtime messages:",
+            status
+          );
+
+        }
+      );
 
 }
 
 
-/* =========================
+/* =====================================================
    INPUT
-========================= */
+===================================================== */
 
 
 function prepararInput() {
 
-  const input =
-    document.getElementById(
-      "mensajeInput"
-    );
-
-
-  input.addEventListener(
+  mensajeInput.addEventListener(
     "keydown",
     event => {
 
@@ -1316,42 +1412,36 @@ function prepararInput() {
   );
 
 
-  input.addEventListener(
+  mensajeInput.addEventListener(
     "input",
-    manejarEscritura
+    manejarTyping
   );
 
 }
 
 
-/* =========================
+/* =====================================================
    TYPING
-========================= */
+===================================================== */
 
 
-async function manejarEscritura() {
+async function manejarTyping() {
 
-  const input =
-    document.getElementById(
-      "mensajeInput"
-    );
-
-
-  const escribiendo =
-    input.value.length > 0;
+  const activo =
+    mensajeInput.value.length > 0;
 
 
   await actualizarTyping(
-    escribiendo
+    activo
   );
 
 
   clearTimeout(
-    escribiendoTimer
+    typingTimer
   );
 
 
-  escribiendoTimer =
+  typingTimer =
     setTimeout(
       () => {
 
@@ -1366,8 +1456,13 @@ async function manejarEscritura() {
 }
 
 
+/* =====================================================
+   ACTUALIZAR TYPING
+===================================================== */
+
+
 async function actualizarTyping(
-  escribiendo
+  activo
 ) {
 
   if (
@@ -1394,7 +1489,7 @@ async function actualizarTyping(
             usuarioActual.id,
 
           is_typing:
-            escribiendo,
+            activo,
 
           updated_at:
             new Date().toISOString()
@@ -1409,7 +1504,7 @@ async function actualizarTyping(
   if (error) {
 
     console.warn(
-      "Error typing:",
+      "Typing:",
       error
     );
 
@@ -1418,161 +1513,5 @@ async function actualizarTyping(
 }
 
 
-/* =========================
-   REALTIME TYPING
-========================= */
-
-
-function escucharTyping() {
-
-  if (!matchActual) {
-
-    return;
-
-  }
-
-
-  canalTyping =
-    supabaseClient
-      .channel(
-        "typing-" +
-        matchActual.id +
-        "-" +
-        usuarioActual.id
-      )
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "typing_status",
-          filter:
-            "match_id=eq." +
-            matchActual.id
-        },
-        payload => {
-
-          const datos =
-            payload.new;
-
-
-          if (
-            !datos ||
-            datos.user_id !==
-            otroUsuario
-          ) {
-
-            return;
-
-          }
-
-
-          const elemento =
-            document.getElementById(
-              "escribiendo"
-            );
-
-
-          if (
-            datos.is_typing ===
-            true
-          ) {
-
-            elemento.textContent =
-              "✍️ Está escribiendo...";
-
-          }
-
-          else {
-
-            elemento.textContent =
-              "";
-
-          }
-
-        }
-      )
-      .subscribe();
-
-}
-
-
-/* =========================
-   REALTIME PERFIL
-========================= */
-
-
-function escucharEstado() {
-
-  canalPerfil =
-    supabaseClient
-      .channel(
-        "perfil-" +
-        otroUsuario +
-        "-" +
-        usuarioActual.id
-      )
-      .on(
-        "postgres_changes",
-        {
-          event: "UPDATE",
-          schema: "public",
-          table: "profiles",
-          filter:
-            "id=eq." +
-            otroUsuario
-        },
-        payload => {
-
-          mostrarEstado(
-            payload.new
-          );
-
-        }
-      )
-      .subscribe();
-
-}
-
-
-/* =========================
-   SCROLL
-========================= */
-
-
-function desplazarAbajo() {
-
-  setTimeout(
-    () => {
-
-      const contenedor =
-        document.getElementById(
-          "mensajes"
-        );
-
-
-      if (contenedor) {
-
-        contenedor.scrollTop =
-          contenedor.scrollHeight;
-
-      }
-
-    },
-    100
-  );
-
-}
-
-
-/* =========================
-   ESCAPAR HTML
-========================= */
-
-
-function escapeHTML(
-  texto
-) {
-
-  const div =
-    document.createEleme
+/* =====================================================
+   
