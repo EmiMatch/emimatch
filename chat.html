@@ -16,8 +16,8 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #667eea, #764ba2);
       min-height: 100vh;
+      background: linear-gradient(135deg, #667eea, #764ba2);
       color: #222;
     }
 
@@ -28,24 +28,74 @@
       padding: 20px 15px 40px;
     }
 
+    /* CABECERA */
+
     .cabecera {
       background: white;
-      border-radius: 20px;
+      border-radius: 22px;
       padding: 20px;
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       box-shadow: 0 8px 25px rgba(0,0,0,.15);
     }
 
     .cabecera h1 {
-      margin: 0 0 8px;
+      margin: 0 0 7px;
       color: #764ba2;
+      font-size: 27px;
     }
 
     .cabecera p {
       margin: 0;
       color: #777;
+      font-size: 14px;
     }
+
+    /* BOTÓN NOTIFICACIONES */
+
+    .notificaciones-btn {
+      width: 100%;
+      border: none;
+      background: white;
+      border-radius: 17px;
+      padding: 15px 18px;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(0,0,0,.12);
+      font-size: 16px;
+      font-weight: bold;
+      color: #764ba2;
+    }
+
+    .notificaciones-izq {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .campana {
+      font-size: 25px;
+    }
+
+    .badge {
+      background: #ff3040;
+      color: white;
+      min-width: 25px;
+      height: 25px;
+      padding: 0 7px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+      box-shadow: 0 3px 8px rgba(255,48,64,.35);
+    }
+
+    /* MATCH */
 
     .match {
       background: white;
@@ -61,8 +111,8 @@
       position: relative;
     }
 
-    .match:hover {
-      transform: translateY(-2px);
+    .match:active {
+      transform: scale(.98);
     }
 
     .foto {
@@ -100,6 +150,12 @@
       max-width: 100%;
     }
 
+    .sin-mensajes {
+      color: #999;
+    }
+
+    /* CONTADOR */
+
     .contador {
       background: #ff3040;
       color: white;
@@ -113,24 +169,10 @@
       font-size: 12px;
       font-weight: bold;
       box-shadow: 0 3px 8px rgba(255,48,64,.35);
+      flex-shrink: 0;
     }
 
-    .sin-mensajes {
-      color: #999;
-    }
-
-    .volver {
-      width: 100%;
-      border: none;
-      background: white;
-      color: #764ba2;
-      padding: 14px;
-      border-radius: 15px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 10px;
-    }
+    /* ESTADOS */
 
     .cargando,
     .error,
@@ -145,6 +187,26 @@
     .error {
       color: #c62828;
     }
+
+    .vacio {
+      color: #777;
+    }
+
+    /* VOLVER */
+
+    .volver {
+      width: 100%;
+      border: none;
+      background: white;
+      color: #764ba2;
+      padding: 14px;
+      border-radius: 15px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
   </style>
 </head>
 
@@ -152,26 +214,80 @@
 
 <div class="contenedor">
 
+  <!-- CABECERA -->
+
   <div class="cabecera">
+
     <h1>💕 Mis Matches</h1>
-    <p>Personas con las que hiciste Match</p>
+
+    <p>
+      Personas con las que hiciste Match
+    </p>
+
   </div>
 
+
+  <!-- NOTIFICACIONES -->
+
+  <button
+    class="notificaciones-btn"
+    onclick="abrirNotificaciones()"
+  >
+
+    <div class="notificaciones-izq">
+
+      <span class="campana">
+        🔔
+      </span>
+
+      <span>
+        Notificaciones
+      </span>
+
+    </div>
+
+    <div
+      id="badgeNotificaciones"
+      style="display:none"
+      class="badge"
+    >
+      0
+    </div>
+
+  </button>
+
+
+  <!-- LISTA DE MATCHES -->
+
   <div id="lista">
+
     <div class="cargando">
       Cargando tus Matches...
     </div>
+
   </div>
 
-  <button class="volver" onclick="volverPerfil()">
+
+  <!-- VOLVER -->
+
+  <button
+    class="volver"
+    onclick="volverPerfil()"
+  >
     ← Volver a mi perfil
   </button>
 
 </div>
 
+
 <script>
 
-const SUPABASE_URL = "https://kngiadwaesdbmvwivdev.supabase.co";
+/* =====================================
+   SUPABASE
+===================================== */
+
+const SUPABASE_URL =
+"https://kngiadwaesdbmvwivdev.supabase.co";
 
 const SUPABASE_KEY =
 "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
@@ -182,36 +298,81 @@ supabase.createClient(
   SUPABASE_KEY
 );
 
+
+/* =====================================
+   VARIABLES
+===================================== */
+
 let usuarioActual = null;
+
+
+/* =====================================
+   INICIAR
+===================================== */
 
 async function iniciar() {
 
-  const { data: sessionData } =
+  console.log(
+    "🚀 Iniciando EmiMatch..."
+  );
+
+
+  const {
+    data: sessionData,
+    error
+  } =
     await supabaseClient.auth.getSession();
 
-  if (!sessionData.session) {
-    window.location.href = "./index.html";
+
+  if (
+    error ||
+    !sessionData.session
+  ) {
+
+    window.location.href =
+      "./index.html";
+
     return;
   }
+
 
   usuarioActual =
     sessionData.session.user;
 
+
+  console.log(
+    "✅ Usuario conectado:",
+    usuarioActual.id
+  );
+
+
   await cargarMatches();
 
-  escucharNuevosMensajes();
+  await actualizarNotificaciones();
+
+  escucharRealtime();
+
 }
 
+
+/* =====================================
+   CARGAR MATCHES
+===================================== */
 
 async function cargarMatches() {
 
   const lista =
     document.getElementById("lista");
 
+
   lista.innerHTML =
     '<div class="cargando">Cargando tus Matches...</div>';
 
-  const { data: matches, error } =
+
+  const {
+    data: matches,
+    error
+  } =
     await supabaseClient
       .from("matches")
       .select("*")
@@ -219,20 +380,25 @@ async function cargarMatches() {
         `user1_id.eq.${usuarioActual.id},user2_id.eq.${usuarioActual.id}`
       );
 
+
   if (error) {
 
     console.error(error);
 
     lista.innerHTML =
       `<div class="error">
-        Error cargando Matches:<br>
-        ${error.message}
+        ❌ Error cargando Matches:<br><br>
+        ${escapeHtml(error.message)}
       </div>`;
 
     return;
   }
 
-  if (!matches || matches.length === 0) {
+
+  if (
+    !matches ||
+    matches.length === 0
+  ) {
 
     lista.innerHTML =
       `<div class="vacio">
@@ -242,66 +408,96 @@ async function cargarMatches() {
     return;
   }
 
+
   lista.innerHTML = "";
 
-  for (const match of matches) {
+
+  for (
+    const match of matches
+  ) {
 
     const otroUsuario =
       match.user1_id === usuarioActual.id
         ? match.user2_id
         : match.user1_id;
 
+
     await crearMatchCard(
       match,
       otroUsuario
     );
+
   }
+
 }
 
+
+/* =====================================
+   CREAR TARJETA MATCH
+===================================== */
 
 async function crearMatchCard(
   match,
   otroUsuario
 ) {
 
-  const { data: perfil, error } =
+
+  const {
+    data: perfil,
+    error
+  } =
     await supabaseClient
       .from("profiles")
       .select(
         "id,nombre,edad,ciudad,descripcion,foto_url,intereses"
       )
-      .eq("id", otroUsuario)
+      .eq(
+        "id",
+        otroUsuario
+      )
       .single();
 
-  if (error || !perfil) {
+
+  if (
+    error ||
+    !perfil
+  ) {
+
     console.error(error);
+
     return;
   }
 
-  /*
-    Buscamos el último mensaje
-  */
 
-  const { data: ultimoMensaje } =
+  /* ÚLTIMO MENSAJE */
+
+  const {
+    data: ultimoMensaje
+  } =
     await supabaseClient
       .from("messages")
       .select(
         "id,content,sender_id,created_at"
       )
-      .eq("match_id", match.id)
-      .order("created_at", {
-        ascending: false
-      })
+      .eq(
+        "match_id",
+        match.id
+      )
+      .order(
+        "created_at",
+        {
+          ascending: false
+        }
+      )
       .limit(1)
       .maybeSingle();
 
 
-  /*
-    Contamos mensajes no leídos
-    enviados por la otra persona.
-  */
+  /* NO LEÍDOS */
 
-  const { count: noLeidos } =
+  const {
+    count: noLeidos
+  } =
     await supabaseClient
       .from("messages")
       .select(
@@ -311,22 +507,36 @@ async function crearMatchCard(
           head: true
         }
       )
-      .eq("match_id", match.id)
-      .eq("sender_id", otroUsuario)
-      .is("read_at", null);
+      .eq(
+        "match_id",
+        match.id
+      )
+      .eq(
+        "sender_id",
+        otroUsuario
+      )
+      .is(
+        "read_at",
+        null
+      );
 
 
   const card =
     document.createElement("div");
 
-  card.className = "match";
 
-  let foto =
+  card.className =
+    "match";
+
+
+  const foto =
     perfil.foto_url ||
     "https://via.placeholder.com/150?text=💕";
 
+
   let ultimoTexto =
     "Todavía no hay mensajes";
+
 
   if (ultimoMensaje) {
 
@@ -334,6 +544,7 @@ async function crearMatchCard(
       ultimoMensaje.sender_id === usuarioActual.id
         ? "Vos: " + ultimoMensaje.content
         : ultimoMensaje.content;
+
   }
 
 
@@ -348,25 +559,53 @@ async function crearMatchCard(
     <div class="info">
 
       <div class="nombre">
-        ${escapeHtml(perfil.nombre || "Usuario")}
+        ${escapeHtml(
+          perfil.nombre || "Usuario"
+        )}
       </div>
 
       <div class="datos">
-        ${perfil.edad ? escapeHtml(perfil.edad) + " años" : ""}
-        ${perfil.ciudad ? " · " + escapeHtml(perfil.ciudad) : ""}
+
+        ${
+          perfil.edad
+            ? escapeHtml(
+                perfil.edad
+              ) + " años"
+            : ""
+        }
+
+        ${
+          perfil.ciudad
+            ? " · " +
+              escapeHtml(
+                perfil.ciudad
+              )
+            : ""
+        }
+
       </div>
 
-      <div class="ultimo ${
-        !ultimoMensaje ? "sin-mensajes" : ""
-      }">
-        ${escapeHtml(ultimoTexto)}
+      <div
+        class="ultimo ${
+          !ultimoMensaje
+            ? "sin-mensajes"
+            : ""
+        }"
+      >
+        ${escapeHtml(
+          ultimoTexto
+        )}
       </div>
 
     </div>
 
     ${
       noLeidos > 0
-        ? `<div class="contador">${noLeidos}</div>`
+        ? `
+          <div class="contador">
+            ${noLeidos}
+          </div>
+        `
         : ""
     }
 
@@ -375,11 +614,13 @@ async function crearMatchCard(
 
   card.addEventListener(
     "click",
-    () => {
+    function() {
 
       window.location.href =
         "./conversacion.html?user=" +
-        encodeURIComponent(otroUsuario);
+        encodeURIComponent(
+          otroUsuario
+        );
 
     }
   );
@@ -388,20 +629,131 @@ async function crearMatchCard(
   document
     .getElementById("lista")
     .appendChild(card);
+
 }
 
 
-/*
-  Realtime:
-  cuando llega un mensaje nuevo,
-  actualizamos automáticamente
-  el contador.
-*/
+/* =====================================
+   CONTADOR GLOBAL
+===================================== */
 
-function escucharNuevosMensajes() {
+async function actualizarNotificaciones() {
+
+  if (!usuarioActual) {
+    return;
+  }
+
+
+  const {
+    data: matches,
+    error
+  } =
+    await supabaseClient
+      .from("matches")
+      .select(
+        "id,user1_id,user2_id"
+      )
+      .or(
+        `user1_id.eq.${usuarioActual.id},user2_id.eq.${usuarioActual.id}`
+      );
+
+
+  if (
+    error ||
+    !matches
+  ) {
+
+    return;
+  }
+
+
+  let totalNoLeidos = 0;
+
+
+  for (
+    const match of matches
+  ) {
+
+    const otroUsuario =
+      match.user1_id === usuarioActual.id
+        ? match.user2_id
+        : match.user1_id;
+
+
+    const {
+      count
+    } =
+      await supabaseClient
+        .from("messages")
+        .select(
+          "id",
+          {
+            count: "exact",
+            head: true
+          }
+        )
+        .eq(
+          "match_id",
+          match.id
+        )
+        .eq(
+          "sender_id",
+          otroUsuario
+        )
+        .is(
+          "read_at",
+          null
+        );
+
+
+    if (count) {
+
+      totalNoLeidos += count;
+
+    }
+
+  }
+
+
+  const badge =
+    document.getElementById(
+      "badgeNotificaciones"
+    );
+
+
+  if (
+    totalNoLeidos > 0
+  ) {
+
+    badge.style.display =
+      "flex";
+
+    badge.textContent =
+      totalNoLeidos > 99
+        ? "99+"
+        : totalNoLeidos;
+
+  } else {
+
+    badge.style.display =
+      "none";
+
+  }
+
+}
+
+
+/* =====================================
+   REALTIME
+===================================== */
+
+function escucharRealtime() {
 
   supabaseClient
-    .channel("chat-lista-matches")
+
+    .channel(
+      "chat-lista-global"
+    )
 
     .on(
       "postgres_changes",
@@ -413,11 +765,14 @@ function escucharNuevosMensajes() {
       async payload => {
 
         console.log(
-          "📩 Nuevo mensaje:",
-          payload.new
+          "📩 Nuevo mensaje recibido"
         );
 
+
         await cargarMatches();
+
+        await actualizarNotificaciones();
+
       }
     )
 
@@ -430,58 +785,109 @@ function escucharNuevosMensajes() {
       },
       async payload => {
 
-        /*
-          Cuando read_at cambia,
-          actualizamos el contador.
-        */
+        console.log(
+          "✓✓ Mensaje actualizado"
+        );
+
 
         await cargarMatches();
+
+        await actualizarNotificaciones();
+
       }
     )
 
-    .subscribe(status => {
+    .subscribe(
+      status => {
 
-      console.log(
-        "Realtime matches:",
-        status
-      );
+        console.log(
+          "Realtime:",
+          status
+        );
 
-    });
+      }
+    );
+
 }
 
 
-/*
-  Seguridad básica para mostrar
-  texto proveniente de la base de datos.
-*/
+/* =====================================
+   ABRIR NOTIFICACIONES
+===================================== */
 
-function escapeHtml(texto) {
+function abrirNotificaciones() {
 
-  if (texto === null ||
-      texto === undefined) {
+  window.location.href =
+    "./notificaciones.html";
 
-    return "";
-  }
-
-  return String(texto)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
 }
 
+
+/* =====================================
+   VOLVER AL PERFIL
+===================================== */
 
 function volverPerfil() {
 
   window.location.href =
     "./perfil.html";
+
 }
 
+
+/* =====================================
+   SEGURIDAD
+===================================== */
+
+function escapeHtml(texto) {
+
+  if (
+    texto === null ||
+    texto === undefined
+  ) {
+
+    return "";
+
+  }
+
+
+  return String(texto)
+
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+
+    .replace(
+      /</g,
+      "&lt;"
+    )
+
+    .replace(
+      />/g,
+      "&gt;"
+    )
+
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+
+    .replace(
+      /'/g,
+      "&#039;"
+    );
+
+}
+
+
+/* =====================================
+   ARRANCAR
+===================================== */
 
 iniciar();
 
 </script>
 
 </body>
-</html>
+  </html>
