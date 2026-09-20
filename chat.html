@@ -4,622 +4,386 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>EmiMatch - Mis Matches</title>
+<title>EmiMatch - Matches</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-
-*{
-  box-sizing:border-box;
+* {
+  box-sizing: border-box;
 }
 
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:linear-gradient(135deg,#0b1020,#172554);
-  color:#222;
-  min-height:100vh;
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f5f7fb;
+  color: #222;
 }
 
-.header{
-  background:rgba(0,0,0,.3);
-  color:white;
-  padding:20px;
-  text-align:center;
+header {
+  background: #111827;
+  color: white;
+  padding: 18px;
+  text-align: center;
 }
 
-.header h1{
-  margin:0;
-  font-size:27px;
+header h1 {
+  margin: 0;
+  font-size: 24px;
 }
 
-.header span{
-  color:#ff4f9a;
+.container {
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
 }
 
-.container{
-  width:95%;
-  max-width:700px;
-  margin:20px auto;
+.status {
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
 }
 
-.card{
-  background:white;
-  border-radius:20px;
-  padding:20px;
-  box-shadow:0 8px 30px rgba(0,0,0,.25);
-  margin-bottom:20px;
+.match {
+  background: white;
+  padding: 15px;
+  border-radius: 15px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  cursor: pointer;
 }
 
-.card h2{
-  margin-top:0;
+.match img {
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #ddd;
 }
 
-.match{
-  display:flex;
-  align-items:center;
-  gap:15px;
-  padding:15px 5px;
-  border-bottom:1px solid #eee;
-  cursor:pointer;
-  transition:.2s;
+.match-info {
+  flex: 1;
 }
 
-.match:hover{
-  background:#f7f7f7;
+.match-info h3 {
+  margin: 0 0 5px;
 }
 
-.match img{
-  width:65px;
-  height:65px;
-  border-radius:50%;
-  object-fit:cover;
-  background:#ddd;
-  border:3px solid #ff4f9a;
+.match-info p {
+  margin: 3px 0;
+  color: #666;
 }
 
-.match-info{
-  flex:1;
+button {
+  width: 100%;
+  padding: 14px;
+  border: 0;
+  border-radius: 10px;
+  background: #111827;
+  color: white;
+  font-size: 16px;
+  margin-top: 10px;
 }
 
-.match-info strong{
-  display:block;
-  font-size:18px;
-  margin-bottom:5px;
+.error {
+  color: #b91c1c;
+  background: #fee2e2;
 }
 
-.match-info span{
-  color:#777;
-  font-size:14px;
+.success {
+  color: #166534;
+  background: #dcfce7;
 }
-
-.match-icon{
-  font-size:25px;
-}
-
-.empty{
-  text-align:center;
-  padding:35px 10px;
-  color:#777;
-}
-
-.loading{
-  text-align:center;
-  padding:25px;
-  color:#777;
-}
-
-.error{
-  background:#ffe8e8;
-  color:#b00020;
-  padding:14px;
-  border-radius:10px;
-  margin-top:15px;
-  word-break:break-word;
-}
-
-.btn{
-  display:block;
-  width:100%;
-  padding:14px;
-  border:none;
-  border-radius:12px;
-  background:#111b3a;
-  color:white;
-  text-decoration:none;
-  text-align:center;
-  font-size:16px;
-  cursor:pointer;
-  margin-top:15px;
-}
-
-#chatSection{
-  display:none;
-}
-
-.chat-header{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  margin-bottom:15px;
-}
-
-.chat-header img{
-  width:60px;
-  height:60px;
-  border-radius:50%;
-  object-fit:cover;
-  border:3px solid #ff4f9a;
-}
-
-.chat-header h2{
-  margin:0;
-  font-size:21px;
-}
-
-.chat-header p{
-  margin:5px 0 0;
-  color:#777;
-  font-size:14px;
-}
-
-#messages{
-  height:420px;
-  overflow-y:auto;
-  background:#f1f3f8;
-  border-radius:12px;
-  padding:15px;
-  margin-bottom:15px;
-}
-
-.message{
-  max-width:80%;
-  padding:10px 13px;
-  margin-bottom:10px;
-  border-radius:15px;
-  word-wrap:break-word;
-  clear:both;
-}
-
-.mine{
-  background:#111b3a;
-  color:white;
-  float:right;
-  border-bottom-right-radius:4px;
-}
-
-.theirs{
-  background:white;
-  color:#222;
-  float:left;
-  border-bottom-left-radius:4px;
-}
-
-.message-time{
-  display:block;
-  font-size:10px;
-  opacity:.7;
-  margin-top:4px;
-}
-
-.input-area{
-  display:flex;
-  gap:8px;
-}
-
-#messageInput{
-  flex:1;
-  padding:13px;
-  border:1px solid #ddd;
-  border-radius:10px;
-  font-size:15px;
-  outline:none;
-}
-
-#sendButton{
-  width:90px;
-  border:none;
-  border-radius:10px;
-  background:#ff4f9a;
-  color:white;
-  cursor:pointer;
-  font-size:15px;
-  font-weight:bold;
-}
-
-#sendButton:disabled{
-  opacity:.5;
-}
-
 </style>
 </head>
 
 <body>
 
-<div class="header">
-  <h1>💕 Emi<span>Match</span></h1>
-</div>
+<header>
+  <h1>💕 Mis Matches</h1>
+</header>
 
 <div class="container">
 
-<!-- =========================
-     MIS MATCHES
-========================= -->
+  <div id="status" class="status">
+    Cargando matches...
+  </div>
 
-<div id="matchesSection" class="card">
+  <div id="matches"></div>
 
-<h2>💕 Mis Matches</h2>
-
-<p>
-Elegí una persona para comenzar una conversación.
-</p>
-
-<div id="matchesList">
-
-<div class="loading">
-Cargando matches...
-</div>
+  <button onclick="volverPerfil()">← Volver al perfil</button>
 
 </div>
-
-<a href="perfil.html" class="btn">
-← Volver a mi Perfil
-</a>
-
-</div>
-
-
-<!-- =========================
-     CHAT
-========================= -->
-
-<div id="chatSection" class="card">
-
-<div class="chat-header">
-
-<img
-id="chatPhoto"
-src="https://via.placeholder.com/100?text=Foto"
-alt="Foto"
->
-
-<div>
-
-<h2 id="chatName">
-Usuario
-</h2>
-
-<p id="chatInfo"></p>
-
-</div>
-
-</div>
-
-
-<div id="messages">
-
-<div class="loading">
-Cargando mensajes...
-</div>
-
-</div>
-
-
-<div class="input-area">
-
-<input
-type="text"
-id="messageInput"
-placeholder="Escribí un mensaje..."
-autocomplete="off"
->
-
-<button id="sendButton">
-Enviar
-</button>
-
-</div>
-
-
-<a href="chat.html" class="btn">
-← Volver a mis Matches
-</a>
-
-</div>
-
-</div>
-
 
 <script>
 
-/* ==========================================
-   SUPABASE
-========================================== */
+const SUPABASE_URL = "https://kngiadwaesdbmvwivdev.supabase.co";
 
-const SUPABASE_URL =
-"https://kngiadwaesdbmvwivdev.supabase.co";
-
-const SUPABASE_ANON_KEY =
+const SUPABASE_KEY =
 "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
 
 const supabaseClient =
-window.supabase.createClient(
-SUPABASE_URL,
-SUPABASE_ANON_KEY
-);
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
 
-/* ==========================================
-   VARIABLES
-========================================== */
+async function cargarMatches() {
 
-let currentUser = null;
+  const status = document.getElementById("status");
+  const container = document.getElementById("matches");
 
-let currentMatchId = null;
+  try {
 
-let currentOtherUserId = null;
+    status.className = "status";
+    status.innerHTML = "🔄 Comprobando sesión...";
 
-let realtimeChannel = null;
+    const {
+      data: sessionData,
+      error: sessionError
+    } = await supabaseClient.auth.getSession();
+
+    if (sessionError) {
+      throw new Error(
+        "Error de sesión: " + sessionError.message
+      );
+    }
+
+    const session = sessionData.session;
+
+    if (!session) {
+
+      status.className = "status error";
+
+      status.innerHTML =
+        "❌ No hay una sesión iniciada.<br><br>" +
+        "Volvé a iniciar sesión.";
+
+      return;
+    }
+
+    const userId = session.user.id;
+
+    console.log("Usuario actual:", userId);
+
+    status.innerHTML =
+      "🔎 Buscando tus matches...";
 
 
-/* ==========================================
-   INICIAR
-========================================== */
+    // BUSCAR MATCHES
+    const {
+      data: matches,
+      error: matchesError
+    } = await supabaseClient
+      .from("matches")
+      .select("*")
+      .or(
+        `user1_id.eq.${userId},user2_id.eq.${userId}`
+      );
 
-document.addEventListener(
-"DOMContentLoaded",
-iniciar
-);
+    console.log("Matches:", matches);
+    console.log("Error matches:", matchesError);
+
+    if (matchesError) {
+
+      throw new Error(
+        "Error consultando matches: " +
+        matchesError.message
+      );
+    }
 
 
-async function iniciar(){
+    if (!matches || matches.length === 0) {
 
-const {
-data:{
-session
-},
-error
-} =
-await supabaseClient.auth.getSession();
+      status.className = "status";
+
+      status.innerHTML =
+        "💕 No tenés matches todavía.";
+
+      return;
+    }
 
 
-if(error){
+    status.className = "status success";
 
-console.error(error);
+    status.innerHTML =
+      "💕 Encontramos " +
+      matches.length +
+      " match" +
+      (matches.length === 1 ? "" : "es") +
+      ".";
+
+
+    container.innerHTML = "";
+
+
+    for (const match of matches) {
+
+      const otherUserId =
+        match.user1_id === userId
+          ? match.user2_id
+          : match.user1_id;
+
+
+      console.log(
+        "Buscando perfil:",
+        otherUserId
+      );
+
+
+      // BUSCAR PERFIL
+      const {
+        data: profile,
+        error: profileError
+      } = await supabaseClient
+        .from("profiles")
+        .select(
+          "id,nombre,edad,ciudad,descripcion,foto_url,intereses"
+        )
+        .eq("id", otherUserId)
+        .maybeSingle();
+
+
+      console.log(
+        "Perfil:",
+        profile
+      );
+
+      console.log(
+        "Error perfil:",
+        profileError
+      );
+
+
+      if (profileError) {
+
+        const errorBox =
+          document.createElement("div");
+
+        errorBox.className =
+          "status error";
+
+        errorBox.innerHTML =
+          "❌ Error al cargar perfil:<br>" +
+          profileError.message;
+
+        container.appendChild(errorBox);
+
+        continue;
+      }
+
+
+      if (!profile) {
+
+        const errorBox =
+          document.createElement("div");
+
+        errorBox.className =
+          "status error";
+
+        errorBox.innerHTML =
+          "⚠️ El match existe, pero no se encontró " +
+          "el perfil del usuario.";
+
+        container.appendChild(errorBox);
+
+        continue;
+      }
+
+
+      const card =
+        document.createElement("div");
+
+      card.className = "match";
+
+
+      const foto =
+        profile.foto_url ||
+        "https://via.placeholder.com/100";
+
+
+      card.innerHTML = `
+        <img
+          src="${escapar(foto)}"
+          alt="Foto"
+        >
+
+        <div class="match-info">
+
+          <h3>
+            ${escapar(profile.nombre || "Usuario")}
+          </h3>
+
+          <p>
+            ${profile.edad ? escapar(profile.edad) + " años" : ""}
+          </p>
+
+          <p>
+            📍 ${escapar(profile.ciudad || "")}
+          </p>
+
+        </div>
+      `;
+
+
+      card.onclick = function() {
+
+        window.location.href =
+          "chat.html?user=" +
+          encodeURIComponent(otherUserId);
+
+      };
+
+
+      container.appendChild(card);
+
+    }
+
+  } catch (error) {
+
+    console.error(error);
+
+    status.className =
+      "status error";
+
+    status.innerHTML =
+      "❌ ERROR:<br><br>" +
+      escapar(error.message);
+
+  }
 
 }
 
 
-if(!session){
+function escapar(texto) {
 
-window.location.href =
-"index.html";
-
-return;
-
-}
-
-
-currentUser =
-session.user;
-
-
-const params =
-new URLSearchParams(
-window.location.search
-);
-
-
-const userId =
-params.get("user");
-
-
-if(userId){
-
-await abrirChat(userId);
-
-}else{
-
-await cargarMatches();
-
-}
+  return String(texto)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 
 }
 
 
-/* ==========================================
-   CARGAR MATCHES
-========================================== */
+function volverPerfil() {
 
-async function cargarMatches(){
-
-document.getElementById(
-"matchesSection"
-).style.display="block";
-
-document.getElementById(
-"chatSection"
-).style.display="none";
-
-
-const lista =
-document.getElementById(
-"matchesList"
-);
-
-
-lista.innerHTML =
-'<div class="loading">Cargando matches...</div>';
-
-
-const {
-data:matches,
-error
-} =
-await supabaseClient
-.from("matches")
-.select("*")
-.or(
-`user1_id.eq.${currentUser.id},user2_id.eq.${currentUser.id}`
-)
-.order(
-"created_at",
-{
-ascending:false
-}
-);
-
-
-if(error){
-
-console.error(error);
-
-lista.innerHTML =
-`
-<div class="error">
-❌ Error al cargar matches:
-<br><br>
-${escapeHtml(error.message)}
-</div>
-`;
-
-return;
+  window.location.href =
+    "perfil.html";
 
 }
 
 
-if(!matches || matches.length===0){
+cargarMatches();
 
-lista.innerHTML =
-`
-<div class="empty">
-💕 Todavía no tenés matches.
-</div>
-`;
+</script>
 
-return;
-
-}
-
-
-lista.innerHTML="";
-
-
-for(const match of matches){
-
-const otherUserId =
-match.user1_id === currentUser.id
-? match.user2_id
-: match.user1_id;
-
-
-/*
-   IMPORTANTE:
-   Las columnas correctas son:
-
-   id
-   nombre
-   edad
-   ciudad
-   descripcion
-   foto_url
-   intereses
-*/
-
-const {
-data:profile,
-error:profileError
-} =
-await supabaseClient
-.from("profiles")
-.select(
-"id,nombre,edad,ciudad,descripcion,foto_url,intereses"
-)
-.eq(
-"id",
-otherUserId
-)
-.maybeSingle();
-
-
-if(profileError){
-
-console.error(
-"Error cargando perfil:",
-profileError
-);
-
-continue;
-
-}
-
-
-if(!profile){
-
-console.log(
-"No existe perfil para:",
-otherUserId
-);
-
-continue;
-
-}
-
-
-const div =
-document.createElement("div");
-
-
-div.className="match";
-
-
-const foto =
-profile.foto_url ||
-"https://via.placeholder.com/100?text=Foto";
-
-
-const nombre =
-profile.nombre ||
-"Usuario";
-
-
-const edad =
-profile.edad
-? ", " + profile.edad
-: "";
-
-
-const ciudad =
-profile.ciudad ||
-"Sin ciudad";
-
-
-div.innerHTML=`
-
-<img
-src="${escapeHtml(foto)}"
-alt="Foto de ${escapeHtml(nombre)}"
->
-
-<div class="match-info">
-
-<strong>
-${escapeHtml(nombre)}${edad}
-</strong>
-
-<span>
-📍 ${escapeHtml(ciudad)}
-</span>
-
-</div>
-
-<div class="match-icon">
-💬
-</div>
-
-`;
-
-
-div.addEventListener(
-"click
+</body>
+</html>
