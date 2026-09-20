@@ -53,6 +53,8 @@
       margin: 5px 0 15px;
     }
 
+    /* FILTROS */
+
     .filtros {
       background: white;
       border-radius: 18px;
@@ -87,7 +89,6 @@
 
     .campo input:focus {
       border-color: #2563eb;
-      box-shadow: 0 0 0 2px rgba(37,99,235,.1);
     }
 
     .fila {
@@ -111,7 +112,6 @@
     .online-filtro input {
       width: 20px;
       height: 20px;
-      cursor: pointer;
     }
 
     .botones {
@@ -151,28 +151,7 @@
       margin: 15px 0;
     }
 
-    .estado {
-      background: white;
-      border-radius: 18px;
-      padding: 25px;
-      text-align: center;
-      box-shadow: 0 5px 18px rgba(0,0,0,.08);
-      margin-bottom: 18px;
-    }
-
-    .estado-icono {
-      font-size: 55px;
-      margin-bottom: 8px;
-    }
-
-    .estado h2 {
-      margin: 8px 0;
-    }
-
-    .estado p {
-      color: #6b7280;
-      line-height: 1.5;
-    }
+    /* CARD */
 
     .card {
       background: white;
@@ -201,6 +180,13 @@
 
     .contenido {
       padding: 19px;
+    }
+
+    .cabecera-perfil {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
     }
 
     .nombre {
@@ -267,6 +253,81 @@
       color: #15803d;
     }
 
+    /* MENU OPCIONES */
+
+    .boton-opciones {
+      border: none;
+      background: #f3f4f6;
+      color: #111827;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      font-size: 22px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .menu-opciones {
+      display: none;
+      background: #f9fafb;
+      border-radius: 13px;
+      margin: 12px 0 15px;
+      overflow: hidden;
+      border: 1px solid #e5e7eb;
+    }
+
+    .menu-opciones.visible {
+      display: block;
+    }
+
+    .opcion {
+      width: 100%;
+      border: none;
+      background: transparent;
+      padding: 14px;
+      text-align: left;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .opcion:hover {
+      background: #e5e7eb;
+    }
+
+    .opcion-bloquear {
+      color: #b91c1c;
+    }
+
+    .opcion-denunciar {
+      color: #92400e;
+    }
+
+    /* ESTADOS */
+
+    .estado {
+      background: white;
+      border-radius: 18px;
+      padding: 25px;
+      text-align: center;
+      box-shadow: 0 5px 18px rgba(0,0,0,.08);
+      margin-bottom: 18px;
+    }
+
+    .estado-icono {
+      font-size: 55px;
+      margin-bottom: 8px;
+    }
+
+    .estado h2 {
+      margin: 8px 0;
+    }
+
+    .estado p {
+      color: #6b7280;
+      line-height: 1.5;
+    }
+
     .reiniciar {
       width: 100%;
       border: none;
@@ -296,7 +357,88 @@
       font-weight: bold;
     }
 
+    /* MODAL DENUNCIA */
+
+    .modal-fondo {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      inset: 0;
+      background: rgba(0,0,0,.6);
+      padding: 20px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-fondo.visible {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 450px;
+      background: white;
+      border-radius: 20px;
+      padding: 22px;
+      box-shadow: 0 15px 40px rgba(0,0,0,.25);
+    }
+
+    .modal h2 {
+      margin-top: 0;
+    }
+
+    .motivo {
+      display: block;
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #d1d5db;
+      border-radius: 11px;
+      margin: 12px 0;
+      font-size: 15px;
+    }
+
+    .detalles-denuncia {
+      width: 100%;
+      min-height: 100px;
+      resize: vertical;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 11px;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+    }
+
+    .modal-botones {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .modal-boton {
+      flex: 1;
+      border: none;
+      padding: 13px;
+      border-radius: 11px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .cancelar {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .enviar-denuncia {
+      background: #dc2626;
+      color: white;
+    }
+
+    .modal-boton:disabled {
+      opacity: .6;
+    }
+
     @media (max-width: 500px) {
+
       .foto,
       .sin-foto {
         height: 330px;
@@ -306,6 +448,7 @@
         flex-direction: column;
         gap: 0;
       }
+
     }
   </style>
 </head>
@@ -437,6 +580,90 @@
 
 </div>
 
+
+<!-- MODAL DENUNCIA -->
+
+<div
+  id="modalDenuncia"
+  class="modal-fondo"
+>
+
+  <div class="modal">
+
+    <h2>
+      ⚠️ Denunciar usuario
+    </h2>
+
+    <p>
+      Seleccioná el motivo de la denuncia.
+    </p>
+
+    <select
+      id="motivoDenuncia"
+      class="motivo"
+    >
+
+      <option value="">
+        Seleccioná un motivo
+      </option>
+
+      <option value="Acoso">
+        🚫 Acoso
+      </option>
+
+      <option value="Perfil falso">
+        🤥 Perfil falso
+      </option>
+
+      <option value="Contenido inapropiado">
+        ⚠️ Contenido inapropiado
+      </option>
+
+      <option value="Estafa">
+        💰 Estafa
+      </option>
+
+      <option value="Comportamiento ofensivo">
+        😡 Comportamiento ofensivo
+      </option>
+
+      <option value="Otro">
+        📝 Otro
+      </option>
+
+    </select>
+
+    <textarea
+      id="detallesDenuncia"
+      class="detalles-denuncia"
+      placeholder="Contanos brevemente qué ocurrió (opcional)"
+    ></textarea>
+
+    <div class="modal-botones">
+
+      <button
+        id="btnCancelarDenuncia"
+        class="modal-boton cancelar"
+        type="button"
+      >
+        Cancelar
+      </button>
+
+      <button
+        id="btnEnviarDenuncia"
+        class="modal-boton enviar-denuncia"
+        type="button"
+      >
+        ⚠️ Enviar denuncia
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
 <script>
 
 const SUPABASE_URL =
@@ -451,11 +678,14 @@ const supabaseClient =
     SUPABASE_KEY
   );
 
+
 let usuarioActual = null;
 
 let perfiles = [];
 
 let perfilesMostrados = [];
+
+let usuarioParaDenunciar = null;
 
 
 // ========================================
@@ -472,17 +702,15 @@ async function iniciar() {
       },
       error
     } =
-      await supabaseClient.auth.getSession();
+      await supabaseClient
+        .auth
+        .getSession();
+
 
     if (error) {
-
-      mostrarError(
-        "No se pudo comprobar la sesión.",
-        error
-      );
-
-      return;
+      throw error;
     }
+
 
     if (!session) {
 
@@ -492,17 +720,20 @@ async function iniciar() {
       return;
     }
 
+
     usuarioActual =
       session.user;
 
+
     await cargarPerfiles();
+
 
   } catch (error) {
 
     console.error(error);
 
     mostrarError(
-      "Ocurrió un error al iniciar Descubrir.",
+      "No se pudo iniciar Descubrir.",
       error
     );
 
@@ -512,22 +743,28 @@ async function iniciar() {
 
 
 // ========================================
-// OBTENER VALORES DE FILTROS
+// FILTROS
 // ========================================
 
 function obtenerFiltros() {
 
   let edadMin =
     parseInt(
-      document.getElementById("edadMin").value,
+      document.getElementById(
+        "edadMin"
+      ).value,
       10
     );
 
+
   let edadMax =
     parseInt(
-      document.getElementById("edadMax").value,
+      document.getElementById(
+        "edadMax"
+      ).value,
       10
     );
+
 
   const ciudad =
     document
@@ -535,11 +772,13 @@ function obtenerFiltros() {
       .value
       .trim();
 
+
   const intereses =
     document
       .getElementById("intereses")
       .value
       .trim();
+
 
   const soloOnline =
     document
@@ -551,9 +790,7 @@ function obtenerFiltros() {
     isNaN(edadMin) ||
     edadMin < 18
   ) {
-
     edadMin = 18;
-
   }
 
 
@@ -561,9 +798,7 @@ function obtenerFiltros() {
     isNaN(edadMax) ||
     edadMax > 100
   ) {
-
     edadMax = 100;
-
   }
 
 
@@ -585,10 +820,15 @@ function obtenerFiltros() {
 async function cargarPerfiles() {
 
   const resultado =
-    document.getElementById("resultado");
+    document.getElementById(
+      "resultado"
+    );
+
 
   const contador =
-    document.getElementById("contador");
+    document.getElementById(
+      "contador"
+    );
 
 
   resultado.innerHTML = `
@@ -597,14 +837,13 @@ async function cargarPerfiles() {
     </div>
   `;
 
+
   contador.textContent = "";
 
 
   const filtros =
     obtenerFiltros();
 
-
-  // Validar edades
 
   if (
     filtros.edadMin >
@@ -618,7 +857,9 @@ async function cargarPerfiles() {
           ⚠️
         </div>
 
-        <h2>Rango incorrecto</h2>
+        <h2>
+          Rango de edad incorrecto
+        </h2>
 
         <p>
           La edad mínima no puede ser
@@ -635,7 +876,7 @@ async function cargarPerfiles() {
   try {
 
     // ====================================
-    // OBTENER SWIPES
+    // SWIPES DEL USUARIO
     // ====================================
 
     const {
@@ -644,7 +885,9 @@ async function cargarPerfiles() {
     } =
       await supabaseClient
         .from("swipes")
-        .select("target_user_id")
+        .select(
+          "target_user_id"
+        )
         .eq(
           "user_id",
           usuarioActual.id
@@ -652,9 +895,7 @@ async function cargarPerfiles() {
 
 
     if (errorSwipes) {
-
       throw errorSwipes;
-
     }
 
 
@@ -663,6 +904,39 @@ async function cargarPerfiles() {
         (swipes || []).map(
           item =>
             item.target_user_id
+        )
+      );
+
+
+    // ====================================
+    // BLOQUEOS REALIZADOS
+    // ====================================
+
+    const {
+      data: bloqueados,
+      error: errorBloqueos
+    } =
+      await supabaseClient
+        .from("user_blocks")
+        .select(
+          "blocked_id"
+        )
+        .eq(
+          "blocker_id",
+          usuarioActual.id
+        );
+
+
+    if (errorBloqueos) {
+      throw errorBloqueos;
+    }
+
+
+    const idsBloqueados =
+      new Set(
+        (bloqueados || []).map(
+          item =>
+            item.blocked_id
         )
       );
 
@@ -699,11 +973,11 @@ async function cargarPerfiles() {
         );
 
 
-    // ====================================
-    // FILTRO CIUDAD
-    // ====================================
+    // CIUDAD
 
-    if (filtros.ciudad !== "") {
+    if (
+      filtros.ciudad !== ""
+    ) {
 
       consulta =
         consulta.ilike(
@@ -714,11 +988,11 @@ async function cargarPerfiles() {
     }
 
 
-    // ====================================
-    // FILTRO INTERESES
-    // ====================================
+    // INTERESES
 
-    if (filtros.intereses !== "") {
+    if (
+      filtros.intereses !== ""
+    ) {
 
       consulta =
         consulta.ilike(
@@ -729,11 +1003,11 @@ async function cargarPerfiles() {
     }
 
 
-    // ====================================
-    // SOLO ONLINE
-    // ====================================
+    // ONLINE
 
-    if (filtros.soloOnline) {
+    if (
+      filtros.soloOnline
+    ) {
 
       consulta =
         consulta.eq(
@@ -744,10 +1018,6 @@ async function cargarPerfiles() {
     }
 
 
-    // ====================================
-    // EJECUTAR CONSULTA
-    // ====================================
-
     const {
       data,
       error
@@ -756,22 +1026,34 @@ async function cargarPerfiles() {
 
 
     if (error) {
-
       throw error;
-
     }
 
 
     // ====================================
-    // QUITAR PERFILES YA VISTOS
+    // FILTRAR VISTOS Y BLOQUEADOS
     // ====================================
 
     perfiles =
       (data || []).filter(
-        perfil =>
-          !vistos.has(
-            perfil.id
-          )
+        perfil => {
+
+          const yaVisto =
+            vistos.has(
+              perfil.id
+            );
+
+          const estaBloqueado =
+            idsBloqueados.has(
+              perfil.id
+            );
+
+          return (
+            !yaVisto &&
+            !estaBloqueado
+          );
+
+        }
       );
 
 
@@ -787,9 +1069,10 @@ async function cargarPerfiles() {
   } catch (error) {
 
     console.error(
-      "ERROR CARGANDO PERFILES:",
+      "Error cargando perfiles:",
       error
     );
+
 
     mostrarError(
       "No se pudieron cargar los perfiles.",
@@ -818,6 +1101,7 @@ function mostrarPerfilActual() {
   ) {
 
     resultado.innerHTML = `
+
       <div class="estado">
 
         <div class="estado-icono">
@@ -842,64 +1126,123 @@ function mostrarPerfilActual() {
         </button>
 
       </div>
+
     `;
 
+
     document
-      .getElementById("btnReiniciar")
+      .getElementById(
+        "btnReiniciar"
+      )
       .addEventListener(
         "click",
         reiniciarPerfiles
       );
 
+
     return;
   }
 
 
+  const perfil =
+    perfilesMostrados[0];
+
+
   resultado.innerHTML =
     crearCard(
-      perfilesMostrados[0]
+      perfil
     );
 
 
-  const botonLike =
-    document.getElementById(
+  document
+    .getElementById(
       "btnLike"
+    )
+    .addEventListener(
+      "click",
+      function() {
+
+        darLike(
+          perfil.id
+        );
+
+      }
     );
 
-  const botonPasar =
-    document.getElementById(
+
+  document
+    .getElementById(
       "btnPasar"
+    )
+    .addEventListener(
+      "click",
+      function() {
+
+        pasar(
+          perfil.id
+        );
+
+      }
     );
 
 
-  botonLike.addEventListener(
-    "click",
-    function() {
+  document
+    .getElementById(
+      "btnOpciones"
+    )
+    .addEventListener(
+      "click",
+      function() {
 
-      darLike(
-        perfilesMostrados[0].id
-      );
+        const menu =
+          document.getElementById(
+            "menuOpciones"
+          );
 
-    }
-  );
+        menu.classList.toggle(
+          "visible"
+        );
+
+      }
+    );
 
 
-  botonPasar.addEventListener(
-    "click",
-    function() {
+  document
+    .getElementById(
+      "btnBloquear"
+    )
+    .addEventListener(
+      "click",
+      function() {
 
-      pasar(
-        perfilesMostrados[0].id
-      );
+        bloquearUsuario(
+          perfil.id
+        );
 
-    }
-  );
+      }
+    );
+
+
+  document
+    .getElementById(
+      "btnDenunciar"
+    )
+    .addEventListener(
+      "click",
+      function() {
+
+        abrirDenuncia(
+          perfil.id
+        );
+
+      }
+    );
 
 }
 
 
 // ========================================
-// CREAR TARJETA
+// CREAR CARD
 // ========================================
 
 function crearCard(perfil) {
@@ -907,7 +1250,9 @@ function crearCard(perfil) {
   let fotoHTML;
 
 
-  if (perfil.foto_url) {
+  if (
+    perfil.foto_url
+  ) {
 
     fotoHTML = `
       <img
@@ -948,6 +1293,7 @@ function crearCard(perfil) {
 
   const datos = [];
 
+
   if (perfil.edad) {
 
     datos.push(
@@ -955,6 +1301,7 @@ function crearCard(perfil) {
     );
 
   }
+
 
   if (perfil.ciudad) {
 
@@ -975,385 +1322,16 @@ function crearCard(perfil) {
 
       <div class="contenido">
 
-        <div class="nombre">
-          ${escaparHTML(
-            perfil.nombre ||
-            "Sin nombre"
-          )}
-        </div>
-
-        <div class="datos">
-          ${datos.join(" · ")}
-        </div>
-
-        ${estadoHTML}
-
-        ${
-          perfil.descripcion
-            ? `
-              <div class="descripcion">
-                ${escaparHTML(
-                  perfil.descripcion
-                )}
-              </div>
-            `
-            : ""
-        }
-
-        ${
-          perfil.intereses
-            ? `
-              <div class="intereses">
-                ❤️
-                <strong>
-                  Intereses:
-                </strong>
-                ${escaparHTML(
-                  perfil.intereses
-                )}
-              </div>
-            `
-            : ""
-        }
-
-        <div class="acciones">
-
-          <button
-            id="btnPasar"
-            class="accion pasar"
-            type="button"
-          >
-            ❌ Pasar
-          </button>
-
-          <button
-            id="btnLike"
-            class="accion like"
-            type="button"
-          >
-            ❤️ Me gusta
-          </button>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  `;
-
-}
-
-
-// ========================================
-// LIKE
-// ========================================
-
-async function darLike(usuarioId) {
-
-  const boton =
-    document.getElementById(
-      "btnLike"
-    );
-
-
-  if (boton) {
-
-    boton.disabled = true;
-
-    boton.textContent =
-      "⏳ Enviando...";
-
-  }
-
-
-  try {
-
-    const {
-      error
-    } =
-      await supabaseClient
-        .from("swipes")
-        .insert({
-          user_id:
-            usuarioActual.id,
-
-          target_user_id:
-            usuarioId,
-
-          action:
-            "like"
-        });
-
-
-    if (error) {
-
-      throw error;
-
-    }
-
-
-    quitarPerfilActual();
-
-    mostrarPerfilActual();
-
-
-  } catch (error) {
-
-    console.error(error);
-
-    if (boton) {
-
-      boton.disabled = false;
-
-      boton.textContent =
-        "❤️ Me gusta";
-
-    }
-
-
-    if (
-      error.code === "23505"
-    ) {
-
-      alert(
-        "Ya habías interactuado con esta persona."
-      );
-
-    } else {
-
-      alert(
-        "No se pudo registrar el Me gusta."
-      );
-
-    }
-
-  }
-
-}
-
-
-// ========================================
-// PASAR
-// ========================================
-
-async function pasar(usuarioId) {
-
-  const boton =
-    document.getElementById(
-      "btnPasar"
-    );
-
-
-  if (boton) {
-
-    boton.disabled = true;
-
-    boton.textContent =
-      "⏳ Guardando...";
-
-  }
-
-
-  try {
-
-    const {
-      error
-    } =
-      await supabaseClient
-        .from("swipes")
-        .insert({
-          user_id:
-            usuarioActual.id,
-
-          target_user_id:
-            usuarioId,
-
-          action:
-            "pass"
-        });
-
-
-    if (error) {
-
-      throw error;
-
-    }
-
-
-    quitarPerfilActual();
-
-    mostrarPerfilActual();
-
-
-  } catch (error) {
-
-    console.error(error);
-
-    if (boton) {
-
-      boton.disabled = false;
-
-      boton.textContent =
-        "❌ Pasar";
-
-    }
-
-
-    if (
-      error.code === "23505"
-    ) {
-
-      alert(
-        "Ya habías interactuado con esta persona."
-      );
-
-    } else {
-
-      alert(
-        "No se pudo registrar la acción."
-      );
-
-    }
-
-  }
-
-}
-
-
-// ========================================
-// QUITAR PERFIL ACTUAL
-// ========================================
-
-function quitarPerfilActual() {
-
-  if (
-    perfilesMostrados.length
-  ) {
-
-    perfilesMostrados.shift();
-
-  }
-
-  actualizarContador();
-
-}
-
-
-// ========================================
-// CONTADOR
-// ========================================
-
-function actualizarContador() {
-
-  const contador =
-    document.getElementById(
-      "contador"
-    );
-
-
-  const cantidad =
-    perfilesMostrados.length;
-
-
-  if (cantidad === 0) {
-
-    contador.textContent = "";
-
-  } else if (cantidad === 1) {
-
-    contador.textContent =
-      "1 perfil disponible";
-
-  } else {
-
-    contador.textContent =
-      `${cantidad} perfiles disponibles`;
-
-  }
-
-}
-
-
-// ========================================
-// APLICAR FILTROS
-// ========================================
-
-async function aplicarFiltros() {
-
-  const boton =
-    document.getElementById(
-      "btnAplicar"
-    );
-
-
-  boton.disabled = true;
-
-  boton.textContent =
-    "⏳ Buscando...";
-
-
-  try {
-
-    await cargarPerfiles();
-
-  } catch (error) {
-
-    console.error(error);
-
-    mostrarError(
-      "No se pudieron aplicar los filtros.",
-      error
-    );
-
-  } finally {
-
-    boton.disabled = false;
-
-    boton.textContent =
-      "🔎 Aplicar filtros";
-
-  }
-
-}
-
-
-// ========================================
-// LIMPIAR FILTROS
-// ========================================
-
-async function limpiarFiltros() {
-
-  document.getElementById(
-    "edadMin"
-  ).value = 18;
-
-
-  document.getElementById(
-    "edadMax"
-  ).value = 80;
-
-
-  document.getElementById(
-    "ciudad"
-  ).value = "";
-
-
-  document.getElementById(
-    "intereses"
-  ).value = "";
-
-
-  document.getElementById(
-    "soloOnline"
-  ).checked = false;
-
-
-  await cargarPerfiles();
-
-}
-
-
-// ========================================
-// REINICIAR PERFILES
-// ===========================
+        <div class="cabecera-perfil">
+
+          <div>
+
+            <div class="nombre">
+              ${escaparHTML(
+                perfil.nombre ||
+                "Sin nombre"
+              )}
+            </div>
+
+            <div class="datos">
+              ${datos.join(" 
