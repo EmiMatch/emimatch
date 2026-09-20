@@ -38,7 +38,6 @@
       align-items: center;
       gap: 12px;
       box-shadow: 0 2px 8px rgba(0,0,0,.15);
-      z-index: 2;
     }
 
     .back {
@@ -120,10 +119,10 @@
       display: flex;
       justify-content: flex-end;
       align-items: center;
-      gap: 4px;
+      gap: 5px;
       margin-top: 3px;
       font-size: 10px;
-      opacity: .75;
+      opacity: .8;
     }
 
     .estado {
@@ -134,10 +133,6 @@
 
     .estado.leido {
       color: #60a5fa;
-    }
-
-    .estado.recibido {
-      color: white;
     }
 
     #typing {
@@ -181,6 +176,10 @@
       font-size: 21px;
       cursor: pointer;
       flex-shrink: 0;
+    }
+
+    #enviarBtn:disabled {
+      opacity: .6;
     }
 
     .loading {
@@ -261,7 +260,7 @@
 
     <button
       id="enviarBtn"
-      onclick="enviarMensaje()"
+      type="button"
     >
       ➤
     </button>
@@ -292,11 +291,10 @@ let otherProfile = null;
 let matchId = null;
 
 let typingTimer = null;
-let isTyping = false;
 
 
 /* =========================================
-   INICIAR
+   INICIO
 ========================================= */
 
 async function iniciar() {
@@ -319,6 +317,7 @@ async function iniciar() {
       );
 
       return;
+
     }
 
 
@@ -336,6 +335,7 @@ async function iniciar() {
         "index.html";
 
       return;
+
     }
 
 
@@ -343,11 +343,10 @@ async function iniciar() {
       session.user;
 
 
-    await marcarOnline();
-
     await cargarPerfilOtro();
 
     await buscarMatch();
+
 
     if (!matchId) {
 
@@ -356,6 +355,7 @@ async function iniciar() {
       );
 
       return;
+
     }
 
 
@@ -365,15 +365,20 @@ async function iniciar() {
 
     await cargarMensajes();
 
+
     escucharMensajes();
 
     escucharTyping();
 
     escucharEstado();
 
+
   } catch (error) {
 
-    console.error(error);
+    console.error(
+      "ERROR EMI MATCH:",
+      error
+    );
 
     mostrarError(
       "Error cargando la conversación."
@@ -385,28 +390,27 @@ async function iniciar() {
 
 
 /* =========================================
-   ONLINE
+   ERROR
 ========================================= */
 
-async function marcarOnline() {
+function mostrarError(
+  mensaje
+) {
 
-  await supabaseClient
-    .from("profiles")
-    .update({
-      online: true,
-      last_seen:
-        new Date().toISOString()
-    })
-    .eq(
-      "id",
-      currentUser.id
-    );
+  document.getElementById(
+    "mensajes"
+  ).innerHTML =
+    `
+      <div class="error">
+        ❌ ${mensaje}
+      </div>
+    `;
 
 }
 
 
 /* =========================================
-   PERFIL
+   PERFIL DEL OTRO USUARIO
 ========================================= */
 
 async function cargarPerfilOtro() {
@@ -427,7 +431,12 @@ async function cargarPerfilOtro() {
       .maybeSingle();
 
 
-  if (error) throw error;
+  if (error) {
+
+    throw error;
+
+  }
+
 
   if (!data) {
 
@@ -484,27 +493,36 @@ function actualizarEstado() {
     elemento.textContent =
       "🟢 En línea";
 
-  } else {
+    return;
+
+  }
+
+
+  if (
+    otherProfile &&
+    otherProfile.last_seen
+  ) {
 
     elemento.textContent =
       "⚪ " +
       ultimaConexion(
-        otherProfile?.last_seen
+        otherProfile.last_seen
       );
 
+    return;
+
   }
+
+
+  elemento.textContent =
+    "⚪ Sin información";
 
 }
 
 
-function ultimaConexion(fecha) {
-
-  if (!fecha) {
-
-    return "Sin información";
-
-  }
-
+function ultimaConexion(
+  fecha
+) {
 
   const segundos =
     Math.floor(
@@ -582,12 +600,10 @@ function ultimaConexion(fecha) {
 
 async function buscarMatch() {
 
-  const {
-    data: match1
-  } =
+  let resultado =
     await supabaseClient
       .from("matches")
-      .select("*")
+      .select("id")
       .eq(
         "user1_id",
         currentUser.id
@@ -599,22 +615,27 @@ async function buscarMatch() {
       .maybeSingle();
 
 
-  if (match1) {
+  if (resultado.error) {
+
+    throw resultado.error;
+
+  }
+
+
+  if (resultado.data) {
 
     matchId =
-      match1.id;
+      resultado.data.id;
 
     return;
 
   }
 
 
-  const {
-    data: match2
-  } =
+  resultado =
     await supabaseClient
       .from("matches")
-      .select("*")
+      .select("id")
       .eq(
         "user1_id",
         otherUserId
@@ -626,10 +647,17 @@ async function buscarMatch() {
       .maybeSingle();
 
 
-  if (match2) {
+  if (resultado.error) {
+
+    throw resultado.error;
+
+  }
+
+
+  if (resultado.data) {
 
     matchId =
-      match2.id;
+      resultado.data.id;
 
   }
 
@@ -663,7 +691,11 @@ async function cargarMensajes() {
       );
 
 
-  if (error) throw error;
+  if (error) {
+
+    throw error;
+
+  }
 
 
   const contenedor =
@@ -681,12 +713,13 @@ async function cargarMensajes() {
     data.length === 0
   ) {
 
-    contenedor.innerHTML = `
-      <div class="loading">
-        💕 Todavía no hay mensajes.<br>
-        ¡Empezá la conversación!
-      </div>
-    `;
+    contenedor.innerHTML =
+      `
+        <div class="loading">
+          💕 Todavía no hay mensajes.<br>
+          ¡Empezá la conversación!
+        </div>
+      `;
 
     return;
 
@@ -707,12 +740,32 @@ async function cargarMensajes() {
    MOSTRAR MENSAJE
 ========================================= */
 
-function mostrarMensaje(mensaje) {
+function mostrarMensaje(
+  mensaje
+) {
 
   const contenedor =
     document.getElementById(
       "mensajes"
     );
+
+
+  const existente =
+    document.getElementById(
+      "mensaje-" +
+      mensaje.id
+    );
+
+
+  if (existente) {
+
+    actualizarEstadoMensaje(
+      mensaje
+    );
+
+    return;
+
+  }
 
 
   const loading =
@@ -725,22 +778,6 @@ function mostrarMensaje(mensaje) {
 
     contenedor.innerHTML =
       "";
-
-  }
-
-
-  /*
-    Evitar duplicados
-  */
-
-  if (
-    document.getElementById(
-      "mensaje-" +
-      mensaje.id
-    )
-  ) {
-
-    return;
 
   }
 
@@ -817,10 +854,6 @@ function mostrarMensaje(mensaje) {
   );
 
 
-  /*
-    ESTADO DEL MENSAJE
-  */
-
   if (esMio) {
 
     const estado =
@@ -831,6 +864,11 @@ function mostrarMensaje(mensaje) {
 
     estado.className =
       "estado";
+
+
+    estado.id =
+      "estado-" +
+      mensaje.id;
 
 
     if (mensaje.read_at) {
@@ -845,21 +883,21 @@ function mostrarMensaje(mensaje) {
       estado.title =
         "Leído";
 
-    } else if (
+    }
+
+    else if (
       mensaje.delivered_at
     ) {
 
       estado.textContent =
         "✓✓";
 
-      estado.classList.add(
-        "recibido"
-      );
-
       estado.title =
         "Recibido";
 
-    } else {
+    }
+
+    else {
 
       estado.textContent =
         "✓";
@@ -897,10 +935,88 @@ function mostrarMensaje(mensaje) {
 
 
 /* =========================================
+   ACTUALIZAR ESTADO DEL MENSAJE
+========================================= */
+
+function actualizarEstadoMensaje(
+  mensaje
+) {
+
+  if (
+    mensaje.sender_id !==
+    currentUser.id
+  ) {
+
+    return;
+
+  }
+
+
+  const estado =
+    document.getElementById(
+      "estado-" +
+      mensaje.id
+    );
+
+
+  if (!estado) {
+
+    return;
+
+  }
+
+
+  estado.classList.remove(
+    "leido"
+  );
+
+
+  if (mensaje.read_at) {
+
+    estado.textContent =
+      "✓✓";
+
+    estado.classList.add(
+      "leido"
+    );
+
+    estado.title =
+      "Leído";
+
+  }
+
+  else if (
+    mensaje.delivered_at
+  ) {
+
+    estado.textContent =
+      "✓✓";
+
+    estado.title =
+      "Recibido";
+
+  }
+
+  else {
+
+    estado.textContent =
+      "✓";
+
+    estado.title =
+      "Enviado";
+
+  }
+
+}
+
+
+/* =========================================
    HORA
 ========================================= */
 
-function formatearHora(fecha) {
+function formatearHora(
+  fecha
+) {
 
   return new Date(
     fecha
@@ -916,7 +1032,7 @@ function formatearHora(fecha) {
 
 
 /* =========================================
-   ENVIAR
+   ENVIAR MENSAJE
 ========================================= */
 
 async function enviarMensaje() {
@@ -931,7 +1047,11 @@ async function enviarMensaje() {
     input.value.trim();
 
 
-  if (!contenido) return;
+  if (!contenido) {
+
+    return;
+
+  }
 
 
   if (!matchId) {
@@ -962,7 +1082,6 @@ async function enviarMensaje() {
     await supabaseClient
       .from("messages")
       .insert({
-
         match_id:
           matchId,
 
@@ -971,7 +1090,6 @@ async function enviarMensaje() {
 
         content:
           contenido
-
       })
       .select()
       .single();
@@ -983,7 +1101,10 @@ async function enviarMensaje() {
 
   if (error) {
 
-    console.error(error);
+    console.error(
+      "Error enviando:",
+      error
+    );
 
     alert(
       "No se pudo enviar el mensaje."
@@ -998,97 +1119,246 @@ async function enviarMensaje() {
     "";
 
 
-  await dejarDeEscribir();
+  dejarDeEscribir();
 
-  input.focus();
-
-
-  /*
-    Mostrar inmediatamente
-    para el remitente.
-  */
 
   if (data) {
 
-    mostrarMensaje(data);
+    mostrarMensaje(
+      data
+    );
 
     bajarChat();
 
   }
 
+
+  input.focus();
+
 }
 
 
 /* =========================================
-   ENTER
+   MARCAR MENSAJES RECIBIDOS
 ========================================= */
 
-document
-  .getElementById(
-    "mensajeInput"
-  )
-  .addEventListener(
-    "keydown",
-    function(event) {
+async function marcarMensajesRecibidos() {
 
-      if (
-        event.key ===
-        "Enter"
-      ) {
+  if (!matchId) {
 
-        event.preventDefault();
+    return;
 
-        enviarMensaje();
+  }
+
+
+  await supabaseClient
+    .from("messages")
+    .update({
+      delivered_at:
+        new Date().toISOString()
+    })
+    .eq(
+      "match_id",
+      matchId
+    )
+    .neq(
+      "sender_id",
+      currentUser.id
+    )
+    .is(
+      "delivered_at",
+      null
+    );
+
+}
+
+
+/* =========================================
+   MARCAR MENSAJES LEÍDOS
+========================================= */
+
+async function marcarMensajesLeidos() {
+
+  if (!matchId) {
+
+    return;
+
+  }
+
+
+  await supabaseClient
+    .from("messages")
+    .update({
+      read_at:
+        new Date().toISOString()
+    })
+    .eq(
+      "match_id",
+      matchId
+    )
+    .neq(
+      "sender_id",
+      currentUser.id
+    )
+    .is(
+      "read_at",
+      null
+    );
+
+}
+
+
+/* =========================================
+   RECIBIR MENSAJE
+========================================= */
+
+async function marcarMensajeRecibido(
+  id
+) {
+
+  await supabaseClient
+    .from("messages")
+    .update({
+      delivered_at:
+        new Date().toISOString()
+    })
+    .eq(
+      "id",
+      id
+    )
+    .neq(
+      "sender_id",
+      currentUser.id
+    )
+    .is(
+      "delivered_at",
+      null
+    );
+
+}
+
+
+/* =========================================
+   MARCAR UNO COMO LEÍDO
+========================================= */
+
+async function marcarMensajeLeido(
+  id
+) {
+
+  await supabaseClient
+    .from("messages")
+    .update({
+      read_at:
+        new Date().toISOString()
+    })
+    .eq(
+      "id",
+      id
+    )
+    .neq(
+      "sender_id",
+      currentUser.id
+    )
+    .is(
+      "read_at",
+      null
+    );
+
+}
+
+
+/* =========================================
+   TIEMPO REAL MENSAJES
+========================================= */
+
+function escucharMensajes() {
+
+  supabaseClient
+    .channel(
+      "chat-" +
+      matchId
+    )
+    .on(
+      "postgres_changes",
+      {
+        event: "INSERT",
+        schema: "public",
+        table: "messages",
+        filter:
+          "match_id=eq." +
+          matchId
+      },
+      async payload => {
+
+        const mensaje =
+          payload.new;
+
+
+        mostrarMensaje(
+          mensaje
+        );
+
+
+        bajarChat();
+
+
+        if (
+          mensaje.sender_id !==
+          currentUser.id
+        ) {
+
+          await marcarMensajeRecibido(
+            mensaje.id
+          );
+
+          await marcarMensajeLeido(
+            mensaje.id
+          );
+
+        }
 
       }
+    )
+    .on(
+      "postgres_changes",
+      {
+        event: "UPDATE",
+        schema: "public",
+        table: "messages",
+        filter:
+          "match_id=eq." +
+          matchId
+      },
+      payload => {
 
-    }
-  );
+        actualizarEstadoMensaje(
+          payload.new
+        );
+
+      }
+    )
+    .subscribe();
+
+}
 
 
 /* =========================================
    ESCRIBIENDO
 ========================================= */
 
-document
-  .getElementById(
-    "mensajeInput"
-  )
-  .addEventListener(
-    "input",
-    function() {
+function marcarEscribiendo() {
 
-      marcarEscribiendo();
+  if (!matchId) {
 
-      clearTimeout(
-        typingTimer
-      );
+    return;
+
+  }
 
 
-      typingTimer =
-        setTimeout(
-          dejarDeEscribir,
-          1500
-        );
-
-    }
-  );
-
-
-async function marcarEscribiendo() {
-
-  if (!matchId) return;
-
-  if (isTyping) return;
-
-  isTyping =
-    true;
-
-
-  await supabaseClient
+  supabaseClient
     .from("typing_status")
     .upsert({
-
       match_id:
         matchId,
 
@@ -1100,25 +1370,35 @@ async function marcarEscribiendo() {
 
       updated_at:
         new Date().toISOString()
-
     });
+
+
+  clearTimeout(
+    typingTimer
+  );
+
+
+  typingTimer =
+    setTimeout(
+      dejarDeEscribir,
+      1500
+    );
 
 }
 
 
-async function dejarDeEscribir() {
+function dejarDeEscribir() {
 
-  if (!matchId) return;
+  if (!matchId) {
+
+    return;
+
+  }
 
 
-  isTyping =
-    false;
-
-
-  await supabaseClient
+  supabaseClient
     .from("typing_status")
     .upsert({
-
       match_id:
         matchId,
 
@@ -1130,14 +1410,13 @@ async function dejarDeEscribir() {
 
       updated_at:
         new Date().toISOString()
-
     });
 
 }
 
 
 /* =========================================
-   TYPING EN TIEMPO REAL
+   TIEMPO REAL ESCRIBIENDO
 ========================================= */
 
 function escucharTyping() {
@@ -1191,7 +1470,9 @@ function escucharTyping() {
             ) +
             " está escribiendo...";
 
-        } else {
+        }
+
+        else {
 
           elemento.textContent =
             "";
@@ -1206,88 +1487,32 @@ function escucharTyping() {
 
 
 /* =========================================
-   NUEVOS MENSAJES
+   ESTADO ONLINE EN TIEMPO REAL
 ========================================= */
 
-function escucharMensajes() {
+function escucharEstado() {
 
   supabaseClient
     .channel(
-      "messages-" +
-      matchId
+      "perfil-" +
+      otherUserId
     )
     .on(
       "postgres_changes",
       {
-        event: "*",
+        event: "UPDATE",
         schema: "public",
-        table: "messages",
+        table: "profiles",
         filter:
-          "match_id=eq." +
-          matchId
+          "id=eq." +
+          otherUserId
       },
-      async payload => {
+      payload => {
 
-        /*
-          INSERT
-        */
+        otherProfile =
+          payload.new;
 
-        if (
-          payload.eventType ===
-          "INSERT"
-        ) {
-
-          const mensaje =
-            payload.new;
-
-
-          /*
-            Si lo recibe el otro usuario,
-            marcamos como entregado.
-          */
-
-          if (
-            mensaje.sender_id !==
-            currentUser.id
-          ) {
-
-            await marcarMensajeRecibido(
-              mensaje.id
-            );
-
-            await marcarMensajeLeido(
-              mensaje.id
-            );
-
-          }
-
-
-          mostrarMensaje(
-            mensaje
-          );
-
-          bajarChat();
-
-          return;
-
-        }
-
-
-        /*
-          UPDATE:
-          actualizar ✓✓ / leído
-        */
-
-        if (
-          payload.eventType ===
-          "UPDATE"
-        ) {
-
-          actualizarEstadoMensaje(
-            payload.new
-          );
-
-        }
+        actualizarEstado();
 
       }
     )
@@ -1297,212 +1522,28 @@ function escucharMensajes() {
 
 
 /* =========================================
-   MARCAR RECIBIDOS
+   SCROLL
 ========================================= */
 
-async function marcarMensajesRecibidos() {
+function bajarChat() {
 
-  const ahora =
-    new Date().toISOString();
-
-
-  await supabaseClient
-    .from("messages")
-    .update({
-      delivered_at:
-        ahora
-    })
-    .eq(
-      "match_id",
-      matchId
-    )
-    .neq(
-      "sender_id",
-      currentUser.id
-    )
-    .is(
-      "delivered_at",
-      null
-    );
-
-}
-
-
-/* =========================================
-   MARCAR LEÍDOS
-========================================= */
-
-async function marcarMensajesLeidos() {
-
-  const ahora =
-    new Date().toISOString();
-
-
-  await supabaseClient
-    .from("messages")
-    .update({
-      read_at:
-        ahora
-    })
-    .eq(
-      "match_id",
-      matchId
-    )
-    .neq(
-      "sender_id",
-      currentUser.id
-    )
-    .is(
-      "read_at",
-      null
-    );
-
-}
-
-
-/* =========================================
-   MARCAR UNO RECIBIDO
-========================================= */
-
-async function marcarMensajeRecibido(
-  id
-) {
-
-  await supabaseClient
-    .from("messages")
-    .update({
-      delivered_at:
-        new Date().toISOString()
-    })
-    .eq(
-      "id",
-      id
-    )
-    .is(
-      "delivered_at",
-      null
-    );
-
-}
-
-
-/* =========================================
-   MARCAR UNO LEÍDO
-========================================= */
-
-async function marcarMensajeLeido(
-  id
-) {
-
-  await supabaseClient
-    .from("messages")
-    .update({
-      read_at:
-        new Date().toISOString()
-    })
-    .eq(
-      "id",
-      id
-    )
-    .is(
-      "read_at",
-      null
-    );
-
-}
-
-
-/* =========================================
-   ACTUALIZAR ESTADO VISUAL
-========================================= */
-
-function actualizarEstadoMensaje(
-  mensaje
-) {
-
-  const elemento =
+  const contenedor =
     document.getElementById(
-      "mensaje-" +
-      mensaje.id
+      "mensajes"
     );
 
 
-  if (!elemento) return;
+  setTimeout(
+    () => {
 
+      contenedor.scrollTop =
+        contenedor.scrollHeight;
 
-  if (
-    mensaje.sender_id !==
-    currentUser.id
-  ) {
-
-    return;
-
-  }
-
-
-  const estado =
-    elemento.querySelector(
-      ".estado"
-    );
-
-
-  if (!estado) return;
-
-
-  estado.classList.remove(
-    "leido"
+    },
+    50
   );
 
-
-  if (mensaje.read_at) {
-
-    estado.textContent =
-      "✓✓";
-
-    estado.classList.add(
-      "leido"
-    );
-
-    estado.title =
-      "Leído";
-
-  } else if (
-    mensaje.delivered_at
-  ) {
-
-    estado.textContent =
-      "✓✓";
-
-    estado.title =
-      "Recibido";
-
-  } else {
-
-    estado.textContent =
-      "✓";
-
-    estado.title =
-      "Enviado";
-
-  }
-
 }
 
 
-/* =========================================
-   ESTADO DEL USUARIO
-========================================= */
-
-function escucharEstado() {
-
-  supabaseClient
-    .channel(
-      "profile-" +
-      otherUserId
-    )
-    .on(
-      "postgres_changes",
-      {
-        event: "UPDATE",
-        schema: "public",
-        table: "prof
+/* ======
