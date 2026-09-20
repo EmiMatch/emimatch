@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Configuración - EmiMatch</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #07152f, #102b55);
+      color: white;
+      padding: 20px;
+    }
+
+    .contenedor {
+      max-width: 500px;
+      margin: auto;
+    }
+
+    .cabecera {
+      text-align: center;
+      margin-bottom: 22px;
+    }
+
+    .cabecera h1 {
+      margin: 5px 0;
+      font-size: 30px;
+    }
+
+    .cabecera p {
+      color: #cbd5e1;
+      margin: 0;
+    }
+
+    .volver {
+      display: inline-block;
+      color: white;
+      text-decoration: none;
+      margin-bottom: 15px;
+    }
+
+    .card {
+      background: white;
+      color: #172033;
+      border-radius: 22px;
+      padding: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 12px 30px rgba(0,0,0,.25);
+    }
+
+    .titulo {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .opcion {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 14px 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .opcion:last-child {
+      border-bottom: none;
+    }
+
+    .texto {
+      flex: 1;
+    }
+
+    .texto strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .texto small {
+      color: #64748b;
+      line-height: 1.4;
+    }
+
+    .switch {
+      position: relative;
+      width: 52px;
+      height: 30px;
+      flex-shrink: 0;
+    }
+
+    .switch input {
+      display: none;
+    }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      background: #cbd5e1;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .slider:before {
+      content: "";
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      left: 4px;
+      top: 4px;
+      background: white;
+      border-radius: 50%;
+      transition: .2s;
+      box-shadow: 0 2px 5px rgba(0,0,0,.2);
+    }
+
+    .switch input:checked + .slider {
+      background: #16a34a;
+    }
+
+    .switch input:checked + .slider:before {
+      transform: translateX(22px);
+    }
+
+    .boton {
+      width: 100%;
+      border: none;
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .guardar {
+      background: #d4af37;
+      color: #07152f;
+    }
+
+    .perfil {
+      background: #0f2d58;
+      color: white;
+    }
+
+    .cerrar {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .mensaje {
+      text-align: center;
+      min-height: 20px;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="contenedor">
+
+  <a class="volver" href="./perfil.html">
+    ← Volver a mi perfil
+  </a>
+
+  <div class="cabecera">
+    <h1>⚙️ Configuración</h1>
+    <p>Personalizá tu experiencia en EmiMatch</p>
+  </div>
+
+
+  <!-- PRIVACIDAD -->
+
+  <div class="card">
+
+    <div class="titulo">
+      🔐 Privacidad
+    </div>
+
+    <div class="opcion">
+
+      <div class="texto">
+        <strong>🟢 Mostrarme en línea</strong>
+
+        <small>
+          Permite que otros usuarios sepan cuando estás conectado.
+        </small>
+      </div>
+
+      <label class="switch">
+
+        <input
+          type="checkbox"
+          id="online">
+
+        <span class="slider"></span>
+
+      </label>
+
+    </div>
+
+  </div>
+
+
+  <!-- NOTIFICACIONES -->
+
+  <div class="card">
+
+    <div class="titulo">
+      🔔 Notificaciones
+    </div>
+
+    <div class="opcion">
+
+      <div class="texto">
+        <strong>💬 Nuevos mensajes</strong>
+
+        <small>
+          Recibir avisos cuando alguien te envíe un mensaje.
+        </small>
+      </div>
+
+      <label class="switch">
+
+        <input
+          type="checkbox"
+          id="notificaciones"
+          checked>
+
+        <span class="slider"></span>
+
+      </label>
+
+    </div>
+
+  </div>
+
+
+  <!-- CUENTA -->
+
+  <div class="card">
+
+    <div class="titulo">
+      👤 Cuenta
+    </div>
+
+    <button
+      class="boton perfil"
+      onclick="irPerfil()">
+      👤 Editar mi perfil
+    </button>
+
+    <button
+      class="boton cerrar"
+      onclick="cerrarSesion()">
+      🚪 Cerrar sesión
+    </button>
+
+  </div>
+
+
+  <div
+    id="mensaje"
+    class="mensaje">
+  </div>
+
+</div>
+
+
+<script>
+
+const SUPABASE_URL =
+  "https://kngiadwaesdbmvwivdev.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
+
+const supabaseClient =
+  supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+let usuarioActual = null;
+
+
+// ========================================
+// INICIAR
+// ========================================
+
+async function iniciar() {
+
+  const {
+    data: { session },
+    error
+  } =
+    await supabaseClient.auth.getSession();
+
+
+  if (error || !session) {
+
+    window.location.replace(
+      "./index.html"
+    );
+
+    return;
+  }
+
+
+  usuarioActual =
+    session.user;
+
+
+  await cargarConfiguracion();
+}
+
+
+// ========================================
+// CARGAR CONFIGURACIÓN
+// ========================================
+
+async function cargarConfiguracion() {
+
+  const { data, error } =
+    await supabaseClient
+      .from("profiles")
+      .select("online")
+      .eq("id", usuarioActual.id)
+      .maybeSingle();
+
+
+  if (error) {
+
+    console.error(error);
+
+    return;
+  }
+
+
+  if (data) {
+
+    document.getElementById("online").checked =
+      data.online !== false;
+  }
+}
+
+
+// ========================================
+// ESTADO ONLINE
+// ========================================
+
+document
+  .getElementById("online")
+  .addEventListener(
+    "change",
+    async function() {
+
+      const activo =
+        this.checked;
+
+
+      const { error } =
+        await supabaseClient
+          .from("profiles")
+          .update({
+            online: activo,
+            last_seen:
+              new Date().toISOString()
+          })
+          .eq(
+            "id",
+            usuarioActual.id
+          );
+
+
+      if (error) {
+
+        console.error(error);
+
+        this.checked =
+          !activo;
+
+        mostrarMensaje(
+          "❌ No se pudo actualizar el estado."
+        );
+
+        return;
+      }
+
+
+      mostrarMensaje(
+        activo
+          ? "🟢 Ahora aparecés en línea."
+          : "⚪ Estado en línea desactivado."
+      );
+    }
+  );
+
+
+// ========================================
+// NOTIFICACIONES
+// ========================================
+
+document
+  .getElementById("notificaciones")
+  .addEventListener(
+    "change",
+    function() {
+
+      localStorage.setItem(
+        "emimatch_notificaciones",
+        this.checked
+          ? "on"
+          : "off"
+      );
+
+
+      mostrarMensaje(
+        this.checked
+          ? "🔔 Notificaciones activadas."
+          : "🔕 Notificaciones desactivadas."
+      );
+    }
+  );
+
+
+// ========================================
+// CARGAR PREFERENCIA NOTIFICACIONES
+// ========================================
+
+function cargarPreferenciaNotificaciones() {
+
+  const valor =
+    localStorage.getItem(
+      "emimatch_notificaciones"
+    );
+
+
+  if (valor === "off") {
+
+    document.getElementById(
+      "notificaciones"
+    ).checked = false;
+
+  } else {
+
+    document.getElementById(
+      "notificaciones"
+    ).checked = true;
+  }
+}
+
+
+// ========================================
+// MENSAJE
+// ========================================
+
+function mostrarMensaje(texto) {
+
+  const mensaje =
+    document.getElementById(
+      "mensaje"
+    );
+
+
+  mensaje.textContent =
+    texto;
+
+
+  setTimeout(() => {
+
+    mensaje.textContent = "";
+
+  }, 2500);
+}
+
+
+// ========================================
+// PERFIL
+// ========================================
+
+function irPerfil() {
+
+  window.location.href =
+    "./perfil.html";
+}
+
+
+// ========================================
+// CERRAR SESIÓN
+// ========================================
+
+async function cerrarSesion() {
+
+  const confirmar =
+    confirm(
+      "¿Querés cerrar sesión?"
+    );
+
+
+  if (!confirmar) return;
+
+
+  await supabaseClient.auth.signOut();
+
+
+  window.location.replace(
+    "./index.html"
+  );
+}
+
+
+// ========================================
+// INICIAR
+// ========================================
+
+cargarPreferenciaNotificaciones();
+
+iniciar();
+
+</script>
+
+</body>
+  </html>
