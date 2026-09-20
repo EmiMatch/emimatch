@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Notificaciones - EmiMatch</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #222;
+    }
+
+    .contenedor {
+      max-width: 600px;
+      margin: auto;
+      padding: 20px 15px 40px;
+    }
+
+    .cabecera {
+      background: white;
+      border-radius: 20px;
+      padding: 22px;
+      text-align: center;
+      margin-bottom: 18px;
+      box-shadow: 0 8px 25px rgba(0,0,0,.15);
+    }
+
+    .cabecera h1 {
+      margin: 0 0 7px;
+      color: #764ba2;
+    }
+
+    .cabecera p {
+      margin: 0;
+      color: #777;
+    }
+
+    .notificacion {
+      background: white;
+      border-radius: 18px;
+      padding: 15px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(0,0,0,.12);
+      position: relative;
+    }
+
+    .foto {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #eee;
+      flex-shrink: 0;
+    }
+
+    .contenido {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .titulo {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .mensaje {
+      color: #555;
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .hora {
+      color: #999;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+
+    .nuevo {
+      width: 10px;
+      height: 10px;
+      background: #ff3040;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .vacio,
+    .cargando,
+    .error {
+      background: white;
+      border-radius: 18px;
+      padding: 25px;
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(0,0,0,.12);
+    }
+
+    .vacio {
+      color: #777;
+    }
+
+    .error {
+      color: #c62828;
+    }
+
+    .volver {
+      width: 100%;
+      border: none;
+      background: white;
+      color: #764ba2;
+      padding: 14px;
+      border-radius: 15px;
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="contenedor">
+
+  <div class="cabecera">
+    <h1>🔔 Notificaciones</h1>
+    <p>Tus mensajes y novedades</p>
+  </div>
+
+  <div id="lista">
+    <div class="cargando">
+      Cargando notificaciones...
+    </div>
+  </div>
+
+  <button class="volver" onclick="volver()">
+    ← Volver
+  </button>
+
+</div>
+
+<script>
+
+const SUPABASE_URL =
+"https://kngiadwaesdbmvwivdev.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
+
+const supabaseClient =
+supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+let usuarioActual = null;
+
+
+/* =========================
+   INICIO
+========================= */
+
+async function iniciar() {
+
+  const { data } =
+    await supabaseClient.auth.getSession();
+
+  if (!data.session) {
+
+    window.location.href =
+      "./index.html";
+
+    return;
+  }
+
+  usuarioActual =
+    data.session.user;
+
+  await cargarNotificaciones();
+
+  escucharMensajes();
+
+}
+
+
+/* =========================
+   CARGAR NOTIFICACIONES
+========================= */
+
+async function cargarNotificaciones() {
+
+  const lista =
+    document.getElementById("lista");
+
+  const { data: matches, error } =
+    await supabaseClient
+      .from("matches")
+      .select("*")
+      .or(
+        `user1_id.eq.${usuarioActual.id},user2_id.eq.${usuarioActual.id}`
+      );
+
+  if (error) {
+
+    console.error(error);
+
+    lista.innerHTML =
+      `<div class="error">
+        No se pudieron cargar las notificaciones.
+      </div>`;
+
+    return;
+  }
+
+  if (!matches || matches.length === 0) {
+
+    lista.innerHTML =
+      `<div class="vacio">
+        🔔 No tenés notificaciones todavía.
+      </div>`;
+
+    return;
+  }
+
+  let notificaciones = [];
+
+  for (const match of matches) {
+
+    const otroUsuario =
+      match.user1_id === usuarioActual.id
+        ? match.user2_id
+        : match.user1_id;
+
+
+    const { data: mensajes } =
+      await supabaseClient
+        .from("messages")
+        .select(
+          "id,content,sender_id,created_at,read_at"
+        )
+        .eq("match_id", match.id)
+        .eq("sender_id", otroUsuario)
+        .order("created_at", {
+          ascending: false
+        })
+        .limit(20);
+
+
+    if (!mensajes || mensajes.length === 0) {
+      continue;
+    }
+
+
+    const { data: perfil } =
+      await supabaseClient
+        .from("profiles")
+        .select(
+          "id,nombre,foto_url"
+        )
+        .eq("id", otroUsuario)
+        .single();
+
+
+    for (const mensaje of mensajes) {
+
+      notificaciones.push({
+
+        matchId: match.id,
+
+        usuarioId: otroUsuario,
+
+        nombre:
+          perfil?.nombre || "Usuario",
+
+        foto:
+          perfil?.foto_url ||
+          "https://via.placeholder.com/150?text=💕",
+
+        contenido:
+          mensaje.content,
+
+        fecha:
+          mensaje.created_at,
+
+        leido:
+          mensaje.read_at !== null
+
+      });
+
+    }
+
+  }
+
+
+  notificaciones.sort(
+    (a, b) =>
+      new Date(b.fecha) -
+      new Date(a.fecha)
+  );
+
+
+  if (notificaciones.length === 0) {
+
+    lista.innerHTML =
+      `<div class="vacio">
+        🔔 No tenés mensajes nuevos.
+      </div>`;
+
+    return;
+  }
+
+
+  lista.innerHTML = "";
+
+  notificaciones
+    .slice(0, 50)
+    .forEach(n => {
+
+      const elemento =
+        document.createElement("div");
+
+      elemento.className =
+        "notificacion";
+
+      elemento.innerHTML = `
+
+        <img
+          class="foto"
+          src="${escapeHtml(n.foto)}"
+          onerror="this.src='https://via.placeholder.com/150?text=💕'"
+        >
+
+        <div class="contenido">
+
+          <div class="titulo">
+            💬 ${escapeHtml(n.nombre)}
+          </div>
+
+          <div class="mensaje">
+            ${escapeHtml(n.contenido)}
+          </div>
+
+          <div class="hora">
+            ${formatearFecha(n.fecha)}
+          </div>
+
+        </div>
+
+        ${
+          !n.leido
+            ? '<div class="nuevo"></div>'
+            : ''
+        }
+
+      `;
+
+
+      elemento.addEventListener(
+        "click",
+        () => {
+
+          window.location.href =
+            "./conversacion.html?user=" +
+            encodeURIComponent(
+              n.usuarioId
+            );
+
+        }
+      );
+
+
+      lista.appendChild(elemento);
+
+    });
+
+}
+
+
+/* =========================
+   TIEMPO
+========================= */
+
+function formatearFecha(fecha) {
+
+  const d =
+    new Date(fecha);
+
+  const ahora =
+    new Date();
+
+  const diferencia =
+    Math.floor(
+      (ahora - d) / 1000
+    );
+
+
+  if (diferencia < 60) {
+    return "Ahora";
+  }
+
+  if (diferencia < 3600) {
+
+    return (
+      Math.floor(
+        diferencia / 60
+      ) + " min"
+    );
+
+  }
+
+  if (diferencia < 86400) {
+
+    return (
+      Math.floor(
+        diferencia / 3600
+      ) + " h"
+    );
+
+  }
+
+  return d.toLocaleDateString(
+    "es-AR",
+    {
+      day: "2-digit",
+      month: "2-digit"
+    }
+  );
+
+}
+
+
+/* =========================
+   REALTIME
+========================= */
+
+function escucharMensajes() {
+
+  supabaseClient
+    .channel(
+      "notificaciones-globales"
+    )
+    .on(
+      "postgres_changes",
+      {
+        event: "INSERT",
+        schema: "public",
+        table: "messages"
+      },
+      async payload => {
+
+        if (
+          payload.new.sender_id !==
+          usuarioActual.id
+        ) {
+
+          await cargarNotificaciones();
+
+        }
+
+      }
+    )
+    .on(
+      "postgres_changes",
+      {
+        event: "UPDATE",
+        schema: "public",
+        table: "messages"
+      },
+      async () => {
+
+        await cargarNotificaciones();
+
+      }
+    )
+    .subscribe();
+
+}
+
+
+/* =========================
+   SEGURIDAD
+========================= */
+
+function escapeHtml(texto) {
+
+  if (
+    texto === null ||
+    texto === undefined
+  ) {
+    return "";
+  }
+
+  return String(texto)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+
+}
+
+
+/* =========================
+   VOLVER
+========================= */
+
+function volver() {
+
+  window.location.href =
+    "./chat.html";
+
+}
+
+
+iniciar();
+
+</script>
+
+</body>
+</html>
