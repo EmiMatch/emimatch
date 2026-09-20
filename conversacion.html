@@ -1,1549 +1,234 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico EmiMatch</title>
 
-  <title>Chat - EmiMatch</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #eef1f5;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    .app {
-      height: 100vh;
-      max-width: 700px;
-      margin: auto;
-      background: white;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .header {
-      background: linear-gradient(135deg, #6c2bd9, #9b4dff);
-      color: white;
-      padding: 12px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.15);
-    }
-
-    .back {
-      border: none;
-      background: transparent;
-      color: white;
-      font-size: 30px;
-      cursor: pointer;
-      width: 40px;
-    }
-
-    .user-photo {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid white;
-      background: #ddd;
-    }
-
-    .user-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .user-name {
-      font-size: 18px;
-      font-weight: bold;
-    }
-
-    .user-status {
-      font-size: 13px;
-      margin-top: 3px;
-    }
-
-    #mensajes {
-      flex: 1;
-      overflow-y: auto;
-      padding: 18px 12px;
-      background: #f3effa;
-    }
-
-    .mensaje {
-      display: flex;
-      margin-bottom: 10px;
-    }
-
-    .mensaje.mio {
-      justify-content: flex-end;
-    }
-
-    .mensaje.otro {
-      justify-content: flex-start;
-    }
-
-    .burbuja {
-      max-width: 78%;
-      padding: 9px 12px;
-      border-radius: 18px;
-      font-size: 15px;
-      line-height: 1.4;
-      word-wrap: break-word;
-      box-shadow: 0 1px 3px rgba(0,0,0,.08);
-    }
-
-    .mio .burbuja {
-      background: #6c2bd9;
-      color: white;
-      border-bottom-right-radius: 5px;
-    }
-
-    .otro .burbuja {
-      background: white;
-      color: #222;
-      border-bottom-left-radius: 5px;
-    }
-
-    .mensaje-info {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      gap: 5px;
-      margin-top: 3px;
-      font-size: 10px;
-      opacity: .8;
-    }
-
-    .estado {
-      font-size: 12px;
-      font-weight: bold;
-      letter-spacing: -2px;
-    }
-
-    .estado.leido {
-      color: #60a5fa;
-    }
-
-    #typing {
-      min-height: 22px;
-      padding: 0 18px 4px;
-      font-size: 13px;
-      color: #777;
-      font-style: italic;
-    }
-
-    .input-area {
-      padding: 10px;
-      background: white;
-      border-top: 1px solid #ddd;
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
-    #mensajeInput {
-      flex: 1;
-      border: 1px solid #ddd;
-      border-radius: 24px;
-      padding: 12px 16px;
-      font-size: 16px;
-      outline: none;
-      min-width: 0;
-    }
-
-    #mensajeInput:focus {
-      border-color: #7b35e8;
-    }
-
-    #enviarBtn {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      border: none;
-      background: #6c2bd9;
-      color: white;
-      font-size: 21px;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-
-    #enviarBtn:disabled {
-      opacity: .6;
-    }
-
-    .loading {
-      text-align: center;
-      color: #777;
-      padding: 30px;
-    }
-
-    .error {
-      color: #b91c1c;
-      text-align: center;
-      padding: 30px;
-    }
-  </style>
+<style>
+body{
+  margin:0;
+  padding:20px;
+  font-family:Arial,sans-serif;
+  background:#111827;
+  color:white;
+}
+.box{
+  max-width:600px;
+  margin:auto;
+  background:#1f2937;
+  padding:20px;
+  border-radius:16px;
+}
+.ok{color:#22c55e}
+.error{color:#ef4444}
+.info{color:#60a5fa}
+</style>
 </head>
 
 <body>
 
-<div class="app">
-
-  <div class="header">
-
-    <button
-      class="back"
-      onclick="window.location.href='chat.html'"
-    >
-      ‹
-    </button>
-
-    <img
-      id="userPhoto"
-      class="user-photo"
-      src="https://via.placeholder.com/100"
-      alt="Perfil"
-    >
-
-    <div class="user-info">
-
-      <div
-        id="userName"
-        class="user-name"
-      >
-        Cargando...
-      </div>
-
-      <div
-        id="userStatus"
-        class="user-status"
-      >
-        Conectando...
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <div id="mensajes">
-
-    <div class="loading">
-      Cargando conversación...
-    </div>
-
-  </div>
-
-
-  <div id="typing"></div>
-
-
-  <div class="input-area">
-
-    <input
-      id="mensajeInput"
-      type="text"
-      placeholder="Escribí un mensaje..."
-      autocomplete="off"
-    >
-
-    <button
-      id="enviarBtn"
-      type="button"
-    >
-      ➤
-    </button>
-
-  </div>
-
+<div class="box">
+  <h2>🔧 Diagnóstico EmiMatch</h2>
+  <div id="estado">Iniciando...</div>
 </div>
-
 
 <script>
 
 const SUPABASE_URL =
-  "https://kngiadwaesdbmvwivdev.supabase.co";
+"https://kngiadwaesdbmvwivdev.supabase.co";
 
 const SUPABASE_KEY =
-  "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
+"sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
 
-const supabaseClient =
-  window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
+let supabaseClient;
 
+function mostrar(texto, tipo="info"){
+  document.getElementById("estado").innerHTML +=
+    `<p class="${tipo}">${texto}</p>`;
+}
 
-let currentUser = null;
-let otherUserId = null;
-let otherProfile = null;
-let matchId = null;
+async function iniciar(){
 
-let typingTimer = null;
+  try{
 
+    mostrar("1️⃣ JavaScript funcionando","ok");
 
-/* =========================================
-   INICIO
-========================================= */
+    if(!window.supabase){
+      throw new Error("Supabase JS no cargó");
+    }
 
-async function iniciar() {
+    mostrar("2️⃣ Supabase cargado","ok");
 
-  try {
+    supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+    mostrar("3️⃣ Cliente Supabase creado","ok");
 
     const params =
-      new URLSearchParams(
-        window.location.search
-      );
+      new URLSearchParams(window.location.search);
 
-    otherUserId =
+    const otherUserId =
       params.get("user");
 
-
-    if (!otherUserId) {
-
-      mostrarError(
-        "No se encontró el usuario."
+    if(!otherUserId){
+      throw new Error(
+        "No existe ?user= en la URL"
       );
-
-      return;
-
     }
 
+    mostrar(
+      "4️⃣ Usuario de la conversación: " +
+      otherUserId,
+      "ok"
+    );
 
     const {
-      data: {
-        session
+      data: { session },
+      error: sessionError
+    } = await supabaseClient.auth.getSession();
+
+    if(sessionError){
+      throw sessionError;
+    }
+
+    if(!session){
+      throw new Error(
+        "No hay una sesión iniciada"
+      );
+    }
+
+    mostrar(
+      "5️⃣ Sesión activa",
+      "ok"
+    );
+
+    mostrar(
+      "Tu usuario: " +
+      session.user.id,
+      "ok"
+    );
+
+    const { data: perfil, error: perfilError } =
+      await supabaseClient
+        .from("profiles")
+        .select(
+          "id,nombre,edad,ciudad,descripcion,foto_url,intereses"
+        )
+        .eq("id", otherUserId)
+        .maybeSingle();
+
+    if(perfilError){
+      throw perfilError;
+    }
+
+    if(!perfil){
+      throw new Error(
+        "No se encontró el perfil del usuario"
+      );
+    }
+
+    mostrar(
+      "6️⃣ Perfil encontrado: " +
+      (perfil.nombre || "Sin nombre"),
+      "ok"
+    );
+
+    const { data: match1, error: error1 } =
+      await supabaseClient
+        .from("matches")
+        .select("id,user1_id,user2_id")
+        .eq("user1_id", session.user.id)
+        .eq("user2_id", otherUserId)
+        .maybeSingle();
+
+    if(error1){
+      throw error1;
+    }
+
+    let match = match1;
+
+    if(!match){
+
+      const { data: match2, error: error2 } =
+        await supabaseClient
+          .from("matches")
+          .select("id,user1_id,user2_id")
+          .eq("user1_id", otherUserId)
+          .eq("user2_id", session.user.id)
+          .maybeSingle();
+
+      if(error2){
+        throw error2;
       }
-    } =
-      await supabaseClient.auth.getSession();
 
-
-    if (!session) {
-
-      window.location.href =
-        "index.html";
-
-      return;
-
+      match = match2;
     }
 
-
-    currentUser =
-      session.user;
-
-
-    await cargarPerfilOtro();
-
-    await buscarMatch();
-
-
-    if (!matchId) {
-
-      mostrarError(
-        "No se encontró el Match."
+    if(!match){
+      throw new Error(
+        "No existe un match entre estos usuarios"
       );
-
-      return;
-
     }
 
-
-    await marcarMensajesRecibidos();
-
-    await marcarMensajesLeidos();
-
-    await cargarMensajes();
-
-
-    escucharMensajes();
-
-    escucharTyping();
-
-    escucharEstado();
-
-
-  } catch (error) {
-
-    console.error(
-      "ERROR EMI MATCH:",
-      error
+    mostrar(
+      "7️⃣ MATCH ENCONTRADO",
+      "ok"
     );
 
-    mostrarError(
-      "Error cargando la conversación."
+    mostrar(
+      "Match ID: " + match.id,
+      "ok"
     );
 
-  }
-
-}
-
-
-/* =========================================
-   ERROR
-========================================= */
-
-function mostrarError(
-  mensaje
-) {
-
-  document.getElementById(
-    "mensajes"
-  ).innerHTML =
-    `
-      <div class="error">
-        ❌ ${mensaje}
-      </div>
-    `;
-
-}
-
-
-/* =========================================
-   PERFIL DEL OTRO USUARIO
-========================================= */
-
-async function cargarPerfilOtro() {
-
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("profiles")
-      .select(
-        "id,nombre,edad,ciudad,descripcion,foto_url,intereses,online,last_seen"
-      )
-      .eq(
-        "id",
-        otherUserId
-      )
-      .maybeSingle();
-
-
-  if (error) {
-
-    throw error;
-
-  }
-
-
-  if (!data) {
-
-    throw new Error(
-      "Perfil no encontrado"
-    );
-
-  }
-
-
-  otherProfile =
-    data;
-
-
-  document.getElementById(
-    "userName"
-  ).textContent =
-    data.nombre ||
-    "Usuario";
-
-
-  if (data.foto_url) {
-
-    document.getElementById(
-      "userPhoto"
-    ).src =
-      data.foto_url;
-
-  }
-
-
-  actualizarEstado();
-
-}
-
-
-/* =========================================
-   ESTADO ONLINE
-========================================= */
-
-function actualizarEstado() {
-
-  const elemento =
-    document.getElementById(
-      "userStatus"
-    );
-
-
-  if (
-    otherProfile &&
-    otherProfile.online
-  ) {
-
-    elemento.textContent =
-      "🟢 En línea";
-
-    return;
-
-  }
-
-
-  if (
-    otherProfile &&
-    otherProfile.last_seen
-  ) {
-
-    elemento.textContent =
-      "⚪ " +
-      ultimaConexion(
-        otherProfile.last_seen
-      );
-
-    return;
-
-  }
-
-
-  elemento.textContent =
-    "⚪ Sin información";
-
-}
-
-
-function ultimaConexion(
-  fecha
-) {
-
-  const segundos =
-    Math.floor(
-      (
-        new Date() -
-        new Date(fecha)
-      ) / 1000
-    );
-
-
-  if (segundos < 60) {
-
-    return "Activo hace unos segundos";
-
-  }
-
-
-  const minutos =
-    Math.floor(
-      segundos / 60
-    );
-
-
-  if (minutos < 60) {
-
-    return (
-      "Activo hace " +
-      minutos +
-      " min"
-    );
-
-  }
-
-
-  const horas =
-    Math.floor(
-      minutos / 60
-    );
-
-
-  if (horas < 24) {
-
-    return (
-      "Activo hace " +
-      horas +
-      " h"
-    );
-
-  }
-
-
-  const dias =
-    Math.floor(
-      horas / 24
-    );
-
-
-  return (
-    "Activo hace " +
-    dias +
-    " día" +
-    (
-      dias === 1
-        ? ""
-        : "s"
-    )
-  );
-
-}
-
-
-/* =========================================
-   BUSCAR MATCH
-========================================= */
-
-async function buscarMatch() {
-
-  let resultado =
-    await supabaseClient
-      .from("matches")
-      .select("id")
-      .eq(
-        "user1_id",
-        currentUser.id
-      )
-      .eq(
-        "user2_id",
-        otherUserId
-      )
-      .maybeSingle();
-
-
-  if (resultado.error) {
-
-    throw resultado.error;
-
-  }
-
-
-  if (resultado.data) {
-
-    matchId =
-      resultado.data.id;
-
-    return;
-
-  }
-
-
-  resultado =
-    await supabaseClient
-      .from("matches")
-      .select("id")
-      .eq(
-        "user1_id",
-        otherUserId
-      )
-      .eq(
-        "user2_id",
-        currentUser.id
-      )
-      .maybeSingle();
-
-
-  if (resultado.error) {
-
-    throw resultado.error;
-
-  }
-
-
-  if (resultado.data) {
-
-    matchId =
-      resultado.data.id;
-
-  }
-
-}
-
-
-/* =========================================
-   CARGAR MENSAJES
-========================================= */
-
-async function cargarMensajes() {
-
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
+    const {
+      data: mensajes,
+      error: mensajesError
+    } = await supabaseClient
       .from("messages")
       .select(
-        "id,match_id,sender_id,content,created_at,delivered_at,read_at"
+        "id,match_id,sender_id,content,created_at"
       )
-      .eq(
-        "match_id",
-        matchId
-      )
-      .order(
-        "created_at",
-        {
-          ascending: true
-        }
-      );
-
-
-  if (error) {
-
-    throw error;
-
-  }
-
-
-  const contenedor =
-    document.getElementById(
-      "mensajes"
-    );
-
-
-  contenedor.innerHTML =
-    "";
-
-
-  if (
-    !data ||
-    data.length === 0
-  ) {
-
-    contenedor.innerHTML =
-      `
-        <div class="loading">
-          💕 Todavía no hay mensajes.<br>
-          ¡Empezá la conversación!
-        </div>
-      `;
-
-    return;
-
-  }
-
-
-  data.forEach(
-    mostrarMensaje
-  );
-
-
-  bajarChat();
-
-}
-
-
-/* =========================================
-   MOSTRAR MENSAJE
-========================================= */
-
-function mostrarMensaje(
-  mensaje
-) {
-
-  const contenedor =
-    document.getElementById(
-      "mensajes"
-    );
-
-
-  const existente =
-    document.getElementById(
-      "mensaje-" +
-      mensaje.id
-    );
-
-
-  if (existente) {
-
-    actualizarEstadoMensaje(
-      mensaje
-    );
-
-    return;
-
-  }
-
-
-  const loading =
-    contenedor.querySelector(
-      ".loading"
-    );
-
-
-  if (loading) {
-
-    contenedor.innerHTML =
-      "";
-
-  }
-
-
-  const div =
-    document.createElement(
-      "div"
-    );
-
-
-  const esMio =
-    mensaje.sender_id ===
-    currentUser.id;
-
-
-  div.className =
-    "mensaje " +
-    (
-      esMio
-        ? "mio"
-        : "otro"
-    );
-
-
-  div.id =
-    "mensaje-" +
-    mensaje.id;
-
-
-  const burbuja =
-    document.createElement(
-      "div"
-    );
-
-
-  burbuja.className =
-    "burbuja";
-
-
-  const texto =
-    document.createElement(
-      "div"
-    );
-
-
-  texto.textContent =
-    mensaje.content;
-
-
-  const info =
-    document.createElement(
-      "div"
-    );
-
-
-  info.className =
-    "mensaje-info";
-
-
-  const hora =
-    document.createElement(
-      "span"
-    );
-
-
-  hora.textContent =
-    formatearHora(
-      mensaje.created_at
-    );
-
-
-  info.appendChild(
-    hora
-  );
-
-
-  if (esMio) {
-
-    const estado =
-      document.createElement(
-        "span"
-      );
-
-
-    estado.className =
-      "estado";
-
-
-    estado.id =
-      "estado-" +
-      mensaje.id;
-
-
-    if (mensaje.read_at) {
-
-      estado.textContent =
-        "✓✓";
-
-      estado.classList.add(
-        "leido"
-      );
-
-      estado.title =
-        "Leído";
-
+      .eq("match_id", match.id)
+      .order("created_at", { ascending:true });
+
+    if(mensajesError){
+      throw mensajesError;
     }
 
-    else if (
-      mensaje.delivered_at
-    ) {
-
-      estado.textContent =
-        "✓✓";
-
-      estado.title =
-        "Recibido";
-
-    }
-
-    else {
-
-      estado.textContent =
-        "✓";
-
-      estado.title =
-        "Enviado";
-
-    }
-
-
-    info.appendChild(
-      estado
+    mostrar(
+      "8️⃣ Mensajes cargados: " +
+      (mensajes?.length || 0),
+      "ok"
     );
 
-  }
-
-
-  burbuja.appendChild(
-    texto
-  );
-
-  burbuja.appendChild(
-    info
-  );
-
-  div.appendChild(
-    burbuja
-  );
-
-  contenedor.appendChild(
-    div
-  );
-
-}
-
-
-/* =========================================
-   ACTUALIZAR ESTADO DEL MENSAJE
-========================================= */
-
-function actualizarEstadoMensaje(
-  mensaje
-) {
-
-  if (
-    mensaje.sender_id !==
-    currentUser.id
-  ) {
-
-    return;
-
-  }
-
-
-  const estado =
-    document.getElementById(
-      "estado-" +
-      mensaje.id
+    mostrar(
+      "✅ CONEXIÓN COMPLETA. El problema no está en Supabase.",
+      "ok"
     );
 
+  }catch(error){
 
-  if (!estado) {
+    console.error(error);
 
-    return;
-
-  }
-
-
-  estado.classList.remove(
-    "leido"
-  );
-
-
-  if (mensaje.read_at) {
-
-    estado.textContent =
-      "✓✓";
-
-    estado.classList.add(
-      "leido"
+    mostrar(
+      "❌ ERROR: " +
+      (error.message || error),
+      "error"
     );
-
-    estado.title =
-      "Leído";
-
-  }
-
-  else if (
-    mensaje.delivered_at
-  ) {
-
-    estado.textContent =
-      "✓✓";
-
-    estado.title =
-      "Recibido";
-
-  }
-
-  else {
-
-    estado.textContent =
-      "✓";
-
-    estado.title =
-      "Enviado";
 
   }
 
 }
 
+iniciar();
 
-/* =========================================
-   HORA
-========================================= */
+</script>
 
-function formatearHora(
-  fecha
-) {
-
-  return new Date(
-    fecha
-  ).toLocaleTimeString(
-    "es-AR",
-    {
-      hour: "2-digit",
-      minute: "2-digit"
-    }
-  );
-
-}
-
-
-/* =========================================
-   ENVIAR MENSAJE
-========================================= */
-
-async function enviarMensaje() {
-
-  const input =
-    document.getElementById(
-      "mensajeInput"
-    );
-
-
-  const contenido =
-    input.value.trim();
-
-
-  if (!contenido) {
-
-    return;
-
-  }
-
-
-  if (!matchId) {
-
-    alert(
-      "No hay un Match activo."
-    );
-
-    return;
-
-  }
-
-
-  const boton =
-    document.getElementById(
-      "enviarBtn"
-    );
-
-
-  boton.disabled =
-    true;
-
-
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("messages")
-      .insert({
-        match_id:
-          matchId,
-
-        sender_id:
-          currentUser.id,
-
-        content:
-          contenido
-      })
-      .select()
-      .single();
-
-
-  boton.disabled =
-    false;
-
-
-  if (error) {
-
-    console.error(
-      "Error enviando:",
-      error
-    );
-
-    alert(
-      "No se pudo enviar el mensaje."
-    );
-
-    return;
-
-  }
-
-
-  input.value =
-    "";
-
-
-  dejarDeEscribir();
-
-
-  if (data) {
-
-    mostrarMensaje(
-      data
-    );
-
-    bajarChat();
-
-  }
-
-
-  input.focus();
-
-}
-
-
-/* =========================================
-   MARCAR MENSAJES RECIBIDOS
-========================================= */
-
-async function marcarMensajesRecibidos() {
-
-  if (!matchId) {
-
-    return;
-
-  }
-
-
-  await supabaseClient
-    .from("messages")
-    .update({
-      delivered_at:
-        new Date().toISOString()
-    })
-    .eq(
-      "match_id",
-      matchId
-    )
-    .neq(
-      "sender_id",
-      currentUser.id
-    )
-    .is(
-      "delivered_at",
-      null
-    );
-
-}
-
-
-/* =========================================
-   MARCAR MENSAJES LEÍDOS
-========================================= */
-
-async function marcarMensajesLeidos() {
-
-  if (!matchId) {
-
-    return;
-
-  }
-
-
-  await supabaseClient
-    .from("messages")
-    .update({
-      read_at:
-        new Date().toISOString()
-    })
-    .eq(
-      "match_id",
-      matchId
-    )
-    .neq(
-      "sender_id",
-      currentUser.id
-    )
-    .is(
-      "read_at",
-      null
-    );
-
-}
-
-
-/* =========================================
-   RECIBIR MENSAJE
-========================================= */
-
-async function marcarMensajeRecibido(
-  id
-) {
-
-  await supabaseClient
-    .from("messages")
-    .update({
-      delivered_at:
-        new Date().toISOString()
-    })
-    .eq(
-      "id",
-      id
-    )
-    .neq(
-      "sender_id",
-      currentUser.id
-    )
-    .is(
-      "delivered_at",
-      null
-    );
-
-}
-
-
-/* =========================================
-   MARCAR UNO COMO LEÍDO
-========================================= */
-
-async function marcarMensajeLeido(
-  id
-) {
-
-  await supabaseClient
-    .from("messages")
-    .update({
-      read_at:
-        new Date().toISOString()
-    })
-    .eq(
-      "id",
-      id
-    )
-    .neq(
-      "sender_id",
-      currentUser.id
-    )
-    .is(
-      "read_at",
-      null
-    );
-
-}
-
-
-/* =========================================
-   TIEMPO REAL MENSAJES
-========================================= */
-
-function escucharMensajes() {
-
-  supabaseClient
-    .channel(
-      "chat-" +
-      matchId
-    )
-    .on(
-      "postgres_changes",
-      {
-        event: "INSERT",
-        schema: "public",
-        table: "messages",
-        filter:
-          "match_id=eq." +
-          matchId
-      },
-      async payload => {
-
-        const mensaje =
-          payload.new;
-
-
-        mostrarMensaje(
-          mensaje
-        );
-
-
-        bajarChat();
-
-
-        if (
-          mensaje.sender_id !==
-          currentUser.id
-        ) {
-
-          await marcarMensajeRecibido(
-            mensaje.id
-          );
-
-          await marcarMensajeLeido(
-            mensaje.id
-          );
-
-        }
-
-      }
-    )
-    .on(
-      "postgres_changes",
-      {
-        event: "UPDATE",
-        schema: "public",
-        table: "messages",
-        filter:
-          "match_id=eq." +
-          matchId
-      },
-      payload => {
-
-        actualizarEstadoMensaje(
-          payload.new
-        );
-
-      }
-    )
-    .subscribe();
-
-}
-
-
-/* =========================================
-   ESCRIBIENDO
-========================================= */
-
-function marcarEscribiendo() {
-
-  if (!matchId) {
-
-    return;
-
-  }
-
-
-  supabaseClient
-    .from("typing_status")
-    .upsert({
-      match_id:
-        matchId,
-
-      user_id:
-        currentUser.id,
-
-      is_typing:
-        true,
-
-      updated_at:
-        new Date().toISOString()
-    });
-
-
-  clearTimeout(
-    typingTimer
-  );
-
-
-  typingTimer =
-    setTimeout(
-      dejarDeEscribir,
-      1500
-    );
-
-}
-
-
-function dejarDeEscribir() {
-
-  if (!matchId) {
-
-    return;
-
-  }
-
-
-  supabaseClient
-    .from("typing_status")
-    .upsert({
-      match_id:
-        matchId,
-
-      user_id:
-        currentUser.id,
-
-      is_typing:
-        false,
-
-      updated_at:
-        new Date().toISOString()
-    });
-
-}
-
-
-/* =========================================
-   TIEMPO REAL ESCRIBIENDO
-========================================= */
-
-function escucharTyping() {
-
-  supabaseClient
-    .channel(
-      "typing-" +
-      matchId
-    )
-    .on(
-      "postgres_changes",
-      {
-        event: "*",
-        schema: "public",
-        table: "typing_status",
-        filter:
-          "match_id=eq." +
-          matchId
-      },
-      payload => {
-
-        const data =
-          payload.new;
-
-
-        if (
-          !data ||
-          data.user_id ===
-          currentUser.id
-        ) {
-
-          return;
-
-        }
-
-
-        const elemento =
-          document.getElementById(
-            "typing"
-          );
-
-
-        if (
-          data.is_typing
-        ) {
-
-          elemento.textContent =
-            (
-              otherProfile?.nombre ||
-              "Usuario"
-            ) +
-            " está escribiendo...";
-
-        }
-
-        else {
-
-          elemento.textContent =
-            "";
-
-        }
-
-      }
-    )
-    .subscribe();
-
-}
-
-
-/* =========================================
-   ESTADO ONLINE EN TIEMPO REAL
-========================================= */
-
-function escucharEstado() {
-
-  supabaseClient
-    .channel(
-      "perfil-" +
-      otherUserId
-    )
-    .on(
-      "postgres_changes",
-      {
-        event: "UPDATE",
-        schema: "public",
-        table: "profiles",
-        filter:
-          "id=eq." +
-          otherUserId
-      },
-      payload => {
-
-        otherProfile =
-          payload.new;
-
-        actualizarEstado();
-
-      }
-    )
-    .subscribe();
-
-}
-
-
-/* =========================================
-   SCROLL
-========================================= */
-
-function bajarChat() {
-
-  const contenedor =
-    document.getElementById(
-      "mensajes"
-    );
-
-
-  setTimeout(
-    () => {
-
-      contenedor.scrollTop =
-        contenedor.scrollHeight;
-
-    },
-    50
-  );
-
-}
-
-
-/* ======
+</body>
+</html>
