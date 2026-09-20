@@ -1,252 +1,777 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EmiMatch - Conversación</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <meta charset="UTF-8">
 
-<style>
-*{
-  box-sizing:border-box;
-}
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#f3f5f9;
-}
+  <title>Conversación - EmiMatch</title>
 
-.app{
-  max-width:700px;
-  margin:auto;
-  min-height:100vh;
-  background:white;
-  display:flex;
-  flex-direction:column;
-}
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-.header{
-  height:70px;
-  background:#071b49;
-  color:white;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:10px 14px;
-}
+  <style>
 
-.back{
-  border:0;
-  background:none;
-  color:white;
-  font-size:32px;
-  cursor:pointer;
-}
+    * {
+      box-sizing: border-box;
+    }
 
-.avatar{
-  width:48px;
-  height:48px;
-  border-radius:50%;
-  object-fit:cover;
-  background:#ddd;
-}
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
 
-.info{
-  flex:1;
-}
+      background:
+        linear-gradient(
+          135deg,
+          #07152f,
+          #102b55
+        );
 
-.name{
-  font-size:18px;
-  font-weight:bold;
-}
+      color: white;
 
-.status{
-  font-size:12px;
-  margin-top:4px;
-}
+      padding-bottom: 90px;
+    }
 
-.messages{
-  flex:1;
-  overflow-y:auto;
-  padding:15px 12px 90px;
-}
+    .contenedor {
+      width: 100%;
+      max-width: 600px;
+      margin: auto;
+    }
 
-.loading{
-  text-align:center;
-  color:#777;
-  padding:30px;
-}
+    /* =========================
+       CABECERA
+    ========================= */
 
-.error{
-  margin:20px;
-  padding:15px;
-  background:#ffe5e5;
-  color:#a00000;
-  border-radius:10px;
-}
+    .cabecera-chat {
+      position: sticky;
+      top: 0;
+      z-index: 100;
 
-.row{
-  display:flex;
-  margin:7px 0;
-}
+      display: flex;
+      align-items: center;
+      gap: 12px;
 
-.mine{
-  justify-content:flex-end;
-}
+      padding: 14px 15px;
 
-.theirs{
-  justify-content:flex-start;
-}
+      background:
+        rgba(7,21,47,.97);
 
-.bubble{
-  max-width:78%;
-  padding:10px 13px;
-  border-radius:17px;
-  word-wrap:break-word;
-  white-space:pre-wrap;
-}
+      border-bottom:
+        1px solid
+        rgba(255,255,255,.12);
 
-.mine .bubble{
-  background:#123b80;
-  color:white;
-  border-bottom-right-radius:5px;
-}
+      backdrop-filter: blur(12px);
+    }
 
-.theirs .bubble{
-  background:#eee;
-  color:#222;
-  border-bottom-left-radius:5px;
-}
+    .volver {
+      width: 42px;
+      height: 42px;
 
-.time{
-  font-size:9px;
-  opacity:.7;
-  text-align:right;
-  margin-top:4px;
-}
+      border: none;
+      border-radius: 50%;
 
-.read{
-  color:#62d8ff;
-}
+      background:
+        rgba(255,255,255,.10);
 
-.typing{
-  height:25px;
-  padding:0 15px;
-  color:#777;
-  font-size:12px;
-  font-style:italic;
-}
+      color: white;
 
-.input{
-  position:fixed;
-  bottom:0;
-  left:50%;
-  transform:translateX(-50%);
-  width:min(700px,100%);
-  background:white;
-  border-top:1px solid #ddd;
-  padding:9px;
-  display:flex;
-  gap:8px;
-  z-index:10;
-}
+      font-size: 22px;
 
-.input input{
-  flex:1;
-  border:1px solid #ccc;
-  border-radius:25px;
-  padding:12px 15px;
-  font-size:15px;
-  outline:none;
-}
+      cursor: pointer;
+    }
 
-.input input:focus{
-  border-color:#123b80;
-}
+    .foto-cabecera {
+      width: 46px;
+      height: 46px;
 
-.input button{
-  width:46px;
-  height:46px;
-  border:0;
-  border-radius:50%;
-  background:#123b80;
-  color:white;
-  font-size:20px;
-  cursor:pointer;
-}
+      min-width: 46px;
 
-.input button:disabled{
-  opacity:.5;
-}
-</style>
+      border-radius: 50%;
+
+      object-fit: cover;
+
+      background: #e5e7eb;
+
+      border:
+        2px solid
+        #d4af37;
+    }
+
+    .foto-cabecera-sin {
+      width: 46px;
+      height: 46px;
+
+      min-width: 46px;
+
+      border-radius: 50%;
+
+      background: #e5e7eb;
+
+      border:
+        2px solid
+        #d4af37;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: 22px;
+    }
+
+    .datos-cabecera {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .nombre-cabecera {
+      font-size: 18px;
+      font-weight: bold;
+
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .estado-cabecera {
+      margin-top: 3px;
+
+      font-size: 13px;
+
+      color: #94a3b8;
+    }
+
+    .online {
+      color: #4ade80;
+    }
+
+    .bloquear-btn {
+      border: none;
+
+      border-radius: 12px;
+
+      padding: 9px 10px;
+
+      background:
+        rgba(239,68,68,.15);
+
+      color: #fca5a5;
+
+      cursor: pointer;
+
+      font-size: 13px;
+    }
+
+    /* =========================
+       MENSAJES
+    ========================= */
+
+    .mensajes {
+      padding: 18px 12px;
+
+      min-height:
+        calc(100vh - 170px);
+
+      display: flex;
+      flex-direction: column;
+
+      gap: 8px;
+    }
+
+    .estado-carga {
+      text-align: center;
+
+      padding: 35px 15px;
+
+      color: #cbd5e1;
+    }
+
+    .mensaje-fila {
+      display: flex;
+      width: 100%;
+    }
+
+    .mensaje-fila.mio {
+      justify-content: flex-end;
+    }
+
+    .mensaje-fila.otro {
+      justify-content: flex-start;
+    }
+
+    .burbuja {
+      max-width: 78%;
+
+      padding: 10px 12px;
+
+      border-radius: 18px;
+
+      box-shadow:
+        0 5px 15px
+        rgba(0,0,0,.16);
+
+      word-break: break-word;
+    }
+
+    .mio .burbuja {
+      background:
+        linear-gradient(
+          135deg,
+          #d4af37,
+          #f0cf62
+        );
+
+      color: #07152f;
+
+      border-bottom-right-radius: 5px;
+    }
+
+    .otro .burbuja {
+      background: white;
+
+      color: #172033;
+
+      border-bottom-left-radius: 5px;
+    }
+
+    .texto-mensaje {
+      font-size: 15px;
+      line-height: 1.4;
+
+      white-space: pre-wrap;
+    }
+
+    .hora {
+      margin-top: 4px;
+
+      display: flex;
+
+      justify-content: flex-end;
+      align-items: center;
+
+      gap: 4px;
+
+      font-size: 10px;
+
+      opacity: .7;
+    }
+
+    .check {
+      font-weight: bold;
+      letter-spacing: -2px;
+    }
+
+    .check.leido {
+      color: #2563eb;
+    }
+
+    /* =========================
+       ESCRIBIENDO
+    ========================= */
+
+    .escribiendo {
+      display: none;
+
+      padding:
+        0 15px
+        8px;
+
+      color: #cbd5e1;
+
+      font-size: 13px;
+    }
+
+    .escribiendo.visible {
+      display: block;
+    }
+
+    /* =========================
+       COMPOSER
+    ========================= */
+
+    .composer {
+      position: fixed;
+
+      left: 0;
+      right: 0;
+      bottom: 0;
+
+      z-index: 500;
+
+      background:
+        rgba(7,21,47,.98);
+
+      border-top:
+        1px solid
+        rgba(255,255,255,.12);
+
+      padding:
+        10px;
+
+      backdrop-filter: blur(12px);
+    }
+
+    .composer-inner {
+      max-width: 600px;
+      margin: auto;
+
+      display: flex;
+
+      align-items: flex-end;
+
+      gap: 8px;
+    }
+
+    #mensajeInput {
+      flex: 1;
+
+      min-height: 45px;
+      max-height: 120px;
+
+      resize: none;
+
+      border: none;
+      outline: none;
+
+      border-radius: 18px;
+
+      padding:
+        12px 14px;
+
+      font-size: 15px;
+
+      background: white;
+      color: #172033;
+    }
+
+    #enviarBtn {
+      width: 46px;
+      height: 46px;
+
+      border: none;
+
+      border-radius: 50%;
+
+      background:
+        #d4af37;
+
+      color: #07152f;
+
+      font-size: 20px;
+
+      cursor: pointer;
+    }
+
+    #enviarBtn:disabled {
+      opacity: .5;
+
+      cursor: not-allowed;
+    }
+
+    /* =========================
+       BLOQUEADO
+    ========================= */
+
+    .bloqueado-aviso {
+      display: none;
+
+      position: fixed;
+
+      left: 0;
+      right: 0;
+      bottom: 0;
+
+      z-index: 600;
+
+      padding: 14px;
+
+      background:
+        #7f1d1d;
+
+      color: white;
+
+      text-align: center;
+
+      font-size: 14px;
+    }
+
+    .bloqueado-aviso.visible {
+      display: block;
+    }
+
+    /* =========================
+       NAV INFERIOR
+    ========================= */
+
+    .bottom-nav {
+      position: fixed;
+
+      left: 10px;
+      right: 10px;
+      bottom: 80px;
+
+      height: 66px;
+
+      max-width: 600px;
+      margin: auto;
+
+      z-index: 450;
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(5, 1fr);
+
+      background:
+        rgba(7,21,47,.96);
+
+      border:
+        1px solid
+        rgba(255,255,255,.14);
+
+      border-radius: 20px;
+
+      box-shadow:
+        0 12px 35px
+        rgba(0,0,0,.40);
+
+      backdrop-filter: blur(14px);
+    }
+
+    .nav-item {
+      position: relative;
+
+      display: flex;
+
+      flex-direction: column;
+
+      align-items: center;
+
+      justify-content: center;
+
+      gap: 2px;
+
+      color: #cbd5e1;
+
+      text-decoration: none;
+
+      font-size: 10px;
+
+      font-weight: bold;
+    }
+
+    .nav-item .icon {
+      font-size: 20px;
+
+      line-height: 21px;
+    }
+
+    .nav-item.activo {
+      color: #d4af37;
+    }
+
+    .nav-badge {
+      position: absolute;
+
+      top: 3px;
+      right: 17%;
+
+      min-width: 18px;
+      height: 18px;
+
+      padding: 2px 5px;
+
+      border-radius: 20px;
+
+      background: #ef4444;
+
+      color: white;
+
+      font-size: 10px;
+
+      display: none;
+
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* =========================
+       TOAST
+    ========================= */
+
+    .toast {
+      position: fixed;
+
+      left: 50%;
+
+      bottom: 155px;
+
+      transform:
+        translateX(-50%)
+        translateY(20px);
+
+      background:
+        #111827;
+
+      color: white;
+
+      padding:
+        12px 17px;
+
+      border-radius: 14px;
+
+      opacity: 0;
+
+      pointer-events: none;
+
+      transition: .25s ease;
+
+      z-index: 2000;
+
+      max-width: 90%;
+
+      text-align: center;
+    }
+
+    .toast.mostrar {
+      opacity: 1;
+
+      transform:
+        translateX(-50%)
+        translateY(0);
+    }
+
+    @media (max-width: 500px) {
+
+      .bottom-nav {
+        left: 6px;
+        right: 6px;
+      }
+
+      .burbuja {
+        max-width: 84%;
+      }
+
+      .bloquear-btn {
+        font-size: 11px;
+        padding: 8px;
+      }
+
+    }
+
+  </style>
+
 </head>
+
 
 <body>
 
-<div class="app">
 
-  <div class="header">
+<div class="contenedor">
+
+
+  <!-- CABECERA -->
+
+  <header class="cabecera-chat">
 
     <button
-      class="back"
-      onclick="location.href='chat.html'">
-      ‹
+      class="volver"
+      onclick="volverMatches()"
+      aria-label="Volver"
+    >
+      ←
     </button>
 
-    <img
-      id="foto"
-      class="avatar"
-      src="https://via.placeholder.com/100">
 
-    <div class="info">
+    <div id="fotoCabecera">
 
       <div
-        id="nombre"
-        class="name">
+        class="foto-cabecera-sin"
+      >
+        👤
+      </div>
+
+    </div>
+
+
+    <div class="datos-cabecera">
+
+      <div
+        id="nombreCabecera"
+        class="nombre-cabecera"
+      >
         Cargando...
       </div>
 
       <div
-        id="estado"
-        class="status">
-        Conectando...
+        id="estadoCabecera"
+        class="estado-cabecera"
+      >
+        ⏳
       </div>
 
     </div>
 
-  </div>
-
-
-  <div
-    id="mensajes"
-    class="messages">
-
-    <div class="loading">
-      Cargando conversación...
-    </div>
-
-  </div>
-
-
-  <div
-    id="typing"
-    class="typing">
-  </div>
-
-
-  <div class="input">
-
-    <input
-      id="texto"
-      type="text"
-      placeholder="Escribí un mensaje..."
-      autocomplete="off">
 
     <button
-      id="botonEnviar"
-      onclick="enviar()">
+      id="bloquearBtn"
+      class="bloquear-btn"
+      onclick="bloquearUsuario()"
+    >
+      🚫
+    </button>
+
+  </header>
+
+
+  <!-- MENSAJES -->
+
+  <main
+    id="mensajes"
+    class="mensajes"
+  >
+
+    <div class="estado-carga">
+      ⏳ Cargando conversación...
+    </div>
+
+  </main>
+
+
+  <!-- ESCRIBIENDO -->
+
+  <div
+    id="escribiendo"
+    class="escribiendo"
+  >
+    ⌨️ Está escribiendo...
+  </div>
+
+
+</div>
+
+
+<!-- NAV -->
+
+<nav class="bottom-nav">
+
+
+  <a
+    class="nav-item"
+    href="./perfil.html"
+  >
+
+    <span class="icon">
+      👤
+    </span>
+
+    <span>
+      Perfil
+    </span>
+
+  </a>
+
+
+  <a
+    class="nav-item"
+    href="./descubrir.html"
+  >
+
+    <span class="icon">
+      🔎
+    </span>
+
+    <span>
+      Descubrir
+    </span>
+
+  </a>
+
+
+  <a
+    class="nav-item"
+    href="./likes.html"
+  >
+
+    <span class="icon">
+      ❤️
+    </span>
+
+    <span>
+      Me gustas
+    </span>
+
+  </a>
+
+
+  <a
+    class="nav-item activo"
+    href="./chat.html"
+  >
+
+    <span class="icon">
+      💕
+    </span>
+
+    <span>
+      Matches
+    </span>
+
+  </a>
+
+
+  <a
+    class="nav-item"
+    href="./notificaciones.html"
+  >
+
+    <span class="icon">
+      🔔
+    </span>
+
+    <span>
+      Notificaciones
+    </span>
+
+    <span
+      id="badgeNotificaciones"
+      class="nav-badge"
+    >
+      0
+    </span>
+
+  </a>
+
+
+</nav>
+
+
+<!-- COMPOSER -->
+
+<div
+  id="composer"
+  class="composer"
+>
+
+  <div class="composer-inner">
+
+    <textarea
+      id="mensajeInput"
+      placeholder="Escribí un mensaje..."
+      rows="1"
+      maxlength="2000"
+    ></textarea>
+
+
+    <button
+      id="enviarBtn"
+      onclick="enviarMensaje()"
+      aria-label="Enviar"
+    >
       ➤
     </button>
 
@@ -255,789 +780,815 @@ body{
 </div>
 
 
+<!-- AVISO BLOQUEADO -->
+
+<div
+  id="bloqueadoAviso"
+  class="bloqueado-aviso"
+>
+  🚫 Esta conversación está bloqueada.
+</div>
+
+
+<div
+  id="toast"
+  class="toast"
+></div>
+
+
 <script>
 
+
 const SUPABASE_URL =
-"https://kngiadwaesdbmvwivdev.supabase.co";
+  "https://kngiadwaesdbmvwivdev.supabase.co";
+
 
 const SUPABASE_KEY =
-"sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
+  "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
+
 
 const supabaseClient =
-supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+  supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
 
-let yo = null;
-let otro = null;
-let match = null;
+let usuarioActual = null;
+
+let otroUsuarioId = null;
+
+let matchActual = null;
+
+let canalMensajes = null;
+
+let canalTyping = null;
 
 let typingTimer = null;
 
-
-const params =
-new URLSearchParams(location.search);
-
-otro = params.get("user");
+let estaBloqueado = false;
 
 
-function escapeHTML(text){
+/* =========================
+   INICIO
+========================= */
 
-  return String(text || "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
+async function iniciar() {
+
+  try {
+
+    const {
+      data: {
+        session
+      }
+    } =
+      await supabaseClient
+        .auth
+        .getSession();
+
+
+    if (!session) {
+
+      window.location.href =
+        "./index.html";
+
+      return;
+    }
+
+
+    usuarioActual =
+      session.user;
+
+
+    const params =
+      new URLSearchParams(
+        window.location.search
+      );
+
+
+    otroUsuarioId =
+      params.get(
+        "user"
+      );
+
+
+    if (
+      !otroUsuarioId
+    ) {
+
+      window.location.href =
+        "./chat.html";
+
+      return;
+
+    }
+
+
+    await comprobarBloqueo();
+
+    await cargarPerfilOtro();
+
+    await buscarMatch();
+
+    await cargarMensajes();
+
+    await marcarMensajesLeidos();
+
+    await cargarNotificaciones();
+
+    configurarRealtime();
+
+    configurarTyping();
+
+  }
+  catch (error) {
+
+    console.error(error);
+
+    mostrarError(
+      "No se pudo iniciar la conversación."
+    );
+
+  }
 
 }
 
 
-function mostrarError(mensaje){
+/* =========================
+   COMPROBAR BLOQUEO
+========================= */
 
-  document.getElementById("mensajes").innerHTML =
-  `<div class="error">
-    ⚠️ ${escapeHTML(mensaje)}
-  </div>`;
+async function comprobarBloqueo() {
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("user_blocks")
+      .select(
+        "blocker_id, blocked_id"
+      )
+      .or(
+        `and(blocker_id.eq.${usuarioActual.id},blocked_id.eq.${otroUsuarioId}),and(blocker_id.eq.${otroUsuarioId},blocked_id.eq.${usuarioActual.id})`
+      );
+
+
+  if (error) {
+
+    console.error(
+      "Error comprobando bloqueo:",
+      error
+    );
+
+    return;
+
+  }
+
+
+  estaBloqueado =
+    !!(
+      data &&
+      data.length
+    );
+
+
+  actualizarEstadoBloqueo();
 
 }
 
 
-async function iniciar(){
+/* =========================
+   ESTADO BLOQUEO
+========================= */
 
-  try{
+function actualizarEstadoBloqueo() {
 
-    if(!otro){
-
-      mostrarError(
-        "No se recibió el usuario."
-      );
-
-      return;
-    }
+  const input =
+    document.getElementById(
+      "mensajeInput"
+    );
 
 
-    /* SESIÓN */
-
-    const {
-      data:sessionData,
-      error:sessionError
-    } =
-    await supabaseClient.auth.getSession();
+  const boton =
+    document.getElementById(
+      "enviarBtn"
+    );
 
 
-    if(sessionError){
-
-      mostrarError(
-        sessionError.message
-      );
-
-      return;
-    }
+  const aviso =
+    document.getElementById(
+      "bloqueadoAviso"
+    );
 
 
-    yo =
-    sessionData.session?.user;
+  if (
+    estaBloqueado
+  ) {
+
+    input.disabled =
+      true;
+
+    boton.disabled =
+      true;
+
+    input.placeholder =
+      "Conversación bloqueada";
+
+    aviso.classList.add(
+      "visible"
+    );
+
+  }
+  else {
+
+    input.disabled =
+      false;
+
+    boton.disabled =
+      false;
+
+    input.placeholder =
+      "Escribí un mensaje...";
+
+    aviso.classList.remove(
+      "visible"
+    );
+
+  }
+
+}
 
 
-    if(!yo){
+/* =========================
+   PERFIL
+========================= */
 
-      mostrarError(
-        "No hay una sesión iniciada."
-      );
+async function cargarPerfilOtro() {
 
-      return;
-    }
-
-
-    /* PERFIL DEL OTRO USUARIO */
-
-    const {
-      data:perfil,
-      error:perfilError
-    } =
+  const {
+    data,
+    error
+  } =
     await supabaseClient
       .from("profiles")
-      .select("*")
-      .eq("id",otro)
+      .select(
+        `
+        id,
+        nombre,
+        edad,
+        foto_url,
+        online,
+        last_seen
+        `
+      )
+      .eq(
+        "id",
+        otroUsuarioId
+      )
       .maybeSingle();
 
 
-    if(perfilError){
+  if (error) {
 
-      mostrarError(
-        "Error del perfil: " +
-        perfilError.message
-      );
+    console.error(error);
 
-      return;
-    }
+    return;
+
+  }
 
 
-    if(!perfil){
+  if (!data) {
 
-      mostrarError(
-        "No se encontró el perfil."
-      );
+    return;
 
-      return;
-    }
+  }
 
 
-    document.getElementById("nombre")
-      .textContent =
-      perfil.nombre || "Usuario";
+  const nombre =
+    escaparHTML(
+      data.nombre ||
+      "Usuario"
+    );
 
 
-    if(perfil.foto_url){
-
-      document.getElementById("foto").src =
-      perfil.foto_url;
-
-    }
+  const edad =
+    data.edad
+      ? `, ${data.edad}`
+      : "";
 
 
-    actualizarEstado(perfil);
+  document.getElementById(
+    "nombreCabecera"
+  ).textContent =
+    `${nombre}${edad}`;
 
 
-    /* BUSCAR MATCH */
+  const estado =
+    document.getElementById(
+      "estadoCabecera"
+    );
 
-    const {
-      data:matches,
-      error:matchError
-    } =
+
+  if (
+    data.online
+  ) {
+
+    estado.innerHTML =
+      `<span class="online">
+        ● En línea
+      </span>`;
+
+  }
+  else {
+
+    estado.textContent =
+      "Última conexión reciente";
+
+  }
+
+
+  const foto =
+    document.getElementById(
+      "fotoCabecera"
+    );
+
+
+  if (
+    data.foto_url
+  ) {
+
+    foto.innerHTML = `
+
+      <img
+        class="foto-cabecera"
+        src="${escaparHTML(
+          data.foto_url
+        )}"
+        alt="Foto"
+      >
+
+    `;
+
+  }
+
+}
+
+
+/* =========================
+   BUSCAR MATCH
+========================= */
+
+async function buscarMatch() {
+
+  const {
+    data,
+    error
+  } =
     await supabaseClient
       .from("matches")
       .select(
-        "id,user1_id,user2_id"
+        `
+        id,
+        user1_id,
+        user2_id
+        `
       )
       .or(
-        "and(user1_id.eq." +
-        yo.id +
-        ",user2_id.eq." +
-        otro +
-        "),and(user1_id.eq." +
-        otro +
-        ",user2_id.eq." +
-        yo.id +
-        ")"
+        `and(user1_id.eq.${usuarioActual.id},user2_id.eq.${otroUsuarioId}),and(user1_id.eq.${otroUsuarioId},user2_id.eq.${usuarioActual.id})`
       )
       .limit(1);
 
 
-    if(matchError){
+  if (error) {
 
-      mostrarError(
-        "Error buscando match: " +
-        matchError.message
-      );
+    console.error(error);
 
-      return;
-    }
+    return;
+
+  }
 
 
-    if(!matches || matches.length === 0){
+  if (
+    data &&
+    data.length
+  ) {
 
-      mostrarError(
-        "No existe un match entre estas cuentas."
-      );
-
-      return;
-    }
-
-
-    match = matches[0];
-
-
-    /* CARGAR MENSAJES */
-
-    await cargar();
-
-
-    /* CREAR ESTADO DE TYPING */
-
-    await prepararTyping();
-
-
-    /* TIEMPO REAL */
-
-    iniciarRealtime();
-
-
-  }catch(e){
-
-    mostrarError(
-      "Error inesperado: " +
-      e.message
-    );
+    matchActual =
+      data[0];
 
   }
 
 }
 
 
-/* ESTADO DEL PERFIL */
+/* =========================
+   CARGAR MENSAJES
+========================= */
 
-function actualizarEstado(perfil){
+async function cargarMensajes() {
 
-  const estado =
-  document.getElementById("estado");
+  const contenedor =
+    document.getElementById(
+      "mensajes"
+    );
 
 
-  if(perfil.online){
+  if (!matchActual) {
 
-    estado.textContent =
-    "🟢 En línea";
+    contenedor.innerHTML = `
 
-  }else{
+      <div class="estado-carga">
 
-    if(perfil.last_seen){
+        💕 Esta conversación
+        todavía no está disponible.
 
-      const fecha =
-      new Date(perfil.last_seen);
+      </div>
 
-      estado.textContent =
-      "Última vez " +
-      fecha.toLocaleString(
-        "es-AR",
+    `;
+
+    return;
+
+  }
+
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("messages")
+      .select(
+        `
+        id,
+        sender_id,
+        content,
+        created_at,
+        read_at,
+        delivered_at
+        `
+      )
+      .eq(
+        "match_id",
+        matchActual.id
+      )
+      .order(
+        "created_at",
         {
-          day:"2-digit",
-          month:"2-digit",
-          hour:"2-digit",
-          minute:"2-digit"
+          ascending: true
         }
       );
 
-    }else{
 
-      estado.textContent =
-      "Desconectado";
+  if (error) {
 
-    }
-
-  }
-
-}
-
-
-/* CARGAR MENSAJES */
-
-async function cargar(){
-
-  if(!match || !yo) return;
-
-
-  const {
-    data,
-    error:msgError
-  } =
-  await supabaseClient
-    .from("messages")
-    .select(
-      "id,sender_id,content,created_at,read_at,delivered_at"
-    )
-    .eq(
-      "match_id",
-      match.id
-    )
-    .order(
-      "created_at",
-      {
-        ascending:true
-      }
-    );
-
-
-  if(msgError){
+    console.error(error);
 
     mostrarError(
-      "Error cargando mensajes: " +
-      msgError.message
+      "No se pudieron cargar los mensajes."
     );
 
     return;
-  }
-
-
-  const contenedor =
-  document.getElementById("mensajes");
-
-
-  contenedor.innerHTML = "";
-
-
-  if(!data || data.length === 0){
-
-    contenedor.innerHTML =
-    `<div class="loading">
-      💕 Todavía no hay mensajes.<br>
-      ¡Empezá la conversación!
-    </div>`;
-
-    return;
 
   }
 
 
-  data.forEach(m => {
-
-    const mio =
-    m.sender_id === yo.id;
-
-
-    const row =
-    document.createElement("div");
-
-    row.className =
-    "row " +
-    (mio
-      ? "mine"
-      : "theirs");
-
-
-    const bubble =
-    document.createElement("div");
-
-    bubble.className =
-    "bubble";
-
-
-    const hora =
-    new Date(
-      m.created_at
-    ).toLocaleTimeString(
-      "es-AR",
-      {
-        hour:"2-digit",
-        minute:"2-digit"
-      }
-    );
-
-
-    let estadoMensaje = "";
-
-
-    if(mio){
-
-      if(m.read_at){
-
-        estadoMensaje =
-        `<span class="read">✓✓</span>`;
-
-      }else if(m.delivered_at){
-
-        estadoMensaje =
-        `<span>✓✓</span>`;
-
-      }else{
-
-        estadoMensaje =
-        `<span>✓</span>`;
-
-      }
-
-    }
-
-
-    bubble.innerHTML =
-      escapeHTML(m.content) +
-      `<div class="time">
-        ${hora}
-        ${estadoMensaje}
-      </div>`;
-
-
-    row.appendChild(bubble);
-
-    contenedor.appendChild(row);
-
-  });
-
-
-  contenedor.scrollTop =
-  contenedor.scrollHeight;
-
-
-  /* MARCAR MENSAJES RECIBIDOS COMO ENTREGADOS */
-
-  const recibidos =
-  data.filter(
-    m =>
-    m.sender_id !== yo.id &&
-    !m.delivered_at
+  renderizarMensajes(
+    data || []
   );
-
-
-  for(const m of recibidos){
-
-    await supabaseClient
-      .from("messages")
-      .update({
-        delivered_at:
-        new Date().toISOString()
-      })
-      .eq(
-        "id",
-        m.id
-      );
-
-  }
-
-
-  /* MARCAR COMO LEÍDOS */
-
-  const noLeidos =
-  data.filter(
-    m =>
-    m.sender_id !== yo.id &&
-    !m.read_at
-  );
-
-
-  for(const m of noLeidos){
-
-    await supabaseClient
-      .from("messages")
-      .update({
-        read_at:
-        new Date().toISOString()
-      })
-      .eq(
-        "id",
-        m.id
-      );
-
-  }
 
 }
 
 
-/* ENVIAR MENSAJE */
+/* =========================
+   RENDER MENSAJES
+========================= */
 
-async function enviar(){
+function renderizarMensajes(
+  mensajes
+) {
+
+  const contenedor =
+    document.getElementById(
+      "mensajes"
+    );
+
+
+  if (
+    !mensajes.length
+  ) {
+
+    contenedor.innerHTML = `
+
+      <div
+        class="estado-carga"
+      >
+        💬 Comenzá la conversación
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  let html = "";
+
+
+  mensajes.forEach(
+    mensaje => {
+
+      const mio =
+        mensaje.sender_id ===
+        usuarioActual.id;
+
+
+      const texto =
+        escaparHTML(
+          mensaje.content
+        );
+
+
+      const hora =
+        new Date(
+          mensaje.created_at
+        )
+          .toLocaleTimeString(
+            "es-AR",
+            {
+              hour: "2-digit",
+              minute: "2-digit"
+            }
+          );
+
+
+      let checks = "";
+
+
+      if (mio) {
+
+        if (
+          mensaje.read_at
+        ) {
+
+          checks = `
+            <span
+              class="check leido"
+            >
+              ✓✓
+            </span>
+          `;
+
+        }
+        else if (
+          mensaje.delivered_at
+        ) {
+
+          checks = `
+            <span class="check">
+              ✓✓
+            </span>
+          `;
+
+        }
+        else {
+
+          checks = `
+            <span class="check">
+              ✓
+            </span>
+          `;
+
+        }
+
+      }
+
+
+      html += `
+
+        <div
+          class="
+            mensaje-fila
+            ${mio ? "mio" : "otro"}
+          "
+        >
+
+          <div class="burbuja">
+
+            <div class="texto-mensaje">
+              ${texto}
+            </div>
+
+            <div class="hora">
+
+              ${hora}
+
+              ${checks}
+
+            </div>
+
+          </div>
+
+        </div>
+
+      `;
+
+    }
+  );
+
+
+  contenedor.innerHTML =
+    html;
+
+
+  /*
+    Bajar al último mensaje
+  */
+
+  requestAnimationFrame(
+    () => {
+
+      contenedor.scrollTop =
+        contenedor.scrollHeight;
+
+    }
+  );
+
+}
+
+
+/* =========================
+   MARCAR ENTREGADOS / LEÍDOS
+========================= */
+
+async function marcarMensajesLeidos() {
+
+  if (
+    !matchActual ||
+    estaBloqueado
+  ) {
+
+    return;
+
+  }
+
+
+  const ahora =
+    new Date().toISOString();
+
+
+  /*
+    Primero marcamos como
+    entregados.
+  */
+
+  await supabaseClient
+    .from("messages")
+    .update({
+      delivered_at:
+        ahora
+    })
+    .eq(
+      "match_id",
+      matchActual.id
+    )
+    .neq(
+      "sender_id",
+      usuarioActual.id
+    )
+    .is(
+      "delivered_at",
+      null
+    );
+
+
+  /*
+    Luego como leídos.
+  */
+
+  await supabaseClient
+    .from("messages")
+    .update({
+      read_at:
+        ahora,
+      delivered_at:
+        ahora
+    })
+    .eq(
+      "match_id",
+      matchActual.id
+    )
+    .neq(
+      "sender_id",
+      usuarioActual.id
+    )
+    .is(
+      "read_at",
+      null
+    );
+
+
+  await cargarNotificaciones();
+
+}
+
+
+/* =========================
+   ENVIAR
+========================= */
+
+async function enviarMensaje() {
+
+  if (
+    estaBloqueado
+  ) {
+
+    return;
+
+  }
+
+
+  if (
+    !matchActual
+  ) {
+
+    mostrarToast(
+      "No hay un Match disponible."
+    );
+
+    return;
+
+  }
+
 
   const input =
-  document.getElementById("texto");
+    document.getElementById(
+      "mensajeInput"
+    );
+
 
   const boton =
-  document.getElementById("botonEnviar");
+    document.getElementById(
+      "enviarBtn"
+    );
 
 
   const contenido =
-  input.value.trim();
+    input.value.trim();
 
 
-  if(!contenido) return;
-
-
-  if(!match){
-
-    alert(
-      "El match todavía no está cargado."
-    );
+  if (!contenido) {
 
     return;
+
   }
 
 
-  boton.disabled = true;
-
-
-  const {
-    error:sendError
-  } =
-  await supabaseClient
-    .from("messages")
-    .insert({
-
-      match_id:
-      match.id,
-
-      sender_id:
-      yo.id,
-
-      content:
-      contenido,
-
-      delivered_at:
-      new Date().toISOString()
-
-    });
-
-
-  boton.disabled = false;
-
-
-  if(sendError){
-
-    alert(
-      "No se pudo enviar:\n\n" +
-      sendError.message
-    );
-
-    return;
-  }
-
-
-  input.value = "";
-
-
-  await actualizarTyping(false);
-
-  await cargar();
-
-}
-
-
-/* TYPING */
-
-async function prepararTyping(){
-
-  if(!match || !yo) return;
+  boton.disabled =
+    true;
 
 
   const {
     error
   } =
-  await supabaseClient
-    .from("typing_status")
-    .upsert(
-      {
-        match_id:match.id,
-        user_id:yo.id,
-        is_typing:false,
-        updated_at:
-        new Date().toISOString()
-      },
-      {
-        onConflict:
-        "match_id,user_id"
-      }
+    await supabaseClient
+      .from("messages")
+      .insert({
+
+        match_id:
+          matchActual.id,
+
+        sender_id:
+          usuarioActual.id,
+
+        content:
+          contenido
+
+      });
+
+
+  boton.disabled =
+    false;
+
+
+  if (error) {
+
+    console.error(error);
+
+    mostrarToast(
+      "No se pudo enviar el mensaje."
     );
 
-
-  if(error){
-
-    console.log(
-      "Typing:",
-      error.message
-    );
-
-  }
-
-}
-
-
-async function actualizarTyping(valor){
-
-  if(!match || !yo) return;
-
-
-  await supabaseClient
-    .from("typing_status")
-    .upsert(
-      {
-        match_id:match.id,
-        user_id:yo.id,
-        is_typing:valor,
-        updated_at:
-        new Date().toISOString()
-      },
-      {
-        onConflict:
-        "match_id,user_id"
-      }
-    );
-
-}
-
-
-async function comprobarTyping(){
-
-  if(!match || !yo) return;
-
-
-  const {
-    data,
-    error
-  } =
-  await supabaseClient
-    .from("typing_status")
-    .select(
-      "is_typing,updated_at"
-    )
-    .eq(
-      "match_id",
-      match.id
-    )
-    .eq(
-      "user_id",
-      otro
-    )
-    .maybeSingle();
-
-
-  if(error) return;
-
-
-  const elemento =
-  document.getElementById("typing");
-
-
-  if(
-    data &&
-    data.is_typing &&
-    data.updated_at
-  ){
-
-    const diferencia =
-    Date.now() -
-    new Date(
-      data.updated_at
-    ).getTime();
-
-
-    if(diferencia < 5000){
-
-      elemento.textContent =
-      "✍️ Está escribiendo...";
-
-      return;
-
-    }
+    return;
 
   }
 
 
-  elemento.textContent = "";
+  input.value =
+    "";
 
-}
+  ajustarTextarea();
 
-
-/* INPUT TYPING */
-
-document
-.getElementById("texto")
-.addEventListener(
-  "input",
-  async function(){
-
-    await actualizarTyping(
-      this.value.trim().length > 0
-    );
-
-
-    clearTimeout(
-      typingTimer
-    );
-
-
-    typingTimer =
-    setTimeout(
-      async function(){
-
-        await actualizarTyping(false);
-
-      },
-      2500
-    );
-
-  }
-);
-
-
-/* ENTER */
-
-document
-.getElementById("texto")
-.addEventListener(
-  "keydown",
-  function(e){
-
-    if(
-      e.key === "Enter" &&
-      !e.shiftKey
-    ){
-
-      e.preventDefault();
-
-      enviar();
-
-    }
-
-  }
-);
-
-
-/* REALTIME */
-
-function iniciarRealtime(){
-
-  supabaseClient
-    .channel(
-      "chat-" + match.id
-    )
-
-    .on(
-      "postgres_changes",
-      {
-        event:"*",
-        schema:"public",
-        table:"messages",
-        filter:
-        "match_id=eq." +
-        match.id
-      },
-      async function(){
-
-        await cargar();
-
-      }
-    )
-
-    .on(
-      "postgres_changes",
-      {
-        event:"*",
-        schema:"public",
-        table:"typing_status",
-        filter:
-        "match_id=eq." +
-        match.id
-      },
-      async function(){
-
-        await comprobarTyping();
-
-      }
-    )
-
-    .subscribe();
-
-
-  /* RESPALDO POR CONSULTA */
-
-  setInterval(
-    async function(){
-
-      await cargar();
-
-      await comprobarTyping();
-
-    },
-    3000
-  );
-
-}
-
-
-/* INICIO */
-
-iniciar();
-
-</script>
-
-</body>
-</html>
+  actualizarTyping(
+    fals
