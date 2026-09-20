@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Me gustas - EmiMatch</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  min-height:100vh;
+  background:linear-gradient(135deg,#667eea,#764ba2);
+  color:#222;
+}
+
+.contenedor{
+  width:100%;
+  max-width:600px;
+  margin:auto;
+  padding:20px 15px 40px;
+}
+
+.cabecera{
+  background:white;
+  border-radius:22px;
+  padding:20px;
+  text-align:center;
+  margin-bottom:15px;
+  box-shadow:0 8px 25px rgba(0,0,0,.15);
+}
+
+.cabecera h1{
+  margin:0 0 7px;
+  color:#764ba2;
+  font-size:27px;
+}
+
+.cabecera p{
+  margin:0;
+  color:#777;
+  font-size:14px;
+}
+
+.card{
+  background:white;
+  border-radius:20px;
+  padding:15px;
+  margin-bottom:15px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  box-shadow:0 6px 18px rgba(0,0,0,.15);
+}
+
+.foto{
+  width:75px;
+  height:75px;
+  border-radius:50%;
+  object-fit:cover;
+  background:#eee;
+  flex-shrink:0;
+}
+
+.info{
+  flex:1;
+  min-width:0;
+}
+
+.nombre{
+  font-size:19px;
+  font-weight:bold;
+  margin-bottom:4px;
+}
+
+.datos{
+  color:#777;
+  font-size:14px;
+  margin-bottom:5px;
+}
+
+.estado{
+  color:#e91e63;
+  font-size:13px;
+  font-weight:bold;
+}
+
+.botones{
+  display:flex;
+  gap:7px;
+  margin-top:9px;
+}
+
+.btn{
+  border:0;
+  border-radius:20px;
+  padding:8px 12px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.match{
+  background:#e91e63;
+  color:white;
+}
+
+.pasar{
+  background:#eee;
+  color:#555;
+}
+
+.vacio,
+.cargando,
+.error{
+  background:white;
+  border-radius:18px;
+  padding:30px 20px;
+  text-align:center;
+  box-shadow:0 6px 18px rgba(0,0,0,.12);
+}
+
+.vacio{
+  color:#777;
+}
+
+.error{
+  color:#c62828;
+}
+
+.volver{
+  width:100%;
+  border:0;
+  background:white;
+  color:#764ba2;
+  padding:14px;
+  border-radius:15px;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+  margin-top:8px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="contenedor">
+
+  <div class="cabecera">
+
+    <h1>❤️ Me gustas</h1>
+
+    <p>
+      Personas a las que les gustaste
+    </p>
+
+  </div>
+
+
+  <div id="lista">
+
+    <div class="cargando">
+      Buscando tus Likes...
+    </div>
+
+  </div>
+
+
+  <button
+    class="volver"
+    onclick="location.href='chat.html'">
+    ← Volver a Mis Matches
+  </button>
+
+</div>
+
+
+<script>
+
+const SUPABASE_URL =
+"https://kngiadwaesdbmvwivdev.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
+
+const supabaseClient =
+supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+
+let usuarioActual = null;
+
+
+/* =========================
+   ESCAPAR HTML
+========================= */
+
+function escapeHtml(texto){
+
+  return String(texto || "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+/* =========================
+   INICIO
+========================= */
+
+async function iniciar(){
+
+  const {
+    data:sessionData,
+    error:sessionError
+  } =
+  await supabaseClient.auth.getSession();
+
+
+  if(
+    sessionError ||
+    !sessionData.session
+  ){
+
+    location.href="index.html";
+    return;
+
+  }
+
+
+  usuarioActual =
+    sessionData.session.user;
+
+
+  await cargarLikes();
+
+}
+
+
+/* =========================
+   CARGAR LIKES
+========================= */
+
+async function cargarLikes(){
+
+  const lista =
+    document.getElementById("lista");
+
+
+  lista.innerHTML =
+    `<div class="cargando">
+      Buscando tus Likes...
+    </div>`;
+
+
+  /*
+    Buscamos personas que hicieron:
+    LIKE → a nuestro usuario
+  */
+
+  const {
+    data:likes,
+    error
+  } =
+  await supabaseClient
+    .from("swipes")
+    .select(
+      "id,user_id,target_user_id,action,created_at"
+    )
+    .eq(
+      "target_user_id",
+      usuarioActual.id
+    )
+    .eq(
+      "action",
+      "like"
+    )
+    .order(
+      "created_at",
+      {
+        ascending:false
+      }
+    );
+
+
+  if(error){
+
+    lista.innerHTML =
+      `<div class="error">
+        ❌ Error cargando Likes:<br><br>
+        ${escapeHtml(error.message)}
+      </div>`;
+
+    return;
+
+  }
+
+
+  if(
+    !likes ||
+    likes.length === 0
+  ){
+
+    lista.innerHTML =
+      `<div class="vacio">
+        ❤️ Todavía no tenés Likes.<br><br>
+        Seguí descubriendo personas en EmiMatch.
+      </div>`;
+
+    return;
+
+  }
+
+
+  lista.innerHTML = "";
+
+
+  for(
+    const like of likes
+  ){
+
+    await crearCard(
+      like
+    );
+
+  }
+
+}
+
+
+/* =========================
+   CREAR CARD
+========================= */
+
+async function crearCard(like){
+
+  const usuario =
+    like.user_id;
+
+
+  /*
+    Comprobar si nosotros
+    también dimos Like
+  */
+
+  const {
+    data:miLike
+  } =
+  await supabaseClient
+    .from("swipes")
+    .select("id,action")
+    .eq(
+      "user_id",
+      usuarioActual.id
+    )
+    .eq(
+      "target_user_id",
+      usuario
+    )
+    .eq(
+      "action",
+      "like"
+    )
+    .maybeSingle();
+
+
+  /*
+    Si ya hay Like mutuo,
+    probablemente el trigger
+    ya creó el Match.
+  */
+
+  if(miLike){
+
+    return;
+
+  }
+
+
+  const {
+    data:perfil,
+    error
+  } =
+  await supabaseClient
+    .from("profiles")
+    .select(
+      "id,nombre,edad,ciudad,foto_url"
+    )
+    .eq(
+      "id",
+      usuario
+    )
+    .maybeSingle();
+
+
+  if(
+    error ||
+    !perfil
+  ){
+
+    return;
+
+  }
+
+
+  const card =
+    document.createElement("div");
+
+  card.className =
+    "card";
+
+
+  const foto =
+    perfil.foto_url ||
+    "https://via.placeholder.com/150?text=💕";
+
+
+  card.innerHTML = `
+
+    <img
+      class="foto"
+      src="${escapeHtml(foto)}"
+      onerror="this.src='https://via.placeholder.com/150?text=💕'"
+    >
+
+    <div class="info">
+
+      <div class="nombre">
+        ${escapeHtml(
+          perfil.nombre || "Usuario"
+        )}
+      </div>
+
+      <div class="datos">
+
+        ${
+          perfil.edad
+            ? escapeHtml(
+                perfil.edad
+              ) + " años"
+            : ""
+        }
+
+        ${
+          perfil.ciudad
+            ? " · " +
+              escapeHtml(
+                perfil.ciudad
+              )
+            : ""
+        }
+
+      </div>
+
+      <div class="estado">
+        ❤️ Le gustaste
+      </div>
+
+      <div class="botones">
+
+        <button
+          class="btn match"
+          onclick="darMatch('${usuario}')">
+          💕 Match
+        </button>
+
+        <button
+          class="btn pasar"
+          onclick="pasar('${usuario}')">
+          ❌ Pasar
+        </button>
+
+      </div>
+
+    </div>
+  `;
+
+
+  document
+    .getElementById("lista")
+    .appendChild(card);
+
+}
+
+
+/* =========================
+   DAR MATCH
+========================= */
+
+async function darMatch(usuario){
+
+  const {
+    error
+  } =
+  await supabaseClient
+    .from("swipes")
+    .insert({
+
+      user_id:
+      usuarioActual.id,
+
+      target_user_id:
+      usuario,
+
+      action:
+      "like"
+
+    });
+
+
+  /*
+    Si ya existía el Like,
+    no romper la aplicación.
+  */
+
+  if(
+    error &&
+    !String(error.message)
+      .toLowerCase()
+      .includes("duplicate")
+  ){
+
+    alert(
+      "No se pudo crear el Match:\n\n" +
+      error.message
+    );
+
+    return;
+
+  }
+
+
+  alert(
+    "💕 ¡Match!\n\nYa pueden comenzar a conversar."
+  );
+
+
+  await cargarLikes();
+
+}
+
+
+/* =========================
+   PASAR
+========================= */
+
+async function pasar(usuario){
+
+  const {
+    error
+  } =
+  await supabaseClient
+    .from("swipes")
+    .insert({
+
+      user_id:
+      usuarioActual.id,
+
+      target_user_id:
+      usuario,
+
+      action:
+      "pass"
+
+    });
+
+
+  if(error){
+
+    /*
+      Si ya existe cualquier
+      swipe, simplemente
+      quitamos visualmente
+      el perfil de la lista.
+    */
+
+    console.log(
+      "Swipe:",
+      error.message
+    );
+
+  }
+
+
+  await cargarLikes();
+
+}
+
+
+/* =========================
+   INICIAR
+========================= */
+
+iniciar();
+
+</script>
+
+</body>
+</html>
