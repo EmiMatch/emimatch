@@ -4,86 +4,221 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>EmiMatch - Match</title>
+  <title>EmiMatch - Chat</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f5f7fb;
-      text-align: center;
+      background: #f4f6fa;
     }
 
-    .header {
+    header {
+      height: 70px;
       background: linear-gradient(135deg, #071a3d, #123b78);
       color: white;
-      padding: 20px;
+      display: flex;
+      align-items: center;
+      padding: 10px 15px;
+      gap: 12px;
     }
 
-    .caja {
+    .volver {
+      border: none;
       background: white;
-      max-width: 500px;
-      margin: 40px auto;
-      padding: 30px;
-      border-radius: 18px;
-      box-shadow: 0 3px 15px rgba(0,0,0,.1);
+      color: #123b78;
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-weight: bold;
+      cursor: pointer;
     }
 
-    .ok {
-      color: green;
+    .perfil {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .foto {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #ddd;
+    }
+
+    .nombre {
+      font-size: 17px;
       font-weight: bold;
+    }
+
+    .datos {
+      font-size: 12px;
+      opacity: .8;
+    }
+
+    #estado {
+      text-align: center;
+      padding: 15px;
+      color: #666;
     }
 
     .error {
-      color: #d32f2f;
+      color: #d32f2f !important;
       font-weight: bold;
     }
 
-    .dato {
-      margin-top: 20px;
-      background: #f1f3f6;
+    #mensajes {
+      height: calc(100vh - 135px);
+      overflow-y: auto;
       padding: 15px;
-      border-radius: 10px;
-      word-break: break-all;
-      font-size: 13px;
+      padding-bottom: 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
-    button {
-      margin-top: 20px;
+    .mensaje {
+      max-width: 78%;
+      padding: 10px 14px;
+      border-radius: 17px;
+      word-wrap: break-word;
+      font-size: 15px;
+    }
+
+    .mio {
+      align-self: flex-end;
       background: #123b78;
       color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .otro {
+      align-self: flex-start;
+      background: white;
+      color: #222;
+      border-bottom-left-radius: 4px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.1);
+    }
+
+    .hora {
+      font-size: 10px;
+      opacity: .65;
+      text-align: right;
+      margin-top: 4px;
+    }
+
+    .sin-mensajes {
+      text-align: center;
+      color: #777;
+      margin-top: 50px;
+    }
+
+    .barra {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      padding: 10px;
+      display: flex;
+      gap: 8px;
+      box-shadow: 0 -2px 8px rgba(0,0,0,.12);
+    }
+
+    #mensaje {
+      flex: 1;
+      border: 1px solid #ccc;
+      border-radius: 22px;
+      padding: 11px 15px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    #enviar {
       border: none;
-      padding: 12px 20px;
-      border-radius: 10px;
+      background: #123b78;
+      color: white;
+      border-radius: 22px;
+      padding: 0 18px;
       font-weight: bold;
+      cursor: pointer;
+    }
+
+    #enviar:disabled {
+      opacity: .5;
     }
   </style>
 </head>
 
 <body>
 
-<div class="header">
-  <h1>💕 EmiMatch</h1>
-  <div>Conversación</div>
+<header>
+
+  <button class="volver" onclick="volver()">
+    ←
+  </button>
+
+  <div class="perfil">
+
+    <img
+      id="foto"
+      class="foto"
+      src="https://via.placeholder.com/100"
+      alt="Foto"
+    >
+
+    <div>
+
+      <div
+        id="nombre"
+        class="nombre">
+        Cargando...
+      </div>
+
+      <div
+        id="datos"
+        class="datos">
+      </div>
+
+    </div>
+
+  </div>
+
+</header>
+
+
+<div id="estado">
+  🔄 Cargando conversación...
 </div>
 
-<div class="caja">
 
-  <h2>💕 Comprobando Match</h2>
+<div id="mensajes"></div>
 
-  <p id="estado">
-    🔄 Buscando Match...
-  </p>
 
-  <div id="datos" class="dato"></div>
+<div class="barra">
 
-  <button onclick="volver()">
-    ← Volver a Matches
+  <input
+    id="mensaje"
+    type="text"
+    placeholder="Escribí un mensaje..."
+    autocomplete="off"
+  >
+
+  <button
+    id="enviar"
+    onclick="enviarMensaje()">
+    Enviar
   </button>
 
 </div>
+
 
 <script>
 
@@ -100,14 +235,16 @@ const supabaseClient =
   );
 
 
-async function comprobarMatch() {
+let currentUser = null;
+let otherUserId = null;
+let matchId = null;
 
-  const estado =
-    document.getElementById("estado");
 
-  const datos =
-    document.getElementById("datos");
+/* ==========================
+   INICIAR
+========================== */
 
+async function iniciar() {
 
   try {
 
@@ -116,15 +253,14 @@ async function comprobarMatch() {
         window.location.search
       );
 
-
-    const otherUserId =
+    otherUserId =
       params.get("user");
 
 
     if (!otherUserId) {
 
       throw new Error(
-        "No se recibió el usuario del Match."
+        "No se encontró el usuario del Match."
       );
 
     }
@@ -151,147 +287,555 @@ async function comprobarMatch() {
     }
 
 
-    const currentUserId =
-      sessionData.session.user.id;
+    currentUser =
+      sessionData.session.user;
 
 
-    estado.textContent =
-      "🔄 Buscando Match entre los dos usuarios...";
+    document.getElementById("estado")
+      .textContent =
+      "🔄 Cargando perfil...";
 
 
-    /*
-      PRIMERA POSIBILIDAD
-      usuario actual → otro usuario
-    */
-
-    const {
-      data: match1,
-      error: error1
-    } =
-      await supabaseClient
-
-        .from("matches")
-
-        .select("*")
-
-        .eq("user1_id", currentUserId)
-
-        .eq("user2_id", otherUserId)
-
-        .maybeSingle();
+    await cargarPerfil();
 
 
-    if (error1) {
-      throw error1;
-    }
+    document.getElementById("estado")
+      .textContent =
+      "🔄 Buscando Match...";
 
 
-    if (match1) {
-
-      mostrarMatch(
-        match1,
-        currentUserId,
-        otherUserId
-      );
-
-      return;
-
-    }
+    await buscarMatch();
 
 
-    /*
-      SEGUNDA POSIBILIDAD
-      otro usuario → usuario actual
-    */
-
-    const {
-      data: match2,
-      error: error2
-    } =
-      await supabaseClient
-
-        .from("matches")
-
-        .select("*")
-
-        .eq("user1_id", otherUserId)
-
-        .eq("user2_id", currentUserId)
-
-        .maybeSingle();
+    document.getElementById("estado")
+      .textContent =
+      "🔄 Cargando mensajes...";
 
 
-    if (error2) {
-      throw error2;
-    }
+    await cargarMensajes();
 
 
-    if (match2) {
-
-      mostrarMatch(
-        match2,
-        currentUserId,
-        otherUserId
-      );
-
-      return;
-
-    }
+    document.getElementById("estado")
+      .style.display = "none";
 
 
-    throw new Error(
-      "No encontramos un Match entre estos usuarios."
-    );
+    activarTiempoReal();
 
 
   } catch (error) {
 
     console.error(error);
 
-    estado.textContent =
-      "❌ " + error.message;
-
-    estado.className =
-      "error";
+    mostrarError(
+      error.message
+    );
 
   }
 
 }
 
 
-function mostrarMatch(
-  match,
-  currentUserId,
-  otherUserId
-) {
+/* ==========================
+   PERFIL
+========================== */
 
-  document.getElementById("estado")
+async function cargarPerfil() {
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+
+      .from("profiles")
+
+      .select(
+        "id,nombre,edad,ciudad,descripcion,foto_url,intereses"
+      )
+
+      .eq("id", otherUserId)
+
+      .maybeSingle();
+
+
+  if (error) {
+    throw error;
+  }
+
+
+  if (!data) {
+
+    throw new Error(
+      "No se encontró el perfil."
+    );
+
+  }
+
+
+  document.getElementById("nombre")
     .textContent =
-      "💕 ¡MATCH ENCONTRADO!";
+    data.nombre || "Usuario";
 
-  document.getElementById("estado")
-    .className =
-      "ok";
+
+  let datos = "";
+
+
+  if (data.edad) {
+
+    datos +=
+      data.edad + " años";
+
+  }
+
+
+  if (data.ciudad) {
+
+    if (datos) {
+      datos += " • ";
+    }
+
+    datos += data.ciudad;
+
+  }
 
 
   document.getElementById("datos")
-    .innerHTML =
+    .textContent =
+    datos;
 
-      "<strong>ID del Match:</strong><br>" +
-      match.id +
 
-      "<br><br>" +
+  if (data.foto_url) {
 
-      "<strong>Tu usuario:</strong><br>" +
-      currentUserId +
+    document.getElementById("foto")
+      .src =
+      data.foto_url;
 
-      "<br><br>" +
-
-      "<strong>Otro usuario:</strong><br>" +
-      otherUserId;
+  }
 
 }
 
+
+/* ==========================
+   BUSCAR MATCH
+========================== */
+
+async function buscarMatch() {
+
+  const {
+    data: match1,
+    error: error1
+  } =
+    await supabaseClient
+
+      .from("matches")
+
+      .select("*")
+
+      .eq("user1_id", currentUser.id)
+
+      .eq("user2_id", otherUserId)
+
+      .maybeSingle();
+
+
+  if (error1) {
+    throw error1;
+  }
+
+
+  if (match1) {
+
+    matchId =
+      match1.id;
+
+    return;
+
+  }
+
+
+  const {
+    data: match2,
+    error: error2
+  } =
+    await supabaseClient
+
+      .from("matches")
+
+      .select("*")
+
+      .eq("user1_id", otherUserId)
+
+      .eq("user2_id", currentUser.id)
+
+      .maybeSingle();
+
+
+  if (error2) {
+    throw error2;
+  }
+
+
+  if (match2) {
+
+    matchId =
+      match2.id;
+
+    return;
+
+  }
+
+
+  throw new Error(
+    "No existe un Match con esta persona."
+  );
+
+}
+
+
+/* ==========================
+   CARGAR MENSAJES
+========================== */
+
+async function cargarMensajes() {
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+
+      .from("messages")
+
+      .select(
+        "id,match_id,sender_id,content,created_at"
+      )
+
+      .eq("match_id", matchId)
+
+      .order(
+        "created_at",
+        {
+          ascending: true
+        }
+      );
+
+
+  if (error) {
+    throw error;
+  }
+
+
+  mostrarMensajes(
+    data || []
+  );
+
+}
+
+
+/* ==========================
+   MOSTRAR MENSAJES
+========================== */
+
+function mostrarMensajes(lista) {
+
+  const contenedor =
+    document.getElementById(
+      "mensajes"
+    );
+
+
+  contenedor.innerHTML = "";
+
+
+  if (!lista.length) {
+
+    const div =
+      document.createElement("div");
+
+
+    div.className =
+      "sin-mensajes";
+
+
+    div.textContent =
+      "💕 Todavía no hay mensajes. ¡Comenzá la conversación!";
+
+
+    contenedor.appendChild(div);
+
+    return;
+
+  }
+
+
+  lista.forEach(
+    mensaje => {
+      mostrarMensaje(mensaje);
+    }
+  );
+
+
+  bajarChat();
+
+}
+
+
+/* ==========================
+   MOSTRAR MENSAJE
+========================== */
+
+function mostrarMensaje(mensaje) {
+
+  const contenedor =
+    document.getElementById(
+      "mensajes"
+    );
+
+
+  const div =
+    document.createElement(
+      "div"
+    );
+
+
+  div.className =
+    "mensaje " +
+    (
+      mensaje.sender_id === currentUser.id
+        ? "mio"
+        : "otro"
+    );
+
+
+  const texto =
+    document.createElement(
+      "div"
+    );
+
+
+  texto.textContent =
+    mensaje.content;
+
+
+  const hora =
+    document.createElement(
+      "div"
+    );
+
+
+  hora.className =
+    "hora";
+
+
+  const fecha =
+    new Date(
+      mensaje.created_at
+    );
+
+
+  hora.textContent =
+    fecha.toLocaleTimeString(
+      "es-AR",
+      {
+        hour: "2-digit",
+        minute: "2-digit"
+      }
+    );
+
+
+  div.appendChild(texto);
+
+  div.appendChild(hora);
+
+  contenedor.appendChild(div);
+
+}
+
+
+/* ==========================
+   ENVIAR
+========================== */
+
+async function enviarMensaje() {
+
+  const input =
+    document.getElementById(
+      "mensaje"
+    );
+
+  const boton =
+    document.getElementById(
+      "enviar"
+    );
+
+
+  const contenido =
+    input.value.trim();
+
+
+  if (!contenido) {
+    return;
+  }
+
+
+  boton.disabled = true;
+
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+
+      .from("messages")
+
+      .insert({
+
+        match_id:
+          matchId,
+
+        sender_id:
+          currentUser.id,
+
+        content:
+          contenido
+
+      })
+
+      .select()
+
+      .single();
+
+
+  boton.disabled = false;
+
+
+  if (error) {
+
+    console.error(error);
+
+    alert(
+      "❌ No se pudo enviar el mensaje:\n\n" +
+      error.message
+    );
+
+    return;
+
+  }
+
+
+  input.value = "";
+
+
+  /*
+    Lo mostramos inmediatamente.
+  */
+
+  mostrarMensaje(data);
+
+  bajarChat();
+
+}
+
+
+/* ==========================
+   TIEMPO REAL
+========================== */
+
+function activarTiempoReal() {
+
+  supabaseClient
+
+    .channel(
+      "chat-" + matchId
+    )
+
+    .on(
+
+      "postgres_changes",
+
+      {
+        event: "INSERT",
+        schema: "public",
+        table: "messages",
+        filter:
+          "match_id=eq." + matchId
+      },
+
+      payload => {
+
+        /*
+          No duplicamos nuestros
+          propios mensajes.
+        */
+
+        if (
+          payload.new.sender_id !==
+          currentUser.id
+        ) {
+
+          mostrarMensaje(
+            payload.new
+          );
+
+          bajarChat();
+
+        }
+
+      }
+
+    )
+
+    .subscribe();
+
+}
+
+
+/* ==========================
+   BAJAR CHAT
+========================== */
+
+function bajarChat() {
+
+  const contenedor =
+    document.getElementById(
+      "mensajes"
+    );
+
+
+  contenedor.scrollTop =
+    contenedor.scrollHeight;
+
+}
+
+
+/* ==========================
+   ENTER
+========================== */
+
+document
+  .getElementById("mensaje")
+  .addEventListener(
+    "keydown",
+    function(event) {
+
+      if (
+        event.key === "Enter"
+      ) {
+
+        event.preventDefault();
+
+        enviarMensaje();
+
+      }
+
+    }
+  );
+
+
+/* ==========================
+   VOLVER
+========================== */
 
 function volver() {
 
@@ -301,7 +845,37 @@ function volver() {
 }
 
 
-comprobarMatch();
+/* ==========================
+   ERROR
+========================== */
+
+function mostrarError(mensaje) {
+
+  const estado =
+    document.getElementById(
+      "estado"
+    );
+
+
+  estado.style.display =
+    "block";
+
+
+  estado.className =
+    "error";
+
+
+  estado.textContent =
+    "❌ " + mensaje;
+
+}
+
+
+/* ==========================
+   INICIAR
+========================== */
+
+iniciar();
 
 </script>
 
