@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Descubrir - EmiMatch</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #07152f, #102a55);
+      color: white;
+      padding: 20px;
+    }
+
+    .contenedor {
+      width: 100%;
+      max-width: 480px;
+      margin: auto;
+    }
+
+    .encabezado {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .titulo {
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .subtitulo {
+      color: #cbd5e1;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+    .boton-volver {
+      border: none;
+      background: rgba(255,255,255,0.12);
+      color: white;
+      padding: 10px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .card {
+      background: white;
+      color: #111827;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.35);
+    }
+
+    .foto {
+      width: 100%;
+      height: 430px;
+      object-fit: cover;
+      display: block;
+      background: #e5e7eb;
+    }
+
+    .sin-foto {
+      width: 100%;
+      height: 430px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #dbeafe, #e2e8f0);
+      font-size: 100px;
+    }
+
+    .info {
+      padding: 20px;
+    }
+
+    .nombre {
+      font-size: 26px;
+      font-weight: bold;
+    }
+
+    .datos {
+      color: #64748b;
+      margin-top: 5px;
+      font-size: 15px;
+    }
+
+    .descripcion {
+      margin-top: 15px;
+      line-height: 1.5;
+      color: #334155;
+    }
+
+    .intereses {
+      margin-top: 15px;
+      color: #475569;
+      font-size: 14px;
+    }
+
+    .botones {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      padding: 20px;
+    }
+
+    .accion {
+      width: 65px;
+      height: 65px;
+      border-radius: 50%;
+      border: none;
+      font-size: 28px;
+      cursor: pointer;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.18);
+    }
+
+    .pasar {
+      background: #f1f5f9;
+    }
+
+    .like {
+      background: #fce7f3;
+    }
+
+    .mensaje {
+      text-align: center;
+      padding: 35px 20px;
+      background: white;
+      color: #334155;
+      border-radius: 20px;
+      font-size: 17px;
+    }
+
+    .boton {
+      margin-top: 18px;
+      border: none;
+      background: #0f2d5c;
+      color: white;
+      padding: 13px 22px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    .cargando {
+      text-align: center;
+      padding: 50px 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="contenedor">
+
+  <div class="encabezado">
+    <div>
+      <div class="titulo">🔎 Descubrir</div>
+      <div class="subtitulo">Encontrá nuevas personas</div>
+    </div>
+
+    <button class="boton-volver" onclick="volver()">
+      ← Volver
+    </button>
+  </div>
+
+  <div id="contenido">
+    <div class="cargando">
+      Cargando perfiles...
+    </div>
+  </div>
+
+</div>
+
+<script>
+
+const SUPABASE_URL = "https://kngiadwaesdbmvwivdev.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+let usuarioActual = null;
+let perfiles = [];
+let indiceActual = 0;
+
+
+/* =========================
+   INICIO
+========================= */
+
+async function iniciar() {
+
+  try {
+
+    const {
+      data: { session },
+      error
+    } = await supabaseClient.auth.getSession();
+
+    if (error) {
+      mostrarMensaje("Error al comprobar la sesión.");
+      return;
+    }
+
+    if (!session) {
+      window.location.href = "./index.html";
+      return;
+    }
+
+    usuarioActual = session.user;
+
+    await cargarPerfiles();
+
+  } catch (error) {
+
+    console.error(error);
+
+    mostrarMensaje(
+      "Ocurrió un error al cargar Descubrir."
+    );
+
+  }
+}
+
+
+/* =========================
+   CARGAR PERFILES
+========================= */
+
+async function cargarPerfiles() {
+
+  const { data, error } = await supabaseClient
+    .from("profiles")
+    .select(`
+      id,
+      nombre,
+      edad,
+      ciudad,
+      descripcion,
+      foto_url,
+      intereses
+    `)
+    .neq("id", usuarioActual.id)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+
+    console.error(error);
+
+    mostrarMensaje(
+      "No se pudieron cargar los perfiles."
+    );
+
+    return;
+  }
+
+  perfiles = data || [];
+
+  indiceActual = 0;
+
+  mostrarPerfil();
+
+}
+
+
+/* =========================
+   MOSTRAR PERFIL
+========================= */
+
+function mostrarPerfil() {
+
+  const contenido =
+    document.getElementById("contenido");
+
+  if (!perfiles.length) {
+
+    contenido.innerHTML = `
+      <div class="mensaje">
+
+        💕<br><br>
+
+        <strong>No hay más perfiles por ahora.</strong>
+
+        <br><br>
+
+        Volvé más tarde para descubrir nuevas personas.
+
+       
