@@ -1,484 +1,548 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Me gustas - EmiMatch</title>
+  <title>Me gustas - EmiMatch</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<style>
-*{
-  box-sizing:border-box;
-}
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  min-height:100vh;
-  background:linear-gradient(135deg,#667eea,#764ba2);
-  color:#222;
-}
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #07152f, #102c5c);
+      color: white;
+      min-height: 100vh;
+    }
 
-.contenedor{
-  width:100%;
-  max-width:600px;
-  margin:auto;
-  padding:20px 15px 40px;
-}
+    header {
+      padding: 20px;
+      text-align: center;
+      background: rgba(0,0,0,0.25);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
 
-.cabecera{
-  background:white;
-  border-radius:22px;
-  padding:20px;
-  text-align:center;
-  margin-bottom:15px;
-  box-shadow:0 8px 25px rgba(0,0,0,.15);
-}
+    header h1 {
+      margin: 0;
+      font-size: 26px;
+    }
 
-.cabecera h1{
-  margin:0 0 7px;
-  color:#764ba2;
-  font-size:27px;
-}
+    header p {
+      margin: 7px 0 0;
+      color: #cfd8ea;
+      font-size: 14px;
+    }
 
-.cabecera p{
-  margin:0;
-  color:#777;
-  font-size:14px;
-}
+    .contenedor {
+      width: 100%;
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+    }
 
-.card{
-  background:white;
-  border-radius:20px;
-  padding:15px;
-  margin-bottom:15px;
-  display:flex;
-  align-items:center;
-  gap:14px;
-  box-shadow:0 6px 18px rgba(0,0,0,.15);
-}
+    .botones-superiores {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
 
-.foto{
-  width:75px;
-  height:75px;
-  border-radius:50%;
-  object-fit:cover;
-  background:#eee;
-  flex-shrink:0;
-}
+    .btn {
+      flex: 1;
+      border: none;
+      border-radius: 12px;
+      padding: 13px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+    }
 
-.info{
-  flex:1;
-  min-width:0;
-}
+    .btn-volver {
+      background: #ffffff;
+      color: #102c5c;
+    }
 
-.nombre{
-  font-size:19px;
-  font-weight:bold;
-  margin-bottom:4px;
-}
+    .btn-recargar {
+      background: #d4af37;
+      color: #111;
+    }
 
-.datos{
-  color:#777;
-  font-size:14px;
-  margin-bottom:5px;
-}
+    .card {
+      background: rgba(255,255,255,0.09);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 22px;
+      overflow: hidden;
+      margin-bottom: 22px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      backdrop-filter: blur(10px);
+    }
 
-.estado{
-  color:#e91e63;
-  font-size:13px;
-  font-weight:bold;
-}
+    .foto {
+      width: 100%;
+      height: 380px;
+      object-fit: cover;
+      background: #16284b;
+    }
 
-.botones{
-  display:flex;
-  gap:7px;
-  margin-top:9px;
-}
+    .info {
+      padding: 20px;
+    }
 
-.btn{
-  border:0;
-  border-radius:20px;
-  padding:8px 12px;
-  font-weight:bold;
-  cursor:pointer;
-}
+    .nombre {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 7px;
+    }
 
-.match{
-  background:#e91e63;
-  color:white;
-}
+    .datos {
+      color: #d6deee;
+      font-size: 15px;
+      margin-bottom: 12px;
+    }
 
-.pasar{
-  background:#eee;
-  color:#555;
-}
+    .descripcion {
+      color: #e8edf7;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
 
-.vacio,
-.cargando,
-.error{
-  background:white;
-  border-radius:18px;
-  padding:30px 20px;
-  text-align:center;
-  box-shadow:0 6px 18px rgba(0,0,0,.12);
-}
+    .intereses {
+      color: #d4af37;
+      font-size: 14px;
+      margin-bottom: 18px;
+    }
 
-.vacio{
-  color:#777;
-}
+    .mensaje-like {
+      background: rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 15px;
+      color: #fff;
+      text-align: center;
+      font-weight: bold;
+    }
 
-.error{
-  color:#c62828;
-}
+    .acciones {
+      display: flex;
+      gap: 10px;
+    }
 
-.volver{
-  width:100%;
-  border:0;
-  background:white;
-  color:#764ba2;
-  padding:14px;
-  border-radius:15px;
-  font-size:16px;
-  font-weight:bold;
-  cursor:pointer;
-  margin-top:8px;
-}
-</style>
+    .accion {
+      flex: 1;
+      border: none;
+      border-radius: 13px;
+      padding: 14px 10px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    .match {
+      background: #d4af37;
+      color: #111;
+    }
+
+    .pasar {
+      background: #ef5350;
+      color: white;
+    }
+
+    .vacio {
+      text-align: center;
+      padding: 50px 20px;
+      background: rgba(255,255,255,0.07);
+      border-radius: 20px;
+      color: #d8e0ef;
+    }
+
+    .vacio .emoji {
+      font-size: 55px;
+      margin-bottom: 15px;
+    }
+
+    .cargando {
+      text-align: center;
+      padding: 40px;
+      color: #d8e0ef;
+    }
+
+    .error {
+      background: rgba(244,67,54,0.15);
+      border: 1px solid rgba(244,67,54,0.4);
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      color: #ffd5d2;
+    }
+
+    @media (max-width: 500px) {
+      .foto {
+        height: 330px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
+<header>
+  <h1>❤️ Me gustas</h1>
+  <p>Personas a las que les gustaste</p>
+</header>
+
 <div class="contenedor">
 
-  <div class="cabecera">
+  <div class="botones-superiores">
+    <button class="btn btn-volver" onclick="window.location.href='chat.html'">
+      ← Mis Matches
+    </button>
 
-    <h1>❤️ Me gustas</h1>
-
-    <p>
-      Personas a las que les gustaste
-    </p>
-
+    <button class="btn btn-recargar" onclick="cargarLikes()">
+      🔄 Actualizar
+    </button>
   </div>
 
+  <div id="estado"></div>
 
-  <div id="lista">
-
-    <div class="cargando">
-      Buscando tus Likes...
-    </div>
-
-  </div>
-
-
-  <button
-    class="volver"
-    onclick="location.href='chat.html'">
-    ← Volver a Mis Matches
-  </button>
+  <div id="listaLikes"></div>
 
 </div>
-
 
 <script>
 
 const SUPABASE_URL =
-"https://kngiadwaesdbmvwivdev.supabase.co";
+  "https://kngiadwaesdbmvwivdev.supabase.co";
 
 const SUPABASE_KEY =
-"sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
+  "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
 
 const supabaseClient =
-supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
-
+  supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
 let usuarioActual = null;
 
 
-/* =========================
-   ESCAPAR HTML
-========================= */
+// ==========================================
+// SESIÓN
+// ==========================================
 
-function escapeHtml(texto){
-
-  return String(texto || "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
-
-}
-
-
-/* =========================
-   INICIO
-========================= */
-
-async function iniciar(){
+async function obtenerSesion() {
 
   const {
-    data:sessionData,
-    error:sessionError
-  } =
-  await supabaseClient.auth.getSession();
+    data: { session },
+    error
+  } = await supabaseClient.auth.getSession();
 
-
-  if(
-    sessionError ||
-    !sessionData.session
-  ){
-
-    location.href="index.html";
-    return;
-
+  if (error) {
+    console.error(error);
+    return null;
   }
 
+  if (!session) {
+    window.location.href = "index.html";
+    return null;
+  }
 
-  usuarioActual =
-    sessionData.session.user;
-
-
-  await cargarLikes();
-
+  return session;
 }
 
 
-/* =========================
-   CARGAR LIKES
-========================= */
+// ==========================================
+// CARGAR BLOQUEOS
+// ==========================================
 
-async function cargarLikes(){
+async function obtenerBloqueos() {
+
+  const { data, error } =
+    await supabaseClient
+      .from("user_blocks")
+      .select("blocker_id, blocked_id")
+      .or(
+        `blocker_id.eq.${usuarioActual.id},blocked_id.eq.${usuarioActual.id}`
+      );
+
+  if (error) {
+    console.error("Error cargando bloqueos:", error);
+    return [];
+  }
+
+  const bloqueados = new Set();
+
+  (data || []).forEach(bloqueo => {
+
+    if (bloqueo.blocker_id === usuarioActual.id) {
+      bloqueados.add(bloqueo.blocked_id);
+    }
+
+    if (bloqueo.blocked_id === usuarioActual.id) {
+      bloqueados.add(bloqueo.blocker_id);
+    }
+
+  });
+
+  return Array.from(bloqueados);
+}
+
+
+// ==========================================
+// CARGAR ME GUSTAS
+// ==========================================
+
+async function cargarLikes() {
 
   const lista =
-    document.getElementById("lista");
+    document.getElementById("listaLikes");
 
-
-  lista.innerHTML =
-    `<div class="cargando">
-      Buscando tus Likes...
-    </div>`;
-
-
-  /*
-    Buscamos personas que hicieron:
-    LIKE → a nuestro usuario
-  */
-
-  const {
-    data:likes,
-    error
-  } =
-  await supabaseClient
-    .from("swipes")
-    .select(
-      "id,user_id,target_user_id,action,created_at"
-    )
-    .eq(
-      "target_user_id",
-      usuarioActual.id
-    )
-    .eq(
-      "action",
-      "like"
-    )
-    .order(
-      "created_at",
-      {
-        ascending:false
-      }
-    );
-
-
-  if(error){
-
-    lista.innerHTML =
-      `<div class="error">
-        ❌ Error cargando Likes:<br><br>
-        ${escapeHtml(error.message)}
-      </div>`;
-
-    return;
-
-  }
-
-
-  if(
-    !likes ||
-    likes.length === 0
-  ){
-
-    lista.innerHTML =
-      `<div class="vacio">
-        ❤️ Todavía no tenés Likes.<br><br>
-        Seguí descubriendo personas en EmiMatch.
-      </div>`;
-
-    return;
-
-  }
-
+  const estado =
+    document.getElementById("estado");
 
   lista.innerHTML = "";
 
+  estado.innerHTML =
+    `<div class="cargando">⏳ Cargando Me gustas...</div>`;
 
-  for(
-    const like of likes
-  ){
+  try {
 
-    await crearCard(
-      like
-    );
+    const session =
+      await obtenerSesion();
 
+    if (!session) return;
+
+    usuarioActual = session.user;
+
+    // --------------------------------------
+    // BLOQUEOS
+    // --------------------------------------
+
+    const bloqueados =
+      await obtenerBloqueos();
+
+    // --------------------------------------
+    // PERSONAS QUE DIERON LIKE
+    // --------------------------------------
+
+    const { data: likesRecibidos, error } =
+      await supabaseClient
+        .from("swipes")
+        .select("user_id, created_at")
+        .eq("target_user_id", usuarioActual.id)
+        .eq("action", "like")
+        .order("created_at", {
+          ascending: false
+        });
+
+    if (error) {
+      throw error;
+    }
+
+    if (!likesRecibidos || likesRecibidos.length === 0) {
+
+      estado.innerHTML = "";
+
+      mostrarVacio(
+        "❤️",
+        "Todavía no tenés Me gustas",
+        "Cuando alguien indique que le gustás, aparecerá acá."
+      );
+
+      return;
+    }
+
+    // --------------------------------------
+    // VER SI YA HAY LIKE MUTUO
+    // --------------------------------------
+
+    const { data: misLikes, error: errorMisLikes } =
+      await supabaseClient
+        .from("swipes")
+        .select("target_user_id")
+        .eq("user_id", usuarioActual.id)
+        .eq("action", "like");
+
+    if (errorMisLikes) {
+      throw errorMisLikes;
+    }
+
+    const misLikesSet =
+      new Set(
+        (misLikes || []).map(
+          item => item.target_user_id
+        )
+      );
+
+    // --------------------------------------
+    // CONSTRUIR LISTA
+    // --------------------------------------
+
+    let cantidadMostrada = 0;
+
+    for (const like of likesRecibidos) {
+
+      const idPersona =
+        like.user_id;
+
+      // Bloqueo
+      if (bloqueados.includes(idPersona)) {
+        continue;
+      }
+
+      // Si ya hay like mutuo, ya es match
+      if (misLikesSet.has(idPersona)) {
+        continue;
+      }
+
+      // ------------------------------------
+      // PERFIL
+      // ------------------------------------
+
+      const {
+        data: perfil,
+        error: errorPerfil
+      } =
+        await supabaseClient
+          .from("profiles")
+          .select("*")
+          .eq("id", idPersona)
+          .maybeSingle();
+
+      if (errorPerfil) {
+        console.error(errorPerfil);
+        continue;
+      }
+
+      if (!perfil) {
+        continue;
+      }
+
+      cantidadMostrada++;
+
+      crearCard(perfil);
+    }
+
+    estado.innerHTML = "";
+
+    if (cantidadMostrada === 0) {
+
+      mostrarVacio(
+        "💕",
+        "No hay Me gustas nuevos",
+        "Las personas bloqueadas y los matches existentes no aparecen acá."
+      );
+    }
+
+  } catch (error) {
+
+    console.error(error);
+
+    estado.innerHTML =
+      `<div class="error">
+        ❌ Ocurrió un error al cargar Me gustas.
+        <br><br>
+        ${error.message || ""}
+      </div>`;
   }
-
 }
 
 
-/* =========================
-   CREAR CARD
-========================= */
+// ==========================================
+// CREAR CARD
+// ==========================================
 
-async function crearCard(like){
+function crearCard(perfil) {
 
-  const usuario =
-    like.user_id;
-
-
-  /*
-    Comprobar si nosotros
-    también dimos Like
-  */
-
-  const {
-    data:miLike
-  } =
-  await supabaseClient
-    .from("swipes")
-    .select("id,action")
-    .eq(
-      "user_id",
-      usuarioActual.id
-    )
-    .eq(
-      "target_user_id",
-      usuario
-    )
-    .eq(
-      "action",
-      "like"
-    )
-    .maybeSingle();
-
-
-  /*
-    Si ya hay Like mutuo,
-    probablemente el trigger
-    ya creó el Match.
-  */
-
-  if(miLike){
-
-    return;
-
-  }
-
-
-  const {
-    data:perfil,
-    error
-  } =
-  await supabaseClient
-    .from("profiles")
-    .select(
-      "id,nombre,edad,ciudad,foto_url"
-    )
-    .eq(
-      "id",
-      usuario
-    )
-    .maybeSingle();
-
-
-  if(
-    error ||
-    !perfil
-  ){
-
-    return;
-
-  }
-
+  const lista =
+    document.getElementById("listaLikes");
 
   const card =
     document.createElement("div");
 
-  card.className =
-    "card";
-
+  card.className = "card";
 
   const foto =
     perfil.foto_url ||
-    "https://via.placeholder.com/150?text=💕";
+    "https://via.placeholder.com/600x600?text=EmiMatch";
 
+  const nombre =
+    perfil.nombre || "Usuario";
+
+  const edad =
+    perfil.edad
+      ? `, ${perfil.edad}`
+      : "";
+
+  const ciudad =
+    perfil.ciudad
+      ? `📍 ${perfil.ciudad}`
+      : "";
+
+  const descripcion =
+    perfil.descripcion ||
+    "Sin descripción.";
+
+  let intereses = "";
+
+  if (perfil.intereses) {
+
+    intereses =
+      `❤️ ${perfil.intereses}`;
+  }
 
   card.innerHTML = `
 
     <img
       class="foto"
-      src="${escapeHtml(foto)}"
-      onerror="this.src='https://via.placeholder.com/150?text=💕'"
+      src="${escapeHTML(foto)}"
+      alt="Foto de ${escapeHTML(nombre)}"
+      onerror="this.src='https://via.placeholder.com/600x600?text=EmiMatch'"
     >
 
     <div class="info">
 
       <div class="nombre">
-        ${escapeHtml(
-          perfil.nombre || "Usuario"
-        )}
+        ${escapeHTML(nombre)}${edad}
       </div>
 
       <div class="datos">
-
-        ${
-          perfil.edad
-            ? escapeHtml(
-                perfil.edad
-              ) + " años"
-            : ""
-        }
-
-        ${
-          perfil.ciudad
-            ? " · " +
-              escapeHtml(
-                perfil.ciudad
-              )
-            : ""
-        }
-
+        ${escapeHTML(ciudad)}
       </div>
 
-      <div class="estado">
+      <div class="descripcion">
+        ${escapeHTML(descripcion)}
+      </div>
+
+      ${
+        intereses
+          ? `<div class="intereses">
+              ${escapeHTML(intereses)}
+             </div>`
+          : ""
+      }
+
+      <div class="mensaje-like">
         ❤️ Le gustaste
       </div>
 
-      <div class="botones">
+      <div class="acciones">
 
         <button
-          class="btn match"
-          onclick="darMatch('${usuario}')">
+          class="accion match"
+          onclick="darMatch('${perfil.id}', this)"
+        >
           💕 Match
         </button>
 
         <button
-          class="btn pasar"
-          onclick="pasar('${usuario}')">
+          class="accion pasar"
+          onclick="pasar('${perfil.id}', this)"
+        >
           ❌ Pasar
         </button>
 
@@ -487,123 +551,210 @@ async function crearCard(like){
     </div>
   `;
 
-
-  document
-    .getElementById("lista")
-    .appendChild(card);
-
+  lista.appendChild(card);
 }
 
 
-/* =========================
-   DAR MATCH
-========================= */
+// ==========================================
+// DAR MATCH
+// ==========================================
 
-async function darMatch(usuario){
+async function darMatch(idUsuario, boton) {
 
-  const {
-    error
-  } =
-  await supabaseClient
-    .from("swipes")
-    .insert({
+  boton.disabled = true;
+  boton.textContent = "⏳";
 
-      user_id:
-      usuarioActual.id,
+  try {
 
-      target_user_id:
-      usuario,
+    // Comprobar bloqueo antes de crear interacción
 
-      action:
-      "like"
+    const bloqueados =
+      await obtenerBloqueos();
 
-    });
+    if (bloqueados.includes(idUsuario)) {
 
+      alert(
+        "🚫 No podés interactuar con este usuario porque existe un bloqueo."
+      );
 
-  /*
-    Si ya existía el Like,
-    no romper la aplicación.
-  */
+      await cargarLikes();
 
-  if(
-    error &&
-    !String(error.message)
-      .toLowerCase()
-      .includes("duplicate")
-  ){
+      return;
+    }
+
+    const { error } =
+      await supabaseClient
+        .from("swipes")
+        .insert({
+          user_id: usuarioActual.id,
+          target_user_id: idUsuario,
+          action: "like"
+        });
+
+    if (error) {
+
+      // Si ya existe un swipe, informamos
+      if (
+        error.code === "23505"
+      ) {
+
+        alert(
+          "Esta persona ya fue evaluada."
+        );
+
+      } else {
+
+        throw error;
+      }
+
+      return;
+    }
 
     alert(
-      "No se pudo crear el Match:\n\n" +
-      error.message
+      "💕 ¡Match realizado!"
     );
 
-    return;
+    await cargarLikes();
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "❌ No se pudo crear el Match."
+    );
+
+  } finally {
+
+    boton.disabled = false;
 
   }
-
-
-  alert(
-    "💕 ¡Match!\n\nYa pueden comenzar a conversar."
-  );
-
-
-  await cargarLikes();
-
 }
 
 
-/* =========================
-   PASAR
-========================= */
+// ==========================================
+// PASAR
+// ==========================================
 
-async function pasar(usuario){
+async function pasar(idUsuario, boton) {
 
-  const {
-    error
-  } =
-  await supabaseClient
-    .from("swipes")
-    .insert({
+  boton.disabled = true;
+  boton.textContent = "⏳";
 
-      user_id:
-      usuarioActual.id,
+  try {
 
-      target_user_id:
-      usuario,
+    // Comprobar bloqueo
 
-      action:
-      "pass"
+    const bloqueados =
+      await obtenerBloqueos();
 
-    });
+    if (bloqueados.includes(idUsuario)) {
 
+      await cargarLikes();
 
-  if(error){
+      return;
+    }
 
-    /*
-      Si ya existe cualquier
-      swipe, simplemente
-      quitamos visualmente
-      el perfil de la lista.
-    */
+    const { error } =
+      await supabaseClient
+        .from("swipes")
+        .insert({
+          user_id: usuarioActual.id,
+          target_user_id: idUsuario,
+          action: "pass"
+        });
 
-    console.log(
-      "Swipe:",
-      error.message
+    if (error) {
+
+      if (
+        error.code === "23505"
+      ) {
+
+        alert(
+          "Esta persona ya fue evaluada."
+        );
+
+      } else {
+
+        throw error;
+      }
+
+      return;
+    }
+
+    await cargarLikes();
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "❌ No se pudo completar la acción."
     );
 
+  } finally {
+
+    boton.disabled = false;
+
   }
-
-
-  await cargarLikes();
-
 }
 
 
-/* =========================
-   INICIAR
-========================= */
+// ==========================================
+// VACÍO
+// ==========================================
 
-iniciar();
+function mostrarVacio(
+  emoji,
+  titulo,
+  texto
+) {
+
+  const lista =
+    document.getElementById("listaLikes");
+
+  lista.innerHTML = `
+
+    <div class="vacio">
+
+      <div class="emoji">
+        ${emoji}
+      </div>
+
+      <h2>
+        ${titulo}
+      </h2>
+
+      <p>
+        ${texto}
+      </p>
+
+    </div>
+
+  `;
+}
+
+
+// ==========================================
+// SEGURIDAD HTML
+// ==========================================
+
+function escapeHTML(valor) {
+
+  return String(valor ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+
+// ==========================================
+// INICIAR
+// ==========================================
+
+cargarLikes();
 
 </script>
 
