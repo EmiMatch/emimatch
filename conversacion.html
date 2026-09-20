@@ -3,567 +3,484 @@
 
 <head>
 
-  <meta charset="UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+<title>Conversación - EmiMatch</title>
 
-  <title>Conversación - EmiMatch</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
 
-  <style>
+* {
+  box-sizing: border-box;
+}
 
-    * {
-      box-sizing: border-box;
-    }
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #07152f, #102b55);
+  color: white;
+  padding-bottom: 150px;
+}
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: Arial, sans-serif;
+.chat {
+  max-width: 600px;
+  margin: auto;
+}
 
-      background:
-        linear-gradient(
-          135deg,
-          #07152f,
-          #102b55
-        );
+/* =========================
+   CABECERA
+========================= */
 
-      color: white;
+.head {
+  position: sticky;
+  top: 0;
+  z-index: 100;
 
-      padding-bottom: 90px;
-    }
+  display: flex;
+  align-items: center;
+  gap: 10px;
 
-    .contenedor {
-      width: 100%;
-      max-width: 600px;
-      margin: auto;
-    }
+  padding: 12px 14px;
 
-    /* =========================
-       CABECERA
-    ========================= */
+  background: rgba(7,21,47,.98);
 
-    .cabecera-chat {
-      position: sticky;
-      top: 0;
-      z-index: 100;
+  border-bottom: 1px solid rgba(255,255,255,.12);
+}
 
-      display: flex;
-      align-items: center;
-      gap: 12px;
+.back {
+  width: 42px;
+  height: 42px;
 
-      padding: 14px 15px;
+  border: none;
+  border-radius: 50%;
 
-      background:
-        rgba(7,21,47,.97);
+  background: rgba(255,255,255,.10);
 
-      border-bottom:
-        1px solid
-        rgba(255,255,255,.12);
+  color: white;
 
-      backdrop-filter: blur(12px);
-    }
+  font-size: 22px;
 
-    .volver {
-      width: 42px;
-      height: 42px;
+  cursor: pointer;
+}
 
-      border: none;
-      border-radius: 50%;
+.avatar {
+  width: 46px;
+  height: 46px;
 
-      background:
-        rgba(255,255,255,.10);
+  min-width: 46px;
 
-      color: white;
+  border-radius: 50%;
 
-      font-size: 22px;
+  object-fit: cover;
 
-      cursor: pointer;
-    }
+  border: 2px solid #d4af37;
 
-    .foto-cabecera {
-      width: 46px;
-      height: 46px;
+  background: #eeeeee;
+}
 
-      min-width: 46px;
+.name {
+  font-weight: bold;
+  font-size: 17px;
 
-      border-radius: 50%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
-      object-fit: cover;
+.status {
+  font-size: 12px;
 
-      background: #e5e7eb;
+  color: #94a3b8;
 
-      border:
-        2px solid
-        #d4af37;
-    }
+  margin-top: 3px;
+}
 
-    .foto-cabecera-sin {
-      width: 46px;
-      height: 46px;
+.online {
+  color: #4ade80;
+}
 
-      min-width: 46px;
+.block {
+  margin-left: auto;
 
-      border-radius: 50%;
+  border: none;
 
-      background: #e5e7eb;
+  border-radius: 10px;
 
-      border:
-        2px solid
-        #d4af37;
+  padding: 9px;
 
-      display: flex;
-      align-items: center;
-      justify-content: center;
+  background: rgba(239,68,68,.15);
 
-      font-size: 22px;
-    }
+  color: #fca5a5;
 
-    .datos-cabecera {
-      min-width: 0;
-      flex: 1;
-    }
+  font-size: 14px;
 
-    .nombre-cabecera {
-      font-size: 18px;
-      font-weight: bold;
+  cursor: pointer;
+}
 
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
 
-    .estado-cabecera {
-      margin-top: 3px;
+/* =========================
+   MENSAJES
+========================= */
 
-      font-size: 13px;
+.msgs {
+  padding: 18px 12px;
 
-      color: #94a3b8;
-    }
+  min-height:
+    calc(100vh - 170px);
 
-    .online {
-      color: #4ade80;
-    }
+  display: flex;
 
-    .bloquear-btn {
-      border: none;
+  flex-direction: column;
 
-      border-radius: 12px;
+  gap: 8px;
 
-      padding: 9px 10px;
+  overflow-y: auto;
+}
 
-      background:
-        rgba(239,68,68,.15);
+.loading {
+  text-align: center;
 
-      color: #fca5a5;
+  padding: 35px 10px;
 
-      cursor: pointer;
+  color: #cbd5e1;
+}
 
-      font-size: 13px;
-    }
+.row {
+  display: flex;
 
-    /* =========================
-       MENSAJES
-    ========================= */
+  width: 100%;
+}
 
-    .mensajes {
-      padding: 18px 12px;
+.mine {
+  justify-content: flex-end;
+}
 
-      min-height:
-        calc(100vh - 170px);
+.other {
+  justify-content: flex-start;
+}
 
-      display: flex;
-      flex-direction: column;
+.bubble {
+  max-width: 82%;
 
-      gap: 8px;
-    }
+  padding: 10px 12px;
 
-    .estado-carga {
-      text-align: center;
+  border-radius: 18px;
 
-      padding: 35px 15px;
+  word-break: break-word;
 
-      color: #cbd5e1;
-    }
+  box-shadow:
+    0 5px 15px rgba(0,0,0,.16);
+}
 
-    .mensaje-fila {
-      display: flex;
-      width: 100%;
-    }
+.mine .bubble {
 
-    .mensaje-fila.mio {
-      justify-content: flex-end;
-    }
+  background:
+    linear-gradient(
+      135deg,
+      #d4af37,
+      #f0cf62
+    );
 
-    .mensaje-fila.otro {
-      justify-content: flex-start;
-    }
+  color: #07152f;
 
-    .burbuja {
-      max-width: 78%;
+  border-bottom-right-radius: 5px;
+}
 
-      padding: 10px 12px;
+.other .bubble {
 
-      border-radius: 18px;
+  background: white;
 
-      box-shadow:
-        0 5px 15px
-        rgba(0,0,0,.16);
+  color: #172033;
 
-      word-break: break-word;
-    }
+  border-bottom-left-radius: 5px;
+}
 
-    .mio .burbuja {
-      background:
-        linear-gradient(
-          135deg,
-          #d4af37,
-          #f0cf62
-        );
+.text {
 
-      color: #07152f;
+  white-space: pre-wrap;
 
-      border-bottom-right-radius: 5px;
-    }
+  line-height: 1.4;
 
-    .otro .burbuja {
-      background: white;
+  font-size: 15px;
+}
 
-      color: #172033;
+.time {
 
-      border-bottom-left-radius: 5px;
-    }
+  text-align: right;
 
-    .texto-mensaje {
-      font-size: 15px;
-      line-height: 1.4;
+  font-size: 10px;
 
-      white-space: pre-wrap;
-    }
+  opacity: .7;
 
-    .hora {
-      margin-top: 4px;
+  margin-top: 4px;
+}
 
-      display: flex;
+.blue {
 
-      justify-content: flex-end;
-      align-items: center;
+  color: #2563eb;
 
-      gap: 4px;
+  font-weight: bold;
+}
 
-      font-size: 10px;
 
-      opacity: .7;
-    }
+/* =========================
+   COMPOSER
+========================= */
 
-    .check {
-      font-weight: bold;
-      letter-spacing: -2px;
-    }
+.composer {
 
-    .check.leido {
-      color: #2563eb;
-    }
+  position: fixed;
 
-    /* =========================
-       ESCRIBIENDO
-    ========================= */
+  left: 0;
+  right: 0;
+  bottom: 0;
 
-    .escribiendo {
-      display: none;
+  z-index: 500;
 
-      padding:
-        0 15px
-        8px;
+  background:
+    rgba(7,21,47,.98);
 
-      color: #cbd5e1;
+  border-top:
+    1px solid
+    rgba(255,255,255,.12);
 
-      font-size: 13px;
-    }
+  padding: 10px;
+}
 
-    .escribiendo.visible {
-      display: block;
-    }
+.compose {
 
-    /* =========================
-       COMPOSER
-    ========================= */
+  max-width: 600px;
 
-    .composer {
-      position: fixed;
+  margin: auto;
 
-      left: 0;
-      right: 0;
-      bottom: 0;
+  display: flex;
 
-      z-index: 500;
+  gap: 8px;
 
-      background:
-        rgba(7,21,47,.98);
+  align-items: flex-end;
+}
 
-      border-top:
-        1px solid
-        rgba(255,255,255,.12);
+#input {
 
-      padding:
-        10px;
+  flex: 1;
 
-      backdrop-filter: blur(12px);
-    }
+  min-height: 45px;
 
-    .composer-inner {
-      max-width: 600px;
-      margin: auto;
+  max-height: 120px;
 
-      display: flex;
+  resize: none;
 
-      align-items: flex-end;
+  border: none;
 
-      gap: 8px;
-    }
+  outline: none;
 
-    #mensajeInput {
-      flex: 1;
+  border-radius: 18px;
 
-      min-height: 45px;
-      max-height: 120px;
+  padding:
+    12px 14px;
 
-      resize: none;
+  font-size: 15px;
 
-      border: none;
-      outline: none;
+  background: white;
 
-      border-radius: 18px;
+  color: #172033;
+}
 
-      padding:
-        12px 14px;
+#send {
 
-      font-size: 15px;
+  width: 46px;
 
-      background: white;
-      color: #172033;
-    }
+  height: 46px;
 
-    #enviarBtn {
-      width: 46px;
-      height: 46px;
+  border: none;
 
-      border: none;
+  border-radius: 50%;
 
-      border-radius: 50%;
+  background: #d4af37;
 
-      background:
-        #d4af37;
+  color: #07152f;
 
-      color: #07152f;
+  font-size: 20px;
 
-      font-size: 20px;
+  cursor: pointer;
+}
 
-      cursor: pointer;
-    }
+#send:disabled {
 
-    #enviarBtn:disabled {
-      opacity: .5;
+  opacity: .5;
 
-      cursor: not-allowed;
-    }
+  cursor: not-allowed;
+}
 
-    /* =========================
-       BLOQUEADO
-    ========================= */
 
-    .bloqueado-aviso {
-      display: none;
+/* =========================
+   NAV
+========================= */
 
-      position: fixed;
+.nav {
 
-      left: 0;
-      right: 0;
-      bottom: 0;
+  position: fixed;
 
-      z-index: 600;
+  left: 8px;
+  right: 8px;
 
-      padding: 14px;
+  bottom: 70px;
 
-      background:
-        #7f1d1d;
+  height: 62px;
 
-      color: white;
+  max-width: 600px;
 
-      text-align: center;
+  margin: auto;
 
-      font-size: 14px;
-    }
+  z-index: 450;
 
-    .bloqueado-aviso.visible {
-      display: block;
-    }
+  display: grid;
 
-    /* =========================
-       NAV INFERIOR
-    ========================= */
+  grid-template-columns:
+    repeat(5,1fr);
 
-    .bottom-nav {
-      position: fixed;
+  background:
+    rgba(7,21,47,.97);
 
-      left: 10px;
-      right: 10px;
-      bottom: 80px;
+  border:
+    1px solid
+    rgba(255,255,255,.14);
 
-      height: 66px;
+  border-radius: 20px;
 
-      max-width: 600px;
-      margin: auto;
+  box-shadow:
+    0 10px 30px
+    rgba(0,0,0,.4);
+}
 
-      z-index: 450;
+.nav a {
 
-      display: grid;
+  display: flex;
 
-      grid-template-columns:
-        repeat(5, 1fr);
+  flex-direction: column;
 
-      background:
-        rgba(7,21,47,.96);
+  align-items: center;
 
-      border:
-        1px solid
-        rgba(255,255,255,.14);
+  justify-content: center;
 
-      border-radius: 20px;
+  color: #cbd5e1;
 
-      box-shadow:
-        0 12px 35px
-        rgba(0,0,0,.40);
+  text-decoration: none;
 
-      backdrop-filter: blur(14px);
-    }
+  font-size: 10px;
 
-    .nav-item {
-      position: relative;
+  font-weight: bold;
 
-      display: flex;
+  gap: 2px;
+}
 
-      flex-direction: column;
+.nav a.active {
 
-      align-items: center;
+  color: #d4af37;
+}
 
-      justify-content: center;
+.badge {
 
-      gap: 2px;
+  position: absolute;
 
-      color: #cbd5e1;
+  top: 3px;
 
-      text-decoration: none;
+  right: 14%;
 
-      font-size: 10px;
+  min-width: 18px;
 
-      font-weight: bold;
-    }
+  height: 18px;
 
-    .nav-item .icon {
-      font-size: 20px;
+  padding: 2px 5px;
 
-      line-height: 21px;
-    }
+  border-radius: 20px;
 
-    .nav-item.activo {
-      color: #d4af37;
-    }
+  background: #ef4444;
 
-    .nav-badge {
-      position: absolute;
+  color: white;
 
-      top: 3px;
-      right: 17%;
+  font-size: 10px;
 
-      min-width: 18px;
-      height: 18px;
+  display: none;
 
-      padding: 2px 5px;
+  align-items: center;
 
-      border-radius: 20px;
+  justify-content: center;
+}
 
-      background: #ef4444;
 
-      color: white;
+/* =========================
+   BLOQUEADO
+========================= */
 
-      font-size: 10px;
+.notice {
 
-      display: none;
+  display: none;
 
-      align-items: center;
-      justify-content: center;
-    }
+  position: fixed;
 
-    /* =========================
-       TOAST
-    ========================= */
+  left: 0;
+  right: 0;
 
-    .toast {
-      position: fixed;
+  bottom: 0;
 
-      left: 50%;
+  z-index: 600;
 
-      bottom: 155px;
+  padding: 14px;
 
-      transform:
-        translateX(-50%)
-        translateY(20px);
+  background: #7f1d1d;
 
-      background:
-        #111827;
+  color: white;
 
-      color: white;
+  text-align: center;
 
-      padding:
-        12px 17px;
+  font-size: 14px;
+}
 
-      border-radius: 14px;
+.notice.show {
 
-      opacity: 0;
+  display: block;
+}
 
-      pointer-events: none;
 
-      transition: .25s ease;
+/* =========================
+   TOAST
+========================= */
 
-      z-index: 2000;
+.toast {
 
-      max-width: 90%;
+  position: fixed;
 
-      text-align: center;
-    }
+  left: 50%;
 
-    .toast.mostrar {
-      opacity: 1;
+  bottom: 145px;
 
-      transform:
-        translateX(-50%)
-        translateY(0);
-    }
+  transform:
+    translateX(-50%);
 
-    @media (max-width: 500px) {
+  background: #111827;
 
-      .bottom-nav {
-        left: 6px;
-        right: 6px;
-      }
+  color: white;
 
-      .burbuja {
-        max-width: 84%;
-      }
+  padding:
+    12px 17px;
 
-      .bloquear-btn {
-        font-size: 11px;
-        padding: 8px;
-      }
+  border-radius: 14px;
 
-    }
+  display: none;
 
-  </style>
+  z-index: 2000;
+}
+
+.toast.show {
+
+  display: block;
+}
+
+</style>
 
 </head>
 
@@ -571,312 +488,317 @@
 <body>
 
 
-<div class="contenedor">
+<div class="chat">
 
 
-  <!-- CABECERA -->
+<!-- =========================
+     CABECERA
+========================= -->
 
-  <header class="cabecera-chat">
+<header class="head">
 
-    <button
-      class="volver"
-      onclick="volverMatches()"
-      aria-label="Volver"
-    >
-      ←
-    </button>
-
-
-    <div id="fotoCabecera">
-
-      <div
-        class="foto-cabecera-sin"
-      >
-        👤
-      </div>
-
-    </div>
+<button
+  class="back"
+  onclick="volverMatches()"
+>
+←
+</button>
 
 
-    <div class="datos-cabecera">
-
-      <div
-        id="nombreCabecera"
-        class="nombre-cabecera"
-      >
-        Cargando...
-      </div>
-
-      <div
-        id="estadoCabecera"
-        class="estado-cabecera"
-      >
-        ⏳
-      </div>
-
-    </div>
-
-
-    <button
-      id="bloquearBtn"
-      class="bloquear-btn"
-      onclick="bloquearUsuario()"
-    >
-      🚫
-    </button>
-
-  </header>
-
-
-  <!-- MENSAJES -->
-
-  <main
-    id="mensajes"
-    class="mensajes"
-  >
-
-    <div class="estado-carga">
-      ⏳ Cargando conversación...
-    </div>
-
-  </main>
-
-
-  <!-- ESCRIBIENDO -->
+<div id="photo">
 
   <div
-    id="escribiendo"
-    class="escribiendo"
+    class="avatar"
+    style="
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    "
   >
-    ⌨️ Está escribiendo...
+    👤
   </div>
-
 
 </div>
 
 
-<!-- NAV -->
+<div
+  style="
+    flex:1;
+    min-width:0;
+  "
+>
 
-<nav class="bottom-nav">
-
-
-  <a
-    class="nav-item"
-    href="./perfil.html"
-  >
-
-    <span class="icon">
-      👤
-    </span>
-
-    <span>
-      Perfil
-    </span>
-
-  </a>
+<div
+  id="name"
+  class="name"
+>
+Cargando...
+</div>
 
 
-  <a
-    class="nav-item"
-    href="./descubrir.html"
-  >
+<div
+  id="status"
+  class="status"
+>
+⏳
+</div>
 
-    <span class="icon">
-      🔎
-    </span>
-
-    <span>
-      Descubrir
-    </span>
-
-  </a>
+</div>
 
 
-  <a
-    class="nav-item"
-    href="./likes.html"
-  >
+<button
+  class="block"
+  onclick="bloquear()"
+>
+🚫
+</button>
 
-    <span class="icon">
-      ❤️
-    </span>
-
-    <span>
-      Me gustas
-    </span>
-
-  </a>
+</header>
 
 
-  <a
-    class="nav-item activo"
-    href="./chat.html"
-  >
 
-    <span class="icon">
-      💕
-    </span>
+<!-- =========================
+     MENSAJES
+========================= -->
 
-    <span>
-      Matches
-    </span>
+<main
+  id="msgs"
+  class="msgs"
+>
 
-  </a>
+<div class="loading">
+
+⏳ Cargando conversación...
+
+</div>
+
+</main>
+
+</div>
 
 
-  <a
-    class="nav-item"
-    href="./notificaciones.html"
-  >
 
-    <span class="icon">
-      🔔
-    </span>
+<!-- =========================
+     NAVEGACIÓN
+========================= -->
 
-    <span>
-      Notificaciones
-    </span>
+<nav class="nav">
 
-    <span
-      id="badgeNotificaciones"
-      class="nav-badge"
-    >
-      0
-    </span>
 
-  </a>
+<a href="./perfil.html">
 
+👤
+
+<span>
+Perfil
+</span>
+
+</a>
+
+
+<a href="./descubrir.html">
+
+🔎
+
+<span>
+Descubrir
+</span>
+
+</a>
+
+
+<a href="./likes.html">
+
+❤️
+
+<span>
+Me gustas
+</span>
+
+</a>
+
+
+<a
+  href="./chat.html"
+  class="active"
+>
+
+💕 
+
+<span>
+Matches
+</span>
+
+</a>
+
+
+<a
+  href="./notificaciones.html"
+  style="position:relative"
+>
+
+🔔
+
+<span>
+Notificaciones
+</span>
+
+
+<b
+  id="badge"
+  class="badge"
+>
+0
+</b>
+
+</a>
 
 </nav>
 
 
-<!-- COMPOSER -->
 
-<div
-  id="composer"
-  class="composer"
+<!-- =========================
+     COMPOSER
+========================= -->
+
+<div class="composer">
+
+<div class="compose">
+
+
+<textarea
+  id="input"
+  placeholder="Escribí un mensaje..."
+  maxlength="2000"
+  rows="1"
+></textarea>
+
+
+<button
+  id="send"
+  onclick="enviar()"
 >
-
-  <div class="composer-inner">
-
-    <textarea
-      id="mensajeInput"
-      placeholder="Escribí un mensaje..."
-      rows="1"
-      maxlength="2000"
-    ></textarea>
+➤
+</button>
 
 
-    <button
-      id="enviarBtn"
-      onclick="enviarMensaje()"
-      aria-label="Enviar"
-    >
-      ➤
-    </button>
-
-  </div>
+</div>
 
 </div>
 
 
-<!-- AVISO BLOQUEADO -->
+
+<!-- =========================
+     BLOQUEADO
+========================= -->
 
 <div
-  id="bloqueadoAviso"
-  class="bloqueado-aviso"
+  id="notice"
+  class="notice"
 >
-  🚫 Esta conversación está bloqueada.
+
+🚫 Esta conversación está bloqueada.
+
 </div>
 
+
+
+<!-- =========================
+     TOAST
+========================= -->
 
 <div
   id="toast"
   class="toast"
-></div>
+>
+</div>
+
 
 
 <script>
 
 
-const SUPABASE_URL =
-  "https://kngiadwaesdbmvwivdev.supabase.co";
+/* =========================
+   SUPABASE
+========================= */
+
+const URL_SUPA =
+"https://kngiadwaesdbmvwivdev.supabase.co";
 
 
-const SUPABASE_KEY =
-  "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
+const KEY_SUPA =
+"sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
 
 
-const supabaseClient =
-  supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
+const sb =
+supabase.createClient(
+  URL_SUPA,
+  KEY_SUPA
+);
 
-
-let usuarioActual = null;
-
-let otroUsuarioId = null;
-
-let matchActual = null;
-
-let canalMensajes = null;
-
-let canalTyping = null;
-
-let typingTimer = null;
-
-let estaBloqueado = false;
 
 
 /* =========================
-   INICIO
+   VARIABLES
 ========================= */
 
-async function iniciar() {
+let me = null;
+
+let other = null;
+
+let match = null;
+
+let blocked = false;
+
+let channel = null;
+
+
+
+/* =========================
+   INICIAR
+========================= */
+
+async function init() {
 
   try {
 
     const {
-      data: {
-        session
-      }
+      data
     } =
-      await supabaseClient
-        .auth
-        .getSession();
+      await sb.auth.getSession();
 
 
-    if (!session) {
+    if (
+      !data.session
+    ) {
 
-      window.location.href =
+      location.href =
         "./index.html";
 
       return;
+
     }
 
 
-    usuarioActual =
-      session.user;
+    me =
+      data.session.user;
 
 
     const params =
       new URLSearchParams(
-        window.location.search
+        location.search
       );
 
 
-    otroUsuarioId =
+    other =
       params.get(
         "user"
       );
 
 
-    if (
-      !otroUsuarioId
-    ) {
+    if (!other) {
 
-      window.location.href =
+      location.href =
         "./chat.html";
 
       return;
@@ -884,174 +806,84 @@ async function iniciar() {
     }
 
 
-    await comprobarBloqueo();
-
-    await cargarPerfilOtro();
-
-    await buscarMatch();
-
-    await cargarMensajes();
-
-    await marcarMensajesLeidos();
-
-    await cargarNotificaciones();
-
-    configurarRealtime();
-
-    configurarTyping();
-
-  }
-  catch (error) {
-
-    console.error(error);
-
-    mostrarError(
-      "No se pudo iniciar la conversación."
-    );
-
-  }
-
-}
+    await profile();
 
 
-/* =========================
-   COMPROBAR BLOQUEO
-========================= */
+    await findMatch();
 
-async function comprobarBloqueo() {
 
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("user_blocks")
-      .select(
-        "blocker_id, blocked_id"
-      )
-      .or(
-        `and(blocker_id.eq.${usuarioActual.id},blocked_id.eq.${otroUsuarioId}),and(blocker_id.eq.${otroUsuarioId},blocked_id.eq.${usuarioActual.id})`
+    if (!match) {
+
+      show(
+        "⚠️ No existe un Match entre estas cuentas."
       );
 
+      return;
 
-  if (error) {
+    }
+
+
+    await checkBlock();
+
+
+    await load();
+
+
+    await read();
+
+
+    await badge();
+
+
+    realtime();
+
+  }
+
+  catch(error) {
 
     console.error(
-      "Error comprobando bloqueo:",
+      "ERROR:",
       error
     );
 
-    return;
-
-  }
-
-
-  estaBloqueado =
-    !!(
-      data &&
-      data.length
-    );
-
-
-  actualizarEstadoBloqueo();
-
-}
-
-
-/* =========================
-   ESTADO BLOQUEO
-========================= */
-
-function actualizarEstadoBloqueo() {
-
-  const input =
-    document.getElementById(
-      "mensajeInput"
-    );
-
-
-  const boton =
-    document.getElementById(
-      "enviarBtn"
-    );
-
-
-  const aviso =
-    document.getElementById(
-      "bloqueadoAviso"
-    );
-
-
-  if (
-    estaBloqueado
-  ) {
-
-    input.disabled =
-      true;
-
-    boton.disabled =
-      true;
-
-    input.placeholder =
-      "Conversación bloqueada";
-
-    aviso.classList.add(
-      "visible"
-    );
-
-  }
-  else {
-
-    input.disabled =
-      false;
-
-    boton.disabled =
-      false;
-
-    input.placeholder =
-      "Escribí un mensaje...";
-
-    aviso.classList.remove(
-      "visible"
+    show(
+      "❌ Error al cargar la conversación."
     );
 
   }
 
 }
+
 
 
 /* =========================
    PERFIL
 ========================= */
 
-async function cargarPerfilOtro() {
+async function profile() {
 
   const {
     data,
     error
   } =
-    await supabaseClient
+    await sb
       .from("profiles")
       .select(
-        `
-        id,
-        nombre,
-        edad,
-        foto_url,
-        online,
-        last_seen
-        `
+        "id,nombre,edad,foto_url,online"
       )
       .eq(
         "id",
-        otroUsuarioId
+        other
       )
       .maybeSingle();
 
 
   if (error) {
 
-    console.error(error);
+    console.error(
+      "Error perfil:",
+      error
+    );
 
     return;
 
@@ -1065,28 +897,25 @@ async function cargarPerfilOtro() {
   }
 
 
-  const nombre =
-    escaparHTML(
-      data.nombre ||
-      "Usuario"
+  document.getElementById(
+    "name"
+  ).textContent =
+
+    (data.nombre ||
+      "Usuario")
+
+    +
+
+    (
+      data.edad
+      ? ", " + data.edad
+      : ""
     );
 
 
-  const edad =
-    data.edad
-      ? `, ${data.edad}`
-      : "";
-
-
-  document.getElementById(
-    "nombreCabecera"
-  ).textContent =
-    `${nombre}${edad}`;
-
-
-  const estado =
+  const status =
     document.getElementById(
-      "estadoCabecera"
+      "status"
     );
 
 
@@ -1094,38 +923,38 @@ async function cargarPerfilOtro() {
     data.online
   ) {
 
-    estado.innerHTML =
-      `<span class="online">
-        ● En línea
-      </span>`;
+    status.innerHTML =
+      '<span class="online">● En línea</span>';
 
   }
+
   else {
 
-    estado.textContent =
+    status.textContent =
       "Última conexión reciente";
 
   }
-
-
-  const foto =
-    document.getElementById(
-      "fotoCabecera"
-    );
 
 
   if (
     data.foto_url
   ) {
 
-    foto.innerHTML = `
+    const photo =
+      document.getElementById(
+        "photo"
+      );
+
+
+    photo.innerHTML = `
 
       <img
-        class="foto-cabecera"
-        src="${escaparHTML(
-          data.foto_url
-        )}"
+        class="avatar"
+        src="${esc(data.foto_url)}"
         alt="Foto"
+        onerror="
+          this.style.display='none';
+        "
       >
 
     `;
@@ -1135,34 +964,44 @@ async function cargarPerfilOtro() {
 }
 
 
+
 /* =========================
    BUSCAR MATCH
 ========================= */
 
-async function buscarMatch() {
+async function findMatch() {
 
   const {
     data,
     error
   } =
-    await supabaseClient
+    await sb
       .from("matches")
       .select(
-        `
-        id,
-        user1_id,
-        user2_id
-        `
+        "id,user1_id,user2_id"
       )
       .or(
-        `and(user1_id.eq.${usuarioActual.id},user2_id.eq.${otroUsuarioId}),and(user1_id.eq.${otroUsuarioId},user2_id.eq.${usuarioActual.id})`
+
+        "and(user1_id.eq." +
+        me.id +
+        ",user2_id.eq." +
+        other +
+        "),and(user1_id.eq." +
+        other +
+        ",user2_id.eq." +
+        me.id +
+        ")"
+
       )
       .limit(1);
 
 
   if (error) {
 
-    console.error(error);
+    console.error(
+      "Error buscando Match:",
+      error
+    );
 
     return;
 
@@ -1174,7 +1013,7 @@ async function buscarMatch() {
     data.length
   ) {
 
-    matchActual =
+    match =
       data[0];
 
   }
@@ -1182,55 +1021,25 @@ async function buscarMatch() {
 }
 
 
+
 /* =========================
    CARGAR MENSAJES
 ========================= */
 
-async function cargarMensajes() {
-
-  const contenedor =
-    document.getElementById(
-      "mensajes"
-    );
-
-
-  if (!matchActual) {
-
-    contenedor.innerHTML = `
-
-      <div class="estado-carga">
-
-        💕 Esta conversación
-        todavía no está disponible.
-
-      </div>
-
-    `;
-
-    return;
-
-  }
-
+async function load() {
 
   const {
     data,
     error
   } =
-    await supabaseClient
+    await sb
       .from("messages")
       .select(
-        `
-        id,
-        sender_id,
-        content,
-        created_at,
-        read_at,
-        delivered_at
-        `
+        "id,sender_id,content,created_at,read_at,delivered_at"
       )
       .eq(
         "match_id",
-        matchActual.id
+        match.id
       )
       .order(
         "created_at",
@@ -1242,10 +1051,13 @@ async function cargarMensajes() {
 
   if (error) {
 
-    console.error(error);
+    console.error(
+      "Error mensajes:",
+      error
+    );
 
-    mostrarError(
-      "No se pudieron cargar los mensajes."
+    show(
+      "❌ No se pudieron cargar los mensajes."
     );
 
     return;
@@ -1253,37 +1065,38 @@ async function cargarMensajes() {
   }
 
 
-  renderizarMensajes(
+  render(
     data || []
   );
 
 }
 
 
+
 /* =========================
-   RENDER MENSAJES
+   MOSTRAR MENSAJES
 ========================= */
 
-function renderizarMensajes(
-  mensajes
+function render(
+  list
 ) {
 
-  const contenedor =
+  const box =
     document.getElementById(
-      "mensajes"
+      "msgs"
     );
 
 
   if (
-    !mensajes.length
+    !list.length
   ) {
 
-    contenedor.innerHTML = `
+    box.innerHTML = `
 
-      <div
-        class="estado-carga"
-      >
+      <div class="loading">
+
         💬 Comenzá la conversación
+
       </div>
 
     `;
@@ -1293,169 +1106,190 @@ function renderizarMensajes(
   }
 
 
-  let html = "";
+  box.innerHTML =
+    "";
 
 
-  mensajes.forEach(
-    mensaje => {
+  list.forEach(
+    message => {
 
-      const mio =
-        mensaje.sender_id ===
-        usuarioActual.id;
+      const mine =
+        message.sender_id ===
+        me.id;
 
 
-      const texto =
-        escaparHTML(
-          mensaje.content
+      const row =
+        document.createElement(
+          "div"
         );
 
 
-      const hora =
+      row.className =
+        "row " +
+        (
+          mine
+          ? "mine"
+          : "other"
+        );
+
+
+      const bubble =
+        document.createElement(
+          "div"
+        );
+
+
+      bubble.className =
+        "bubble";
+
+
+      const text =
+        document.createElement(
+          "div"
+        );
+
+
+      text.className =
+        "text";
+
+
+      text.textContent =
+        message.content;
+
+
+      const time =
+        document.createElement(
+          "div"
+        );
+
+
+      time.className =
+        "time";
+
+
+      time.textContent =
         new Date(
-          mensaje.created_at
+          message.created_at
         )
-          .toLocaleTimeString(
-            "es-AR",
-            {
-              hour: "2-digit",
-              minute: "2-digit"
-            }
+        .toLocaleTimeString(
+          "es-AR",
+          {
+            hour:
+              "2-digit",
+
+            minute:
+              "2-digit"
+          }
+        );
+
+
+      if (mine) {
+
+        const check =
+          document.createElement(
+            "span"
           );
 
 
-      let checks = "";
-
-
-      if (mio) {
-
         if (
-          mensaje.read_at
+          message.read_at
         ) {
 
-          checks = `
-            <span
-              class="check leido"
-            >
-              ✓✓
-            </span>
-          `;
+          check.textContent =
+            "  ✓✓";
+
+          check.className =
+            "blue";
 
         }
+
         else if (
-          mensaje.delivered_at
+          message.delivered_at
         ) {
 
-          checks = `
-            <span class="check">
-              ✓✓
-            </span>
-          `;
+          check.textContent =
+            "  ✓✓";
 
         }
+
         else {
 
-          checks = `
-            <span class="check">
-              ✓
-            </span>
-          `;
+          check.textContent =
+            "  ✓";
 
         }
+
+
+        time.appendChild(
+          check
+        );
 
       }
 
 
-      html += `
+      bubble.appendChild(
+        text
+      );
 
-        <div
-          class="
-            mensaje-fila
-            ${mio ? "mio" : "otro"}
-          "
-        >
 
-          <div class="burbuja">
+      bubble.appendChild(
+        time
+      );
 
-            <div class="texto-mensaje">
-              ${texto}
-            </div>
 
-            <div class="hora">
+      row.appendChild(
+        bubble
+      );
 
-              ${hora}
 
-              ${checks}
-
-            </div>
-
-          </div>
-
-        </div>
-
-      `;
+      box.appendChild(
+        row
+      );
 
     }
   );
 
 
-  contenedor.innerHTML =
-    html;
-
-
-  /*
-    Bajar al último mensaje
-  */
-
-  requestAnimationFrame(
-    () => {
-
-      contenedor.scrollTop =
-        contenedor.scrollHeight;
-
-    }
-  );
+  box.scrollTop =
+    box.scrollHeight;
 
 }
 
 
+
 /* =========================
-   MARCAR ENTREGADOS / LEÍDOS
+   MARCAR LEÍDOS
 ========================= */
 
-async function marcarMensajesLeidos() {
+async function read() {
 
-  if (
-    !matchActual ||
-    estaBloqueado
-  ) {
+  if (!match) {
 
     return;
 
   }
 
 
-  const ahora =
-    new Date().toISOString();
+  const now =
+    new Date()
+      .toISOString();
 
 
-  /*
-    Primero marcamos como
-    entregados.
-  */
-
-  await supabaseClient
+  await sb
     .from("messages")
     .update({
+
       delivered_at:
-        ahora
+        now
+
     })
     .eq(
       "match_id",
-      matchActual.id
+      match.id
     )
     .neq(
       "sender_id",
-      usuarioActual.id
+      me.id
     )
     .is(
       "delivered_at",
@@ -1463,59 +1297,44 @@ async function marcarMensajesLeidos() {
     );
 
 
-  /*
-    Luego como leídos.
-  */
-
-  await supabaseClient
+  await sb
     .from("messages")
     .update({
+
       read_at:
-        ahora,
+        now,
+
       delivered_at:
-        ahora
+        now
+
     })
     .eq(
       "match_id",
-      matchActual.id
+      match.id
     )
     .neq(
       "sender_id",
-      usuarioActual.id
+      me.id
     )
     .is(
       "read_at",
       null
     );
 
-
-  await cargarNotificaciones();
-
 }
 
 
+
 /* =========================
-   ENVIAR
+   ENVIAR MENSAJE
 ========================= */
 
-async function enviarMensaje() {
+async function enviar() {
 
   if (
-    estaBloqueado
+    blocked ||
+    !match
   ) {
-
-    return;
-
-  }
-
-
-  if (
-    !matchActual
-  ) {
-
-    mostrarToast(
-      "No hay un Match disponible."
-    );
 
     return;
 
@@ -1524,61 +1343,66 @@ async function enviarMensaje() {
 
   const input =
     document.getElementById(
-      "mensajeInput"
+      "input"
     );
 
 
-  const boton =
+  const button =
     document.getElementById(
-      "enviarBtn"
+      "send"
     );
 
 
-  const contenido =
+  const content =
     input.value.trim();
 
 
-  if (!contenido) {
+  if (!content) {
 
     return;
 
   }
 
 
-  boton.disabled =
+  button.disabled =
     true;
 
 
   const {
     error
   } =
-    await supabaseClient
+    await sb
       .from("messages")
       .insert({
 
         match_id:
-          matchActual.id,
+          match.id,
 
         sender_id:
-          usuarioActual.id,
+          me.id,
 
         content:
-          contenido
+          content
 
       });
 
 
-  boton.disabled =
+  button.disabled =
     false;
 
 
   if (error) {
 
-    console.error(error);
-
-    mostrarToast(
-      "No se pudo enviar el mensaje."
+    console.error(
+      "Error enviando:",
+      error
     );
+
+
+    showToast(
+      "❌ No se pudo enviar el mensaje."
+    );
+
 
     return;
 
@@ -1588,7 +1412,515 @@ async function enviarMensaje() {
   input.value =
     "";
 
-  ajustarTextarea();
 
-  actualizarTyping(
-    fals
+  await load();
+
+
+  await badge();
+
+}
+
+
+
+/* =========================
+   ENTER
+========================= */
+
+document
+  .getElementById(
+    "input"
+  )
+  .addEventListener(
+    "keydown",
+    function(event) {
+
+      if (
+        event.key ===
+          "Enter" &&
+        !event.shiftKey
+      ) {
+
+        event.preventDefault();
+
+        enviar();
+
+      }
+
+    }
+  );
+
+
+
+/* =========================
+   REALTIME
+========================= */
+
+function realtime() {
+
+  if (!match) {
+
+    return;
+
+  }
+
+
+  channel =
+    sb
+      .channel(
+        "chat-" +
+        match.id
+      )
+
+
+      .on(
+        "postgres_changes",
+
+        {
+          event:
+            "INSERT",
+
+          schema:
+            "public",
+
+          table:
+            "messages",
+
+          filter:
+            "match_id=eq." +
+            match.id
+        },
+
+        async payload => {
+
+          await load();
+
+
+          if (
+            payload.new.sender_id !==
+            me.id
+          ) {
+
+            await read();
+
+          }
+
+
+          await badge();
+
+        }
+
+      )
+
+
+      .on(
+        "postgres_changes",
+
+        {
+          event:
+            "UPDATE",
+
+          schema:
+            "public",
+
+          table:
+            "messages",
+
+          filter:
+            "match_id=eq." +
+            match.id
+        },
+
+        async () => {
+
+          await load();
+
+        }
+
+      )
+
+
+      .subscribe();
+
+}
+
+
+
+/* =========================
+   BLOQUEO
+========================= */
+
+async function checkBlock() {
+
+  const {
+    data,
+    error
+  } =
+    await sb
+      .from("user_blocks")
+      .select(
+        "blocker_id,blocked_id"
+      )
+      .or(
+
+        "and(blocker_id.eq." +
+        me.id +
+        ",blocked_id.eq." +
+        other +
+        "),and(blocker_id.eq." +
+        other +
+        ",blocked_id.eq." +
+        me.id +
+        ")"
+
+      );
+
+
+  if (error) {
+
+    console.error(
+      "Error bloqueo:",
+      error
+    );
+
+    return;
+
+  }
+
+
+  blocked =
+    !!(
+      data &&
+      data.length
+    );
+
+
+  updateBlock();
+
+}
+
+
+
+/* =========================
+   ACTUALIZAR BLOQUEO
+========================= */
+
+function updateBlock() {
+
+  const input =
+    document.getElementById(
+      "input"
+    );
+
+
+  const button =
+    document.getElementById(
+      "send"
+    );
+
+
+  const notice =
+    document.getElementById(
+      "notice"
+    );
+
+
+  if (blocked) {
+
+    input.disabled =
+      true;
+
+    button.disabled =
+      true;
+
+    input.placeholder =
+      "Conversación bloqueada";
+
+    notice.classList.add(
+      "show"
+    );
+
+  }
+
+  else {
+
+    input.disabled =
+      false;
+
+    button.disabled =
+      false;
+
+    input.placeholder =
+      "Escribí un mensaje...";
+
+    notice.classList.remove(
+      "show"
+    );
+
+  }
+
+}
+
+
+
+/* =========================
+   BLOQUEAR USUARIO
+========================= */
+
+async function bloquear() {
+
+  if (!other) {
+
+    return;
+
+  }
+
+
+  const confirmar =
+    confirm(
+      "¿Querés bloquear a este usuario?"
+    );
+
+
+  if (!confirmar) {
+
+    return;
+
+  }
+
+
+  const {
+    error
+  } =
+    await sb
+      .from("user_blocks")
+      .insert({
+
+        blocker_id:
+          me.id,
+
+        blocked_id:
+          other
+
+      });
+
+
+  if (error) {
+
+    console.error(
+      "Error bloqueando:",
+      error
+    );
+
+
+    showToast(
+      "❌ No se pudo bloquear."
+    );
+
+
+    return;
+
+  }
+
+
+  blocked =
+    true;
+
+
+  updateBlock();
+
+
+  showToast(
+    "🚫 Usuario bloqueado"
+  );
+
+}
+
+
+
+/* =========================
+   BADGE
+========================= */
+
+async function badge() {
+
+  const badgeElement =
+    document.getElementById(
+      "badge"
+    );
+
+
+  const {
+    data,
+    error
+  } =
+    await sb
+      .from("messages")
+      .select(
+        "id"
+      )
+      .neq(
+        "sender_id",
+        me.id
+      )
+      .is(
+        "read_at",
+        null
+      );
+
+
+  if (error) {
+
+    console.error(
+      "Error badge:",
+      error
+    );
+
+    return;
+
+  }
+
+
+  const cantidad =
+    data
+      ? data.length
+      : 0;
+
+
+  if (
+    cantidad > 0
+  ) {
+
+    badgeElement.textContent =
+      cantidad > 99
+        ? "99+"
+        : cantidad;
+
+
+    badgeElement.style.display =
+      "flex";
+
+  }
+
+  else {
+
+    badgeElement.style.display =
+      "none";
+
+  }
+
+}
+
+
+
+/* =========================
+   UTILIDADES
+========================= */
+
+function esc(
+  value
+) {
+
+  return String(
+    value ?? ""
+  )
+
+  .replace(
+    /&/g,
+    "&amp;"
+  )
+
+  .replace(
+    /</g,
+    "&lt;"
+  )
+
+  .replace(
+    />/g,
+    "&gt;"
+  )
+
+  .replace(
+    /"/g,
+    "&quot;"
+  )
+
+  .replace(
+    /'/g,
+    "&#039;"
+  );
+
+}
+
+
+function show(
+  message
+) {
+
+  document.getElementById(
+    "msgs"
+  ).innerHTML = `
+
+    <div class="loading">
+
+      ${esc(message)}
+
+    </div>
+
+  `;
+
+}
+
+
+function showToast(
+  message
+) {
+
+  const toast =
+    document.getElementById(
+      "toast"
+    );
+
+
+  toast.textContent =
+    message;
+
+
+  toast.classList.add(
+    "show"
+  );
+
+
+  setTimeout(
+    function() {
+
+      toast.classList.remove(
+        "show"
+      );
+
+    },
+    2500
+  );
+
+}
+
+
+function volverMatches() {
+
+  window.location.href =
+    "./chat.html";
+
+}
+
+
+
+/* =========================
+   ARRANCAR
+========================= */
+
+init();
+
+</script>
+
+</body>
+
+  </html>
