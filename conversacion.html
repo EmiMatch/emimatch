@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>EmiMatch - Chat</title>
+  <title>Chat - EmiMatch</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -16,206 +16,257 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f4f6fa;
+      background: #eef1f5;
+      height: 100vh;
+      overflow: hidden;
     }
 
-    header {
-      height: 70px;
-      background: linear-gradient(135deg, #071a3d, #123b78);
-      color: white;
-      display: flex;
-      align-items: center;
-      padding: 10px 15px;
-      gap: 12px;
-    }
-
-    .volver {
-      border: none;
+    .app {
+      height: 100vh;
+      max-width: 700px;
+      margin: auto;
       background: white;
-      color: #123b78;
-      border-radius: 8px;
-      padding: 9px 12px;
-      font-weight: bold;
-      cursor: pointer;
+      display: flex;
+      flex-direction: column;
     }
 
-    .perfil {
+    .header {
+      background: linear-gradient(135deg, #6c2bd9, #9b4dff);
+      color: white;
+      padding: 12px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.15);
+      z-index: 2;
     }
 
-    .foto {
-      width: 45px;
-      height: 45px;
+    .back {
+      border: none;
+      background: transparent;
+      color: white;
+      font-size: 30px;
+      cursor: pointer;
+      width: 40px;
+    }
+
+    .user-photo {
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
       object-fit: cover;
+      border: 2px solid white;
       background: #ddd;
     }
 
-    .nombre {
-      font-size: 17px;
+    .user-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .user-name {
+      font-size: 18px;
       font-weight: bold;
     }
 
-    .datos {
-      font-size: 12px;
-      opacity: .8;
-    }
-
-    #estado {
-      text-align: center;
-      padding: 15px;
-      color: #666;
-    }
-
-    .error {
-      color: #d32f2f !important;
-      font-weight: bold;
+    .user-status {
+      font-size: 13px;
+      margin-top: 3px;
     }
 
     #mensajes {
-      height: calc(100vh - 135px);
+      flex: 1;
       overflow-y: auto;
-      padding: 15px;
-      padding-bottom: 80px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+      padding: 18px 12px;
+      background: #f3effa;
     }
 
     .mensaje {
+      display: flex;
+      margin-bottom: 10px;
+    }
+
+    .mensaje.mio {
+      justify-content: flex-end;
+    }
+
+    .mensaje.otro {
+      justify-content: flex-start;
+    }
+
+    .burbuja {
       max-width: 78%;
-      padding: 10px 14px;
-      border-radius: 17px;
-      word-wrap: break-word;
+      padding: 9px 12px;
+      border-radius: 18px;
       font-size: 15px;
+      line-height: 1.4;
+      word-wrap: break-word;
+      box-shadow: 0 1px 3px rgba(0,0,0,.08);
     }
 
-    .mio {
-      align-self: flex-end;
-      background: #123b78;
+    .mio .burbuja {
+      background: #6c2bd9;
       color: white;
-      border-bottom-right-radius: 4px;
+      border-bottom-right-radius: 5px;
     }
 
-    .otro {
-      align-self: flex-start;
+    .otro .burbuja {
       background: white;
       color: #222;
-      border-bottom-left-radius: 4px;
-      box-shadow: 0 1px 4px rgba(0,0,0,.1);
+      border-bottom-left-radius: 5px;
     }
 
-    .hora {
+    .mensaje-info {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 4px;
+      margin-top: 3px;
       font-size: 10px;
-      opacity: .65;
-      text-align: right;
-      margin-top: 4px;
+      opacity: .75;
     }
 
-    .sin-mensajes {
-      text-align: center;
+    .estado {
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: -2px;
+    }
+
+    .estado.leido {
+      color: #60a5fa;
+    }
+
+    .estado.recibido {
+      color: white;
+    }
+
+    #typing {
+      min-height: 22px;
+      padding: 0 18px 4px;
+      font-size: 13px;
       color: #777;
-      margin-top: 50px;
+      font-style: italic;
     }
 
-    .barra {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: white;
+    .input-area {
       padding: 10px;
+      background: white;
+      border-top: 1px solid #ddd;
       display: flex;
       gap: 8px;
-      box-shadow: 0 -2px 8px rgba(0,0,0,.12);
+      align-items: center;
     }
 
-    #mensaje {
+    #mensajeInput {
       flex: 1;
-      border: 1px solid #ccc;
-      border-radius: 22px;
-      padding: 11px 15px;
-      font-size: 15px;
+      border: 1px solid #ddd;
+      border-radius: 24px;
+      padding: 12px 16px;
+      font-size: 16px;
       outline: none;
+      min-width: 0;
     }
 
-    #enviar {
+    #mensajeInput:focus {
+      border-color: #7b35e8;
+    }
+
+    #enviarBtn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
       border: none;
-      background: #123b78;
+      background: #6c2bd9;
       color: white;
-      border-radius: 22px;
-      padding: 0 18px;
-      font-weight: bold;
+      font-size: 21px;
       cursor: pointer;
+      flex-shrink: 0;
     }
 
-    #enviar:disabled {
-      opacity: .5;
+    .loading {
+      text-align: center;
+      color: #777;
+      padding: 30px;
+    }
+
+    .error {
+      color: #b91c1c;
+      text-align: center;
+      padding: 30px;
     }
   </style>
 </head>
 
 <body>
 
-<header>
+<div class="app">
 
-  <button class="volver" onclick="volver()">
-    ←
-  </button>
+  <div class="header">
 
-  <div class="perfil">
+    <button
+      class="back"
+      onclick="window.location.href='chat.html'"
+    >
+      ‹
+    </button>
 
     <img
-      id="foto"
-      class="foto"
+      id="userPhoto"
+      class="user-photo"
       src="https://via.placeholder.com/100"
-      alt="Foto"
+      alt="Perfil"
     >
 
-    <div>
+    <div class="user-info">
 
       <div
-        id="nombre"
-        class="nombre">
+        id="userName"
+        class="user-name"
+      >
         Cargando...
       </div>
 
       <div
-        id="datos"
-        class="datos">
+        id="userStatus"
+        class="user-status"
+      >
+        Conectando...
       </div>
 
     </div>
 
   </div>
 
-</header>
+
+  <div id="mensajes">
+
+    <div class="loading">
+      Cargando conversación...
+    </div>
+
+  </div>
 
 
-<div id="estado">
-  🔄 Cargando conversación...
-</div>
+  <div id="typing"></div>
 
 
-<div id="mensajes"></div>
+  <div class="input-area">
 
+    <input
+      id="mensajeInput"
+      type="text"
+      placeholder="Escribí un mensaje..."
+      autocomplete="off"
+    >
 
-<div class="barra">
+    <button
+      id="enviarBtn"
+      onclick="enviarMensaje()"
+    >
+      ➤
+    </button>
 
-  <input
-    id="mensaje"
-    type="text"
-    placeholder="Escribí un mensaje..."
-    autocomplete="off"
-  >
-
-  <button
-    id="enviar"
-    onclick="enviarMensaje()">
-    Enviar
-  </button>
+  </div>
 
 </div>
 
@@ -237,12 +288,16 @@ const supabaseClient =
 
 let currentUser = null;
 let otherUserId = null;
+let otherProfile = null;
 let matchId = null;
 
+let typingTimer = null;
+let isTyping = false;
 
-/* ==========================
+
+/* =========================================
    INICIAR
-========================== */
+========================================= */
 
 async function iniciar() {
 
@@ -259,75 +314,69 @@ async function iniciar() {
 
     if (!otherUserId) {
 
-      throw new Error(
-        "No se encontró el usuario del Match."
+      mostrarError(
+        "No se encontró el usuario."
       );
 
+      return;
     }
 
 
     const {
-      data: sessionData,
-      error: sessionError
+      data: {
+        session
+      }
     } =
       await supabaseClient.auth.getSession();
 
 
-    if (sessionError) {
-      throw sessionError;
-    }
+    if (!session) {
 
+      window.location.href =
+        "index.html";
 
-    if (!sessionData.session) {
-
-      throw new Error(
-        "No hay una sesión activa."
-      );
-
+      return;
     }
 
 
     currentUser =
-      sessionData.session.user;
+      session.user;
 
 
-    document.getElementById("estado")
-      .textContent =
-      "🔄 Cargando perfil...";
+    await marcarOnline();
 
-
-    await cargarPerfil();
-
-
-    document.getElementById("estado")
-      .textContent =
-      "🔄 Buscando Match...";
-
+    await cargarPerfilOtro();
 
     await buscarMatch();
 
+    if (!matchId) {
 
-    document.getElementById("estado")
-      .textContent =
-      "🔄 Cargando mensajes...";
+      mostrarError(
+        "No se encontró el Match."
+      );
 
+      return;
+    }
+
+
+    await marcarMensajesRecibidos();
+
+    await marcarMensajesLeidos();
 
     await cargarMensajes();
 
+    escucharMensajes();
 
-    document.getElementById("estado")
-      .style.display = "none";
+    escucharTyping();
 
-
-    activarTiempoReal();
-
+    escucharEstado();
 
   } catch (error) {
 
     console.error(error);
 
     mostrarError(
-      error.message
+      "Error cargando la conversación."
     );
 
   }
@@ -335,112 +384,219 @@ async function iniciar() {
 }
 
 
-/* ==========================
-   PERFIL
-========================== */
+/* =========================================
+   ONLINE
+========================================= */
 
-async function cargarPerfil() {
+async function marcarOnline() {
+
+  await supabaseClient
+    .from("profiles")
+    .update({
+      online: true,
+      last_seen:
+        new Date().toISOString()
+    })
+    .eq(
+      "id",
+      currentUser.id
+    );
+
+}
+
+
+/* =========================================
+   PERFIL
+========================================= */
+
+async function cargarPerfilOtro() {
 
   const {
     data,
     error
   } =
     await supabaseClient
-
       .from("profiles")
-
       .select(
-        "id,nombre,edad,ciudad,descripcion,foto_url,intereses"
+        "id,nombre,edad,ciudad,descripcion,foto_url,intereses,online,last_seen"
       )
-
-      .eq("id", otherUserId)
-
+      .eq(
+        "id",
+        otherUserId
+      )
       .maybeSingle();
 
 
-  if (error) {
-    throw error;
-  }
-
+  if (error) throw error;
 
   if (!data) {
 
     throw new Error(
-      "No se encontró el perfil."
+      "Perfil no encontrado"
     );
 
   }
 
 
-  document.getElementById("nombre")
-    .textContent =
-    data.nombre || "Usuario";
+  otherProfile =
+    data;
 
 
-  let datos = "";
-
-
-  if (data.edad) {
-
-    datos +=
-      data.edad + " años";
-
-  }
-
-
-  if (data.ciudad) {
-
-    if (datos) {
-      datos += " • ";
-    }
-
-    datos += data.ciudad;
-
-  }
-
-
-  document.getElementById("datos")
-    .textContent =
-    datos;
+  document.getElementById(
+    "userName"
+  ).textContent =
+    data.nombre ||
+    "Usuario";
 
 
   if (data.foto_url) {
 
-    document.getElementById("foto")
-      .src =
+    document.getElementById(
+      "userPhoto"
+    ).src =
       data.foto_url;
+
+  }
+
+
+  actualizarEstado();
+
+}
+
+
+/* =========================================
+   ESTADO ONLINE
+========================================= */
+
+function actualizarEstado() {
+
+  const elemento =
+    document.getElementById(
+      "userStatus"
+    );
+
+
+  if (
+    otherProfile &&
+    otherProfile.online
+  ) {
+
+    elemento.textContent =
+      "🟢 En línea";
+
+  } else {
+
+    elemento.textContent =
+      "⚪ " +
+      ultimaConexion(
+        otherProfile?.last_seen
+      );
 
   }
 
 }
 
 
-/* ==========================
+function ultimaConexion(fecha) {
+
+  if (!fecha) {
+
+    return "Sin información";
+
+  }
+
+
+  const segundos =
+    Math.floor(
+      (
+        new Date() -
+        new Date(fecha)
+      ) / 1000
+    );
+
+
+  if (segundos < 60) {
+
+    return "Activo hace unos segundos";
+
+  }
+
+
+  const minutos =
+    Math.floor(
+      segundos / 60
+    );
+
+
+  if (minutos < 60) {
+
+    return (
+      "Activo hace " +
+      minutos +
+      " min"
+    );
+
+  }
+
+
+  const horas =
+    Math.floor(
+      minutos / 60
+    );
+
+
+  if (horas < 24) {
+
+    return (
+      "Activo hace " +
+      horas +
+      " h"
+    );
+
+  }
+
+
+  const dias =
+    Math.floor(
+      horas / 24
+    );
+
+
+  return (
+    "Activo hace " +
+    dias +
+    " día" +
+    (
+      dias === 1
+        ? ""
+        : "s"
+    )
+  );
+
+}
+
+
+/* =========================================
    BUSCAR MATCH
-========================== */
+========================================= */
 
 async function buscarMatch() {
 
   const {
-    data: match1,
-    error: error1
+    data: match1
   } =
     await supabaseClient
-
       .from("matches")
-
       .select("*")
-
-      .eq("user1_id", currentUser.id)
-
-      .eq("user2_id", otherUserId)
-
+      .eq(
+        "user1_id",
+        currentUser.id
+      )
+      .eq(
+        "user2_id",
+        otherUserId
+      )
       .maybeSingle();
-
-
-  if (error1) {
-    throw error1;
-  }
 
 
   if (match1) {
@@ -454,25 +610,20 @@ async function buscarMatch() {
 
 
   const {
-    data: match2,
-    error: error2
+    data: match2
   } =
     await supabaseClient
-
       .from("matches")
-
       .select("*")
-
-      .eq("user1_id", otherUserId)
-
-      .eq("user2_id", currentUser.id)
-
+      .eq(
+        "user1_id",
+        otherUserId
+      )
+      .eq(
+        "user2_id",
+        currentUser.id
+      )
       .maybeSingle();
-
-
-  if (error2) {
-    throw error2;
-  }
 
 
   if (match2) {
@@ -480,21 +631,14 @@ async function buscarMatch() {
     matchId =
       match2.id;
 
-    return;
-
   }
-
-
-  throw new Error(
-    "No existe un Match con esta persona."
-  );
 
 }
 
 
-/* ==========================
+/* =========================================
    CARGAR MENSAJES
-========================== */
+========================================= */
 
 async function cargarMensajes() {
 
@@ -503,15 +647,14 @@ async function cargarMensajes() {
     error
   } =
     await supabaseClient
-
       .from("messages")
-
       .select(
-        "id,match_id,sender_id,content,created_at"
+        "id,match_id,sender_id,content,created_at,delivered_at,read_at"
       )
-
-      .eq("match_id", matchId)
-
+      .eq(
+        "match_id",
+        matchId
+      )
       .order(
         "created_at",
         {
@@ -520,23 +663,8 @@ async function cargarMensajes() {
       );
 
 
-  if (error) {
-    throw error;
-  }
+  if (error) throw error;
 
-
-  mostrarMensajes(
-    data || []
-  );
-
-}
-
-
-/* ==========================
-   MOSTRAR MENSAJES
-========================== */
-
-function mostrarMensajes(lista) {
 
   const contenedor =
     document.getElementById(
@@ -544,34 +672,29 @@ function mostrarMensajes(lista) {
     );
 
 
-  contenedor.innerHTML = "";
+  contenedor.innerHTML =
+    "";
 
 
-  if (!lista.length) {
+  if (
+    !data ||
+    data.length === 0
+  ) {
 
-    const div =
-      document.createElement("div");
-
-
-    div.className =
-      "sin-mensajes";
-
-
-    div.textContent =
-      "💕 Todavía no hay mensajes. ¡Comenzá la conversación!";
-
-
-    contenedor.appendChild(div);
+    contenedor.innerHTML = `
+      <div class="loading">
+        💕 Todavía no hay mensajes.<br>
+        ¡Empezá la conversación!
+      </div>
+    `;
 
     return;
 
   }
 
 
-  lista.forEach(
-    mensaje => {
-      mostrarMensaje(mensaje);
-    }
+  data.forEach(
+    mostrarMensaje
   );
 
 
@@ -580,9 +703,9 @@ function mostrarMensajes(lista) {
 }
 
 
-/* ==========================
+/* =========================================
    MOSTRAR MENSAJE
-========================== */
+========================================= */
 
 function mostrarMensaje(mensaje) {
 
@@ -592,19 +715,69 @@ function mostrarMensaje(mensaje) {
     );
 
 
+  const loading =
+    contenedor.querySelector(
+      ".loading"
+    );
+
+
+  if (loading) {
+
+    contenedor.innerHTML =
+      "";
+
+  }
+
+
+  /*
+    Evitar duplicados
+  */
+
+  if (
+    document.getElementById(
+      "mensaje-" +
+      mensaje.id
+    )
+  ) {
+
+    return;
+
+  }
+
+
   const div =
     document.createElement(
       "div"
     );
 
 
+  const esMio =
+    mensaje.sender_id ===
+    currentUser.id;
+
+
   div.className =
     "mensaje " +
     (
-      mensaje.sender_id === currentUser.id
+      esMio
         ? "mio"
         : "otro"
     );
+
+
+  div.id =
+    "mensaje-" +
+    mensaje.id;
+
+
+  const burbuja =
+    document.createElement(
+      "div"
+    );
+
+
+  burbuja.className =
+    "burbuja";
 
 
   const texto =
@@ -617,55 +790,140 @@ function mostrarMensaje(mensaje) {
     mensaje.content;
 
 
-  const hora =
+  const info =
     document.createElement(
       "div"
     );
 
 
-  hora.className =
-    "hora";
+  info.className =
+    "mensaje-info";
 
 
-  const fecha =
-    new Date(
-      mensaje.created_at
+  const hora =
+    document.createElement(
+      "span"
     );
 
 
   hora.textContent =
-    fecha.toLocaleTimeString(
-      "es-AR",
-      {
-        hour: "2-digit",
-        minute: "2-digit"
-      }
+    formatearHora(
+      mensaje.created_at
     );
 
 
-  div.appendChild(texto);
+  info.appendChild(
+    hora
+  );
 
-  div.appendChild(hora);
 
-  contenedor.appendChild(div);
+  /*
+    ESTADO DEL MENSAJE
+  */
+
+  if (esMio) {
+
+    const estado =
+      document.createElement(
+        "span"
+      );
+
+
+    estado.className =
+      "estado";
+
+
+    if (mensaje.read_at) {
+
+      estado.textContent =
+        "✓✓";
+
+      estado.classList.add(
+        "leido"
+      );
+
+      estado.title =
+        "Leído";
+
+    } else if (
+      mensaje.delivered_at
+    ) {
+
+      estado.textContent =
+        "✓✓";
+
+      estado.classList.add(
+        "recibido"
+      );
+
+      estado.title =
+        "Recibido";
+
+    } else {
+
+      estado.textContent =
+        "✓";
+
+      estado.title =
+        "Enviado";
+
+    }
+
+
+    info.appendChild(
+      estado
+    );
+
+  }
+
+
+  burbuja.appendChild(
+    texto
+  );
+
+  burbuja.appendChild(
+    info
+  );
+
+  div.appendChild(
+    burbuja
+  );
+
+  contenedor.appendChild(
+    div
+  );
 
 }
 
 
-/* ==========================
+/* =========================================
+   HORA
+========================================= */
+
+function formatearHora(fecha) {
+
+  return new Date(
+    fecha
+  ).toLocaleTimeString(
+    "es-AR",
+    {
+      hour: "2-digit",
+      minute: "2-digit"
+    }
+  );
+
+}
+
+
+/* =========================================
    ENVIAR
-========================== */
+========================================= */
 
 async function enviarMensaje() {
 
   const input =
     document.getElementById(
-      "mensaje"
-    );
-
-  const boton =
-    document.getElementById(
-      "enviar"
+      "mensajeInput"
     );
 
 
@@ -673,12 +931,28 @@ async function enviarMensaje() {
     input.value.trim();
 
 
-  if (!contenido) {
+  if (!contenido) return;
+
+
+  if (!matchId) {
+
+    alert(
+      "No hay un Match activo."
+    );
+
     return;
+
   }
 
 
-  boton.disabled = true;
+  const boton =
+    document.getElementById(
+      "enviarBtn"
+    );
+
+
+  boton.disabled =
+    true;
 
 
   const {
@@ -686,9 +960,7 @@ async function enviarMensaje() {
     error
   } =
     await supabaseClient
-
       .from("messages")
-
       .insert({
 
         match_id:
@@ -701,13 +973,12 @@ async function enviarMensaje() {
           contenido
 
       })
-
       .select()
-
       .single();
 
 
-  boton.disabled = false;
+  boton.disabled =
+    false;
 
 
   if (error) {
@@ -715,8 +986,7 @@ async function enviarMensaje() {
     console.error(error);
 
     alert(
-      "❌ No se pudo enviar el mensaje:\n\n" +
-      error.message
+      "No se pudo enviar el mensaje."
     );
 
     return;
@@ -724,103 +994,46 @@ async function enviarMensaje() {
   }
 
 
-  input.value = "";
+  input.value =
+    "";
+
+
+  await dejarDeEscribir();
+
+  input.focus();
 
 
   /*
-    Lo mostramos inmediatamente.
+    Mostrar inmediatamente
+    para el remitente.
   */
 
-  mostrarMensaje(data);
+  if (data) {
 
-  bajarChat();
+    mostrarMensaje(data);
 
-}
+    bajarChat();
 
-
-/* ==========================
-   TIEMPO REAL
-========================== */
-
-function activarTiempoReal() {
-
-  supabaseClient
-
-    .channel(
-      "chat-" + matchId
-    )
-
-    .on(
-
-      "postgres_changes",
-
-      {
-        event: "INSERT",
-        schema: "public",
-        table: "messages",
-        filter:
-          "match_id=eq." + matchId
-      },
-
-      payload => {
-
-        /*
-          No duplicamos nuestros
-          propios mensajes.
-        */
-
-        if (
-          payload.new.sender_id !==
-          currentUser.id
-        ) {
-
-          mostrarMensaje(
-            payload.new
-          );
-
-          bajarChat();
-
-        }
-
-      }
-
-    )
-
-    .subscribe();
+  }
 
 }
 
 
-/* ==========================
-   BAJAR CHAT
-========================== */
-
-function bajarChat() {
-
-  const contenedor =
-    document.getElementById(
-      "mensajes"
-    );
-
-
-  contenedor.scrollTop =
-    contenedor.scrollHeight;
-
-}
-
-
-/* ==========================
+/* =========================================
    ENTER
-========================== */
+========================================= */
 
 document
-  .getElementById("mensaje")
+  .getElementById(
+    "mensajeInput"
+  )
   .addEventListener(
     "keydown",
     function(event) {
 
       if (
-        event.key === "Enter"
+        event.key ===
+        "Enter"
       ) {
 
         event.preventDefault();
@@ -833,51 +1046,463 @@ document
   );
 
 
-/* ==========================
-   VOLVER
-========================== */
+/* =========================================
+   ESCRIBIENDO
+========================================= */
 
-function volver() {
+document
+  .getElementById(
+    "mensajeInput"
+  )
+  .addEventListener(
+    "input",
+    function() {
 
-  window.location.href =
-    "./chat.html";
+      marcarEscribiendo();
+
+      clearTimeout(
+        typingTimer
+      );
+
+
+      typingTimer =
+        setTimeout(
+          dejarDeEscribir,
+          1500
+        );
+
+    }
+  );
+
+
+async function marcarEscribiendo() {
+
+  if (!matchId) return;
+
+  if (isTyping) return;
+
+  isTyping =
+    true;
+
+
+  await supabaseClient
+    .from("typing_status")
+    .upsert({
+
+      match_id:
+        matchId,
+
+      user_id:
+        currentUser.id,
+
+      is_typing:
+        true,
+
+      updated_at:
+        new Date().toISOString()
+
+    });
 
 }
 
 
-/* ==========================
-   ERROR
-========================== */
+async function dejarDeEscribir() {
 
-function mostrarError(mensaje) {
+  if (!matchId) return;
 
-  const estado =
+
+  isTyping =
+    false;
+
+
+  await supabaseClient
+    .from("typing_status")
+    .upsert({
+
+      match_id:
+        matchId,
+
+      user_id:
+        currentUser.id,
+
+      is_typing:
+        false,
+
+      updated_at:
+        new Date().toISOString()
+
+    });
+
+}
+
+
+/* =========================================
+   TYPING EN TIEMPO REAL
+========================================= */
+
+function escucharTyping() {
+
+  supabaseClient
+    .channel(
+      "typing-" +
+      matchId
+    )
+    .on(
+      "postgres_changes",
+      {
+        event: "*",
+        schema: "public",
+        table: "typing_status",
+        filter:
+          "match_id=eq." +
+          matchId
+      },
+      payload => {
+
+        const data =
+          payload.new;
+
+
+        if (
+          !data ||
+          data.user_id ===
+          currentUser.id
+        ) {
+
+          return;
+
+        }
+
+
+        const elemento =
+          document.getElementById(
+            "typing"
+          );
+
+
+        if (
+          data.is_typing
+        ) {
+
+          elemento.textContent =
+            (
+              otherProfile?.nombre ||
+              "Usuario"
+            ) +
+            " está escribiendo...";
+
+        } else {
+
+          elemento.textContent =
+            "";
+
+        }
+
+      }
+    )
+    .subscribe();
+
+}
+
+
+/* =========================================
+   NUEVOS MENSAJES
+========================================= */
+
+function escucharMensajes() {
+
+  supabaseClient
+    .channel(
+      "messages-" +
+      matchId
+    )
+    .on(
+      "postgres_changes",
+      {
+        event: "*",
+        schema: "public",
+        table: "messages",
+        filter:
+          "match_id=eq." +
+          matchId
+      },
+      async payload => {
+
+        /*
+          INSERT
+        */
+
+        if (
+          payload.eventType ===
+          "INSERT"
+        ) {
+
+          const mensaje =
+            payload.new;
+
+
+          /*
+            Si lo recibe el otro usuario,
+            marcamos como entregado.
+          */
+
+          if (
+            mensaje.sender_id !==
+            currentUser.id
+          ) {
+
+            await marcarMensajeRecibido(
+              mensaje.id
+            );
+
+            await marcarMensajeLeido(
+              mensaje.id
+            );
+
+          }
+
+
+          mostrarMensaje(
+            mensaje
+          );
+
+          bajarChat();
+
+          return;
+
+        }
+
+
+        /*
+          UPDATE:
+          actualizar ✓✓ / leído
+        */
+
+        if (
+          payload.eventType ===
+          "UPDATE"
+        ) {
+
+          actualizarEstadoMensaje(
+            payload.new
+          );
+
+        }
+
+      }
+    )
+    .subscribe();
+
+}
+
+
+/* =========================================
+   MARCAR RECIBIDOS
+========================================= */
+
+async function marcarMensajesRecibidos() {
+
+  const ahora =
+    new Date().toISOString();
+
+
+  await supabaseClient
+    .from("messages")
+    .update({
+      delivered_at:
+        ahora
+    })
+    .eq(
+      "match_id",
+      matchId
+    )
+    .neq(
+      "sender_id",
+      currentUser.id
+    )
+    .is(
+      "delivered_at",
+      null
+    );
+
+}
+
+
+/* =========================================
+   MARCAR LEÍDOS
+========================================= */
+
+async function marcarMensajesLeidos() {
+
+  const ahora =
+    new Date().toISOString();
+
+
+  await supabaseClient
+    .from("messages")
+    .update({
+      read_at:
+        ahora
+    })
+    .eq(
+      "match_id",
+      matchId
+    )
+    .neq(
+      "sender_id",
+      currentUser.id
+    )
+    .is(
+      "read_at",
+      null
+    );
+
+}
+
+
+/* =========================================
+   MARCAR UNO RECIBIDO
+========================================= */
+
+async function marcarMensajeRecibido(
+  id
+) {
+
+  await supabaseClient
+    .from("messages")
+    .update({
+      delivered_at:
+        new Date().toISOString()
+    })
+    .eq(
+      "id",
+      id
+    )
+    .is(
+      "delivered_at",
+      null
+    );
+
+}
+
+
+/* =========================================
+   MARCAR UNO LEÍDO
+========================================= */
+
+async function marcarMensajeLeido(
+  id
+) {
+
+  await supabaseClient
+    .from("messages")
+    .update({
+      read_at:
+        new Date().toISOString()
+    })
+    .eq(
+      "id",
+      id
+    )
+    .is(
+      "read_at",
+      null
+    );
+
+}
+
+
+/* =========================================
+   ACTUALIZAR ESTADO VISUAL
+========================================= */
+
+function actualizarEstadoMensaje(
+  mensaje
+) {
+
+  const elemento =
     document.getElementById(
-      "estado"
+      "mensaje-" +
+      mensaje.id
     );
 
 
-  estado.style.display =
-    "block";
+  if (!elemento) return;
 
 
-  estado.className =
-    "error";
+  if (
+    mensaje.sender_id !==
+    currentUser.id
+  ) {
+
+    return;
+
+  }
 
 
-  estado.textContent =
-    "❌ " + mensaje;
+  const estado =
+    elemento.querySelector(
+      ".estado"
+    );
+
+
+  if (!estado) return;
+
+
+  estado.classList.remove(
+    "leido"
+  );
+
+
+  if (mensaje.read_at) {
+
+    estado.textContent =
+      "✓✓";
+
+    estado.classList.add(
+      "leido"
+    );
+
+    estado.title =
+      "Leído";
+
+  } else if (
+    mensaje.delivered_at
+  ) {
+
+    estado.textContent =
+      "✓✓";
+
+    estado.title =
+      "Recibido";
+
+  } else {
+
+    estado.textContent =
+      "✓";
+
+    estado.title =
+      "Enviado";
+
+  }
 
 }
 
 
-/* ==========================
-   INICIAR
-========================== */
+/* =========================================
+   ESTADO DEL USUARIO
+========================================= */
 
-iniciar();
+function escucharEstado() {
 
-</script>
-
-</body>
-</html>
+  supabaseClient
+    .channel(
+      "profile-" +
+      otherUserId
+    )
+    .on(
+      "postgres_changes",
+      {
+        event: "UPDATE",
+        schema: "public",
+        table: "prof
