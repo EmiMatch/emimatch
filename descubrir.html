@@ -3,93 +3,242 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Diagnóstico EmiMatch</title>
+
+  <title>Descubrir - EmiMatch</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
+      margin: 0;
+      min-height: 100vh;
       font-family: Arial, sans-serif;
-      background: #07152f;
+      background: linear-gradient(135deg, #07152f, #102a55);
       color: white;
-      padding: 25px;
+      padding: 18px;
     }
 
-    .box {
-      background: #102a55;
+    .contenedor {
+      width: 100%;
+      max-width: 480px;
+      margin: auto;
+    }
+
+    .encabezado {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .titulo {
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .subtitulo {
+      color: #cbd5e1;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+    .volver {
+      border: 0;
+      background: rgba(255,255,255,.12);
+      color: white;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .card {
+      background: white;
+      color: #111827;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 18px 45px rgba(0,0,0,.35);
+    }
+
+    .foto {
+      width: 100%;
+      height: 430px;
+      object-fit: cover;
+      display: block;
+      background: #e5e7eb;
+    }
+
+    .sin-foto {
+      width: 100%;
+      height: 430px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg,#dbeafe,#e2e8f0);
+      font-size: 100px;
+    }
+
+    .info {
       padding: 20px;
-      border-radius: 15px;
-      margin-top: 20px;
-      line-height: 1.7;
-      word-break: break-word;
     }
 
-    .ok {
-      color: #4ade80;
+    .nombre {
+      font-size: 27px;
+      font-weight: 700;
+    }
+
+    .datos {
+      color: #64748b;
+      margin-top: 6px;
+      font-size: 15px;
+    }
+
+    .descripcion {
+      margin-top: 16px;
+      color: #334155;
+      line-height: 1.5;
+    }
+
+    .intereses {
+      margin-top: 14px;
+      color: #475569;
+      line-height: 1.5;
+    }
+
+    .acciones {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      padding: 20px;
+    }
+
+    .accion {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      border: 0;
+      font-size: 29px;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(0,0,0,.18);
+    }
+
+    .pasar {
+      background: #f1f5f9;
+    }
+
+    .like {
+      background: #fce7f3;
+    }
+
+    .mensaje {
+      background: white;
+      color: #334155;
+      padding: 35px 20px;
+      border-radius: 20px;
+      text-align: center;
+      font-size: 17px;
+    }
+
+    .boton {
+      margin-top: 18px;
+      border: 0;
+      background: #102a55;
+      color: white;
+      padding: 13px 22px;
+      border-radius: 12px;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    .cargando {
+      text-align: center;
+      padding: 50px 20px;
+      font-size: 17px;
     }
 
     .error {
-      color: #f87171;
+      color: #b91c1c;
+      background: #fee2e2;
+      padding: 15px;
+      border-radius: 12px;
+      margin-top: 15px;
+      word-break: break-word;
     }
   </style>
 </head>
 
 <body>
 
-<h2>🔎 Diagnóstico EmiMatch</h2>
+<div class="contenedor">
 
-<div class="box" id="resultado">
-  Iniciando...
+  <div class="encabezado">
+
+    <div>
+      <div class="titulo">🔎 Descubrir</div>
+      <div class="subtitulo">Encontrá nuevas personas</div>
+    </div>
+
+    <button
+      class="volver"
+      onclick="volver()">
+      ← Volver
+    </button>
+
+  </div>
+
+  <div id="contenido">
+    <div class="cargando">
+      🔎 Buscando perfiles...
+    </div>
+  </div>
+
 </div>
+
 
 <script>
 
-const resultado = document.getElementById("resultado");
+const SUPABASE_URL =
+  "https://kngiadwaesdbmvwivdev.supabase.co";
 
-function escribir(texto, clase = "") {
-  resultado.innerHTML +=
-    `<div class="${clase}">${texto}</div>`;
-}
+const SUPABASE_KEY =
+  "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
 
-
-async function diagnostico() {
-
-  resultado.innerHTML = "";
-
-  escribir("1️⃣ JavaScript funcionando", "ok");
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
 
-  const SUPABASE_URL =
-    "https://kngiadwaesdbmvwivdev.supabase.co";
+let usuarioActual = null;
+let perfiles = [];
+let indiceActual = 0;
 
-  const SUPABASE_KEY =
-    "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
 
+/* =====================================
+   INICIO
+===================================== */
+
+async function iniciar() {
 
   try {
 
-    const supabaseClient =
-      window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-      );
-
-    escribir("2️⃣ Supabase cargado", "ok");
-
-
     const {
       data: { session },
-      error: sessionError
-    } =
-      await supabaseClient.auth.getSession();
+      error
+    } = await supabaseClient.auth.getSession();
 
 
-    if (sessionError) {
+    if (error) {
 
-      escribir(
-        "❌ Error de sesión: " +
-        sessionError.message,
-        "error"
+      mostrarError(
+        "Error al comprobar la sesión.",
+        error.message
       );
 
       return;
@@ -98,110 +247,27 @@ async function diagnostico() {
 
     if (!session) {
 
-      escribir(
-        "❌ No hay sesión iniciada.",
-        "error"
-      );
+      window.location.href =
+        "./index.html";
 
       return;
     }
 
 
-    escribir(
-      "3️⃣ Sesión activa",
-      "ok"
-    );
+    usuarioActual =
+      session.user;
 
 
-    escribir(
-      "Usuario: " +
-      session.user.id,
-      "ok"
-    );
+    await cargarPerfiles();
 
-
-    const {
-      data,
-      error
-    } =
-      await supabaseClient
-        .from("profiles")
-        .select("*")
-        .limit(10);
-
-
-    if (error) {
-
-      escribir(
-        "❌ Error leyendo profiles:",
-        "error"
-      );
-
-      escribir(
-        error.message,
-        "error"
-      );
-
-      escribir(
-        "Código: " + error.code,
-        "error"
-      );
-
-      escribir(
-        "Detalles: " +
-        (error.details || "ninguno"),
-        "error"
-      );
-
-      return;
-    }
-
-
-    escribir(
-      "4️⃣ Tabla profiles accesible",
-      "ok"
-    );
-
-
-    escribir(
-      "Perfiles encontrados: " +
-      (data ? data.length : 0),
-      "ok"
-    );
-
-
-    if (data && data.length > 0) {
-
-      escribir(
-        "5️⃣ Primer perfil:",
-        "ok"
-      );
-
-      escribir(
-        JSON.stringify(data[0], null, 2)
-          .replace(/\n/g, "<br>"),
-        "ok"
-      );
-
-    } else {
-
-      escribir(
-        "⚠️ La tabla profiles está vacía.",
-        "error"
-      );
-
-    }
 
   } catch (error) {
 
-    escribir(
-      "❌ Error inesperado:",
-      "error"
-    );
+    console.error(error);
 
-    escribir(
-      error.message,
-      "error"
+    mostrarError(
+      "Error inesperado.",
+      error.message
     );
 
   }
@@ -209,7 +275,419 @@ async function diagnostico() {
 }
 
 
-diagnostico();
+/* =====================================
+   CARGAR PERFILES
+===================================== */
+
+async function cargarPerfiles() {
+
+  document.getElementById(
+    "contenido"
+  ).innerHTML = `
+    <div class="cargando">
+      🔎 Buscando perfiles...
+    </div>
+  `;
+
+
+  const {
+    data,
+    error
+  } = await supabaseClient
+    .from("profiles")
+    .select(`
+      id,
+      nombre,
+      edad,
+      ciudad,
+      descripcion,
+      foto_url,
+      intereses,
+      created_at
+    `)
+    .neq(
+      "id",
+      usuarioActual.id
+    )
+    .order(
+      "created_at",
+      {
+        ascending: false
+      }
+    );
+
+
+  if (error) {
+
+    console.error(
+      "Error profiles:",
+      error
+    );
+
+    mostrarError(
+      "No se pudieron cargar los perfiles.",
+      error.message
+    );
+
+    return;
+  }
+
+
+  perfiles =
+    Array.isArray(data)
+      ? data
+      : [];
+
+
+  indiceActual = 0;
+
+
+  mostrarPerfil();
+
+}
+
+
+/* =====================================
+   MOSTRAR PERFIL
+===================================== */
+
+function mostrarPerfil() {
+
+  const contenido =
+    document.getElementById(
+      "contenido"
+    );
+
+
+  if (
+    perfiles.length === 0
+  ) {
+
+    contenido.innerHTML = `
+      <div class="mensaje">
+
+        <div style="font-size:65px;">
+          💕
+        </div>
+
+        <strong>
+          No hay perfiles disponibles.
+        </strong>
+
+        <br><br>
+
+        Por ahora no encontramos
+        otras personas para mostrarte.
+
+        <br>
+
+        <button
+          class="boton"
+          onclick="cargarPerfiles()">
+          🔄 Actualizar
+        </button>
+
+      </div>
+    `;
+
+    return;
+  }
+
+
+  if (
+    indiceActual >= perfiles.length
+  ) {
+
+    contenido.innerHTML = `
+      <div class="mensaje">
+
+        <div style="font-size:65px;">
+          🎉
+        </div>
+
+        <strong>
+          Ya viste todos los perfiles.
+        </strong>
+
+        <br><br>
+
+        Volvé más tarde para descubrir
+        nuevas personas.
+
+        <br>
+
+        <button
+          class="boton"
+          onclick="cargarPerfiles()">
+          🔄 Buscar nuevamente
+        </button>
+
+      </div>
+    `;
+
+    return;
+  }
+
+
+  const perfil =
+    perfiles[indiceActual];
+
+
+  const nombre =
+    escapar(
+      perfil.nombre ||
+      "Usuario"
+    );
+
+
+  const edad =
+    perfil.edad !== null &&
+    perfil.edad !== undefined &&
+    perfil.edad !== ""
+      ? escapar(
+          String(perfil.edad)
+        )
+      : "";
+
+
+  const ciudad =
+    escapar(
+      perfil.ciudad ||
+      ""
+    );
+
+
+  const descripcion =
+    escapar(
+      perfil.descripcion ||
+      "Todavía no agregó una descripción."
+    );
+
+
+  const intereses =
+    escapar(
+      perfil.intereses ||
+      "Todavía no agregó intereses."
+    );
+
+
+  let fotoHTML;
+
+
+  if (
+    perfil.foto_url &&
+    perfil.foto_url.trim() !== ""
+  ) {
+
+    fotoHTML = `
+      <img
+        class="foto"
+        src="${escapar(perfil.foto_url)}"
+        alt="Foto de perfil"
+        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+      >
+
+      <div
+        class="sin-foto"
+        style="display:none;">
+        👤
+      </div>
+    `;
+
+  } else {
+
+    fotoHTML = `
+      <div class="sin-foto">
+        👤
+      </div>
+    `;
+
+  }
+
+
+  contenido.innerHTML = `
+
+    <div class="card">
+
+      ${fotoHTML}
+
+      <div class="info">
+
+        <div class="nombre">
+          ${nombre}${edad ? ", " + edad : ""}
+        </div>
+
+
+        ${
+          ciudad
+            ? `
+              <div class="datos">
+                📍 ${ciudad}
+              </div>
+            `
+            : ""
+        }
+
+
+        <div class="descripcion">
+          ${descripcion}
+        </div>
+
+
+        <div class="intereses">
+          ❤️ ${intereses}
+        </div>
+
+      </div>
+
+
+      <div class="acciones">
+
+        <button
+          class="accion pasar"
+          onclick="pasarPerfil()"
+          aria-label="Pasar">
+
+          ❌
+
+        </button>
+
+
+        <button
+          class="accion like"
+          onclick="darLike()"
+          aria-label="Me gusta">
+
+          ❤️
+
+        </button>
+
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+/* =====================================
+   PASAR PERFIL
+===================================== */
+
+function pasarPerfil() {
+
+  indiceActual++;
+
+  mostrarPerfil();
+
+}
+
+
+/* =====================================
+   LIKE
+===================================== */
+
+async function darLike() {
+
+  const perfil =
+    perfiles[indiceActual];
+
+
+  if (!perfil) {
+    return;
+  }
+
+
+  /*
+    El botón está preparado.
+
+    Todavía NO escribimos en una tabla
+    de likes porque primero debemos usar
+    la estructura real de tu base de datos.
+  */
+
+
+  indiceActual++;
+
+  mostrarPerfil();
+
+}
+
+
+/* =====================================
+   MOSTRAR ERROR
+===================================== */
+
+function mostrarError(
+  titulo,
+  detalle
+) {
+
+  document.getElementById(
+    "contenido"
+  ).innerHTML = `
+
+    <div class="mensaje">
+
+      <div style="font-size:55px;">
+        ⚠️
+      </div>
+
+      <strong>
+        ${escapar(titulo)}
+      </strong>
+
+      <div class="error">
+        ${escapar(detalle || "Error desconocido")}
+      </div>
+
+      <button
+        class="boton"
+        onclick="cargarPerfiles()">
+        🔄 Reintentar
+      </button>
+
+    </div>
+
+  `;
+
+}
+
+
+/* =====================================
+   ESCAPAR HTML
+===================================== */
+
+function escapar(texto) {
+
+  return String(texto)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+
+}
+
+
+/* =====================================
+   VOLVER
+===================================== */
+
+function volver() {
+
+  window.location.href =
+    "./perfil.html";
+
+}
+
+
+/* =====================================
+   ARRANCAR
+===================================== */
+
+iniciar();
 
 </script>
 
