@@ -3,19 +3,82 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prueba EmiMatch</title>
+
+  <title>EmiMatch - Conversación</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fb;
+      padding: 25px;
+      text-align: center;
+    }
+
+    .caja {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      max-width: 500px;
+      margin: 40px auto;
+      box-shadow: 0 3px 15px rgba(0,0,0,.1);
+    }
+
+    .ok {
+      color: green;
+      font-weight: bold;
+    }
+
+    .dato {
+      background: #f0f2f5;
+      padding: 12px;
+      border-radius: 8px;
+      word-break: break-all;
+      margin-top: 15px;
+    }
+  </style>
 </head>
 
 <body>
 
-<h1>💕 EmiMatch</h1>
+<div class="caja">
 
-<h2 id="resultado">Probando...</h2>
+  <h1>💕 EmiMatch</h1>
+
+  <h2>Conversación</h2>
+
+  <p id="estado">
+    Probando usuario...
+  </p>
+
+  <div id="usuario" class="dato"></div>
+
+</div>
 
 <script>
 
-document.getElementById("resultado").textContent =
-  "✅ JAVASCRIPT FUNCIONA";
+const params =
+  new URLSearchParams(window.location.search);
+
+const userId =
+  params.get("user");
+
+if (userId) {
+
+  document.getElementById("estado").innerHTML =
+    "✅ El usuario del Match fue recibido correctamente.";
+
+  document.getElementById("estado").className =
+    "ok";
+
+  document.getElementById("usuario").textContent =
+    userId;
+
+} else {
+
+  document.getElementById("estado").textContent =
+    "❌ No se recibió ningún usuario.";
+
+}
 
 </script>
 
