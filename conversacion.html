@@ -23,6 +23,8 @@ body{
   flex-direction:column;
 }
 
+/* HEADER */
+
 header{
   height:70px;
   background:linear-gradient(135deg,#7c3aed,#ec4899);
@@ -35,12 +37,12 @@ header{
 
 .btn-volver{
   border:0;
-  background:rgba(255,255,255,.2);
+  background:rgba(255,255,255,.20);
   color:white;
   width:42px;
   height:42px;
   border-radius:50%;
-  font-size:22px;
+  font-size:25px;
   cursor:pointer;
 }
 
@@ -63,9 +65,11 @@ header{
 
 .estado{
   font-size:13px;
-  opacity:.9;
   margin-top:3px;
+  opacity:.9;
 }
+
+/* CHAT */
 
 .chat{
   flex:1;
@@ -97,28 +101,40 @@ header{
   background:white;
   color:#222;
   border-bottom-left-radius:5px;
-  box-shadow:0 1px 4px rgba(0,0,0,.1);
+  box-shadow:0 1px 4px rgba(0,0,0,.10);
 }
 
 .hora{
   font-size:10px;
-  opacity:.65;
+  opacity:.70;
   margin-top:4px;
   text-align:right;
 }
 
 .check{
-  margin-left:4px;
+  margin-left:5px;
+  font-weight:bold;
 }
+
+.check.leido{
+  color:#38bdf8;
+}
+
+/* ESCRIBIENDO */
 
 .escribiendo{
   position:fixed;
-  bottom:65px;
+  bottom:68px;
   left:15px;
   font-size:13px;
   color:#777;
   display:none;
+  background:white;
+  padding:5px 10px;
+  border-radius:12px;
 }
+
+/* INPUT */
 
 .composer{
   position:fixed;
@@ -156,6 +172,12 @@ header{
   cursor:pointer;
 }
 
+.enviar:active{
+  transform:scale(.95);
+}
+
+/* MENSAJES ESPECIALES */
+
 .vacio{
   text-align:center;
   color:#888;
@@ -175,19 +197,30 @@ header{
 
 <header>
 
-<button class="btn-volver" onclick="history.back()">‹</button>
+<button
+  class="btn-volver"
+  onclick="history.back()">
+  ‹
+</button>
 
-<img id="foto" class="foto"
-     src="https://via.placeholder.com/100">
+<img
+  id="foto"
+  class="foto"
+  src="https://via.placeholder.com/100"
+  alt="Foto">
 
 <div class="info">
 
-<div id="nombre" class="nombre">
-Cargando...
+<div
+  id="nombre"
+  class="nombre">
+  Cargando...
 </div>
 
-<div id="estado" class="estado">
-Conectando...
+<div
+  id="estado"
+  class="estado">
+  Conectando...
 </div>
 
 </div>
@@ -195,7 +228,9 @@ Conectando...
 </header>
 
 
-<div id="chat" class="chat">
+<div
+  id="chat"
+  class="chat">
 
 <div class="vacio">
 Cargando conversación...
@@ -204,7 +239,9 @@ Cargando conversación...
 </div>
 
 
-<div id="escribiendo" class="escribiendo">
+<div
+  id="escribiendo"
+  class="escribiendo">
 Está escribiendo...
 </div>
 
@@ -212,14 +249,15 @@ Está escribiendo...
 <div class="composer">
 
 <input
- id="mensajeInput"
- class="input"
- type="text"
- placeholder="Escribí un mensaje..."
- autocomplete="off"
->
+  id="mensajeInput"
+  class="input"
+  type="text"
+  placeholder="Escribí un mensaje..."
+  autocomplete="off">
 
-<button id="enviar" class="enviar">
+<button
+  id="enviar"
+  class="enviar">
 ➤
 </button>
 
@@ -227,6 +265,10 @@ Está escribiendo...
 
 
 <script>
+
+/* =========================
+   SUPABASE
+========================= */
 
 const SUPABASE_URL =
 "https://kngiadwaesdbmvwivdev.supabase.co";
@@ -236,584 +278,907 @@ const SUPABASE_KEY =
 
 const supabaseClient =
 window.supabase.createClient(
-SUPABASE_URL,
-SUPABASE_KEY
+  SUPABASE_URL,
+  SUPABASE_KEY
 );
 
+
+/* =========================
+   VARIABLES
+========================= */
 
 let currentUser = null;
 let otherUserId = null;
 let matchId = null;
+
 let canalMensajes = null;
 
 
+/* =========================
+   USUARIO DE LA URL
+========================= */
+
 const params =
-new URLSearchParams(window.location.search);
+new URLSearchParams(
+  window.location.search
+);
 
 otherUserId =
 params.get("user");
 
 
+/* =========================
+   INICIAR
+========================= */
+
 async function iniciar(){
 
-try{
+  try{
 
-if(!otherUserId){
+    if(!otherUserId){
 
-mostrarError(
-"No se encontró el usuario de la conversación."
-);
+      mostrarError(
+        "No se encontró el usuario de la conversación."
+      );
 
-return;
-
-}
-
-
-const {
-data:{session},
-error:sessionError
-} =
-await supabaseClient.auth.getSession();
+      return;
+    }
 
 
-if(sessionError)
-throw sessionError;
+    const {
+      data:{session},
+      error:sessionError
+    } =
+    await supabaseClient.auth.getSession();
 
 
-if(!session){
-
-mostrarError(
-"La sesión expiró. Volvé a iniciar sesión."
-);
-
-return;
-
-}
+    if(sessionError)
+      throw sessionError;
 
 
-currentUser =
-session.user;
+    if(!session){
+
+      mostrarError(
+        "La sesión expiró. Volvé a iniciar sesión."
+      );
+
+      return;
+    }
 
 
-await cargarPerfil();
-
-await buscarMatch();
-
-await cargarMensajes();
-
-escucharMensajes();
-
-marcarMensajesRecibidos();
-
-document
-.getElementById("mensajeInput")
-.addEventListener(
-"input",
-manejarEscritura
-);
+    currentUser =
+    session.user;
 
 
-document
-.getElementById("mensajeInput")
-.addEventListener(
-"keydown",
-function(e){
+    await cargarPerfil();
 
-if(e.key==="Enter"){
+    await buscarMatch();
 
-e.preventDefault();
+    await cargarMensajes();
 
-enviarMensaje();
+    await marcarMensajesLeidos();
+
+    escucharMensajes();
+
+    prepararInput();
+
+  }
+  catch(error){
+
+    console.error(error);
+
+    mostrarError(
+      "Error: " +
+      error.message
+    );
+
+  }
 
 }
 
-});
 
-
-document
-.getElementById("enviar")
-.addEventListener(
-"click",
-enviarMensaje
-);
-
-
-}catch(error){
-
-console.error(error);
-
-mostrarError(
-"Error: "+error.message
-);
-
-}
-
-}
-
+/* =========================
+   PERFIL
+========================= */
 
 async function cargarPerfil(){
 
-const {
-data,
-error
-} =
-await supabaseClient
-.from("profiles")
-.select(
-"id,nombre,edad,ciudad,descripcion,foto_url,intereses"
-)
-.eq("id",otherUserId)
-.maybeSingle();
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
+    .from("profiles")
+    .select(
+      "id,nombre,edad,ciudad,descripcion,foto_url,intereses"
+    )
+    .eq("id",otherUserId)
+    .maybeSingle();
 
 
-if(error)
-throw error;
+  if(error)
+    throw error;
 
 
-if(!data)
-throw new Error(
-"No se encontró el perfil."
-);
+  if(!data)
+    throw new Error(
+      "No se encontró el perfil."
+    );
 
 
-document
-.getElementById("nombre")
-.textContent =
-data.nombre || "Usuario";
+  document
+    .getElementById("nombre")
+    .textContent =
+    data.nombre || "Usuario";
 
 
-if(data.foto_url){
+  if(data.foto_url){
 
-document
-.getElementById("foto")
-.src =
-data.foto_url;
+    document
+      .getElementById("foto")
+      .src =
+      data.foto_url;
+
+  }
 
 }
 
-}
 
+/* =========================
+   BUSCAR MATCH
+========================= */
 
 async function buscarMatch(){
 
-let {data,error} =
-await supabaseClient
-.from("matches")
-.select(
-"id,user1_id,user2_id"
-)
-.eq("user1_id",currentUser.id)
-.eq("user2_id",otherUserId)
-.maybeSingle();
+  let resultado =
+  await supabaseClient
+    .from("matches")
+    .select(
+      "id,user1_id,user2_id"
+    )
+    .eq(
+      "user1_id",
+      currentUser.id
+    )
+    .eq(
+      "user2_id",
+      otherUserId
+    )
+    .maybeSingle();
 
 
-if(error)
-throw error;
+  if(resultado.error)
+    throw resultado.error;
 
 
-if(!data){
-
-const resultado =
-await supabaseClient
-.from("matches")
-.select(
-"id,user1_id,user2_id"
-)
-.eq("user1_id",otherUserId)
-.eq("user2_id",currentUser.id)
-.maybeSingle();
+  let data =
+  resultado.data;
 
 
-if(resultado.error)
-throw resultado.error;
+  /* Buscar en sentido contrario */
+
+  if(!data){
+
+    resultado =
+    await supabaseClient
+      .from("matches")
+      .select(
+        "id,user1_id,user2_id"
+      )
+      .eq(
+        "user1_id",
+        otherUserId
+      )
+      .eq(
+        "user2_id",
+        currentUser.id
+      )
+      .maybeSingle();
 
 
-data =
-resultado.data;
+    if(resultado.error)
+      throw resultado.error;
+
+
+    data =
+    resultado.data;
+
+  }
+
+
+  if(!data){
+
+    throw new Error(
+      "No existe un match entre estos usuarios."
+    );
+
+  }
+
+
+  matchId =
+  data.id;
 
 }
 
 
-if(!data)
-throw new Error(
-"No existe un match entre estos usuarios."
-);
-
-
-matchId =
-data.id;
-
-}
-
+/* =========================
+   CARGAR MENSAJES
+========================= */
 
 async function cargarMensajes(){
 
-const {
-data,
-error
-} =
-await supabaseClient
-.from("messages")
-.select(
-"id,match_id,sender_id,content,created_at,delivered_at,read_at"
-)
-.eq("match_id",matchId)
-.order(
-"created_at",
-{ascending:true}
-);
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
+    .from("messages")
+    .select(
+      "id,match_id,sender_id,content,created_at,delivered_at,read_at"
+    )
+    .eq(
+      "match_id",
+      matchId
+    )
+    .order(
+      "created_at",
+      {
+        ascending:true
+      }
+    );
 
 
-if(error)
-throw error;
+  if(error)
+    throw error;
 
 
-const chat =
-document.getElementById("chat");
+  const chat =
+  document.getElementById(
+    "chat"
+  );
 
 
-chat.innerHTML="";
+  chat.innerHTML = "";
 
 
-if(!data || data.length===0){
+  if(!data || data.length===0){
 
-chat.innerHTML=
-'<div class="vacio">Todavía no hay mensajes 💬</div>';
+    chat.innerHTML =
+      '<div class="vacio">Todavía no hay mensajes 💬</div>';
 
-return;
+    return;
+
+  }
+
+
+  data.forEach(
+    mensaje => {
+
+      mostrarMensaje(
+        mensaje
+      );
+
+    }
+  );
+
+
+  bajarChat();
 
 }
 
 
-data.forEach(
-mostrarMensaje
-);
-
-
-bajarChat();
-
-}
-
+/* =========================
+   MOSTRAR MENSAJE
+========================= */
 
 function mostrarMensaje(mensaje){
 
-const chat =
-document.getElementById("chat");
+  const chat =
+  document.getElementById(
+    "chat"
+  );
 
 
-const div =
-document.createElement("div");
+  /* Evitar duplicados */
+
+  if(
+    chat.querySelector(
+      `[data-id="${mensaje.id}"]`
+    )
+  ){
+
+    actualizarMensajeVisual(
+      mensaje
+    );
+
+    return;
+
+  }
 
 
-const mio =
-mensaje.sender_id ===
-currentUser.id;
+  const div =
+  document.createElement(
+    "div"
+  );
 
 
-div.className =
-"mensaje "+
-(mio ? "mio":"otro");
+  const mio =
+  mensaje.sender_id ===
+  currentUser.id;
 
 
-let hora =
-new Date(
-mensaje.created_at
-).toLocaleTimeString(
-[],
-{
-hour:"2-digit",
-minute:"2-digit"
+  div.className =
+    "mensaje " +
+    (
+      mio
+      ? "mio"
+      : "otro"
+    );
+
+
+  div.dataset.id =
+    mensaje.id;
+
+
+  const hora =
+  new Date(
+    mensaje.created_at
+  ).toLocaleTimeString(
+    [],
+    {
+      hour:"2-digit",
+      minute:"2-digit"
+    }
+  );
+
+
+  let checks = "";
+
+
+  if(mio){
+
+    if(mensaje.read_at){
+
+      checks =
+        '<span class="check leido">✓✓</span>';
+
+    }
+    else if(mensaje.delivered_at){
+
+      checks =
+        '<span class="check">✓✓</span>';
+
+    }
+    else{
+
+      checks =
+        '<span class="check">✓</span>';
+
+    }
+
+  }
+
+
+  div.innerHTML =
+
+  `<div>${escapeHTML(
+    mensaje.content
+  )}</div>
+
+  <div class="hora">
+    ${hora}
+    ${checks}
+  </div>`;
+
+
+  chat.appendChild(
+    div
+  );
+
 }
-);
 
 
-let checks="";
+/* =========================
+   ACTUALIZAR VISUAL
+========================= */
+
+function actualizarMensajeVisual(
+  mensaje
+){
+
+  const elemento =
+  document.querySelector(
+    `[data-id="${mensaje.id}"]`
+  );
 
 
-if(mio){
+  if(!elemento)
+    return;
 
-if(mensaje.read_at){
 
-checks =
-'<span class="check">✓✓</span>';
+  if(
+    mensaje.sender_id !==
+    currentUser.id
+  )
+    return;
 
-}else if(mensaje.delivered_at){
 
-checks =
-'<span class="check">✓✓</span>';
+  const hora =
+  new Date(
+    mensaje.created_at
+  ).toLocaleTimeString(
+    [],
+    {
+      hour:"2-digit",
+      minute:"2-digit"
+    }
+  );
 
-}else{
 
-checks =
-'<span class="check">✓</span>';
+  let checks = "";
+
+
+  if(mensaje.read_at){
+
+    checks =
+      '<span class="check leido">✓✓</span>';
+
+  }
+  else if(mensaje.delivered_at){
+
+    checks =
+      '<span class="check">✓✓</span>';
+
+  }
+  else{
+
+    checks =
+      '<span class="check">✓</span>';
+
+  }
+
+
+  const horaDiv =
+  elemento.querySelector(
+    ".hora"
+  );
+
+
+  if(horaDiv){
+
+    horaDiv.innerHTML =
+      hora + checks;
+
+  }
 
 }
 
-}
 
-
-div.innerHTML =
-
-`<div>${escapeHTML(mensaje.content)}</div>
-<div class="hora">
-${hora}${checks}
-</div>`;
-
-
-div.dataset.id =
-mensaje.id;
-
-
-chat.appendChild(div);
-
-}
-
-
-function escapeHTML(text){
-
-const div =
-document.createElement("div");
-
-div.textContent =
-text;
-
-return div.innerHTML;
-
-}
-
+/* =========================
+   ENVIAR
+========================= */
 
 async function enviarMensaje(){
 
-const input =
-document.getElementById(
-"mensajeInput"
-);
+  const input =
+  document.getElementById(
+    "mensajeInput"
+  );
 
 
-const contenido =
-input.value.trim();
+  const contenido =
+  input.value.trim();
 
 
-if(!contenido)
-return;
+  if(!contenido)
+    return;
 
 
-if(!matchId)
-return;
+  if(!matchId)
+    return;
 
 
-input.value="";
+  input.disabled =
+    true;
 
 
-const {
-data,
-error
-} =
-await supabaseClient
-.from("messages")
-.insert({
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
+    .from("messages")
+    .insert({
 
-match_id:matchId,
+      match_id:
+      matchId,
 
-sender_id:
-currentUser.id,
+      sender_id:
+      currentUser.id,
 
-content:contenido
+      content:
+      contenido
 
-})
-.select()
-.single();
+    })
+    .select()
+    .single();
 
 
-if(error){
+  input.disabled =
+    false;
 
-console.error(error);
 
-input.value =
-contenido;
+  if(error){
 
-alert(
-"No se pudo enviar el mensaje."
-);
+    console.error(error);
 
-return;
+    alert(
+      "No se pudo enviar el mensaje."
+    );
+
+    return;
+
+  }
+
+
+  input.value = "";
+
+
+  mostrarMensaje(
+    data
+  );
+
+
+  bajarChat();
 
 }
 
 
-mostrarMensaje(data);
-
-bajarChat();
-
-}
-
+/* =========================
+   MARCAR ENTREGADOS
+========================= */
 
 async function marcarMensajesRecibidos(){
 
-const {
-data,
-error
-} =
-await supabaseClient
-.from("messages")
-.select(
-"id,sender_id,delivered_at"
-)
-.eq("match_id",matchId)
-.neq("sender_id",currentUser.id)
-.is("delivered_at",null);
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
+    .from("messages")
+    .select(
+      "id"
+    )
+    .eq(
+      "match_id",
+      matchId
+    )
+    .neq(
+      "sender_id",
+      currentUser.id
+    )
+    .is(
+      "delivered_at",
+      null
+    );
 
 
-if(error){
+  if(error){
 
-console.error(error);
+    console.error(
+      "Error entregados:",
+      error
+    );
 
-return;
+    return;
+
+  }
+
+
+  if(!data)
+    return;
+
+
+  for(
+    const mensaje of data
+  ){
+
+    await supabaseClient
+      .from("messages")
+      .update({
+        delivered_at:
+        new Date().toISOString()
+      })
+      .eq(
+        "id",
+        mensaje.id
+      );
+
+  }
 
 }
 
 
-if(!data || data.length===0)
-return;
+/* =========================
+   MARCAR COMO LEÍDOS
+========================= */
+
+async function marcarMensajesLeidos(){
+
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
+    .from("messages")
+    .select(
+      "id"
+    )
+    .eq(
+      "match_id",
+      matchId
+    )
+    .neq(
+      "sender_id",
+      currentUser.id
+    )
+    .is(
+      "read_at",
+      null
+    );
 
 
-for(const mensaje of data){
+  if(error){
 
-await supabaseClient
-.from("messages")
-.update({
-delivered_at:new Date().toISOString()
-})
-.eq("id",mensaje.id);
+    console.error(
+      "Error buscando mensajes para leer:",
+      error
+    );
+
+    return;
+
+  }
+
+
+  if(!data || data.length===0)
+    return;
+
+
+  const ahora =
+  new Date().toISOString();
+
+
+  for(
+    const mensaje of data
+  ){
+
+    const resultado =
+    await supabaseClient
+      .from("messages")
+      .update({
+        delivered_at:ahora,
+        read_at:ahora
+      })
+      .eq(
+        "id",
+        mensaje.id
+      );
+
+
+    if(resultado.error){
+
+      console.error(
+        "Error marcando leído:",
+        resultado.error
+      );
+
+    }
+
+  }
 
 }
 
-}
 
+/* =========================
+   TIEMPO REAL
+========================= */
 
 function escucharMensajes(){
 
-canalMensajes =
-supabaseClient
-.channel(
-"chat-"+matchId
-);
+  canalMensajes =
+  supabaseClient
+    .channel(
+      "chat-" + matchId
+    );
 
 
-canalMensajes
-.on(
-"postgres_changes",
-{
-event:"INSERT",
-schema:"public",
-table:"messages",
-filter:"match_id=eq."+matchId
-},
-payload=>{
+  canalMensajes
+    .on(
+      "postgres_changes",
+      {
+        event:"INSERT",
+        schema:"public",
+        table:"messages",
+        filter:
+        "match_id=eq." +
+        matchId
+      },
+      async payload => {
 
-const mensaje =
-payload.new;
-
-
-if(
-mensaje.sender_id !==
-currentUser.id
-){
-
-mostrarMensaje(
-mensaje
-);
-
-bajarChat();
-
-marcarMensajeRecibido(
-mensaje.id
-);
-
-}
-
-}
-)
-.subscribe();
+        const mensaje =
+        payload.new;
 
 
-}
+        mostrarMensaje(
+          mensaje
+        );
 
 
-async function marcarMensajeRecibido(id){
-
-await supabaseClient
-.from("messages")
-.update({
-delivered_at:
-new Date().toISOString()
-})
-.eq("id",id);
-
-}
+        bajarChat();
 
 
-function manejarEscritura(){
+        /* Si lo recibimos,
+           marcar entregado */
 
-const texto =
-document
-.getElementById("mensajeInput")
-.value
-.trim();
+        if(
+          mensaje.sender_id !==
+          currentUser.id
+        ){
 
+          await supabaseClient
+            .from("messages")
+            .update({
+              delivered_at:
+              new Date().toISOString(),
+              read_at:
+              new Date().toISOString()
+            })
+            .eq(
+              "id",
+              mensaje.id
+            );
 
-const estado =
-document
-.getElementById("escribiendo");
+        }
 
+      }
+    )
+    .on(
+      "postgres_changes",
+      {
+        event:"UPDATE",
+        schema:"public",
+        table:"messages",
+        filter:
+        "match_id=eq." +
+        matchId
+      },
+      payload => {
 
-if(texto){
+        actualizarMensajeVisual(
+          payload.new
+        );
 
-estado.style.display =
-"block";
-
-estado.textContent =
-"Escribiendo...";
-
-}else{
-
-estado.style.display =
-"none";
+      }
+    )
+    .subscribe();
 
 }
 
+
+/* =========================
+   INPUT
+========================= */
+
+function prepararInput(){
+
+  const input =
+  document.getElementById(
+    "mensajeInput"
+  );
+
+
+  input.addEventListener(
+    "keydown",
+    function(event){
+
+      if(
+        event.key ===
+        "Enter"
+      ){
+
+        event.preventDefault();
+
+        enviarMensaje();
+
+      }
+
+    }
+  );
+
+
+  document
+    .getElementById("enviar")
+    .addEventListener(
+      "click",
+      enviarMensaje
+    );
+
 }
 
+
+/* =========================
+   ESCAPAR HTML
+========================= */
+
+function escapeHTML(text){
+
+  const div =
+  document.createElement(
+    "div"
+  );
+
+
+  div.textContent =
+  text;
+
+
+  return div.innerHTML;
+
+}
+
+
+/* =========================
+   SCROLL
+========================= */
 
 function bajarChat(){
 
-const chat =
-document.getElementById("chat");
+  const chat =
+  document.getElementById(
+    "chat"
+  );
 
-setTimeout(
-()=>{
-chat.scrollTop =
-chat.scrollHeight;
-},
-50
-);
+
+  setTimeout(
+    () => {
+
+      chat.scrollTop =
+      chat.scrollHeight;
+
+    },
+    50
+  );
+
+}
+
+
+/* =========================
+   ERROR
+========================= */
+
+function mostrarError(
+  texto
+){
+
+  document
+    .getElementById(
+      "chat"
+    )
+    .innerHTML =
+    `<div class="error">
+      ${escapeHTML(texto)}
+    </div>`;
 
 }
 
 
-function mostrarError(texto){
-
-document
-.getElementById("chat")
-.innerHTML =
-`<div class="error">${escapeHTML(texto)}</div>`;
-
-}
-
+/* =========================
+   INICIAR APP
+========================= */
 
 iniciar();
 
 </script>
 
 </body>
-  </html>
+</html>
