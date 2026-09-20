@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Descubrir - EmiMatch</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -15,43 +14,143 @@
 
     body {
       margin: 0;
-      min-height: 100vh;
       font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #07152f, #102b55);
+      background: linear-gradient(135deg, #f5f7fb, #e9eef7);
+      color: #222;
+    }
+
+    header {
+      background: linear-gradient(135deg, #111827, #1e3a8a);
       color: white;
-      padding: 20px;
+      padding: 22px 16px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,.15);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 27px;
+    }
+
+    header p {
+      margin: 7px 0 0;
+      opacity: .85;
     }
 
     .contenedor {
-      max-width: 430px;
+      width: 100%;
+      max-width: 600px;
       margin: auto;
+      padding: 15px;
     }
 
-    h1 {
-      text-align: center;
-      margin: 10px 0 5px;
-    }
-
-    .subtitulo {
-      text-align: center;
-      color: #cbd5e1;
-      margin-bottom: 20px;
-    }
-
-    .volver {
-      display: inline-block;
-      color: white;
+    .boton-volver {
+      display: block;
       text-decoration: none;
-      margin-bottom: 15px;
+      color: #1e3a8a;
+      font-weight: bold;
+      margin: 5px 0 15px;
+    }
+
+    .filtros {
+      background: white;
+      border-radius: 18px;
+      padding: 18px;
+      margin-bottom: 18px;
+      box-shadow: 0 5px 18px rgba(0,0,0,.08);
+    }
+
+    .filtros h2 {
+      margin-top: 0;
+      font-size: 20px;
+      color: #111827;
+    }
+
+    .campo {
+      margin-bottom: 13px;
+    }
+
+    .campo label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    .campo input,
+    .campo select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
       font-size: 15px;
+      outline: none;
+    }
+
+    .campo input:focus,
+    .campo select:focus {
+      border-color: #2563eb;
+    }
+
+    .fila {
+      display: flex;
+      gap: 10px;
+    }
+
+    .fila .campo {
+      flex: 1;
+    }
+
+    .checkbox {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin: 8px 0 15px;
+      font-weight: bold;
+    }
+
+    .checkbox input {
+      width: 20px;
+      height: 20px;
+    }
+
+    .botones-filtro {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      flex: 1;
+      border: none;
+      border-radius: 11px;
+      padding: 13px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .btn-aplicar {
+      background: #2563eb;
+      color: white;
+    }
+
+    .btn-limpiar {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .contador {
+      text-align: center;
+      font-weight: bold;
+      margin: 12px 0;
+      color: #374151;
     }
 
     .card {
       background: white;
-      color: #172033;
       border-radius: 22px;
       overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      box-shadow: 0 8px 25px rgba(0,0,0,.12);
+      margin-bottom: 20px;
     }
 
     .foto {
@@ -62,115 +161,193 @@
       background: #e5e7eb;
     }
 
-    .sinFoto {
+    .sin-foto {
+      width: 100%;
       height: 390px;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #e5e7eb;
-      color: #64748b;
-      font-size: 70px;
+      background: linear-gradient(135deg, #dbeafe, #e5e7eb);
+      font-size: 90px;
     }
 
-    .info {
-      padding: 20px;
+    .contenido {
+      padding: 18px;
     }
 
     .nombre {
-      font-size: 26px;
+      font-size: 24px;
       font-weight: bold;
-      margin-bottom: 5px;
+      margin-bottom: 6px;
     }
 
     .datos {
-      color: #64748b;
-      margin-bottom: 12px;
+      color: #555;
+      margin-bottom: 10px;
+    }
+
+    .online {
+      color: #16a34a;
+      font-weight: bold;
+      margin-bottom: 10px;
     }
 
     .descripcion {
       line-height: 1.5;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .intereses {
-      color: #475569;
+      color: #374151;
       font-size: 14px;
-      margin-bottom: 5px;
+      margin-bottom: 15px;
     }
 
-    .botones {
+    .acciones {
       display: flex;
       gap: 12px;
-      padding: 0 20px 20px;
     }
 
-    button {
+    .accion {
       flex: 1;
       border: none;
-      padding: 15px;
       border-radius: 14px;
+      padding: 14px;
       font-size: 18px;
       font-weight: bold;
       cursor: pointer;
     }
 
     .pasar {
-      background: #e5e7eb;
-      color: #334155;
+      background: #fee2e2;
+      color: #b91c1c;
     }
 
     .like {
-      background: #ec4899;
-      color: white;
+      background: #dcfce7;
+      color: #15803d;
+    }
+
+    .mensaje {
+      background: white;
+      padding: 25px 18px;
+      border-radius: 18px;
+      text-align: center;
+      box-shadow: 0 5px 18px rgba(0,0,0,.08);
+      margin-bottom: 15px;
     }
 
     .reiniciar {
       width: 100%;
-      margin-top: 18px;
-      background: #d4af37;
-      color: #07152f;
-    }
-
-    .mensaje {
-      text-align: center;
-      padding: 30px 15px;
-      background: rgba(255,255,255,.08);
-      border-radius: 20px;
-      line-height: 1.6;
-    }
-
-    .emoji {
-      font-size: 60px;
-      margin-bottom: 10px;
-    }
-
-    .volverPerfil {
-      display: block;
-      margin-top: 18px;
-      text-align: center;
+      border: none;
+      background: #111827;
       color: white;
-      text-decoration: none;
+      padding: 13px;
+      border-radius: 11px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
     }
 
     .cargando {
       text-align: center;
-      padding: 40px;
+      padding: 30px;
+      font-weight: bold;
+    }
+
+    @media (max-width: 500px) {
+      .foto,
+      .sin-foto {
+        height: 330px;
+      }
     }
   </style>
 </head>
 
 <body>
 
+<header>
+  <h1>🔎 Descubrir</h1>
+  <p>Encontrá personas compatibles con vos</p>
+</header>
+
 <div class="contenedor">
 
-  <a class="volver" href="./perfil.html">← Volver</a>
+  <a href="perfil.html" class="boton-volver">
+    ← Volver a mi perfil
+  </a>
 
-  <h1>🔎 Descubrir</h1>
-  <div class="subtitulo">Encontrá nuevas personas</div>
+  <!-- FILTROS -->
+  <div class="filtros">
 
-  <div id="contenido">
+    <h2>🎯 Filtrar perfiles</h2>
+
+    <div class="fila">
+
+      <div class="campo">
+        <label for="edadMin">Edad mínima</label>
+        <input
+          type="number"
+          id="edadMin"
+          min="18"
+          max="100"
+          value="18"
+        >
+      </div>
+
+      <div class="campo">
+        <label for="edadMax">Edad máxima</label>
+        <input
+          type="number"
+          id="edadMax"
+          min="18"
+          max="100"
+          value="80"
+        >
+      </div>
+
+    </div>
+
+    <div class="campo">
+      <label for="ciudad">📍 Ciudad</label>
+      <input
+        type="text"
+        id="ciudad"
+        placeholder="Ej: Buenos Aires"
+      >
+    </div>
+
+    <div class="campo">
+      <label for="intereses">❤️ Interés</label>
+      <input
+        type="text"
+        id="intereses"
+        placeholder="Ej: fútbol, música, viajes"
+      >
+    </div>
+
+    <label class="checkbox">
+      <input type="checkbox" id="soloOnline">
+      🟢 Mostrar solamente personas online
+    </label>
+
+    <div class="botones-filtro">
+      <button class="btn btn-aplicar" onclick="aplicarFiltros()">
+        🔎 Aplicar filtros
+      </button>
+
+      <button class="btn btn-limpiar" onclick="limpiarFiltros()">
+        🧹 Limpiar
+      </button>
+    </div>
+
+  </div>
+
+  <div id="contador" class="contador"></div>
+
+  <div id="resultado">
     <div class="cargando">
-      Cargando perfiles...
+      ⏳ Cargando perfiles...
     </div>
   </div>
 
@@ -185,374 +362,549 @@ const SUPABASE_KEY =
   "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
 
 const supabaseClient =
-  supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
 let usuarioActual = null;
 let perfiles = [];
-let indiceActual = 0;
+let perfilesMostrados = [];
 
 
-// ================================
-// INICIAR
-// ================================
+// ===============================
+// INICIO
+// ===============================
 
 async function iniciar() {
 
   const {
-    data: { session },
-    error
+    data: {
+      session
+    }
   } = await supabaseClient.auth.getSession();
 
-  if (error || !session) {
-    window.location.replace("./index.html");
+  if (!session) {
+
+    window.location.href = "index.html";
+
     return;
   }
 
   usuarioActual = session.user;
 
-  await cargarPerfiles();
+  cargarPerfiles();
 }
 
 
-// ================================
+// ===============================
 // CARGAR PERFILES
-// ================================
+// ===============================
 
 async function cargarPerfiles() {
 
-  const contenido =
-    document.getElementById("contenido");
+  document.getElementById("resultado").innerHTML =
+    `<div class="cargando">⏳ Buscando perfiles...</div>`;
 
-  contenido.innerHTML =
-    `<div class="cargando">Cargando perfiles...</div>`;
+  const edadMin =
+    Number(document.getElementById("edadMin").value) || 18;
 
-  const { data: todos, error } =
-    await supabaseClient
-      .from("profiles")
-      .select("*")
-      .neq("id", usuarioActual.id)
-      .order("created_at", { ascending: false });
+  const edadMax =
+    Number(document.getElementById("edadMax").value) || 100;
 
-  if (error) {
+  const ciudad =
+    document.getElementById("ciudad").value.trim();
 
-    contenido.innerHTML = `
-      <div class="mensaje">
-        <div class="emoji">⚠️</div>
-        <h2>Error</h2>
-        <p>No se pudieron cargar los perfiles.</p>
-      </div>
-    `;
+  const intereses =
+    document.getElementById("intereses").value.trim();
 
-    console.error(error);
+  const soloOnline =
+    document.getElementById("soloOnline").checked;
+
+
+  if (edadMin > edadMax) {
+
+    document.getElementById("resultado").innerHTML =
+      `<div class="mensaje">
+        ⚠️ La edad mínima no puede ser mayor que la edad máxima.
+      </div>`;
+
     return;
   }
 
 
-  const { data: swipes, error: errorSwipes } =
-    await supabaseClient
-      .from("swipes")
-      .select("target_user_id")
-      .eq("user_id", usuarioActual.id);
+  // ===============================
+  // OBTENER SWIPES
+  // ===============================
+
+  const {
+    data: swipes,
+    error: errorSwipes
+  } = await supabaseClient
+    .from("swipes")
+    .select("target_user_id")
+    .eq("user_id", usuarioActual.id);
 
 
   if (errorSwipes) {
 
     console.error(errorSwipes);
 
-    perfiles = todos || [];
-
-  } else {
-
-    const vistos = new Set(
-      (swipes || []).map(
-        s => s.target_user_id
-      )
-    );
-
-    perfiles = (todos || []).filter(
-      perfil => !vistos.has(perfil.id)
-    );
-  }
-
-
-  indiceActual = 0;
-
-  mostrarPerfil();
-}
-
-
-// ================================
-// MOSTRAR PERFIL
-// ================================
-
-function mostrarPerfil() {
-
-  const contenido =
-    document.getElementById("contenido");
-
-  if (indiceActual >= perfiles.length) {
-
-    contenido.innerHTML = `
-
-      <div class="mensaje">
-
-        <div class="emoji">💕</div>
-
-        <h2>No hay más perfiles</h2>
-
-        <p>
-          Por ahora viste todos los perfiles disponibles.
-        </p>
-
-        <button
-          class="reiniciar"
-          onclick="reiniciarPerfiles()">
-          🔄 Reiniciar perfiles
-        </button>
-
-      </div>
-
-      <a
-        class="volverPerfil"
-        href="./perfil.html">
-        Volver al perfil
-      </a>
-
-    `;
+    mostrarError("No se pudieron cargar tus preferencias.");
 
     return;
   }
 
 
-  const perfil = perfiles[indiceActual];
+  const vistos = new Set(
+    (swipes || []).map(
+      swipe => swipe.target_user_id
+    )
+  );
 
 
-  let fotoHTML = "";
+  // ===============================
+  // CONSULTA DE PERFILES
+  // ===============================
 
-  if (perfil.foto_url) {
+  let query = supabaseClient
+    .from("profiles")
+    .select(`
+      id,
+      nombre,
+      edad,
+      ciudad,
+      descripcion,
+      foto_url,
+      intereses,
+      online,
+      last_seen
+    `)
+    .neq("id", usuarioActual.id)
+    .gte("edad", edadMin)
+    .lte("edad", edadMax);
 
-    fotoHTML = `
-      <img
-        class="foto"
-        src="${escapeHTML(perfil.foto_url)}"
-        alt="Foto de ${escapeHTML(perfil.nombre || "usuario")}"
-        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-      >
 
-      <div
-        class="sinFoto"
-        style="display:none;">
-        👤
-      </div>
-    `;
+  if (ciudad) {
 
-  } else {
-
-    fotoHTML = `
-      <div class="sinFoto">
-        👤
-      </div>
-    `;
+    query = query.ilike(
+      "ciudad",
+      `%${ciudad}%`
+    );
   }
 
 
-  contenido.innerHTML = `
+  if (intereses) {
 
-    <div class="card">
-
-      ${fotoHTML}
-
-      <div class="info">
-
-        <div class="nombre">
-          ${escapeHTML(perfil.nombre || "Sin nombre")}
-          ${perfil.edad ? ", " + escapeHTML(perfil.edad) : ""}
-        </div>
-
-        ${
-          perfil.ciudad
-          ? `<div class="datos">
-              📍 ${escapeHTML(perfil.ciudad)}
-             </div>`
-          : ""
-        }
-
-        ${
-          perfil.descripcion
-          ? `<div class="descripcion">
-              ${escapeHTML(perfil.descripcion)}
-             </div>`
-          : ""
-        }
-
-        ${
-          perfil.intereses
-          ? `<div class="intereses">
-              ❤️ ${escapeHTML(perfil.intereses)}
-             </div>`
-          : ""
-        }
-
-      </div>
-
-
-      <div class="botones">
-
-        <button
-          class="pasar"
-          onclick="pasarPerfil()">
-          ❌ Pasar
-        </button>
-
-        <button
-          class="like"
-          onclick="darLike()">
-          ❤️ Me gusta
-        </button>
-
-      </div>
-
-    </div>
-
-  `;
-}
-
-
-// ================================
-// LIKE
-// ================================
-
-async function darLike() {
-
-  if (!usuarioActual) return;
-
-  const perfil =
-    perfiles[indiceActual];
-
-  if (!perfil) return;
-
-
-  const { data: existente } =
-    await supabaseClient
-      .from("swipes")
-      .select("id")
-      .eq("user_id", usuarioActual.id)
-      .eq("target_user_id", perfil.id)
-      .maybeSingle();
-
-
-  if (existente) {
-
-    indiceActual++;
-    mostrarPerfil();
-    return;
+    query = query.ilike(
+      "intereses",
+      `%${intereses}%`
+    );
   }
 
 
-  const { error } =
-    await supabaseClient
-      .from("swipes")
-      .insert({
-        user_id: usuarioActual.id,
-        target_user_id: perfil.id,
-        action: "like"
-      });
+  if (soloOnline) {
+
+    query = query.eq(
+      "online",
+      true
+    );
+  }
+
+
+  const {
+    data,
+    error
+  } = await query;
 
 
   if (error) {
 
     console.error(error);
 
-    alert(
-      "No se pudo registrar el Me gusta."
+    mostrarError(
+      "No se pudieron cargar los perfiles."
     );
 
     return;
   }
 
 
-  indiceActual++;
+  perfiles = (data || []).filter(
+    perfil => !vistos.has(perfil.id)
+  );
 
-  mostrarPerfil();
+
+  perfilesMostrados = perfiles;
+
+  actualizarContador();
+
+  mostrarPrimerPerfil();
 }
 
 
-// ================================
-// PASS
-// ================================
+// ===============================
+// MOSTRAR PRIMER PERFIL
+// ===============================
 
-async function pasarPerfil() {
+function mostrarPrimerPerfil() {
 
-  if (!usuarioActual) return;
-
-  const perfil =
-    perfiles[indiceActual];
-
-  if (!perfil) return;
+  const resultado =
+    document.getElementById("resultado");
 
 
-  const { data: existente } =
-    await supabaseClient
-      .from("swipes")
-      .select("id")
-      .eq("user_id", usuarioActual.id)
-      .eq("target_user_id", perfil.id)
-      .maybeSingle();
+  if (!perfilesMostrados.length) {
 
+    resultado.innerHTML = `
+      <div class="mensaje">
 
-  if (!existente) {
+        <div style="font-size:60px;">
+          💕
+        </div>
 
-    const { error } =
-      await supabaseClient
-        .from("swipes")
-        .insert({
-          user_id: usuarioActual.id,
-          target_user_id: perfil.id,
-          action: "pass"
-        });
+        <h2>No encontramos más perfiles</h2>
 
+        <p>
+          Probá cambiando los filtros
+          o reiniciá los perfiles para continuar
+          con las pruebas.
+        </p>
 
-    if (error) {
+        <button
+          class="reiniciar"
+          onclick="reiniciarPerfiles()"
+        >
+          🔄 Reiniciar perfiles
+        </button>
 
-      console.error(error);
+      </div>
+    `;
 
-      alert(
-        "No se pudo registrar el perfil."
-      );
-
-      return;
-    }
+    return;
   }
 
 
-  indiceActual++;
+  const perfil =
+    perfilesMostrados[0];
 
-  mostrarPerfil();
+
+  resultado.innerHTML = crearCard(perfil);
 }
 
 
-// ================================
-// REINICIAR
-// ================================
+// ===============================
+// CREAR CARD
+// ===============================
+
+function crearCard(perfil) {
+
+  const foto = perfil.foto_url
+    ? `
+      <img
+        class="foto"
+        src="${escaparHTML(perfil.foto_url)}"
+        alt="Foto de ${escaparHTML(perfil.nombre || "usuario")}"
+      >
+    `
+    : `
+      <div class="sin-foto">
+        👤
+      </div>
+    `;
+
+
+  const online = perfil.online === true
+    ? `
+      <div class="online">
+        🟢 En línea
+      </div>
+    `
+    : `
+      <div style="color:#777;margin-bottom:10px;">
+        ⚪ Desconectado
+      </div>
+    `;
+
+
+  return `
+
+    <div class="card">
+
+      ${foto}
+
+      <div class="contenido">
+
+        <div class="nombre">
+          ${escaparHTML(perfil.nombre || "Sin nombre")}
+        </div>
+
+        <div class="datos">
+
+          ${perfil.edad ? perfil.edad + " años" : ""}
+          
+          ${perfil.ciudad
+            ? " · " + escaparHTML(perfil.ciudad)
+            : ""
+          }
+
+        </div>
+
+        ${online}
+
+        ${
+          perfil.descripcion
+          ? `
+            <div class="descripcion">
+              ${escaparHTML(perfil.descripcion)}
+            </div>
+          `
+          : ""
+        }
+
+        ${
+          perfil.intereses
+          ? `
+            <div class="intereses">
+              ❤️ ${escaparHTML(perfil.intereses)}
+            </div>
+          `
+          : ""
+        }
+
+        <div class="acciones">
+
+          <button
+            class="accion pasar"
+            onclick="pasar('${perfil.id}')"
+          >
+            ❌ Pasar
+          </button>
+
+          <button
+            class="accion like"
+            onclick="darLike('${perfil.id}')"
+          >
+            ❤️ Me gusta
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+  `;
+}
+
+
+// ===============================
+// LIKE
+// ===============================
+
+async function darLike(usuarioId) {
+
+  const boton =
+    document.querySelector(".like");
+
+  if (boton) {
+    boton.disabled = true;
+  }
+
+
+  const {
+    error
+  } = await supabaseClient
+    .from("swipes")
+    .insert({
+      user_id: usuarioActual.id,
+      target_user_id: usuarioId,
+      action: "like"
+    });
+
+
+  if (error) {
+
+    console.error(error);
+
+    if (boton) {
+      boton.disabled = false;
+    }
+
+    if (
+      error.code === "23505"
+    ) {
+
+      alert(
+        "Ya habías interactuado con esta persona."
+      );
+
+    } else {
+
+      alert(
+        "No se pudo registrar el Me gusta."
+      );
+    }
+
+    return;
+  }
+
+
+  // Sacar perfil de la lista
+  quitarPerfilActual();
+
+  alert("❤️ ¡Me gusta enviado!");
+
+  mostrarPrimerPerfil();
+}
+
+
+// ===============================
+// PASAR
+// ===============================
+
+async function pasar(usuarioId) {
+
+  const boton =
+    document.querySelector(".pasar");
+
+  if (boton) {
+    boton.disabled = true;
+  }
+
+
+  const {
+    error
+  } = await supabaseClient
+    .from("swipes")
+    .insert({
+      user_id: usuarioActual.id,
+      target_user_id: usuarioId,
+      action: "pass"
+    });
+
+
+  if (error) {
+
+    console.error(error);
+
+    if (boton) {
+      boton.disabled = false;
+    }
+
+    if (
+      error.code === "23505"
+    ) {
+
+      alert(
+        "Ya habías interactuado con esta persona."
+      );
+
+    } else {
+
+      alert(
+        "No se pudo registrar la acción."
+      );
+    }
+
+    return;
+  }
+
+
+  quitarPerfilActual();
+
+  mostrarPrimerPerfil();
+}
+
+
+// ===============================
+// QUITAR PERFIL ACTUAL
+// ===============================
+
+function quitarPerfilActual() {
+
+  if (!perfilesMostrados.length) {
+    return;
+  }
+
+  perfilesMostrados.shift();
+
+  actualizarContador();
+}
+
+
+// ===============================
+// CONTADOR
+// ===============================
+
+function actualizarContador() {
+
+  const contador =
+    document.getElementById("contador");
+
+  const cantidad =
+    perfilesMostrados.length;
+
+  contador.textContent =
+    cantidad === 1
+      ? "1 perfil disponible"
+      : `${cantidad} perfiles disponibles`;
+}
+
+
+// ===============================
+// APLICAR FILTROS
+// ===============================
+
+function aplicarFiltros() {
+
+  cargarPerfiles();
+}
+
+
+// ===============================
+// LIMPIAR FILTROS
+// ===============================
+
+function limpiarFiltros() {
+
+  document.getElementById("edadMin").value = 18;
+
+  document.getElementById("edadMax").value = 80;
+
+  document.getElementById("ciudad").value = "";
+
+  document.getElementById("intereses").value = "";
+
+  document.getElementById("soloOnline").checked = false;
+
+  cargarPerfiles();
+}
+
+
+// ===============================
+// REINICIAR SWIPES
+// ===============================
 
 async function reiniciarPerfiles() {
 
-  if (!usuarioActual) return;
-
-
   const confirmar =
     confirm(
-      "¿Querés volver a mostrar todos los perfiles?"
+      "¿Querés reiniciar todos tus perfiles vistos para esta prueba?"
     );
 
-  if (!confirmar) return;
+  if (!confirmar) {
+    return;
+  }
 
 
-  const { error } =
-    await supabaseClient
-      .from("swipes")
-      .delete()
-      .eq("user_id", usuarioActual.id);
+  const {
+    error
+  } = await supabaseClient
+    .from("swipes")
+    .delete()
+    .eq(
+      "user_id",
+      usuarioActual.id
+    );
 
 
   if (error) {
@@ -567,17 +919,35 @@ async function reiniciarPerfiles() {
   }
 
 
-  await cargarPerfiles();
+  alert(
+    "🔄 Perfiles reiniciados correctamente."
+  );
+
+  cargarPerfiles();
 }
 
 
-// ================================
+// ===============================
+// ERROR
+// ===============================
+
+function mostrarError(texto) {
+
+  document.getElementById("resultado").innerHTML = `
+    <div class="mensaje">
+      ❌ ${texto}
+    </div>
+  `;
+}
+
+
+// ===============================
 // SEGURIDAD HTML
-// ================================
+// ===============================
 
-function escapeHTML(valor) {
+function escaparHTML(texto) {
 
-  return String(valor)
+  return String(texto)
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
@@ -586,9 +956,9 @@ function escapeHTML(valor) {
 }
 
 
-// ================================
-// INICIAR APP
-// ================================
+// ===============================
+// INICIAR
+// ===============================
 
 iniciar();
 
