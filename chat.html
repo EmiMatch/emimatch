@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>EmiMatch - Matches</title>
+<title>EmiMatch - Mis Matches</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -23,13 +23,13 @@ body {
 header {
   background: #111827;
   color: white;
-  padding: 18px;
+  padding: 20px;
   text-align: center;
 }
 
 header h1 {
   margin: 0;
-  font-size: 24px;
+  font-size: 25px;
 }
 
 .container {
@@ -40,27 +40,42 @@ header h1 {
 
 .status {
   background: white;
-  padding: 15px;
-  border-radius: 12px;
+  padding: 16px;
+  border-radius: 14px;
   margin-bottom: 15px;
   box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+
+.error {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.success {
+  background: #dcfce7;
+  color: #166534;
 }
 
 .match {
   background: white;
   padding: 15px;
-  border-radius: 15px;
+  border-radius: 16px;
   margin-bottom: 12px;
   display: flex;
   align-items: center;
   gap: 15px;
   box-shadow: 0 2px 8px rgba(0,0,0,.08);
   cursor: pointer;
+  transition: .2s;
+}
+
+.match:active {
+  transform: scale(.98);
 }
 
 .match img {
-  width: 65px;
-  height: 65px;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
   object-fit: cover;
   background: #ddd;
@@ -71,33 +86,28 @@ header h1 {
 }
 
 .match-info h3 {
-  margin: 0 0 5px;
+  margin: 0 0 6px;
+  font-size: 19px;
 }
 
 .match-info p {
-  margin: 3px 0;
+  margin: 4px 0;
   color: #666;
+}
+
+.arrow {
+  font-size: 25px;
 }
 
 button {
   width: 100%;
   padding: 14px;
-  border: 0;
-  border-radius: 10px;
+  border: none;
+  border-radius: 12px;
   background: #111827;
   color: white;
   font-size: 16px;
-  margin-top: 10px;
-}
-
-.error {
-  color: #b91c1c;
-  background: #fee2e2;
-}
-
-.success {
-  color: #166534;
-  background: #dcfce7;
+  margin-top: 15px;
 }
 </style>
 </head>
@@ -111,72 +121,91 @@ button {
 <div class="container">
 
   <div id="status" class="status">
-    Cargando matches...
+    🔄 Cargando matches...
   </div>
 
   <div id="matches"></div>
 
-  <button onclick="volverPerfil()">← Volver al perfil</button>
+  <button onclick="volverPerfil()">
+    ← Volver al perfil
+  </button>
 
 </div>
 
 <script>
 
-const SUPABASE_URL = "https://kngiadwaesdbmvwivdev.supabase.co";
+const SUPABASE_URL =
+"https://kngiadwaesdbmvwivdev.supabase.co";
 
 const SUPABASE_KEY =
 "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
 
 const supabaseClient =
-  window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
+window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
 
 async function cargarMatches() {
 
-  const status = document.getElementById("status");
-  const container = document.getElementById("matches");
+  const status =
+    document.getElementById("status");
+
+  const container =
+    document.getElementById("matches");
 
   try {
 
     status.className = "status";
-    status.innerHTML = "🔄 Comprobando sesión...";
+
+    status.innerHTML =
+      "🔄 Comprobando sesión...";
+
 
     const {
       data: sessionData,
       error: sessionError
     } = await supabaseClient.auth.getSession();
 
+
     if (sessionError) {
       throw new Error(
-        "Error de sesión: " + sessionError.message
+        sessionError.message
       );
     }
 
-    const session = sessionData.session;
+
+    const session =
+      sessionData.session;
+
 
     if (!session) {
 
-      status.className = "status error";
+      status.className =
+        "status error";
 
       status.innerHTML =
-        "❌ No hay una sesión iniciada.<br><br>" +
-        "Volvé a iniciar sesión.";
+        "❌ No hay una sesión iniciada.";
 
       return;
     }
 
-    const userId = session.user.id;
 
-    console.log("Usuario actual:", userId);
+    const userId =
+      session.user.id;
+
+
+    console.log(
+      "Usuario actual:",
+      userId
+    );
+
 
     status.innerHTML =
       "🔎 Buscando tus matches...";
 
 
-    // BUSCAR MATCHES
     const {
       data: matches,
       error: matchesError
@@ -187,8 +216,12 @@ async function cargarMatches() {
         `user1_id.eq.${userId},user2_id.eq.${userId}`
       );
 
-    console.log("Matches:", matches);
-    console.log("Error matches:", matchesError);
+
+    console.log(
+      "Matches encontrados:",
+      matches
+    );
+
 
     if (matchesError) {
 
@@ -199,18 +232,18 @@ async function cargarMatches() {
     }
 
 
-    if (!matches || matches.length === 0) {
-
-      status.className = "status";
+    if (!matches ||
+        matches.length === 0) {
 
       status.innerHTML =
-        "💕 No tenés matches todavía.";
+        "💕 Todavía no tenés matches.";
 
       return;
     }
 
 
-    status.className = "status success";
+    status.className =
+      "status success";
 
     status.innerHTML =
       "💕 Encontramos " +
@@ -232,12 +265,11 @@ async function cargarMatches() {
 
 
       console.log(
-        "Buscando perfil:",
+        "Buscando usuario:",
         otherUserId
       );
 
 
-      // BUSCAR PERFIL
       const {
         data: profile,
         error: profileError
@@ -251,13 +283,8 @@ async function cargarMatches() {
 
 
       console.log(
-        "Perfil:",
+        "Perfil encontrado:",
         profile
-      );
-
-      console.log(
-        "Error perfil:",
-        profileError
       );
 
 
@@ -270,8 +297,8 @@ async function cargarMatches() {
           "status error";
 
         errorBox.innerHTML =
-          "❌ Error al cargar perfil:<br>" +
-          profileError.message;
+          "❌ Error cargando perfil:<br>" +
+          escapar(profileError.message);
 
         container.appendChild(errorBox);
 
@@ -288,8 +315,7 @@ async function cargarMatches() {
           "status error";
 
         errorBox.innerHTML =
-          "⚠️ El match existe, pero no se encontró " +
-          "el perfil del usuario.";
+          "⚠️ No se encontró el perfil.";
 
         container.appendChild(errorBox);
 
@@ -300,45 +326,88 @@ async function cargarMatches() {
       const card =
         document.createElement("div");
 
-      card.className = "match";
+      card.className =
+        "match";
 
 
       const foto =
         profile.foto_url ||
-        "https://via.placeholder.com/100";
+        "https://via.placeholder.com/150";
+
+
+      const nombre =
+        profile.nombre ||
+        "Usuario";
+
+
+      const edad =
+        profile.edad
+          ? profile.edad + " años"
+          : "";
+
+
+      const ciudad =
+        profile.ciudad ||
+        "";
 
 
       card.innerHTML = `
+
         <img
           src="${escapar(foto)}"
-          alt="Foto"
+          alt="Foto de ${escapar(nombre)}"
         >
 
         <div class="match-info">
 
           <h3>
-            ${escapar(profile.nombre || "Usuario")}
+            ${escapar(nombre)}
           </h3>
 
           <p>
-            ${profile.edad ? escapar(profile.edad) + " años" : ""}
+            ${escapar(edad)}
           </p>
 
           <p>
-            📍 ${escapar(profile.ciudad || "")}
+            📍 ${escapar(ciudad)}
           </p>
 
         </div>
+
+        <div class="arrow">
+          ›
+        </div>
+
       `;
 
 
-      card.onclick = function() {
+      card.addEventListener(
+        "click",
+        function() {
 
-        window.location.href =
-          "chat.html?user=" +
-          encodeURIComponent(otherUserId);
+          console.log(
+            "ABRIENDO CONVERSACIÓN:",
+            otherUserId
+          );
 
-      };
+
+          const url =
+            "./conversacion.html?user=" +
+            encodeURIComponent(
+              otherUserId
+            );
+
+
+          console.log(
+            "URL:",
+            url
+          );
+
+
+          window.location.assign(url);
+
+        }
+      );
 
 
       container.appendChild(card);
@@ -347,10 +416,15 @@ async function cargarMatches() {
 
   } catch (error) {
 
-    console.error(error);
+    console.error(
+      "ERROR GENERAL:",
+      error
+    );
+
 
     status.className =
       "status error";
+
 
     status.innerHTML =
       "❌ ERROR:<br><br>" +
@@ -363,7 +437,7 @@ async function cargarMatches() {
 
 function escapar(texto) {
 
-  return String(texto)
+  return String(texto || "")
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
@@ -376,7 +450,7 @@ function escapar(texto) {
 function volverPerfil() {
 
   window.location.href =
-    "perfil.html";
+    "./perfil.html";
 
 }
 
