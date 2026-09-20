@@ -1,98 +1,109 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>Mi Perfil - EmiMatch</title>
+  <title>Mi perfil - EmiMatch</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-
     * {
       box-sizing: border-box;
     }
 
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
       min-height: 100vh;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      color: #222;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #07152f, #102b55);
+      color: white;
+      padding: 20px;
     }
 
     .contenedor {
-      width: 100%;
-      max-width: 600px;
+      max-width: 500px;
       margin: auto;
-      padding: 20px 15px 40px;
     }
 
-    .tarjeta {
-      background: white;
-      border-radius: 24px;
-      padding: 22px;
-      box-shadow: 0 8px 28px rgba(0,0,0,.16);
-    }
-
-    h1 {
-      text-align: center;
-      color: #764ba2;
-      margin: 0 0 5px;
-    }
-
-    .subtitulo {
-      text-align: center;
-      color: #888;
-      margin-bottom: 20px;
-    }
-
-    /* FOTO */
-
-    .foto-contenedor {
+    .cabecera {
       text-align: center;
       margin-bottom: 20px;
     }
 
-    .foto-perfil {
-      width: 140px;
-      height: 140px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 5px solid #764ba2;
-      background: #eee;
+    .cabecera h1 {
+      margin: 5px 0;
+      font-size: 30px;
+    }
+
+    .cabecera p {
+      margin: 0;
+      color: #cbd5e1;
     }
 
     .estado {
-      margin-top: 8px;
+      display: inline-block;
+      margin-top: 10px;
+      padding: 7px 13px;
+      border-radius: 20px;
+      background: rgba(34,197,94,.15);
+      color: #4ade80;
       font-size: 14px;
-      font-weight: bold;
-      color: #159447;
     }
 
-    /* CAMPOS */
+    .card {
+      background: white;
+      color: #172033;
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: 0 15px 35px rgba(0,0,0,.3);
+    }
+
+    .foto-container {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .foto-preview {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 5px solid #d4af37;
+      background: #e5e7eb;
+    }
+
+    .sin-foto {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: auto;
+      font-size: 65px;
+      border: 5px solid #d4af37;
+    }
+
+    .campo {
+      margin-bottom: 15px;
+    }
 
     label {
       display: block;
       font-weight: bold;
-      margin-top: 15px;
       margin-bottom: 6px;
     }
 
     input,
     textarea {
       width: 100%;
-      border: 1px solid #ddd;
+      border: 1px solid #cbd5e1;
       border-radius: 12px;
       padding: 13px;
-      font-size: 15px;
+      font-size: 16px;
       outline: none;
     }
 
@@ -103,782 +114,637 @@
 
     input:focus,
     textarea:focus {
-      border-color: #764ba2;
+      border-color: #d4af37;
     }
-
-    input[type="file"] {
-      background: #fafafa;
-    }
-
-    /* BOTÓN GUARDAR */
 
     .guardar {
       width: 100%;
       border: none;
       border-radius: 14px;
       padding: 15px;
-      margin-top: 22px;
-      background: linear-gradient(
-        135deg,
-        #667eea,
-        #764ba2
-      );
-      color: white;
-      font-size: 16px;
+      background: #d4af37;
+      color: #07152f;
+      font-size: 17px;
       font-weight: bold;
       cursor: pointer;
+      margin-top: 5px;
     }
 
-    .guardar:active {
-      transform: scale(.98);
+    .guardar:disabled {
+      opacity: .6;
+      cursor: not-allowed;
     }
 
-    /* BOTONES */
+    .mensaje {
+      text-align: center;
+      margin-top: 12px;
+      min-height: 20px;
+      font-size: 14px;
+    }
 
-    .botones {
-      margin-top: 18px;
+    .navegacion {
+      margin-top: 20px;
       display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 12px;
     }
 
-    .boton {
-      width: 100%;
-      border: none;
-      border-radius: 14px;
-      padding: 15px;
-      background: white;
-      color: #764ba2;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      box-shadow: 0 5px 15px rgba(0,0,0,.10);
-    }
-
-    /* NOTIFICACIONES */
-
-    .notificaciones {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .notificaciones-izq {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .campana {
-      font-size: 24px;
-    }
-
-    .badge {
-      background: #ff3040;
-      color: white;
-      min-width: 25px;
-      height: 25px;
-      padding: 0 7px;
-      border-radius: 20px;
+    .nav-btn {
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
+      min-height: 58px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.1);
+      color: white;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: bold;
+      backdrop-filter: blur(8px);
+    }
+
+    .nav-btn:hover {
+      background: rgba(255,255,255,.17);
+    }
+
+    .nav-btn.principal {
+      grid-column: span 2;
+      background: linear-gradient(135deg, #ec4899, #be185d);
+    }
+
+    .badge {
+      position: absolute;
+      top: 7px;
+      right: 9px;
+      min-width: 20px;
+      height: 20px;
+      padding: 2px 6px;
+      border-radius: 20px;
+      background: #ef4444;
+      color: white;
       font-size: 12px;
-      font-weight: bold;
+      display: none;
+      align-items: center;
+      justify-content: center;
     }
 
-    /* MENSAJES */
-
-    #mensaje {
+    .cerrar {
+      width: 100%;
       margin-top: 15px;
-      text-align: center;
-      font-weight: bold;
-      min-height: 20px;
+      padding: 13px;
+      border: none;
+      border-radius: 14px;
+      background: rgba(255,255,255,.1);
+      color: #cbd5e1;
+      cursor: pointer;
     }
 
-    .exito {
-      color: #159447;
-    }
+    @media (max-width: 400px) {
+      body {
+        padding: 12px;
+      }
 
-    .error {
-      color: #c62828;
-    }
+      .card {
+        padding: 17px;
+      }
 
+      .navegacion {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-btn.principal {
+        grid-column: span 1;
+      }
+    }
   </style>
-
 </head>
-
 
 <body>
 
 <div class="contenedor">
 
-  <div class="tarjeta">
+  <div class="cabecera">
+    <h1>👤 Mi perfil</h1>
+    <p>Completá tu información</p>
 
-    <h1>Mi perfil</h1>
-
-    <div class="subtitulo">
-      Completá tu información
+    <div class="estado">
+      🟢 En línea
     </div>
+  </div>
 
+  <div class="card">
 
-    <!-- FOTO -->
+    <div class="foto-container">
 
-    <div class="foto-contenedor">
+      <div id="sinFoto" class="sin-foto">
+        👤
+      </div>
 
       <img
-        id="fotoPerfil"
-        class="foto-perfil"
-        src="https://via.placeholder.com/300?text=💕"
+        id="fotoPreview"
+        class="foto-preview"
+        style="display:none;"
         alt="Foto de perfil"
       >
 
-      <div
-        id="estadoOnline"
-        class="estado"
-      >
-        🟢 En línea
+      <div style="margin-top:12px;">
+        <label for="foto">
+          📸 Foto de perfil
+        </label>
+
+        <input
+          type="file"
+          id="foto"
+          accept="image/*"
+        >
       </div>
 
     </div>
 
 
-    <!-- ARCHIVO -->
+    <div class="campo">
+      <label for="nombre">
+        Nombre
+      </label>
 
-    <label>
-      Foto de perfil
-    </label>
-
-    <input
-      type="file"
-      id="fotoArchivo"
-      accept="image/*"
-    >
-
-
-    <!-- NOMBRE -->
-
-    <label for="nombre">
-      Nombre
-    </label>
-
-    <input
-      type="text"
-      id="nombre"
-      placeholder="Tu nombre"
-    >
+      <input
+        type="text"
+        id="nombre"
+        placeholder="Tu nombre"
+      >
+    </div>
 
 
-    <!-- EDAD -->
+    <div class="campo">
+      <label for="edad">
+        Edad
+      </label>
 
-    <label for="edad">
-      Edad
-    </label>
-
-    <input
-      type="number"
-      id="edad"
-      placeholder="Tu edad"
-      min="18"
-      max="100"
-    >
-
-
-    <!-- CIUDAD -->
-
-    <label for="ciudad">
-      Ciudad
-    </label>
-
-    <input
-      type="text"
-      id="ciudad"
-      placeholder="Tu ciudad"
-    >
+      <input
+        type="number"
+        id="edad"
+        min="18"
+        max="100"
+        placeholder="Tu edad"
+      >
+    </div>
 
 
-    <!-- DESCRIPCIÓN -->
+    <div class="campo">
+      <label for="ciudad">
+        Ciudad
+      </label>
 
-    <label for="descripcion">
-      Sobre mí
-    </label>
-
-    <textarea
-      id="descripcion"
-      placeholder="Contanos un poco sobre vos..."
-    ></textarea>
-
-
-    <!-- INTERESES -->
-
-    <label for="intereses">
-      Intereses
-    </label>
-
-    <input
-      type="text"
-      id="intereses"
-      placeholder="Música, fútbol, viajes..."
-    >
+      <input
+        type="text"
+        id="ciudad"
+        placeholder="Tu ciudad"
+      >
+    </div>
 
 
-    <!-- GUARDAR -->
+    <div class="campo">
+      <label for="descripcion">
+        Sobre mí
+      </label>
+
+      <textarea
+        id="descripcion"
+        placeholder="Contanos un poco sobre vos..."
+      ></textarea>
+    </div>
+
+
+    <div class="campo">
+      <label for="intereses">
+        Intereses
+      </label>
+
+      <input
+        type="text"
+        id="intereses"
+        placeholder="Música, fútbol, viajes..."
+      >
+    </div>
+
 
     <button
       class="guardar"
-      onclick="guardarPerfil()"
-    >
+      id="guardarBtn"
+      onclick="guardarPerfil()">
       💾 Guardar perfil
     </button>
 
-
-    <div id="mensaje"></div>
+    <div
+      id="mensaje"
+      class="mensaje">
+    </div>
 
   </div>
 
 
-  <!-- BOTONES -->
+  <!-- NAVEGACIÓN -->
 
-  <div class="botones">
+  <div class="navegacion">
 
-
-    <!-- NOTIFICACIONES -->
-
-    <button
-      class="boton notificaciones"
-      onclick="abrirNotificaciones()"
-    >
-
-      <div class="notificaciones-izq">
-
-        <span class="campana">
-          🔔
-        </span>
-
-        <span>
-          Notificaciones
-        </span>
-
-      </div>
-
-      <div
-        id="badgeNotificaciones"
-        class="badge"
-        style="display:none"
-      >
-        0
-      </div>
-
-    </button>
-
-
-    <!-- MATCHES -->
-
-    <button
-      class="boton"
-      onclick="irMatches()"
-    >
-      💕 Mis Matches
-    </button>
-
-
-    <!-- DESCUBRIR -->
-
-    <button
-      class="boton"
-      onclick="irDescubrir()"
-    >
+    <a
+      class="nav-btn principal"
+      href="./descubrir.html">
       🔎 Descubrir
-    </button>
+    </a>
+
+
+    <a
+      class="nav-btn"
+      href="./likes.html">
+      ❤️ Me gustas
+    </a>
+
+
+    <a
+      class="nav-btn"
+      href="./chat.html">
+      💕 Mis Matches
+    </a>
+
+
+    <a
+      class="nav-btn"
+      href="./notificaciones.html">
+      🔔 Notificaciones
+
+      <span
+        id="badgeNotificaciones"
+        class="badge">
+        0
+      </span>
+    </a>
+
+
+    <a
+      class="nav-btn"
+      href="./configuracion.html">
+      ⚙️ Configuración
+    </a>
 
   </div>
+
+
+  <button
+    class="cerrar"
+    onclick="cerrarSesion()">
+    🚪 Cerrar sesión
+  </button>
 
 </div>
 
 
 <script>
 
-/* ==========================================
-   SUPABASE
-========================================== */
-
 const SUPABASE_URL =
-"https://kngiadwaesdbmvwivdev.supabase.co";
+  "https://kngiadwaesdbmvwivdev.supabase.co";
 
 const SUPABASE_KEY =
-"sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
+  "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
 
 const supabaseClient =
-supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+  supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
-
-/* ==========================================
-   VARIABLES
-========================================== */
 
 let usuarioActual = null;
+let fotoSeleccionada = null;
 
 
-/* ==========================================
-   INICIO
-========================================== */
+// ========================================
+// INICIAR
+// ========================================
 
 async function iniciar() {
 
   const {
-    data,
+    data: { session },
     error
-  } =
-    await supabaseClient.auth.getSession();
+  } = await supabaseClient.auth.getSession();
 
 
-  if (
-    error ||
-    !data.session
-  ) {
+  if (error || !session) {
 
-    window.location.href =
-      "./index.html";
+    window.location.replace(
+      "./index.html"
+    );
 
     return;
   }
 
 
-  usuarioActual =
-    data.session.user;
+  usuarioActual = session.user;
 
 
   await cargarPerfil();
 
-  await actualizarEstado();
-
-  await actualizarNotificaciones();
-
-  escucharNotificaciones();
-
+  await cargarNotificaciones();
 }
 
 
-/* ==========================================
-   CARGAR PERFIL
-========================================== */
+// ========================================
+// CARGAR PERFIL
+// ========================================
 
 async function cargarPerfil() {
 
-  const {
-    data: perfil,
-    error
-  } =
+  const { data, error } =
     await supabaseClient
       .from("profiles")
-      .select(
-        "id,nombre,edad,ciudad,descripcion,foto_url,intereses,online,last_seen"
-      )
-      .eq(
-        "id",
-        usuarioActual.id
-      )
+      .select("*")
+      .eq("id", usuarioActual.id)
       .maybeSingle();
 
 
-  if (
-    error
-  ) {
+  if (error) {
 
     console.error(error);
 
-    mostrarMensaje(
-      "Error cargando perfil",
-      true
-    );
-
     return;
   }
 
 
-  if (!perfil) {
-    return;
+  if (!data) return;
+
+
+  document.getElementById("nombre").value =
+    data.nombre || "";
+
+
+  document.getElementById("edad").value =
+    data.edad || "";
+
+
+  document.getElementById("ciudad").value =
+    data.ciudad || "";
+
+
+  document.getElementById("descripcion").value =
+    data.descripcion || "";
+
+
+  document.getElementById("intereses").value =
+    data.intereses || "";
+
+
+  if (data.foto_url) {
+
+    mostrarFoto(data.foto_url);
   }
-
-
-  document.getElementById(
-    "nombre"
-  ).value =
-    perfil.nombre || "";
-
-
-  document.getElementById(
-    "edad"
-  ).value =
-    perfil.edad || "";
-
-
-  document.getElementById(
-    "ciudad"
-  ).value =
-    perfil.ciudad || "";
-
-
-  document.getElementById(
-    "descripcion"
-  ).value =
-    perfil.descripcion || "";
-
-
-  document.getElementById(
-    "intereses"
-  ).value =
-    perfil.intereses || "";
-
-
-  if (
-    perfil.foto_url
-  ) {
-
-    document.getElementById(
-      "fotoPerfil"
-    ).src =
-      perfil.foto_url;
-
-  }
-
 }
 
 
-/* ==========================================
-   GUARDAR PERFIL
-========================================== */
+// ========================================
+// MOSTRAR FOTO
+// ========================================
+
+function mostrarFoto(url) {
+
+  const img =
+    document.getElementById("fotoPreview");
+
+  const sinFoto =
+    document.getElementById("sinFoto");
+
+
+  img.src = url;
+  img.style.display = "block";
+
+  sinFoto.style.display = "none";
+}
+
+
+// ========================================
+// SELECCIONAR FOTO
+// ========================================
+
+document
+  .getElementById("foto")
+  .addEventListener(
+    "change",
+    function(event) {
+
+      const archivo =
+        event.target.files[0];
+
+      if (!archivo) return;
+
+
+      fotoSeleccionada = archivo;
+
+
+      const url =
+        URL.createObjectURL(archivo);
+
+
+      mostrarFoto(url);
+    }
+  );
+
+
+// ========================================
+// GUARDAR PERFIL
+// ========================================
 
 async function guardarPerfil() {
 
-  const nombre =
-    document.getElementById(
-      "nombre"
-    ).value.trim();
+  const boton =
+    document.getElementById("guardarBtn");
+
+  const mensaje =
+    document.getElementById("mensaje");
 
 
-  const edad =
-    document.getElementById(
-      "edad"
-    ).value;
+  boton.disabled = true;
+
+  mensaje.textContent =
+    "Guardando...";
 
 
-  const ciudad =
-    document.getElementById(
-      "ciudad"
-    ).value.trim();
+  try {
+
+    let fotoUrl = null;
 
 
-  const descripcion =
-    document.getElementById(
-      "descripcion"
-    ).value.trim();
+    // --------------------------------
+    // FOTO
+    // --------------------------------
+
+    if (fotoSeleccionada) {
+
+      const extension =
+        fotoSeleccionada.name
+          .split(".")
+          .pop()
+          .toLowerCase();
 
 
-  const intereses =
-    document.getElementById(
-      "intereses"
-    ).value.trim();
+      const nombreArchivo =
+        usuarioActual.id +
+        "_" +
+        Date.now() +
+        "." +
+        extension;
 
 
-  if (!nombre) {
-
-    mostrarMensaje(
-      "Ingresá tu nombre",
-      true
-    );
-
-    return;
-  }
+      const ruta =
+        nombreArchivo;
 
 
-  const archivo =
-    document.getElementById(
-      "fotoArchivo"
-    ).files[0];
+      const { error: uploadError } =
+        await supabaseClient
+          .storage
+          .from("avatars")
+          .upload(
+            ruta,
+            fotoSeleccionada,
+            {
+              upsert: true
+            }
+          );
 
 
-  let fotoUrl = null;
+      if (uploadError) {
+
+        throw uploadError;
+      }
 
 
-  /* SUBIR FOTO */
-
-  if (archivo) {
-
-    mostrarMensaje(
-      "Subiendo foto..."
-    );
+      const { data: publicData } =
+        supabaseClient
+          .storage
+          .from("avatars")
+          .getPublicUrl(ruta);
 
 
-    const extension =
-      archivo.name
-        .split(".")
-        .pop()
-        .toLowerCase();
+      fotoUrl =
+        publicData.publicUrl;
+    }
 
 
-    const nombreArchivo =
-      usuarioActual.id +
-      "_" +
-      Date.now() +
-      "." +
-      extension;
+    // --------------------------------
+    // DATOS
+    // --------------------------------
+
+    const datos = {
+
+      id: usuarioActual.id,
+
+      nombre:
+        document
+          .getElementById("nombre")
+          .value
+          .trim(),
+
+      edad:
+        document
+          .getElementById("edad")
+          .value
+          ? Number(
+              document
+                .getElementById("edad")
+                .value
+            )
+          : null,
+
+      ciudad:
+        document
+          .getElementById("ciudad")
+          .value
+          .trim(),
+
+      descripcion:
+        document
+          .getElementById("descripcion")
+          .value
+          .trim(),
+
+      intereses:
+        document
+          .getElementById("intereses")
+          .value
+          .trim(),
+
+      online: true,
+
+      last_seen:
+        new Date().toISOString()
+    };
 
 
-    const ruta =
-      nombreArchivo;
+    if (fotoUrl) {
+
+      datos.foto_url =
+        fotoUrl;
+    }
 
 
-    const {
-      error: uploadError
-    } =
+    const { error } =
       await supabaseClient
-        .storage
-        .from("avatars")
-        .upload(
-          ruta,
-          archivo,
+        .from("profiles")
+        .upsert(
+          datos,
           {
-            upsert: true
+            onConflict: "id"
           }
         );
 
 
-    if (uploadError) {
+    if (error) {
 
-      console.error(
-        uploadError
-      );
-
-      mostrarMensaje(
-        "No se pudo subir la foto: " +
-        uploadError.message,
-        true
-      );
-
-      return;
+      throw error;
     }
 
 
-    const {
-      data: publicData
-    } =
-      supabaseClient
-        .storage
-        .from("avatars")
-        .getPublicUrl(
-          ruta
-        );
+    fotoSeleccionada = null;
 
 
-    fotoUrl =
-      publicData.publicUrl;
-
-  }
+    mensaje.textContent =
+      "✅ Perfil guardado correctamente";
 
 
-  /* DATOS PERFIL */
-
-  const datos = {
-
-    nombre:
-      nombre,
-
-    edad:
-      edad
-        ? Number(edad)
-        : null,
-
-    ciudad:
-      ciudad,
-
-    descripcion:
-      descripcion,
-
-    intereses:
-      intereses,
-
-    online:
-      true
-
-  };
+    mensaje.style.color =
+      "#16a34a";
 
 
-  if (fotoUrl) {
+    setTimeout(() => {
 
-    datos.foto_url =
-      fotoUrl;
+      mensaje.textContent = "";
 
-  }
-
-
-  const {
-    error
-  } =
-    await supabaseClient
-      .from("profiles")
-      .upsert(
-        {
-          id:
-            usuarioActual.id,
-
-          ...datos
-
-        },
-        {
-          onConflict:
-            "id"
-        }
-      );
+    }, 3000);
 
 
-  if (error) {
+  } catch (error) {
 
     console.error(error);
 
-    mostrarMensaje(
-      "Error guardando perfil: " +
-      error.message,
-      true
-    );
+    mensaje.textContent =
+      "❌ No se pudo guardar el perfil";
 
-    return;
+    mensaje.style.color =
+      "#dc2626";
+
+  } finally {
+
+    boton.disabled = false;
   }
-
-
-  if (fotoUrl) {
-
-    document.getElementById(
-      "fotoPerfil"
-    ).src =
-      fotoUrl;
-
-  }
-
-
-  mostrarMensaje(
-    "✅ Perfil guardado correctamente"
-  );
-
 }
 
 
-/* ==========================================
-   ESTADO ONLINE
-========================================== */
+// ========================================
+// NOTIFICACIONES
+// ========================================
 
-async function actualizarEstado() {
-
-  const {
-    error
-  } =
-    await supabaseClient
-      .from("profiles")
-      .update({
-        online: true,
-        last_seen: new Date()
-      })
-      .eq(
-        "id",
-        usuarioActual.id
-      );
-
-
-  if (error) {
-
-    console.error(
-      "Estado:",
-      error
-    );
-
-  }
-
-}
-
-
-/* ==========================================
-   CONTADOR NOTIFICACIONES
-========================================== */
-
-async function actualizarNotificaciones() {
-
-  const {
-    data: matches,
-    error
-  } =
-    await supabaseClient
-      .from("matches")
-      .select(
-        "id,user1_id,user2_id"
-      )
-      .or(
-        `user1_id.eq.${usuarioActual.id},user2_id.eq.${usuarioActual.id}`
-      );
-
-
-  if (
-    error ||
-    !matches
-  ) {
-
-    return;
-  }
-
-
-  let total =
-    0;
-
-
-  for (
-    const match of matches
-  ) {
-
-    const otroUsuario =
-      match.user1_id ===
-      usuarioActual.id
-        ? match.user2_id
-        : match.user1_id;
-
-
-    const {
-      count
-    } =
-      await supabaseClient
-        .from("messages")
-        .select(
-          "id",
-          {
-            count:
-              "exact",
-            head:
-              true
-          }
-        )
-        .eq(
-          "match_id",
-          match.id
-        )
-        .eq(
-          "sender_id",
-          otroUsuario
-        )
-        .is(
-          "read_at",
-          null
-        );
-
-
-    if (count) {
-
-      total +=
-        count;
-
-    }
-
-  }
-
+async function cargarNotificaciones() {
 
   const badge =
     document.getElementById(
@@ -886,158 +752,100 @@ async function actualizarNotificaciones() {
     );
 
 
-  if (
-    total > 0
-  ) {
+  const {
+    data: { session }
+  } =
+    await supabaseClient.auth.getSession();
+
+
+  if (!session) return;
+
+
+  const usuario =
+    session.user.id;
+
+
+  const { data: matches } =
+    await supabaseClient
+      .from("matches")
+      .select("id,user1_id,user2_id")
+      .or(
+        `user1_id.eq.${usuario},user2_id.eq.${usuario}`
+      );
+
+
+  if (!matches || matches.length === 0) {
+
+    badge.style.display = "none";
+
+    return;
+  }
+
+
+  let totalNoLeidos = 0;
+
+
+  for (const match of matches) {
+
+    const { data: mensajes } =
+      await supabaseClient
+        .from("messages")
+        .select("id")
+        .eq("match_id", match.id)
+        .neq("sender_id", usuario)
+        .is("read_at", null);
+
+
+    totalNoLeidos +=
+      mensajes?.length || 0;
+  }
+
+
+  if (totalNoLeidos > 0) {
+
+    badge.textContent =
+      totalNoLeidos > 99
+        ? "99+"
+        : totalNoLeidos;
 
     badge.style.display =
       "flex";
-
-    badge.textContent =
-      total > 99
-        ? "99+"
-        : total;
 
   } else {
 
     badge.style.display =
       "none";
-
   }
-
 }
 
 
-/* ==========================================
-   REALTIME
-========================================== */
+// ========================================
+// CERRAR SESIÓN
+// ========================================
 
-function escucharNotificaciones() {
+async function cerrarSesion() {
 
-  supabaseClient
-
-    .channel(
-      "perfil-notificaciones"
-    )
-
-    .on(
-      "postgres_changes",
-      {
-        event:
-          "INSERT",
-        schema:
-          "public",
-        table:
-          "messages"
-      },
-      async payload => {
-
-        if (
-          payload.new.sender_id !==
-          usuarioActual.id
-        ) {
-
-          await actualizarNotificaciones();
-
-        }
-
-      }
-    )
-
-    .on(
-      "postgres_changes",
-      {
-        event:
-          "UPDATE",
-        schema:
-          "public",
-        table:
-          "messages"
-      },
-      async () => {
-
-        await actualizarNotificaciones();
-
-      }
-    )
-
-    .subscribe();
-
-}
-
-
-/* ==========================================
-   MENSAJES
-========================================== */
-
-function mostrarMensaje(
-  texto,
-  error = false
-) {
-
-  const elemento =
-    document.getElementById(
-      "mensaje"
+  const confirmar =
+    confirm(
+      "¿Querés cerrar sesión?"
     );
 
 
-  elemento.textContent =
-    texto;
+  if (!confirmar) return;
 
 
-  elemento.className =
-    error
-      ? "error"
-      : "exito";
+  await supabaseClient.auth.signOut();
 
 
-  setTimeout(
-    () => {
-
-      elemento.textContent =
-        "";
-
-      elemento.className =
-        "";
-
-    },
-    4000
+  window.location.replace(
+    "./index.html"
   );
-
 }
 
 
-/* ==========================================
-   NAVEGACIÓN
-========================================== */
-
-function abrirNotificaciones() {
-
-  window.location.href =
-    "./notificaciones.html";
-
-}
-
-
-function irMatches() {
-
-  window.location.href =
-    "./chat.html";
-
-}
-
-
-function irDescubrir() {
-
-  window.location.href =
-    "./descubrir.html";
-
-}
-
-
-/* ==========================================
-   INICIAR
-========================================== */
+// ========================================
+// INICIAR
+// ========================================
 
 iniciar();
 
