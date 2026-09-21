@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Notificaciones - EmiMatch</title>
+  <title>Notificaciones · EmiMatch</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -15,212 +15,1370 @@
 
     body {
       margin: 0;
-      padding: 0;
       font-family: Arial, sans-serif;
-      background: linear-gradient(180deg, #06152f, #0b2348);
-      color: white;
-      min-height: 100vh;
-      padding-bottom: 90px;
+      background: #f3f6fb;
+      color: #172033;
+      padding-bottom: 82px;
     }
+
+    .app {
+      width: 100%;
+      max-width: 700px;
+      min-height: 100vh;
+      margin: 0 auto;
+      background: #fff;
+    }
+
+    /* HEADER */
 
     .header {
       position: sticky;
       top: 0;
       z-index: 20;
-      background: rgba(4, 18, 42, 0.97);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      padding: 18px 16px;
+      padding: 20px 18px;
+      color: white;
+      background:
+        linear-gradient(
+          135deg,
+          #06183f,
+          #123b91
+        );
+      box-shadow:
+        0 3px 12px rgba(0,0,0,.15);
+    }
+
+    .header-row {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .header-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,.12);
+      font-size: 25px;
+    }
+
+    .header-info {
+      flex: 1;
     }
 
     .header h1 {
       margin: 0;
-      font-size: 22px;
+      font-size: 21px;
     }
 
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    .header p {
+      margin: 5px 0 0;
+      font-size: 12px;
+      opacity: .82;
     }
 
-    .bell {
-      font-size: 25px;
-    }
-
-    .badge {
-      min-width: 22px;
-      height: 22px;
-      padding: 0 6px;
-      border-radius: 20px;
-      background: #ff315c;
-      color: white;
+    .header-count {
       display: none;
+      min-width: 24px;
+      height: 24px;
+      padding: 0 7px;
       align-items: center;
       justify-content: center;
-      font-size: 12px;
+      border-radius: 20px;
+      background: #e53935;
+      color: white;
+      font-size: 11px;
       font-weight: bold;
     }
 
-    .container {
-      width: 100%;
-      max-width: 650px;
-      margin: auto;
-      padding: 16px;
+    /* ACTIONS */
+
+    .acciones {
+      display: flex;
+      gap: 9px;
+      padding: 12px;
+      background: #fff;
+      border-bottom: 1px solid #e5e9f0;
     }
 
-    .intro {
-      margin-bottom: 15px;
+    .accion {
+      flex: 1;
+      min-height: 42px;
+      border: 0;
+      border-radius: 12px;
+      background: #eef3fa;
+      color: #123b91;
+      font-weight: bold;
+      cursor: pointer;
     }
 
-    .intro h2 {
-      margin: 0 0 5px;
-      font-size: 20px;
+    .accion:active {
+      transform: scale(.98);
     }
 
-    .intro p {
-      margin: 0;
-      color: #b8c6dc;
-      font-size: 14px;
+    /* LISTA */
+
+    .lista {
+      padding: 10px;
     }
 
-    .notification {
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 18px;
-      padding: 13px;
-      margin-bottom: 12px;
+    .notificacion {
+      position: relative;
       display: flex;
       align-items: center;
       gap: 12px;
+      padding: 13px;
+      margin-bottom: 9px;
+      border: 1px solid #e3e8f0;
+      border-radius: 16px;
+      background: #fff;
       cursor: pointer;
-      transition: 0.2s;
-      position: relative;
+      transition: .15s;
     }
 
-    .notification:hover {
-      background: rgba(255,255,255,0.13);
-      transform: translateY(-1px);
+    .notificacion:active {
+      transform: scale(.99);
     }
 
-    .notification.unread {
-      border-left: 4px solid #ff315c;
-      background: rgba(255,49,92,0.10);
+    .notificacion.no-leida {
+      background: #eef5ff;
+      border-color: #c9dcff;
     }
 
     .avatar {
-      width: 55px;
-      height: 55px;
-      min-width: 55px;
+      width: 53px;
+      height: 53px;
+      flex-shrink: 0;
       border-radius: 50%;
       object-fit: cover;
-      background: #17335f;
-      border: 2px solid rgba(255,255,255,0.15);
+      background: #e5e7eb;
     }
 
-    .avatar-placeholder {
-      width: 55px;
-      height: 55px;
-      min-width: 55px;
-      border-radius: 50%;
-      background: #17335f;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 25px;
-    }
-
-    .notification-content {
+    .contenido {
       flex: 1;
       min-width: 0;
     }
 
-    .name-row {
+    .nombre {
       display: flex;
       align-items: center;
-      gap: 7px;
-      margin-bottom: 4px;
-    }
-
-    .name {
+      gap: 6px;
+      font-size: 15px;
       font-weight: bold;
-      font-size: 16px;
     }
 
     .online {
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: #22d36b;
+      background: #22c55e;
+      display: inline-block;
     }
 
-    .message {
-      color: #d8e1ef;
-      font-size: 14px;
+    .mensaje {
+      margin-top: 5px;
+      color: #566276;
+      font-size: 13px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 100%;
     }
 
-    .time {
-      color: #8fa1bd;
-      font-size: 11px;
+    .hora {
       margin-top: 5px;
+      color: #8a94a6;
+      font-size: 11px;
     }
 
-    .unread-dot {
-      width: 11px;
-      height: 11px;
-      background: #ff315c;
+    .indicador {
+      width: 10px;
+      height: 10px;
+      flex-shrink: 0;
       border-radius: 50%;
-      position: absolute;
-      right: 13px;
-      top: 13px;
+      background: #e53935;
+      box-shadow: 0 0 0 3px #dceaff;
     }
 
-    .empty {
+    /* ESTADOS */
+
+    .estado {
       text-align: center;
-      padding: 70px 20px;
-      color: #aebed5;
+      padding: 70px 25px;
+      color: #667085;
     }
 
-    .empty-icon {
-      font-size: 55px;
+    .estado-icono {
+      font-size: 48px;
       margin-bottom: 15px;
     }
 
-    .empty h3 {
-      margin: 0 0 8px;
-      color: white;
+    .estado strong {
+      display: block;
+      color: #263247;
+      font-size: 16px;
+      margin-bottom: 7px;
     }
 
-    .loading {
-      text-align: center;
-      padding: 50px 20px;
-      color: #b8c6dc;
+    .estado p {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .spinner {
+      font-size: 30px;
+      animation: girar 1s linear infinite;
+    }
+
+    @keyframes girar {
+      from {
+        transform: rotate(0);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     .error {
-      background: rgba(255,49,92,0.12);
-      border: 1px solid rgba(255,49,92,0.3);
-      border-radius: 15px;
-      padding: 15px;
       text-align: center;
-      color: #ffb4c3;
-      margin-top: 20px;
+      padding: 50px 20px;
+      color: #c62828;
     }
 
-    .refresh {
+    /* NAV */
+
+    .bottom-nav {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      z-index: 100;
       width: 100%;
-      border: 0;
-      border-radius: 14px;
-      padding: 13px;
-      background: #173b73;
-      color: white;
+      max-width: 700px;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      background: rgba(255,255,255,.98);
+      border-top: 1px solid #dfe4ec;
+      box-shadow: 0 -3px 15px rgba(0,0,0,.08);
+    }
+
+    .nav-item {
+      position: relative;
+      min-width: 55px;
+      color: #6b7485;
+      text-decoration: none;
+      text-align: center;
+      font-size: 10px;
+    }
+
+    .nav-icon {
+      display: block;
+      margin-bottom: 3px;
+      font-size: 21px;
+    }
+
+    .nav-item.active {
+      color: #123b91;
       font-weight: bold;
-      font-size: 14px;
-      cursor: pointer;
-      margin-bottom
+    }
+
+    .nav-badge {
+      position: absolute;
+      top: -5px;
+      right: 7px;
+      min-width: 17px;
+      height: 17px;
+      padding: 0 4px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      border-radius: 20px;
+      background: #e53935;
+      color: white;
+      font-size: 9px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- HEADER -->
+
+  <header class="header">
+
+    <div class="header-row">
+
+      <div class="header-icon">
+        🔔
+      </div>
+
+      <div class="header-info">
+
+        <h1>
+          Notificaciones
+        </h1>
+
+        <p>
+          Mensajes y actividad reciente
+        </p>
+
+      </div>
+
+      <span
+        id="headerCount"
+        class="header-count"
+      >
+        0
+      </span>
+
+    </div>
+
+  </header>
+
+
+  <!-- ACCIONES -->
+
+  <div class="acciones">
+
+    <button
+      class="accion"
+      id="btnActualizar"
+      onclick="cargarNotificaciones()"
+    >
+      🔄 Actualizar
+    </button>
+
+    <button
+      class="accion"
+      onclick="marcarTodasLeidas()"
+    >
+      ✓✓ Marcar leídas
+    </button>
+
+  </div>
+
+
+  <!-- LISTA -->
+
+  <main
+    id="lista"
+    class="lista"
+  >
+
+    <div class="estado">
+
+      <div class="spinner">
+        ⏳
+      </div>
+
+      <p>
+        Cargando notificaciones...
+      </p>
+
+    </div>
+
+  </main>
+
+</div>
+
+
+<!-- NAVEGACIÓN -->
+
+<nav class="bottom-nav">
+
+  <a
+    class="nav-item"
+    href="perfil.html"
+  >
+    <span class="nav-icon">
+      👤
+    </span>
+    Perfil
+  </a>
+
+
+  <a
+    class="nav-item"
+    href="descubrir.html"
+  >
+    <span class="nav-icon">
+      🔎
+    </span>
+    Descubrir
+  </a>
+
+
+  <a
+    class="nav-item"
+    href="likes.html"
+  >
+    <span class="nav-icon">
+      ❤️
+    </span>
+    Me gustas
+  </a>
+
+
+  <a
+    class="nav-item"
+    href="chat.html"
+  >
+    <span class="nav-icon">
+      💕
+    </span>
+    Matches
+  </a>
+
+
+  <a
+    class="nav-item active"
+    href="notificaciones.html"
+  >
+
+    <span class="nav-icon">
+      🔔
+    </span>
+
+    Notificaciones
+
+    <span
+      id="navBadge"
+      class="nav-badge"
+    >
+      0
+    </span>
+
+  </a>
+
+</nav>
+
+
+<script>
+
+/* =====================================================
+   CONFIGURACIÓN SUPABASE
+===================================================== */
+
+const SUPABASE_URL =
+  "https://kngiadwaesdbmvwivdev.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
+
+
+const supabaseClient =
+  supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+/* =====================================================
+   VARIABLES
+===================================================== */
+
+let usuarioActual = null;
+
+let canalMensajes = null;
+
+let cargando = false;
+
+
+/* =====================================================
+   ELEMENTOS
+===================================================== */
+
+const lista =
+  document.getElementById(
+    "lista"
+  );
+
+const btnActualizar =
+  document.getElementById(
+    "btnActualizar"
+  );
+
+const navBadge =
+  document.getElementById(
+    "navBadge"
+  );
+
+const headerCount =
+  document.getElementById(
+    "headerCount"
+  );
+
+
+/* =====================================================
+   INICIO
+===================================================== */
+
+async function iniciar() {
+
+  try {
+
+    mostrarCargando();
+
+
+    const {
+      data: {
+        session
+      },
+      error
+    } =
+      await supabaseClient
+        .auth
+        .getSession();
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    if (!session) {
+
+      window.location.href =
+        "index.html";
+
+      return;
+    }
+
+
+    usuarioActual =
+      session.user;
+
+
+    await cargarNotificaciones();
+
+    activarRealtime();
+
+
+  } catch (error) {
+
+    console.error(
+      "Error al iniciar:",
+      error
+    );
+
+
+    mostrarError(
+      "No se pudieron cargar las notificaciones."
+    );
+  }
+}
+
+
+/* =====================================================
+   CARGAR NOTIFICACIONES
+===================================================== */
+
+async function cargarNotificaciones() {
+
+  if (
+    !usuarioActual ||
+    cargando
+  ) {
+    return;
+  }
+
+
+  cargando = true;
+
+  btnActualizar.disabled =
+    true;
+
+
+  try {
+
+    mostrarCargando();
+
+
+    /*
+      Buscar los Matches
+    */
+
+    const {
+      data: matches,
+      error: matchError
+    } =
+      await supabaseClient
+        .from("matches")
+        .select(
+          "id,user1_id,user2_id"
+        )
+        .or(
+          `user1_id.eq.${usuarioActual.id},user2_id.eq.${usuarioActual.id}`
+        );
+
+
+    if (matchError) {
+      throw matchError;
+    }
+
+
+    if (
+      !matches ||
+      matches.length === 0
+    ) {
+
+      mostrarVacio();
+
+      actualizarContadores(0);
+
+      return;
+    }
+
+
+    /*
+      Construir las notificaciones
+    */
+
+    const resultados = [];
+
+
+    for (
+      const match of matches
+    ) {
+
+      const otroId =
+        match.user1_id ===
+        usuarioActual.id
+          ? match.user2_id
+          : match.user1_id;
+
+
+      /*
+        Buscar solamente mensajes
+        enviados por la otra persona.
+      */
+
+      const {
+        data: mensajes,
+        error: mensajesError
+      } =
+        await supabaseClient
+          .from("messages")
+          .select(
+            "id,match_id,sender_id,content,created_at,delivered_at,read_at"
+          )
+          .eq(
+            "match_id",
+            match.id
+          )
+          .eq(
+            "sender_id",
+            otroId
+          )
+          .order(
+            "created_at",
+            {
+              ascending: false
+            }
+          )
+          .limit(30);
+
+
+      if (mensajesError) {
+
+        console.error(
+          "Error mensajes:",
+          mensajesError
+        );
+
+        continue;
+      }
+
+
+      if (
+        !mensajes ||
+        mensajes.length === 0
+      ) {
+        continue;
+      }
+
+
+      /*
+        Buscar perfil
+      */
+
+      const {
+        data: perfil,
+        error: perfilError
+      } =
+        await supabaseClient
+          .from("profiles")
+          .select(
+            "id,nombre,foto_url,online"
+          )
+          .eq(
+            "id",
+            otroId
+          )
+          .single();
+
+
+      if (perfilError) {
+
+        console.error(
+          "Error perfil:",
+          perfilError
+        );
+
+        continue;
+      }
+
+
+      /*
+        Agregar cada mensaje
+      */
+
+      for (
+        const mensaje of mensajes
+      ) {
+
+        resultados.push({
+
+          id:
+            mensaje.id,
+
+          matchId:
+            match.id,
+
+          mensaje,
+
+          perfil
+
+        });
+      }
+    }
+
+
+    /*
+      Ordenar más nuevo primero
+    */
+
+    resultados.sort(
+      (a, b) => {
+
+        return (
+          new Date(
+            b.mensaje.created_at
+          ) -
+          new Date(
+            a.mensaje.created_at
+          )
+        );
+
+      }
+    );
+
+
+    /*
+      Si no hay mensajes
+    */
+
+    if (
+      resultados.length === 0
+    ) {
+
+      mostrarVacio();
+
+      actualizarContadores(0);
+
+      return;
+    }
+
+
+    /*
+      Mostrar
+    */
+
+    renderizarNotificaciones(
+      resultados
+    );
+
+
+    /*
+      Contar no leídas
+    */
+
+    const noLeidas =
+      resultados.filter(
+        item =>
+          !item.mensaje.read_at
+      ).length;
+
+
+    actualizarContadores(
+      noLeidas
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Error cargando:",
+      error
+    );
+
+
+    mostrarError(
+      "No se pudieron cargar las notificaciones."
+    );
+
+
+  } finally {
+
+    cargando = false;
+
+    btnActualizar.disabled =
+      false;
+  }
+}
+
+
+/* =====================================================
+   RENDERIZAR
+===================================================== */
+
+function renderizarNotificaciones(
+  resultados
+) {
+
+  lista.innerHTML = "";
+
+
+  resultados.forEach(
+    item => {
+
+      const mensaje =
+        item.mensaje;
+
+      const perfil =
+        item.perfil;
+
+
+      const noLeida =
+        !mensaje.read_at;
+
+
+      const tarjeta =
+        document.createElement(
+          "div"
+        );
+
+
+      tarjeta.className =
+        "notificacion" +
+        (
+          noLeida
+            ? " no-leida"
+            : ""
+        );
+
+
+      /*
+        Foto segura
+      */
+
+      const foto =
+        perfil.foto_url ||
+        "https://via.placeholder.com/100";
+
+
+      /*
+        Nombre seguro
+      */
+
+      const nombre =
+        escapar(
+          perfil.nombre ||
+          "Usuario"
+        );
+
+
+      /*
+        Mensaje seguro
+      */
+
+      const contenido =
+        escapar(
+          mensaje.content ||
+          ""
+        );
+
+
+      /*
+        Hora
+      */
+
+      const fecha =
+        new Date(
+          mensaje.created_at
+        );
+
+
+      const fechaTexto =
+        formatearFecha(
+          fecha
+        );
+
+
+      tarjeta.innerHTML = `
+
+        <img
+          class="avatar"
+          src="${foto}"
+          alt="Foto"
+          onerror="
+            this.src='https://via.placeholder.com/100'
+          "
+        >
+
+        <div class="contenido">
+
+          <div class="nombre">
+
+            ${nombre}
+
+            ${
+              perfil.online
+                ? '<span class="online"></span>'
+                : ''
+            }
+
+          </div>
+
+          <div class="mensaje">
+            💬 ${contenido}
+          </div>
+
+          <div class="hora">
+            ${fechaTexto}
+          </div>
+
+        </div>
+
+        ${
+          noLeida
+            ? '<span class="indicador"></span>'
+            : ''
+        }
+
+      `;
+
+
+      /*
+        Al tocar:
+        marcar como leído
+        y abrir conversación.
+      */
+
+      tarjeta.addEventListener(
+        "click",
+        () => {
+
+          abrirConversacion(
+            perfil.id,
+            mensaje.id
+          );
+
+        }
+      );
+
+
+      lista.appendChild(
+        tarjeta
+      );
+
+    }
+  );
+}
+
+
+/* =====================================================
+   ABRIR CONVERSACIÓN
+===================================================== */
+
+async function abrirConversacion(
+  usuarioId,
+  mensajeId
+) {
+
+  try {
+
+    const ahora =
+      new Date().toISOString();
+
+
+    /*
+      Marcar mensaje leído.
+    */
+
+    await supabaseClient
+      .from("messages")
+      .update({
+
+        delivered_at:
+          ahora,
+
+        read_at:
+          ahora
+
+      })
+      .eq(
+        "id",
+        mensajeId
+      )
+      .eq(
+        "sender_id",
+        usuarioId
+      );
+
+
+  } catch (error) {
+
+    console.error(
+      "No se pudo marcar leído:",
+      error
+    );
+  }
+
+
+  /*
+    Abrir conversación.
+  */
+
+  window.location.href =
+    "conversacion.html?user=" +
+    encodeURIComponent(
+      usuarioId
+    );
+}
+
+
+/* =====================================================
+   MARCAR TODAS COMO LEÍDAS
+===================================================== */
+
+async function marcarTodasLeidas() {
+
+  if (!usuarioActual) {
+    return;
+  }
+
+
+  try {
+
+    const {
+      data: matches,
+      error
+    } =
+      await supabaseClient
+        .from("matches")
+        .select(
+          "id"
+        )
+        .or(
+          `user1_id.eq.${usuarioActual.id},user2_id.eq.${usuarioActual.id}`
+        );
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    if (
+      !matches ||
+      matches.length === 0
+    ) {
+
+      actualizarContadores(0);
+
+      return;
+    }
+
+
+    const ahora =
+      new Date().toISOString();
+
+
+    /*
+      Marcar solamente mensajes
+      recibidos y todavía no leídos.
+    */
+
+    for (
+      const match of matches
+    ) {
+
+      const {
+        error:
+          updateError
+      } =
+        await supabaseClient
+          .from("messages")
+          .update({
+
+            delivered_at:
+              ahora,
+
+            read_at:
+              ahora
+
+          })
+          .eq(
+            "match_id",
+            match.id
+          )
+          .neq(
+            "sender_id",
+            usuarioActual.id
+          )
+          .is(
+            "read_at",
+            null
+          );
+
+
+      if (updateError) {
+
+        console.error(
+          "Error marcando:",
+          updateError
+        );
+      }
+    }
+
+
+    /*
+      Recargar
+    */
+
+    await cargarNotificaciones();
+
+
+  } catch (error) {
+
+    console.error(
+      error
+    );
+
+
+    alert(
+      "No se pudieron marcar las notificaciones."
+    );
+  }
+}
+
+
+/* =====================================================
+   REALTIME
+===================================================== */
+
+function activarRealtime() {
+
+  if (
+    !usuarioActual
+  ) {
+    return;
+  }
+
+
+  /*
+    Evitar canales duplicados.
+  */
+
+  if (canalMensajes) {
+
+    supabaseClient
+      .removeChannel(
+        canalMensajes
+      );
+  }
+
+
+  canalMensajes =
+    supabaseClient
+      .channel(
+        "notificaciones-" +
+        usuarioActual.id +
+        "-" +
+        Date.now()
+      )
+
+
+      .on(
+
+        "postgres_changes",
+
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "messages"
+        },
+
+        payload => {
+
+          const mensaje =
+            payload.new;
+
+
+          /*
+            Solo nos interesan
+            mensajes recibidos.
+          */
+
+          if (
+            mensaje &&
+            mensaje.sender_id !==
+            usuarioActual.id
+          ) {
+
+            cargarNotificaciones();
+          }
+
+        }
+
+      )
+
+
+      .on(
+
+        "postgres_changes",
+
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "messages"
+        },
+
+        payload => {
+
+          const mensaje =
+            payload.new;
+
+
+          if (
+            mensaje &&
+            mensaje.sender_id !==
+            usuarioActual.id
+          ) {
+
+            cargarNotificaciones();
+          }
+
+        }
+
+      )
+
+
+      .subscribe(
+        status => {
+
+          console.log(
+            "Realtime notificaciones:",
+            status
+          );
+
+        }
+      );
+}
+
+
+/* =====================================================
+   CONTADORES
+===================================================== */
+
+function actualizarContadores(
+  cantidad
+) {
+
+  const valor =
+    Number(cantidad) || 0;
+
+
+  /*
+    Header
+  */
+
+  if (
+    valor > 0
+  ) {
+
+    headerCount.textContent =
+      valor > 99
+        ? "99+"
+        : valor;
+
+    headerCount.style.display =
+      "flex";
+
+  } else {
+
+    headerCount.style.display =
+      "none";
+  }
+
+
+  /*
+    Navegación
+  */
+
+  if (
+    valor > 0
+  ) {
+
+    navBadge.textContent =
+      valor > 99
+        ? "99+"
+        : valor;
+
+    navBadge.style.display =
+      "flex";
+
+  } else {
+
+    navBadge.style.display =
+      "none";
+  }
+}
+
+
+/* =====================================================
+   ESTADO CARGANDO
+===================================================== */
+
+function mostrarCargando() {
+
+  lista.innerHTML = `
+
+    <div class="estado">
+
+      <div class="spinner">
+        ⏳
+      </div>
+
+      <p>
+        Cargando notificaciones...
+      </p>
+
+    </div>
+
+  `;
+}
+
+
+/* =====================================================
+   ESTADO VACÍO
+========================
