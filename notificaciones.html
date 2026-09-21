@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Notificaciones · EmiMatch</title>
+  <title>Notificaciones - EmiMatch</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -16,171 +16,107 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f3f6fb;
-      color: #172033;
-      padding-bottom: 82px;
-    }
-
-    .app {
-      width: 100%;
-      max-width: 700px;
-      min-height: 100vh;
-      margin: 0 auto;
-      background: #fff;
-    }
-
-    /* HEADER */
-
-    .header {
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      padding: 20px 18px;
+      background: linear-gradient(180deg, #071a3d, #0b2454);
       color: white;
-      background:
-        linear-gradient(
-          135deg,
-          #06183f,
-          #123b91
-        );
-      box-shadow:
-        0 3px 12px rgba(0,0,0,.15);
+      min-height: 100vh;
+      padding-bottom: 90px;
     }
 
-    .header-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
+    header {
+      padding: 22px 18px;
+      text-align: center;
+      background: rgba(0,0,0,.18);
+      border-bottom: 1px solid rgba(255,255,255,.1);
     }
 
-    .header-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(255,255,255,.12);
+    header h1 {
+      margin: 0;
       font-size: 25px;
     }
 
-    .header-info {
-      flex: 1;
+    header p {
+      margin: 7px 0 0;
+      opacity: .75;
+      font-size: 14px;
     }
-
-    .header h1 {
-      margin: 0;
-      font-size: 21px;
-    }
-
-    .header p {
-      margin: 5px 0 0;
-      font-size: 12px;
-      opacity: .82;
-    }
-
-    .header-count {
-      display: none;
-      min-width: 24px;
-      height: 24px;
-      padding: 0 7px;
-      align-items: center;
-      justify-content: center;
-      border-radius: 20px;
-      background: #e53935;
-      color: white;
-      font-size: 11px;
-      font-weight: bold;
-    }
-
-    /* ACTIONS */
 
     .acciones {
       display: flex;
-      gap: 9px;
-      padding: 12px;
-      background: #fff;
-      border-bottom: 1px solid #e5e9f0;
+      gap: 10px;
+      padding: 15px;
     }
 
-    .accion {
-      flex: 1;
-      min-height: 42px;
+    button {
       border: 0;
       border-radius: 12px;
-      background: #eef3fa;
-      color: #123b91;
+      padding: 11px 14px;
       font-weight: bold;
       cursor: pointer;
     }
 
-    .accion:active {
-      transform: scale(.98);
+    .btn {
+      flex: 1;
+      background: white;
+      color: #09204a;
     }
 
-    /* LISTA */
+    .contenedor {
+      padding: 0 15px;
+    }
 
-    .lista {
-      padding: 10px;
+    .estado {
+      text-align: center;
+      padding: 40px 20px;
+      opacity: .8;
     }
 
     .notificacion {
-      position: relative;
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 13px;
-      margin-bottom: 9px;
-      border: 1px solid #e3e8f0;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.08);
       border-radius: 16px;
-      background: #fff;
+      padding: 13px;
+      margin-bottom: 10px;
       cursor: pointer;
-      transition: .15s;
     }
 
-    .notificacion:active {
-      transform: scale(.99);
-    }
-
-    .notificacion.no-leida {
-      background: #eef5ff;
-      border-color: #c9dcff;
-    }
-
-    .avatar {
-      width: 53px;
-      height: 53px;
-      flex-shrink: 0;
+    .foto {
+      width: 52px;
+      height: 52px;
+      min-width: 52px;
       border-radius: 50%;
       object-fit: cover;
-      background: #e5e7eb;
+      background: #193b72;
     }
 
-    .contenido {
+    .foto-placeholder {
+      width: 52px;
+      height: 52px;
+      min-width: 52px;
+      border-radius: 50%;
+      background: #193b72;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    .info {
       flex: 1;
       min-width: 0;
     }
 
     .nombre {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 15px;
       font-weight: bold;
-    }
-
-    .online {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #22c55e;
-      display: inline-block;
+      font-size: 16px;
     }
 
     .mensaje {
-      margin-top: 5px;
-      color: #566276;
-      font-size: 13px;
+      margin-top: 4px;
+      opacity: .85;
+      font-size: 14px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -188,119 +124,58 @@
 
     .hora {
       margin-top: 5px;
-      color: #8a94a6;
-      font-size: 11px;
+      font-size: 12px;
+      opacity: .55;
     }
 
-    .indicador {
-      width: 10px;
-      height: 10px;
-      flex-shrink: 0;
+    .punto {
+      width: 11px;
+      height: 11px;
+      background: #ff3158;
       border-radius: 50%;
-      background: #e53935;
-      box-shadow: 0 0 0 3px #dceaff;
+      flex-shrink: 0;
     }
 
-    /* ESTADOS */
-
-    .estado {
-      text-align: center;
-      padding: 70px 25px;
-      color: #667085;
-    }
-
-    .estado-icono {
-      font-size: 48px;
-      margin-bottom: 15px;
-    }
-
-    .estado strong {
-      display: block;
-      color: #263247;
-      font-size: 16px;
-      margin-bottom: 7px;
-    }
-
-    .estado p {
-      margin: 0;
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    .spinner {
-      font-size: 30px;
-      animation: girar 1s linear infinite;
-    }
-
-    @keyframes girar {
-      from {
-        transform: rotate(0);
-      }
-
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .error {
-      text-align: center;
-      padding: 50px 20px;
-      color: #c62828;
-    }
-
-    /* NAV */
-
-    .bottom-nav {
+    nav {
       position: fixed;
-      left: 50%;
       bottom: 0;
-      transform: translateX(-50%);
-      z-index: 100;
-      width: 100%;
-      max-width: 700px;
+      left: 0;
+      right: 0;
       height: 72px;
+      background: rgba(4,14,35,.97);
+      border-top: 1px solid rgba(255,255,255,.1);
       display: flex;
-      align-items: center;
       justify-content: space-around;
-      background: rgba(255,255,255,.98);
-      border-top: 1px solid #dfe4ec;
-      box-shadow: 0 -3px 15px rgba(0,0,0,.08);
+      align-items: center;
+      z-index: 100;
     }
 
-    .nav-item {
-      position: relative;
-      min-width: 55px;
-      color: #6b7485;
+    nav a {
       text-decoration: none;
+      color: white;
+      font-size: 11px;
       text-align: center;
-      font-size: 10px;
+      opacity: .85;
+      position: relative;
     }
 
-    .nav-icon {
+    nav a span {
       display: block;
+      font-size: 22px;
       margin-bottom: 3px;
-      font-size: 21px;
     }
 
-    .nav-item.active {
-      color: #123b91;
-      font-weight: bold;
-    }
-
-    .nav-badge {
+    .badge {
       position: absolute;
       top: -5px;
-      right: 7px;
+      right: 4px;
+      background: #ff3158;
+      color: white;
+      border-radius: 20px;
       min-width: 17px;
       height: 17px;
-      padding: 0 4px;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      border-radius: 20px;
-      background: #e53935;
-      color: white;
-      font-size: 9px;
+      padding: 2px 5px;
+      font-size: 10px;
       font-weight: bold;
     }
   </style>
@@ -308,164 +183,63 @@
 
 <body>
 
-<div class="app">
+<header>
+  <h1>🔔 Notificaciones</h1>
+  <p>Mensajes y actividad reciente</p>
+</header>
 
-  <!-- HEADER -->
+<div class="acciones">
+  <button class="btn" onclick="cargarNotificaciones()">
+    🔄 Actualizar
+  </button>
 
-  <header class="header">
+  <button class="btn" onclick="marcarTodasLeidas()">
+    ✓✓ Marcar leídas
+  </button>
+</div>
 
-    <div class="header-row">
+<div class="contenedor">
 
-      <div class="header-icon">
-        🔔
-      </div>
-
-      <div class="header-info">
-
-        <h1>
-          Notificaciones
-        </h1>
-
-        <p>
-          Mensajes y actividad reciente
-        </p>
-
-      </div>
-
-      <span
-        id="headerCount"
-        class="header-count"
-      >
-        0
-      </span>
-
-    </div>
-
-  </header>
-
-
-  <!-- ACCIONES -->
-
-  <div class="acciones">
-
-    <button
-      class="accion"
-      id="btnActualizar"
-      onclick="cargarNotificaciones()"
-    >
-      🔄 Actualizar
-    </button>
-
-    <button
-      class="accion"
-      onclick="marcarTodasLeidas()"
-    >
-      ✓✓ Marcar leídas
-    </button>
-
+  <div id="estado" class="estado">
+    ⏳<br><br>
+    Cargando notificaciones...
   </div>
 
-
-  <!-- LISTA -->
-
-  <main
-    id="lista"
-    class="lista"
-  >
-
-    <div class="estado">
-
-      <div class="spinner">
-        ⏳
-      </div>
-
-      <p>
-        Cargando notificaciones...
-      </p>
-
-    </div>
-
-  </main>
+  <div id="lista"></div>
 
 </div>
 
+<nav>
 
-<!-- NAVEGACIÓN -->
-
-<nav class="bottom-nav">
-
-  <a
-    class="nav-item"
-    href="perfil.html"
-  >
-    <span class="nav-icon">
-      👤
-    </span>
+  <a href="perfil.html">
+    <span>👤</span>
     Perfil
   </a>
 
-
-  <a
-    class="nav-item"
-    href="descubrir.html"
-  >
-    <span class="nav-icon">
-      🔎
-    </span>
+  <a href="descubrir.html">
+    <span>🔎</span>
     Descubrir
   </a>
 
-
-  <a
-    class="nav-item"
-    href="likes.html"
-  >
-    <span class="nav-icon">
-      ❤️
-    </span>
+  <a href="likes.html">
+    <span>❤️</span>
     Me gustas
   </a>
 
-
-  <a
-    class="nav-item"
-    href="chat.html"
-  >
-    <span class="nav-icon">
-      💕
-    </span>
+  <a href="chat.html">
+    <span>💕</span>
     Matches
   </a>
 
-
-  <a
-    class="nav-item active"
-    href="notificaciones.html"
-  >
-
-    <span class="nav-icon">
-      🔔
-    </span>
-
+  <a href="notificaciones.html">
+    <span>🔔</span>
     Notificaciones
-
-    <span
-      id="navBadge"
-      class="nav-badge"
-    >
-      0
-    </span>
-
+    <b id="badge" class="badge" style="display:none;">0</b>
   </a>
 
 </nav>
 
-
 <script>
-
-/* =====================================================
-   CONFIGURACIÓN SUPABASE
-===================================================== */
 
 const SUPABASE_URL =
   "https://kngiadwaesdbmvwivdev.supabase.co";
@@ -473,326 +247,199 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
   "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
 
-
 const supabaseClient =
-  supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
-
-
-/* =====================================================
-   VARIABLES
-===================================================== */
+  supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let usuarioActual = null;
 
-let canalMensajes = null;
 
-let cargando = false;
-
-
-/* =====================================================
-   ELEMENTOS
-===================================================== */
-
-const lista =
-  document.getElementById(
-    "lista"
-  );
-
-const btnActualizar =
-  document.getElementById(
-    "btnActualizar"
-  );
-
-const navBadge =
-  document.getElementById(
-    "navBadge"
-  );
-
-const headerCount =
-  document.getElementById(
-    "headerCount"
-  );
-
-
-/* =====================================================
-   INICIO
-===================================================== */
+/* =========================
+   INICIAR
+========================= */
 
 async function iniciar() {
 
   try {
 
-    mostrarCargando();
-
-
     const {
-      data: {
-        session
-      },
+      data: { session },
       error
-    } =
-      await supabaseClient
-        .auth
-        .getSession();
-
+    } = await supabaseClient.auth.getSession();
 
     if (error) {
       throw error;
     }
 
-
     if (!session) {
 
-      window.location.href =
-        "index.html";
+      document.getElementById("estado").innerHTML =
+        "🔐<br><br>Necesitás iniciar sesión.";
 
       return;
     }
 
-
-    usuarioActual =
-      session.user;
-
+    usuarioActual = session.user;
 
     await cargarNotificaciones();
 
-    activarRealtime();
-
-
   } catch (error) {
 
-    console.error(
-      "Error al iniciar:",
-      error
-    );
+    console.error(error);
 
-
-    mostrarError(
-      "No se pudieron cargar las notificaciones."
-    );
+    document.getElementById("estado").innerHTML =
+      "❌<br><br>No se pudieron cargar las notificaciones.<br><br>" +
+      "<small>" + escapar(error.message) + "</small>";
   }
 }
 
 
-/* =====================================================
+/* =========================
    CARGAR NOTIFICACIONES
-===================================================== */
+========================= */
 
 async function cargarNotificaciones() {
 
-  if (
-    !usuarioActual ||
-    cargando
-  ) {
-    return;
-  }
+  if (!usuarioActual) return;
 
+  const estado =
+    document.getElementById("estado");
 
-  cargando = true;
+  const lista =
+    document.getElementById("lista");
 
-  btnActualizar.disabled =
-    true;
+  estado.style.display = "block";
 
+  estado.innerHTML =
+    "⏳<br><br>Cargando notificaciones...";
+
+  lista.innerHTML = "";
 
   try {
 
-    mostrarCargando();
-
-
     /*
-      Buscar los Matches
+      Primero obtenemos los matches
     */
 
-    const {
-      data: matches,
-      error: matchError
-    } =
+    const { data: matches, error: errorMatches } =
       await supabaseClient
         .from("matches")
-        .select(
-          "id,user1_id,user2_id"
-        )
+        .select("id,user1_id,user2_id")
         .or(
-          `user1_id.eq.${usuarioActual.id},user2_id.eq.${usuarioActual.id}`
+          "user1_id.eq." +
+          usuarioActual.id +
+          ",user2_id.eq." +
+          usuarioActual.id
         );
 
-
-    if (matchError) {
-      throw matchError;
+    if (errorMatches) {
+      throw errorMatches;
     }
 
+    if (!matches || matches.length === 0) {
 
-    if (
-      !matches ||
-      matches.length === 0
-    ) {
+      estado.innerHTML =
+        "🔔<br><br>No tenés notificaciones todavía.";
 
-      mostrarVacio();
-
-      actualizarContadores(0);
+      actualizarBadge(0);
 
       return;
     }
 
 
     /*
-      Construir las notificaciones
+      Buscamos los mensajes de esos matches
     */
 
-    const resultados = [];
+    let todas = [];
 
+    for (const match of matches) {
 
-    for (
-      const match of matches
-    ) {
-
-      const otroId =
-        match.user1_id ===
-        usuarioActual.id
+      const otroUsuario =
+        match.user1_id === usuarioActual.id
           ? match.user2_id
           : match.user1_id;
 
 
-      /*
-        Buscar solamente mensajes
-        enviados por la otra persona.
-      */
-
-      const {
-        data: mensajes,
-        error: mensajesError
-      } =
+      const { data: mensajes, error: errorMensajes } =
         await supabaseClient
           .from("messages")
           .select(
-            "id,match_id,sender_id,content,created_at,delivered_at,read_at"
+            "id,match_id,sender_id,content,created_at,read_at,delivered_at"
           )
-          .eq(
-            "match_id",
-            match.id
-          )
-          .eq(
-            "sender_id",
-            otroId
-          )
-          .order(
-            "created_at",
-            {
-              ascending: false
-            }
-          )
-          .limit(30);
+          .eq("match_id", match.id)
+          .eq("sender_id", otroUsuario)
+          .order("created_at", { ascending: false })
+          .limit(20);
 
 
-      if (mensajesError) {
-
-        console.error(
-          "Error mensajes:",
-          mensajesError
-        );
-
+      if (errorMensajes) {
+        console.error(errorMensajes);
         continue;
       }
 
 
-      if (
-        !mensajes ||
-        mensajes.length === 0
-      ) {
+      if (!mensajes || mensajes.length === 0) {
         continue;
       }
 
 
       /*
-        Buscar perfil
+        Perfil del usuario
       */
 
-      const {
-        data: perfil,
-        error: perfilError
-      } =
+      const { data: perfil, error: errorPerfil } =
         await supabaseClient
           .from("profiles")
           .select(
-            "id,nombre,foto_url,online"
+            "id,nombre,edad,ciudad,foto_url,online"
           )
-          .eq(
-            "id",
-            otroId
-          )
-          .single();
+          .eq("id", otroUsuario)
+          .maybeSingle();
 
 
-      if (perfilError) {
-
-        console.error(
-          "Error perfil:",
-          perfilError
-        );
-
-        continue;
+      if (errorPerfil) {
+        console.error(errorPerfil);
       }
 
 
-      /*
-        Agregar cada mensaje
-      */
+      for (const mensaje of mensajes) {
 
-      for (
-        const mensaje of mensajes
-      ) {
+        todas.push({
 
-        resultados.push({
+          mensaje: mensaje,
 
-          id:
-            mensaje.id,
+          perfil: perfil,
 
-          matchId:
-            match.id,
-
-          mensaje,
-
-          perfil
+          otroUsuario: otroUsuario
 
         });
+
       }
+
     }
 
 
     /*
-      Ordenar más nuevo primero
+      Ordenar por fecha
     */
 
-    resultados.sort(
-      (a, b) => {
+    todas.sort(function(a, b) {
 
-        return (
-          new Date(
-            b.mensaje.created_at
-          ) -
-          new Date(
-            a.mensaje.created_at
-          )
-        );
+      return new Date(
+        b.mensaje.created_at
+      ) - new Date(
+        a.mensaje.created_at
+      );
 
-      }
-    );
+    });
 
 
-    /*
-      Si no hay mensajes
-    */
+    if (todas.length === 0) {
 
-    if (
-      resultados.length === 0
-    ) {
+      estado.innerHTML =
+        "🔔<br><br>No tenés mensajes nuevos.";
 
-      mostrarVacio();
-
-      actualizarContadores(0);
+      actualizarBadge(0);
 
       return;
     }
@@ -802,583 +449,396 @@ async function cargarNotificaciones() {
       Mostrar
     */
 
-    renderizarNotificaciones(
-      resultados
-    );
+    estado.style.display = "none";
 
+    let noLeidas = 0;
 
-    /*
-      Contar no leídas
-    */
+    todas.forEach(function(item) {
 
-    const noLeidas =
-      resultados.filter(
-        item =>
-          !item.mensaje.read_at
-      ).length;
+      const mensaje = item.mensaje;
+      const perfil = item.perfil;
 
+      if (!mensaje.read_at) {
+        noLeidas++;
+      }
 
-    actualizarContadores(
-      noLeidas
-    );
-
-
-  } catch (error) {
-
-    console.error(
-      "Error cargando:",
-      error
-    );
-
-
-    mostrarError(
-      "No se pudieron cargar las notificaciones."
-    );
-
-
-  } finally {
-
-    cargando = false;
-
-    btnActualizar.disabled =
-      false;
-  }
-}
-
-
-/* =====================================================
-   RENDERIZAR
-===================================================== */
-
-function renderizarNotificaciones(
-  resultados
-) {
-
-  lista.innerHTML = "";
-
-
-  resultados.forEach(
-    item => {
-
-      const mensaje =
-        item.mensaje;
-
-      const perfil =
-        item.perfil;
-
-
-      const noLeida =
-        !mensaje.read_at;
-
-
-      const tarjeta =
-        document.createElement(
-          "div"
-        );
-
-
-      tarjeta.className =
-        "notificacion" +
-        (
-          noLeida
-            ? " no-leida"
-            : ""
-        );
-
-
-      /*
-        Foto segura
-      */
-
-      const foto =
-        perfil.foto_url ||
-        "https://via.placeholder.com/100";
-
-
-      /*
-        Nombre seguro
-      */
 
       const nombre =
-        escapar(
-          perfil.nombre ||
-          "Usuario"
-        );
+        perfil && perfil.nombre
+          ? perfil.nombre
+          : "Usuario";
 
 
-      /*
-        Mensaje seguro
-      */
-
-      const contenido =
-        escapar(
-          mensaje.content ||
-          ""
-        );
-
-
-      /*
-        Hora
-      */
-
-      const fecha =
-        new Date(
-          mensaje.created_at
-        );
-
-
-      const fechaTexto =
-        formatearFecha(
-          fecha
-        );
+      const foto =
+        perfil && perfil.foto_url
+          ? `
+            <img
+              class="foto"
+              src="${escapar(perfil.foto_url)}"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+            >
+            <div
+              class="foto-placeholder"
+              style="display:none;"
+            >
+              👤
+            </div>
+          `
+          : `
+            <div class="foto-placeholder">
+              👤
+            </div>
+          `;
 
 
-      tarjeta.innerHTML = `
+      const texto =
+        mensaje.content || "";
 
-        <img
-          class="avatar"
-          src="${foto}"
-          alt="Foto"
-          onerror="
-            this.src='https://via.placeholder.com/100'
-          "
-        >
 
-        <div class="contenido">
+      const hora =
+        tiempoRelativo(mensaje.created_at);
+
+
+      const punto =
+        mensaje.read_at
+          ? ""
+          : `<div class="punto"></div>`;
+
+
+      const div =
+        document.createElement("div");
+
+      div.className = "notificacion";
+
+      div.innerHTML = `
+
+        ${foto}
+
+        <div class="info">
 
           <div class="nombre">
-
-            ${nombre}
-
-            ${
-              perfil.online
-                ? '<span class="online"></span>'
-                : ''
-            }
-
+            ${escapar(nombre)}
+            ${perfil && perfil.online ? " 🟢" : ""}
           </div>
 
           <div class="mensaje">
-            💬 ${contenido}
+            ${escapar(texto)}
           </div>
 
           <div class="hora">
-            ${fechaTexto}
+            ${hora}
           </div>
 
         </div>
 
-        ${
-          noLeida
-            ? '<span class="indicador"></span>'
-            : ''
-        }
+        ${punto}
 
       `;
 
 
-      /*
-        Al tocar:
-        marcar como leído
-        y abrir conversación.
-      */
+      div.onclick = function() {
 
-      tarjeta.addEventListener(
-        "click",
-        () => {
+        abrirConversacion(
+          mensaje.id,
+          item.otroUsuario
+        );
 
-          abrirConversacion(
-            perfil.id,
-            mensaje.id
-          );
-
-        }
-      );
+      };
 
 
-      lista.appendChild(
-        tarjeta
-      );
+      lista.appendChild(div);
 
-    }
-  );
-}
+    });
 
 
-/* =====================================================
-   ABRIR CONVERSACIÓN
-===================================================== */
-
-async function abrirConversacion(
-  usuarioId,
-  mensajeId
-) {
-
-  try {
-
-    const ahora =
-      new Date().toISOString();
-
-
-    /*
-      Marcar mensaje leído.
-    */
-
-    await supabaseClient
-      .from("messages")
-      .update({
-
-        delivered_at:
-          ahora,
-
-        read_at:
-          ahora
-
-      })
-      .eq(
-        "id",
-        mensajeId
-      )
-      .eq(
-        "sender_id",
-        usuarioId
-      );
+    actualizarBadge(noLeidas);
 
 
   } catch (error) {
 
-    console.error(
-      "No se pudo marcar leído:",
-      error
-    );
+    console.error(error);
+
+    estado.style.display = "block";
+
+    estado.innerHTML =
+      "❌<br><br>" +
+      "Error cargando notificaciones.<br><br>" +
+      "<small>" +
+      escapar(error.message) +
+      "</small>";
+
   }
 
-
-  /*
-    Abrir conversación.
-  */
-
-  window.location.href =
-    "conversacion.html?user=" +
-    encodeURIComponent(
-      usuarioId
-    );
 }
 
 
-/* =====================================================
-   MARCAR TODAS COMO LEÍDAS
-===================================================== */
+/* =========================
+   ABRIR CONVERSACIÓN
+========================= */
 
-async function marcarTodasLeidas() {
-
-  if (!usuarioActual) {
-    return;
-  }
-
+async function abrirConversacion(
+  mensajeId,
+  otroUsuario
+) {
 
   try {
 
-    const {
-      data: matches,
-      error
-    } =
-      await supabaseClient
-        .from("matches")
-        .select(
-          "id"
-        )
-        .or(
-          `user1_id.eq.${usuarioActual.id},user2_id.eq.${usuarioActual.id}`
-        );
+    await supabaseClient
+      .from("messages")
+      .update({
+        delivered_at: new Date().toISOString(),
+        read_at: new Date().toISOString()
+      })
+      .eq("id", mensajeId)
+      .eq("sender_id", otroUsuario);
 
+  } catch (error) {
+
+    console.error(error);
+
+  }
+
+  window.location.href =
+    "conversacion.html?user=" +
+    encodeURIComponent(otroUsuario);
+
+}
+
+
+/* =========================
+   MARCAR TODAS
+========================= */
+
+async function marcarTodasLeidas() {
+
+  if (!usuarioActual) return;
+
+  try {
+
+    /*
+      Primero buscamos mensajes recibidos
+    */
+
+    const { data, error } =
+      await supabaseClient
+        .from("messages")
+        .select("id")
+        .neq("sender_id", usuarioActual.id)
+        .is("read_at", null);
 
     if (error) {
       throw error;
     }
 
+    if (!data || data.length === 0) {
 
-    if (
-      !matches ||
-      matches.length === 0
-    ) {
-
-      actualizarContadores(0);
+      actualizarBadge(0);
 
       return;
     }
 
 
-    const ahora =
-      new Date().toISOString();
+    const ids =
+      data.map(function(m) {
+        return m.id;
+      });
 
 
-    /*
-      Marcar solamente mensajes
-      recibidos y todavía no leídos.
-    */
+    await supabaseClient
+      .from("messages")
+      .update({
+        read_at: new Date().toISOString(),
+        delivered_at: new Date().toISOString()
+      })
+      .in("id", ids);
 
-    for (
-      const match of matches
-    ) {
-
-      const {
-        error:
-          updateError
-      } =
-        await supabaseClient
-          .from("messages")
-          .update({
-
-            delivered_at:
-              ahora,
-
-            read_at:
-              ahora
-
-          })
-          .eq(
-            "match_id",
-            match.id
-          )
-          .neq(
-            "sender_id",
-            usuarioActual.id
-          )
-          .is(
-            "read_at",
-            null
-          );
-
-
-      if (updateError) {
-
-        console.error(
-          "Error marcando:",
-          updateError
-        );
-      }
-    }
-
-
-    /*
-      Recargar
-    */
 
     await cargarNotificaciones();
 
 
   } catch (error) {
 
-    console.error(
-      error
-    );
-
+    console.error(error);
 
     alert(
       "No se pudieron marcar las notificaciones."
     );
+
   }
+
 }
 
 
-/* =====================================================
+/* =========================
+   BADGE
+========================= */
+
+function actualizarBadge(numero) {
+
+  const badge =
+    document.getElementById("badge");
+
+  if (!badge) return;
+
+  if (numero > 0) {
+
+    badge.style.display = "block";
+
+    badge.textContent =
+      numero > 99
+        ? "99+"
+        : numero;
+
+  } else {
+
+    badge.style.display = "none";
+
+  }
+
+}
+
+
+/* =========================
+   TIEMPO
+========================= */
+
+function tiempoRelativo(fecha) {
+
+  const ahora =
+    new Date();
+
+  const fechaMensaje =
+    new Date(fecha);
+
+  const segundos =
+    Math.floor(
+      (ahora - fechaMensaje) / 1000
+    );
+
+  if (segundos < 60) {
+    return "Ahora";
+  }
+
+  const minutos =
+    Math.floor(segundos / 60);
+
+  if (minutos < 60) {
+    return "Hace " + minutos + " min";
+  }
+
+  const horas =
+    Math.floor(minutos / 60);
+
+  if (horas < 24) {
+    return "Hace " + horas + " h";
+  }
+
+  const dias =
+    Math.floor(horas / 24);
+
+  if (dias < 7) {
+    return "Hace " + dias + " d";
+  }
+
+  return fechaMensaje.toLocaleDateString(
+    "es-AR",
+    {
+      day: "2-digit",
+      month: "2-digit"
+    }
+  );
+
+}
+
+
+/* =========================
+   ESCAPAR HTML
+========================= */
+
+function escapar(texto) {
+
+  return String(texto ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+
+}
+
+
+/* =========================
    REALTIME
-===================================================== */
+========================= */
+
+let canal = null;
 
 function activarRealtime() {
 
-  if (
-    !usuarioActual
-  ) {
-    return;
-  }
-
-
-  /*
-    Evitar canales duplicados.
-  */
-
-  if (canalMensajes) {
-
+  canal =
     supabaseClient
-      .removeChannel(
-        canalMensajes
-      );
-  }
-
-
-  canalMensajes =
-    supabaseClient
-      .channel(
-        "notificaciones-" +
-        usuarioActual.id +
-        "-" +
-        Date.now()
-      )
-
+      .channel("notificaciones-emimatch")
 
       .on(
-
         "postgres_changes",
-
         {
           event: "INSERT",
           schema: "public",
           table: "messages"
         },
+        function() {
 
-        payload => {
-
-          const mensaje =
-            payload.new;
-
-
-          /*
-            Solo nos interesan
-            mensajes recibidos.
-          */
-
-          if (
-            mensaje &&
-            mensaje.sender_id !==
-            usuarioActual.id
-          ) {
-
-            cargarNotificaciones();
-          }
+          cargarNotificaciones();
 
         }
-
       )
 
-
       .on(
-
         "postgres_changes",
-
         {
           event: "UPDATE",
           schema: "public",
           table: "messages"
         },
+        function() {
 
-        payload => {
-
-          const mensaje =
-            payload.new;
-
-
-          if (
-            mensaje &&
-            mensaje.sender_id !==
-            usuarioActual.id
-          ) {
-
-            cargarNotificaciones();
-          }
+          cargarNotificaciones();
 
         }
-
       )
 
+      .subscribe();
 
-      .subscribe(
-        status => {
-
-          console.log(
-            "Realtime notificaciones:",
-            status
-          );
-
-        }
-      );
 }
 
 
-/* =====================================================
-   CONTADORES
-===================================================== */
+window.addEventListener(
+  "beforeunload",
+  function() {
 
-function actualizarContadores(
-  cantidad
-) {
+    if (canal) {
 
-  const valor =
-    Number(cantidad) || 0;
+      supabaseClient
+        .removeChannel(canal);
 
+    }
 
-  /*
-    Header
-  */
-
-  if (
-    valor > 0
-  ) {
-
-    headerCount.textContent =
-      valor > 99
-        ? "99+"
-        : valor;
-
-    headerCount.style.display =
-      "flex";
-
-  } else {
-
-    headerCount.style.display =
-      "none";
   }
+);
 
 
-  /*
-    Navegación
-  */
+/* =========================
+   INICIAR
+========================= */
 
-  if (
-    valor > 0
-  ) {
+iniciar();
 
-    navBadge.textContent =
-      valor > 99
-        ? "99+"
-        : valor;
+setTimeout(
+  activarRealtime,
+  1500
+);
 
-    navBadge.style.display =
-      "flex";
+</script>
 
-  } else {
-
-    navBadge.style.display =
-      "none";
-  }
-}
-
-
-/* =====================================================
-   ESTADO CARGANDO
-===================================================== */
-
-function mostrarCargando() {
-
-  lista.innerHTML = `
-
-    <div class="estado">
-
-      <div class="spinner">
-        ⏳
-      </div>
-
-      <p>
-        Cargando notificaciones...
-      </p>
-
-    </div>
-
-  `;
-}
-
-
-/* =====================================================
-   ESTADO VACÍO
-========================
+</body>
+</html>
