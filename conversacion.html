@@ -1,269 +1,526 @@
-<!DOCTYPE html>
-<html lang="es">
+<!DOCTYPE html><html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Conversación · EmiMatch</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>Conversación · EmiMatch</title>  <meta name="theme-color" content="#07152f">
+  <meta name="description" content="Conversación privada de EmiMatch.">  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>  <style>
     * {
       box-sizing: border-box;
     }
 
+    html,
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f4f6fb;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      background:
+        radial-gradient(circle at top right, rgba(124,58,237,.20), transparent 35%),
+        linear-gradient(145deg, #07152f, #102b5c);
       color: #172033;
     }
 
     .app {
+      width: 100%;
       max-width: 700px;
-      margin: auto;
+      height: 100dvh;
       min-height: 100vh;
-      background: white;
+      margin: auto;
+      background: #f4f7fb;
       display: flex;
       flex-direction: column;
+      position: relative;
+      overflow: hidden;
     }
 
+    /* =========================
+       HEADER
+    ========================= */
+
     .header {
-      position: sticky;
-      top: 0;
-      z-index: 10;
+      flex-shrink: 0;
+      height: 70px;
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 12px 15px;
-      background: linear-gradient(135deg, #071b49, #123b91);
+      gap: 11px;
+      padding: 10px 12px;
+      background:
+        linear-gradient(135deg, #07152f, #123b91 65%, #4c1d95);
       color: white;
+      box-shadow: 0 5px 18px rgba(0,0,0,.22);
+      z-index: 10;
     }
 
     .back {
+      width: 42px;
+      height: 42px;
+      flex-shrink: 0;
       border: 0;
-      background: transparent;
+      border-radius: 50%;
+      background: rgba(255,255,255,.10);
       color: white;
-      font-size: 28px;
+      font-size: 31px;
+      line-height: 1;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: .18s ease;
+    }
+
+    .back:active {
+      transform: scale(.92);
+      background: rgba(255,255,255,.18);
+    }
+
+    .avatar-wrap {
+      position: relative;
+      width: 46px;
+      height: 46px;
+      flex-shrink: 0;
     }
 
     .avatar {
-      width: 45px;
-      height: 45px;
+      width: 46px;
+      height: 46px;
       border-radius: 50%;
       object-fit: cover;
-      background: #ddd;
+      background: #dbe2ed;
+      border: 2px solid rgba(255,255,255,.75);
+      display: block;
+    }
+
+    .online-dot {
+      position: absolute;
+      right: 0;
+      bottom: 1px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #22c55e;
+      border: 2px solid #123b91;
+      display: none;
     }
 
     .header-info {
       flex: 1;
+      min-width: 0;
     }
 
     .header-info strong {
       display: block;
-      font-size: 17px;
+      font-size: 16px;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .status {
-      font-size: 12px;
-      opacity: .9;
-      margin-top: 3px;
+      font-size: 11px;
+      opacity: .88;
+      margin-top: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
+
+    .block-btn {
+      width: 40px;
+      height: 40px;
+      flex-shrink: 0;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(255,255,255,.08);
+      color: white;
+      cursor: pointer;
+      font-size: 18px;
+      transition: .18s ease;
+    }
+
+    .block-btn:active {
+      transform: scale(.92);
+      background: rgba(255,255,255,.18);
+    }
+
+    /* =========================
+       MENSAJES
+    ========================= */
 
     .messages {
       flex: 1;
-      padding: 18px 12px 95px;
+      min-height: 0;
+      padding: 18px 13px 12px;
       overflow-y: auto;
+      overflow-x: hidden;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 7px;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+
+      background:
+        radial-gradient(circle at 15% 10%, rgba(124,58,237,.05), transparent 25%),
+        radial-gradient(circle at 85% 80%, rgba(212,175,55,.05), transparent 25%),
+        #f4f7fb;
+    }
+
+    .messages::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .messages::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
     }
 
     .message {
-      max-width: 78%;
-      padding: 10px 13px;
-      border-radius: 17px;
+      position: relative;
+      max-width: 80%;
+      padding: 10px 13px 8px;
+      border-radius: 18px;
       font-size: 15px;
-      line-height: 1.35;
-      word-wrap: break-word;
+      line-height: 1.42;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      box-shadow: 0 3px 10px rgba(0,0,0,.07);
+      animation: aparecer .18s ease;
+    }
+
+    @keyframes aparecer {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .mine {
       align-self: flex-end;
-      background: #123b91;
+      background:
+        linear-gradient(135deg, #123b91, #2563eb);
       color: white;
       border-bottom-right-radius: 5px;
+      box-shadow: 0 4px 12px rgba(18,59,145,.20);
     }
 
     .theirs {
       align-self: flex-start;
-      background: #e9edf5;
+      background: white;
       color: #172033;
       border-bottom-left-radius: 5px;
+      border: 1px solid #e5eaf2;
     }
 
     .time {
       display: block;
-      font-size: 10px;
+      font-size: 9px;
       opacity: .72;
-      margin-top: 4px;
+      margin-top: 5px;
       text-align: right;
+      white-space: nowrap;
     }
 
     .checks {
       margin-left: 4px;
       font-size: 11px;
+      letter-spacing: -2px;
     }
 
     .read {
-      color: #5ec8ff;
+      color: #5ee7ff;
     }
+
+    /* =========================
+       TYPING
+    ========================= */
 
     .typing {
-      min-height: 24px;
-      padding: 0 15px 7px;
-      font-size: 12px;
+      flex-shrink: 0;
+      min-height: 25px;
+      padding: 3px 16px 5px;
+      font-size: 11px;
       color: #64748b;
       font-style: italic;
+      background: #f4f7fb;
     }
 
+    /* =========================
+       COMPOSER
+    ========================= */
+
     .composer {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
+      flex-shrink: 0;
       width: 100%;
-      max-width: 700px;
-      padding: 10px;
-      background: white;
-      border-top: 1px solid #ddd;
+      padding: 9px 10px calc(9px + env(safe-area-inset-bottom));
+      background: rgba(255,255,255,.97);
+      border-top: 1px solid #e1e6ef;
       display: flex;
+      align-items: flex-end;
       gap: 8px;
       z-index: 20;
+      box-shadow: 0 -5px 18px rgba(0,0,0,.07);
     }
 
     .composer textarea {
       flex: 1;
+      width: 100%;
       resize: none;
-      border: 1px solid #ccd3df;
-      border-radius: 20px;
-      padding: 10px 14px;
+      border: 1px solid #d6dce7;
+      border-radius: 21px;
+      padding: 11px 14px;
       outline: none;
       font-family: inherit;
-      min-height: 42px;
-      max-height: 100px;
+      font-size: 15px;
+      line-height: 1.35;
+      min-height: 43px;
+      max-height: 105px;
+      background: #f8fafc;
+      color: #172033;
+      transition: border-color .18s ease, box-shadow .18s ease;
+    }
+
+    .composer textarea:focus {
+      border-color: #4c6fd8;
+      box-shadow: 0 0 0 3px rgba(76,111,216,.10);
+      background: white;
+    }
+
+    .composer textarea::placeholder {
+      color: #94a3b8;
     }
 
     .send {
-      width: 45px;
-      height: 45px;
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
       border: 0;
       border-radius: 50%;
-      background: #123b91;
+      background:
+        linear-gradient(135deg, #123b91, #4c1d95);
       color: white;
-      font-size: 20px;
+      font-size: 19px;
       cursor: pointer;
+      box-shadow: 0 5px 14px rgba(18,59,145,.25);
+      transition: .18s ease;
+    }
+
+    .send:active {
+      transform: scale(.92);
     }
 
     .send:disabled {
-      opacity: .5;
+      opacity: .45;
       cursor: not-allowed;
+      box-shadow: none;
     }
+
+    /* =========================
+       ESTADOS
+    ========================= */
 
     .empty,
     .error {
+      width: 100%;
+      max-width: 320px;
       text-align: center;
       margin: auto;
       color: #64748b;
-      padding: 30px;
+      padding: 30px 20px;
+      line-height: 1.5;
     }
 
-    .block-btn {
-      border: 0;
-      background: transparent;
-      color: white;
-      cursor: pointer;
-      font-size: 18px;
+    .empty::first-line {
+      font-size: 15px;
     }
-  </style>
-</head>
 
-<body>
+    /* =========================
+       BLOQUEADO
+    ========================= */
 
-<div class="app">
+    .bloqueado-info {
+      margin: 8px auto 4px;
+      max-width: 330px;
+      padding: 9px 14px;
+      border-radius: 14px;
+      background: #fff7ed;
+      color: #9a3412;
+      font-size: 12px;
+      text-align: center;
+      border: 1px solid #fed7aa;
+    }
 
-  <div class="header">
+    /* =========================
+       DESKTOP
+    ========================= */
 
-    <button class="back" onclick="volver()">‹</button>
+    @media (min-width: 701px) {
+      .app {
+        box-shadow:
+          0 0 50px rgba(0,0,0,.30);
+      }
 
-    <img
-      id="avatar"
-      class="avatar"
-      src="https://via.placeholder.com/100"
-      alt="Foto"
-    >
+      .header {
+        height: 74px;
+      }
 
-    <div class="header-info">
+      .messages {
+        padding-left: 22px;
+        padding-right: 22px;
+      }
 
-      <strong id="nombreUsuario">
-        Cargando...
-      </strong>
+      .composer {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+    }
 
-      <div id="estadoUsuario" class="status">
-        ⏳
-      </div>
+    /* =========================
+       CELULARES PEQUEÑOS
+    ========================= */
 
-    </div>
+    @media (max-width: 380px) {
 
-    <button
-      class="block-btn"
-      onclick="bloquearUsuario()"
-      title="Bloquear"
-    >
-      🚫
-    </button>
+      .header {
+        height: 64px;
+        padding: 8px 9px;
+        gap: 8px;
+      }
 
-  </div>
+      .back {
+        width: 38px;
+        height: 38px;
+        font-size: 28px;
+      }
 
+      .avatar-wrap,
+      .avatar {
+        width: 42px;
+        height: 42px;
+      }
 
-  <div id="messages" class="messages">
+      .block-btn {
+        width: 37px;
+        height: 37px;
+        font-size: 16px;
+      }
 
-    <div class="empty">
-      ⏳ Cargando conversación...
-    </div>
+      .header-info strong {
+        font-size: 15px;
+      }
 
-  </div>
+      .status {
+        font-size: 10px;
+      }
 
+      .messages {
+        padding: 14px 9px 9px;
+      }
 
-  <div id="typing" class="typing"></div>
+      .message {
+        max-width: 86%;
+        font-size: 14px;
+        padding: 9px 11px 7px;
+      }
 
+      .composer {
+        padding: 7px 7px;
+      }
 
-  <div class="composer">
+      .composer textarea {
+        font-size: 14px;
+        padding: 10px 12px;
+      }
 
-    <textarea
-      id="inputMensaje"
-      placeholder="Escribí un mensaje..."
-      rows="1"
-      disabled
-    ></textarea>
+      .send {
+        width: 42px;
+        height: 42px;
+        min-width: 42px;
+      }
+    }
+  </style></head><body><div class="app">  <div class="header"><button
+  class="back"
+  onclick="volver()"
+  aria-label="Volver"
+>
+  ‹
+</button>
 
-    <button
-      id="btnEnviar"
-      class="send"
-      onclick="enviarMensaje()"
-      disabled
-    >
-      ➤
-    </button>
+<div class="avatar-wrap">
 
+  <img
+    id="avatar"
+    class="avatar"
+    src="https://via.placeholder.com/100"
+    alt="Foto"
+  >
+
+  <div
+    id="onlineDot"
+    class="online-dot"
+  ></div>
+
+</div>
+
+<div class="header-info">
+
+  <strong id="nombreUsuario">
+    Cargando...
+  </strong>
+
+  <div
+    id="estadoUsuario"
+    class="status"
+  >
+    ⏳
   </div>
 
 </div>
 
+<button
+  class="block-btn"
+  onclick="bloquearUsuario()"
+  title="Bloquear"
+  aria-label="Bloquear usuario"
+>
+  🚫
+</button>
 
-<script>
+  </div>  <div
+    id="messages"
+    class="messages"
+  ><div class="empty">
+  ⏳ Cargando conversación...
+</div>
+
+  </div>  <div
+    id="typing"
+    class="typing"
+  ></div>  <div class="composer"><textarea
+  id="inputMensaje"
+  placeholder="Escribí un mensaje..."
+  rows="1"
+  disabled
+></textarea>
+
+<button
+  id="btnEnviar"
+  class="send"
+  onclick="enviarMensaje()"
+  disabled
+  aria-label="Enviar mensaje"
+>
+  ➤
+</button>
+
+  </div></div><script>
 
 const SUPABASE_URL =
   "https://kngiadwaesdbmvwivdev.supabase.co";
@@ -444,11 +701,19 @@ function actualizarEstadoUsuario() {
       "estadoUsuario"
     );
 
+  const onlineDot =
+    document.getElementById(
+      "onlineDot"
+    );
+
 
   if (bloqueado) {
 
     estado.textContent =
       "🚫 Usuario bloqueado";
+
+    onlineDot.style.display =
+      "none";
 
     return;
   }
@@ -459,10 +724,16 @@ function actualizarEstadoUsuario() {
     estado.textContent =
       "🟢 En línea";
 
+    onlineDot.style.display =
+      "block";
+
   } else {
 
     estado.textContent =
       "⚪ Desconectado";
+
+    onlineDot.style.display =
+      "none";
   }
 
 }
@@ -1004,7 +1275,6 @@ function activarRealtimeTyping() {
 }
 
 
-
 /* =========================
    DETECTAR ESCRITURA
 ========================= */
@@ -1370,3 +1640,4 @@ iniciar();
 
 </body>
 </html>
+
