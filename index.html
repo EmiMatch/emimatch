@@ -1,1148 +1,590 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-
-  <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-  >
-
-  <title>EmiMatch — Conocé personas y hacé Match</title>
-
-  <meta
-    name="description"
-    content="EmiMatch es una plataforma para conocer personas, descubrir perfiles, hacer Match y comenzar nuevas conversaciones."
-  >
-
-  <meta name="author" content="EmiMatch">
-  <meta name="robots" content="index, follow">
-  <meta name="theme-color" content="#07152f">
-
-  <link
-    rel="icon"
-    type="image/svg+xml"
-    href="favicon.svg"
-  >
-
-  <link
-    rel="canonical"
-    href="https://emimatch.github.io/emimatch/"
-  >
-
-  <!-- Open Graph -->
-
-  <meta
-    property="og:type"
-    content="website"
-  >
-
-  <meta
-    property="og:title"
-    content="EmiMatch — Conocé personas y hacé Match"
-  >
-
-  <meta
-    property="og:description"
-    content="Descubrí perfiles, hacé Match y comenzá nuevas conversaciones con EmiMatch."
-  >
-
-  <meta
-    property="og:url"
-    content="https://emimatch.github.io/emimatch/"
-  >
-
-  <meta
-    property="og:site_name"
-    content="EmiMatch"
-  >
-
-  <style>
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Roboto,
-        Arial,
-        sans-serif;
-
-      background:
-        radial-gradient(
-          circle at 15% 10%,
-          rgba(124, 58, 237, 0.35),
-          transparent 35%
-        ),
-        radial-gradient(
-          circle at 85% 20%,
-          rgba(217, 173, 69, 0.18),
-          transparent 30%
-        ),
-        linear-gradient(
-          145deg,
-          #040b1c 0%,
-          #07152f 45%,
-          #102d59 100%
-        );
-
-      color: #ffffff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      overflow-x: hidden;
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
-      width: 280px;
-      height: 280px;
-      border-radius: 50%;
-      background: rgba(124, 58, 237, 0.14);
-      filter: blur(50px);
-      top: -100px;
-      left: -100px;
-      pointer-events: none;
-    }
-
-    body::after {
-      content: "";
-      position: fixed;
-      width: 260px;
-      height: 260px;
-      border-radius: 50%;
-      background: rgba(217, 173, 69, 0.10);
-      filter: blur(60px);
-      right: -100px;
-      bottom: -100px;
-      pointer-events: none;
-    }
-
-    .app {
-      width: 100%;
-      max-width: 440px;
-      position: relative;
-      z-index: 2;
-    }
-
-    .brand {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .brand-icon {
-      width: 82px;
-      height: 82px;
-      margin: 0 auto 14px;
-      border-radius: 25px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      background:
-        linear-gradient(
-          145deg,
-          #d9ad45,
-          #f1d37b
-        );
-
-      box-shadow:
-        0 15px 35px rgba(0, 0, 0, 0.35),
-        0 0 35px rgba(217, 173, 69, 0.18);
-
-      font-size: 42px;
-    }
-
-    .brand h1 {
-      margin: 0;
-      font-size: 38px;
-      letter-spacing: -1px;
-
-      background:
-        linear-gradient(
-          90deg,
-          #ffffff,
-          #d9ad45
-        );
-
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    .brand p {
-      margin: 7px 0 0;
-      color: #b9c4d8;
-      font-size: 15px;
-    }
-
-    .card {
-      background: rgba(255, 255, 255, 0.97);
-      color: #172033;
-
-      border-radius: 26px;
-      padding: 27px;
-
-      box-shadow:
-        0 25px 60px rgba(0, 0, 0, 0.35);
-
-      backdrop-filter: blur(15px);
-    }
-
-    .tabs {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      background: #eef1f7;
-      border-radius: 13px;
-      padding: 4px;
-      margin-bottom: 24px;
-    }
-
-    .tab {
-      border: 0;
-      background: transparent;
-      color: #697386;
-
-      padding: 11px;
-      border-radius: 10px;
-
-      font-size: 14px;
-      font-weight: 700;
-
-      cursor: pointer;
-    }
-
-    .tab.active {
-      background: #ffffff;
-      color: #102d59;
-
-      box-shadow:
-        0 3px 10px rgba(0,0,0,0.08);
-    }
-
-    .section-title {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .section-title h2 {
-      margin: 0;
-      color: #102d59;
-      font-size: 24px;
-    }
-
-    .section-title p {
-      margin: 7px 0 0;
-      color: #788196;
-      font-size: 14px;
-    }
-
-    .field {
-      margin-bottom: 15px;
-    }
-
-    .field label {
-      display: block;
-      margin-bottom: 7px;
-
-      color: #344054;
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .input-wrapper {
-      position: relative;
-    }
-
-    .input-wrapper span {
-      position: absolute;
-      left: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 17px;
-      pointer-events: none;
-    }
-
-    input[type="email"],
-    input[type="password"] {
-      width: 100%;
-      height: 50px;
-
-      border: 1px solid #d9deea;
-      border-radius: 13px;
-
-      padding: 0 14px 0 43px;
-
-      background: #f9fafc;
-      color: #172033;
-
-      font-size: 15px;
-      outline: none;
-
-      transition:
-        border-color .2s,
-        box-shadow .2s,
-        background .2s;
-    }
-
-    input:focus {
-      border-color: #7c3aed;
-      background: #ffffff;
-
-      box-shadow:
-        0 0 0 4px rgba(124, 58, 237, 0.10);
-    }
-
-    .password-wrapper input {
-      padding-right: 48px;
-    }
-
-    .password-toggle {
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-
-      border: 0;
-      background: transparent;
-
-      width: 35px;
-      height: 35px;
-
-      cursor: pointer;
-      font-size: 17px;
-      color: #687386;
-    }
-
-    .main-button {
-      width: 100%;
-      height: 52px;
-
-      border: 0;
-      border-radius: 14px;
-
-      background:
-        linear-gradient(
-          135deg,
-          #7c3aed,
-          #5b21b6
-        );
-
-      color: #ffffff;
-
-      font-size: 15px;
-      font-weight: 800;
-
-      cursor: pointer;
-
-      box-shadow:
-        0 10px 24px rgba(92, 33, 182, 0.25);
-
-      transition:
-        transform .15s,
-        box-shadow .15s;
-    }
-
-    .main-button:hover {
-      transform: translateY(-1px);
-      box-shadow:
-        0 13px 28px rgba(92, 33, 182, 0.32);
-    }
-
-    .main-button:active {
-      transform: scale(0.98);
-    }
-
-    .gold-button {
-      background:
-        linear-gradient(
-          135deg,
-          #d9ad45,
-          #b88924
-        );
-
-      color: #07152f;
-
-      box-shadow:
-        0 10px 24px rgba(184, 137, 36, 0.22);
-    }
-
-    .forgot {
-      display: block;
-      text-align: center;
-
-      margin: 16px 0;
-
-      color: #5b21b6;
-      text-decoration: none;
-
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .forgot:hover {
-      text-decoration: underline;
-    }
-
-    .terms {
-      display: flex;
-      align-items: flex-start;
-      gap: 9px;
-
-      margin: 17px 0;
-
-      color: #667085;
-      font-size: 12px;
-      line-height: 1.55;
-    }
-
-    .terms input {
-      margin-top: 3px;
-      flex-shrink: 0;
-
-      width: 16px;
-      height: 16px;
-
-      accent-color: #7c3aed;
-    }
-
-    .terms a {
-      color: #5b21b6;
-      font-weight: 700;
-    }
-
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-
-      margin: 20px 0;
-
-      color: #98a2b3;
-      font-size: 12px;
-    }
-
-    .divider::before,
-    .divider::after {
-      content: "";
-      height: 1px;
-      flex: 1;
-      background: #e5e7eb;
-    }
-
-    .message {
-      display: none;
-
-      margin-top: 16px;
-      padding: 12px 14px;
-
-      border-radius: 12px;
-
-      text-align: center;
-
-      font-size: 13px;
-      line-height: 1.45;
-    }
-
-    .success {
-      display: block;
-      background: #ecfdf3;
-      color: #067647;
-      border: 1px solid #abefc6;
-    }
-
-    .error {
-      display: block;
-      background: #fef3f2;
-      color: #b42318;
-      border: 1px solid #fecdca;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .features {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-
-      margin-top: 16px;
-    }
-
-    .feature {
-      text-align: center;
-      color: #b9c4d8;
-      font-size: 11px;
-      line-height: 1.35;
-    }
-
-    .feature-icon {
-      display: block;
-      font-size: 19px;
-      margin-bottom: 4px;
-    }
-
-    .footer-links {
-      display: flex;
-      justify-content: center;
-      gap: 14px;
-
-      margin-top: 18px;
-
-      font-size: 11px;
-    }
-
-    .footer-links a {
-      color: #aebbd0;
-      text-decoration: none;
-    }
-
-    .footer-links a:hover {
-      color: #ffffff;
-      text-decoration: underline;
-    }
-
-    .loading {
-      opacity: 0.65;
-      pointer-events: none;
-    }
-
-    @media (max-width: 480px) {
-
-      body {
-        padding:
-          18px
-          14px
-          calc(18px + env(safe-area-inset-bottom));
-      }
-
-      .brand-icon {
-        width: 72px;
-        height: 72px;
-        font-size: 36px;
-      }
-
-      .brand h1 {
-        font-size: 34px;
-      }
-
-      .card {
-        padding: 22px 18px;
-        border-radius: 23px;
-      }
-
-      .features {
-        margin-top: 14px;
-      }
-
-    }
-
-  </style>
-</head>
-
-<body>
-
-  <main class="app">
-
-    <header class="brand">
-
-      <div class="brand-icon">
-        💕
-      </div>
-
-      <h1>EmiMatch</h1>
-
-      <p>
-        Conocé personas. Hacé Match. Conectá.
-      </p>
-
-    </header>
-
-    <section class="card">
-
-      <div class="tabs">
-
-        <button
-          id="loginTab"
-          class="tab active"
-          type="button"
-        >
-          Iniciar sesión
-        </button>
-
-        <button
-          id="registerTab"
-          class="tab"
-          type="button"
-        >
-          Crear cuenta
-        </button>
-
-      </div>
-
-      <!-- LOGIN -->
-
-      <div id="loginSection">
-
-        <div class="section-title">
-
-          <h2>Bienvenido/a</h2>
-
-          <p>
-            Entrá a tu cuenta para continuar.
-          </p>
-
-        </div>
-
-        <div class="field">
-
-          <label for="loginEmail">
-            Email
-          </label>
-
-          <div class="input-wrapper">
-
-            <span>✉️</span>
-
-            <input
-              type="email"
-              id="loginEmail"
-              placeholder="tuemail@ejemplo.com"
-              autocomplete="email"
-            >
-
-          </div>
-
-        </div>
-
-        <div class="field">
-
-          <label for="loginPassword">
-            Contraseña
-          </label>
-
-          <div class="input-wrapper password-wrapper">
-
-            <span>🔒</span>
-
-            <input
-              type="password"
-              id="loginPassword"
-              placeholder="Tu contraseña"
-              autocomplete="current-password"
-            >
-
-            <button
-              type="button"
-              class="password-toggle"
-              data-target="loginPassword"
-              aria-label="Mostrar contraseña"
-            >
-              👁️
-            </button>
-
-          </div>
-
-        </div>
-
-        <button
-          id="loginButton"
-          class="main-button"
-          type="button"
-        >
-          Iniciar sesión
-        </button>
-
-        <a
-          class="forgot"
-          href="recuperar.html"
-        >
-          ¿Olvidaste tu contraseña?
-        </a>
-
-      </div>
-
-      <!-- REGISTRO -->
-
-      <div
-        id="registerSection"
-        class="hidden"
-      >
-
-        <div class="section-title">
-
-          <h2>Crear cuenta</h2>
-
-          <p>
-            Empezá a conocer nuevas personas.
-          </p>
-
-        </div>
-
-        <div class="field">
-
-          <label for="registerEmail">
-            Email
-          </label>
-
-          <div class="input-wrapper">
-
-            <span>✉️</span>
-
-            <input
-              type="email"
-              id="registerEmail"
-              placeholder="tuemail@ejemplo.com"
-              autocomplete="email"
-            >
-
-          </div>
-
-        </div>
-
-        <div class="field">
-
-          <label for="registerPassword">
-            Contraseña
-          </label>
-
-          <div class="input-wrapper password-wrapper">
-
-            <span>🔒</span>
-
-            <input
-              type="password"
-              id="registerPassword"
-              placeholder="Mínimo 6 caracteres"
-              autocomplete="new-password"
-            >
-
-            <button
-              type="button"
-              class="password-toggle"
-              data-target="registerPassword"
-              aria-label="Mostrar contraseña"
-            >
-              👁️
-            </button>
-
-          </div>
-
-        </div>
-
-        <div class="field">
-
-          <label for="registerPassword2">
-            Confirmar contraseña
-          </label>
-
-          <div class="input-wrapper password-wrapper">
-
-            <span>🔐</span>
-
-            <input
-              type="password"
-              id="registerPassword2"
-              placeholder="Repetí tu contraseña"
-              autocomplete="new-password"
-            >
-
-            <button
-              type="button"
-              class="password-toggle"
-              data-target="registerPassword2"
-              aria-label="Mostrar contraseña"
-            >
-              👁️
-            </button>
-
-          </div>
-
-        </div>
-
-        <label class="terms">
-
-          <input
-            type="checkbox"
-            id="acceptTerms"
-          >
-
-          <span>
-
-            Acepto los
-
-            <a
-              href="terminos.html"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Términos y Condiciones
-            </a>
-
-            y la
-
-            <a
-              href="privacidad.html"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Política de Privacidad
-            </a>
-
-            de EmiMatch.
-
-          </span>
-
-        </label>
-
-        <button
-          id="registerButton"
-          class="main-button gold-button"
-          type="button"
-        >
-          Crear mi cuenta
-        </button>
-
-      </div>
-
-      <div
-        id="message"
-        class="message"
-        role="alert"
-        aria-live="polite"
-      ></div>
-
-    </section>
-
-    <div class="features">
-
-      <div class="feature">
-        <span class="feature-icon">🔎</span>
-        Descubrí perfiles
-      </div>
-
-      <div class="feature">
-        <span class="feature-icon">💕</span>
-        Hacé Match
-      </div>
-
-      <div class="feature">
-        <span class="feature-icon">💬</span>
-        Comenzá a hablar
-      </div>
-
-    </div>
-
-    <nav class="footer-links">
-
-      <a href="terminos.html">
-        Términos
-      </a>
-
-      <a href="privacidad.html">
-        Privacidad
-      </a>
-
-    </nav>
-
-  </main>
-
-  <script>
-
-    const SUPABASE_URL =
-      "https://kngiadwaesdbmvwivdev.supabase.co";
-
-    const SUPABASE_ANON_KEY =
-      "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
-
-    const supabaseClient =
-      window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_ANON_KEY
-      );
-
-    const loginSection =
-      document.getElementById("loginSection");
-
-    const registerSection =
-      document.getElementById("registerSection");
-
-    const loginTab =
-      document.getElementById("loginTab");
-
-    const registerTab =
-      document.getElementById("registerTab");
-
-    const message =
-      document.getElementById("message");
-
-    function showMessage(text, type) {
-
-      message.textContent = text;
-
-      message.className =
-        "message " + type;
-
-    }
-
-    function clearMessage() {
-
-      message.textContent = "";
-
-      message.className =
-        "message";
-
-    }
-
-    function showLogin() {
-
-      clearMessage();
-
-      loginSection.classList.remove("hidden");
-
-      registerSection.classList.add("hidden");
-
-      loginTab.classList.add("active");
-
-      registerTab.classList.remove("active");
-
-    }
-
-    function showRegister() {
-
-      clearMessage();
-
-      loginSection.classList.add("hidden");
-
-      registerSection.classList.remove("hidden");
-
-      loginTab.classList.remove("active");
-
-      registerTab.classList.add("active");
-
-    }
-
-    loginTab.addEventListener(
-      "click",
-      showLogin
+<script>
+  const SUPABASE_URL =
+    "https://kngiadwaesdbmvwivdev.supabase.co";
+
+  const SUPABASE_ANON_KEY =
+    "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
+
+  const supabaseClient =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
     );
 
-    registerTab.addEventListener(
-      "click",
-      showRegister
-    );
+  // ==============================
+  // ELEMENTOS
+  // ==============================
 
-    // Mostrar / ocultar contraseña
+  const loginSection =
+    document.getElementById("loginSection");
 
-    document
-      .querySelectorAll(".password-toggle")
-      .forEach(button => {
+  const registerSection =
+    document.getElementById("registerSection");
 
-        button.addEventListener(
-          "click",
-          () => {
+  const loginTab =
+    document.getElementById("loginTab");
 
-            const target =
-              document.getElementById(
-                button.dataset.target
-              );
+  const registerTab =
+    document.getElementById("registerTab");
 
-            if (target.type === "password") {
+  const message =
+    document.getElementById("message");
 
-              target.type = "text";
+  const loginButton =
+    document.getElementById("loginButton");
 
-              button.textContent = "🙈";
+  const registerButton =
+    document.getElementById("registerButton");
 
-            } else {
+  // ==============================
+  // MENSAJES
+  // ==============================
 
-              target.type = "password";
+  function showMessage(text, type = "error") {
+    message.textContent = text;
+    message.className = "message " + type;
+  }
 
-              button.textContent = "👁️";
+  function clearMessage() {
+    message.textContent = "";
+    message.className = "message";
+  }
 
-            }
+  // ==============================
+  // CAMBIAR ENTRE LOGIN / REGISTRO
+  // ==============================
 
-          }
-        );
+  function showLogin() {
+    clearMessage();
 
+    loginSection.classList.remove("hidden");
+    registerSection.classList.add("hidden");
+
+    loginTab.classList.add("active");
+    registerTab.classList.remove("active");
+  }
+
+  function showRegister() {
+    clearMessage();
+
+    loginSection.classList.add("hidden");
+    registerSection.classList.remove("hidden");
+
+    loginTab.classList.remove("active");
+    registerTab.classList.add("active");
+  }
+
+  loginTab.addEventListener("click", showLogin);
+  registerTab.addEventListener("click", showRegister);
+
+  // ==============================
+  // MOSTRAR / OCULTAR CONTRASEÑA
+  // ==============================
+
+  document
+    .querySelectorAll(".password-toggle")
+    .forEach(button => {
+
+      button.addEventListener("click", () => {
+
+        const target =
+          document.getElementById(
+            button.dataset.target
+          );
+
+        if (!target) return;
+
+        if (target.type === "password") {
+          target.type = "text";
+          button.textContent = "🙈";
+          button.setAttribute(
+            "aria-label",
+            "Ocultar contraseña"
+          );
+        } else {
+          target.type = "password";
+          button.textContent = "👁️";
+          button.setAttribute(
+            "aria-label",
+            "Mostrar contraseña"
+          );
+        }
       });
+    });
 
-    // LOGIN
+  // ==============================
+  // VALIDAR EMAIL
+  // ==============================
 
-    document
-      .getElementById("loginButton")
-      .addEventListener(
-        "click",
-        async () => {
+  function isValidEmail(email) {
 
-          clearMessage();
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      .test(email);
+  }
 
-          const button =
-            document.getElementById(
-              "loginButton"
-            );
+  // ==============================
+  // LOGIN
+  // ==============================
 
-          const email =
-            document
-              .getElementById("loginEmail")
-              .value
-              .trim();
+  loginButton.addEventListener(
+    "click",
+    async () => {
 
-          const password =
-            document
-              .getElementById("loginPassword")
-              .value;
+      clearMessage();
 
-          if (!email || !password) {
+      const email =
+        document
+          .getElementById("loginEmail")
+          .value
+          .trim()
+          .toLowerCase();
 
-            showMessage(
-              "Completá tu email y contraseña.",
-              "error"
-            );
+      const password =
+        document
+          .getElementById("loginPassword")
+          .value;
 
-            return;
+      if (!email) {
+        showMessage(
+          "Ingresá tu email.",
+          "error"
+        );
+        return;
+      }
 
-          }
+      if (!isValidEmail(email)) {
+        showMessage(
+          "Ingresá un email válido.",
+          "error"
+        );
+        return;
+      }
 
-          button.textContent =
-            "Ingresando...";
+      if (!password) {
+        showMessage(
+          "Ingresá tu contraseña.",
+          "error"
+        );
+        return;
+      }
 
-          button.classList.add(
-            "loading"
-          );
+      loginButton.disabled = true;
+      loginButton.textContent = "Ingresando...";
+      loginButton.classList.add("loading");
 
-          const {
-            data,
+      try {
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient.auth
+            .signInWithPassword({
+              email,
+              password
+            });
+
+        if (error) {
+          console.error(
+            "Error de login:",
             error
-          } =
-            await supabaseClient.auth
-              .signInWithPassword({
-                email,
-                password
-              });
-
-          button.textContent =
-            "Iniciar sesión";
-
-          button.classList.remove(
-            "loading"
           );
 
-          if (error) {
+          showMessage(
+            traducirError(error),
+            "error"
+          );
 
-            showMessage(
-              error.message,
-              "error"
-            );
+          return;
+        }
 
-            return;
+        if (data?.session) {
 
-          }
+          showMessage(
+            "¡Bienvenido/a a EmiMatch!",
+            "success"
+          );
 
-          if (data.session) {
-
+          setTimeout(() => {
             window.location.href =
               "perfil.html";
+          }, 500);
 
-          }
+        } else {
+
+          showMessage(
+            "No se pudo iniciar la sesión. Intentá nuevamente.",
+            "error"
+          );
 
         }
+
+      } catch (error) {
+
+        console.error(error);
+
+        showMessage(
+          "Ocurrió un error de conexión. Revisá tu internet e intentá nuevamente.",
+          "error"
+        );
+
+      } finally {
+
+        loginButton.disabled = false;
+        loginButton.textContent =
+          "Iniciar sesión";
+
+        loginButton.classList.remove(
+          "loading"
+        );
+      }
+    }
+  );
+
+  // ==============================
+  // REGISTRO
+  // ==============================
+
+  registerButton.addEventListener(
+    "click",
+    async () => {
+
+      clearMessage();
+
+      const email =
+        document
+          .getElementById("registerEmail")
+          .value
+          .trim()
+          .toLowerCase();
+
+      const password =
+        document
+          .getElementById("registerPassword")
+          .value;
+
+      const password2 =
+        document
+          .getElementById("registerPassword2")
+          .value;
+
+      const accepted =
+        document
+          .getElementById("acceptTerms")
+          .checked;
+
+      // ------------------------------
+      // VALIDACIONES
+      // ------------------------------
+
+      if (!email) {
+        showMessage(
+          "Ingresá tu email.",
+          "error"
+        );
+        return;
+      }
+
+      if (!isValidEmail(email)) {
+        showMessage(
+          "Ingresá un email válido.",
+          "error"
+        );
+        return;
+      }
+
+      if (!password) {
+        showMessage(
+          "Ingresá una contraseña.",
+          "error"
+        );
+        return;
+      }
+
+      if (password.length < 6) {
+        showMessage(
+          "La contraseña debe tener al menos 6 caracteres.",
+          "error"
+        );
+        return;
+      }
+
+      if (password !== password2) {
+        showMessage(
+          "Las contraseñas no coinciden.",
+          "error"
+        );
+        return;
+      }
+
+      if (!accepted) {
+        showMessage(
+          "Debés aceptar los Términos y la Política de Privacidad.",
+          "error"
+        );
+        return;
+      }
+
+      // ------------------------------
+      // BLOQUEAR BOTÓN
+      // ------------------------------
+
+      registerButton.disabled = true;
+      registerButton.textContent =
+        "Creando cuenta...";
+      registerButton.classList.add(
+        "loading"
       );
 
-    // REGISTRO
+      try {
 
-    document
-      .getElementById("registerButton")
-      .addEventListener(
-        "click",
-        async () => {
+        console.log(
+          "Intentando registrar:",
+          email
+        );
 
-          clearMessage();
+        const {
+          data,
+          error
+        } =
+          await supabaseClient.auth
+            .signUp({
+              email,
+              password,
 
-          const button =
-            document.getElementById(
-              "registerButton"
-            );
+              options: {
+                emailRedirectTo:
+                  "https://emimatch.github.io/emimatch/"
+              }
+            });
 
-          const email =
-            document
-              .getElementById("registerEmail")
-              .value
-              .trim();
+        console.log(
+          "Respuesta Supabase:",
+          data,
+          error
+        );
 
-          const password =
-            document
-              .getElementById("registerPassword")
-              .value;
+        // ------------------------------
+        // ERROR
+        // ------------------------------
 
-          const password2 =
-            document
-              .getElementById("registerPassword2")
-              .value;
+        if (error) {
 
-          const accepted =
-            document
-              .getElementById("acceptTerms")
-              .checked;
+          console.error(
+            "Error de registro:",
+            error
+          );
 
-          if (!email) {
+          showMessage(
+            traducirError(error),
+            "error"
+          );
 
-            showMessage(
-              "Ingresá tu email.",
-              "error"
-            );
+          return;
+        }
 
-            return;
+        // ------------------------------
+        // REGISTRO EXITOSO
+        // ------------------------------
 
-          }
+        if (data?.user) {
 
-          if (!password) {
+          /*
+           * Si Supabase requiere confirmación
+           * por email, normalmente session será null.
+           */
 
-            showMessage(
-              "Ingresá una contraseña.",
-              "error"
-            );
-
-            return;
-
-          }
-
-          if (password.length < 6) {
-
-            showMessage(
-              "La contraseña debe tener al menos 6 caracteres.",
-              "error"
-            );
-
-            return;
-
-          }
-
-          if (password !== password2) {
+          if (!data.session) {
 
             showMessage(
-              "Las contraseñas no coinciden.",
-              "error"
+              "✅ Cuenta creada correctamente. Revisá tu email para confirmar la cuenta antes de iniciar sesión.",
+              "success"
             );
 
-            return;
+            document
+              .getElementById(
+                "registerEmail"
+              )
+              .value = "";
 
+            document
+              .getElementById(
+                "registerPassword"
+              )
+              .value = "";
+
+            document
+              .getElementById(
+                "registerPassword2"
+              )
+              .value = "";
+
+            document
+              .getElementById(
+                "acceptTerms"
+              )
+              .checked = false;
+
+          } else {
+
+            showMessage(
+              "✅ Cuenta creada correctamente. Entrando a tu perfil...",
+              "success"
+            );
+
+            setTimeout(() => {
+
+              window.location.href =
+                "perfil.html";
+
+            }, 700);
           }
 
-          if (!accepted) {
+        } else {
 
-            
+          showMessage(
+            "La cuenta no pudo crearse. Intentá nuevamente.",
+            "error"
+          );
+        }
+
+      } catch (error) {
+
+        console.error(
+          "Error inesperado:",
+          error
+        );
+
+        showMessage(
+          "No se pudo conectar con el servidor. Revisá tu conexión e intentá nuevamente.",
+          "error"
+        );
+
+      } finally {
+
+        registerButton.disabled = false;
+
+        registerButton.textContent =
+          "Crear mi cuenta";
+
+        registerButton.classList.remove(
+          "loading"
+        );
+      }
+    }
+  );
+
+  // ==============================
+  // TRADUCIR ERRORES DE SUPABASE
+  // ==============================
+
+  function traducirError(error) {
+
+    const message =
+      String(
+        error?.message || ""
+      ).toLowerCase();
+
+    if (
+      message.includes(
+        "user already registered"
+      ) ||
+      message.includes(
+        "already registered"
+      )
+    ) {
+      return "Este email ya está registrado. Intentá iniciar sesión.";
+    }
+
+    if (
+      message.includes(
+        "invalid login credentials"
+      )
+    ) {
+      return "El email o la contraseña son incorrectos.";
+    }
+
+    if (
+      message.includes(
+        "email not confirmed"
+      )
+    ) {
+      return "Tu email todavía no fue confirmado. Revisá tu bandeja de entrada.";
+    }
+
+    if (
+      message.includes(
+        "password"
+      ) &&
+      message.includes(
+        "6"
+      )
+    ) {
+      return "La contraseña debe tener al menos 6 caracteres.";
+    }
+
+    if (
+      message.includes(
+        "rate limit"
+      ) ||
+      message.includes(
+        "too many requests"
+      )
+    ) {
+      return "Demasiados intentos. Esperá unos minutos y probá nuevamente.";
+    }
+
+    if (
+      message.includes(
+        "email"
+      ) &&
+      message.includes(
+        "invalid"
+      )
+    ) {
+      return "El email ingresado no es válido.";
+    }
+
+    return (
+      error?.message ||
+      "Ocurrió un error. Intentá nuevamente."
+    );
+  }
+
+  // ==============================
+  // COMPROBAR SESIÓN EXISTENTE
+  // ==============================
+
+  async function comprobarSesion() {
+
+    try {
+
+      const {
+        data
+      } =
+        await supabaseClient.auth
+          .getSession();
+
+      if (data?.session) {
+
+        /*
+         * Si ya está logueado y entra al index,
+         * lo enviamos directamente al perfil.
+         */
+
+        window.location.href =
+          "perfil.html";
+      }
+
+    } catch (error) {
+
+      console.error(
+        "Error comprobando sesión:",
+        error
+      );
+    }
+  }
+
+  comprobarSesion();
+
+      </script>
