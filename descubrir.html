@@ -92,6 +92,8 @@
       border: 1px solid #cbd5e1;
       font-size: 14px;
       outline: none;
+      background: white;
+      color: #172033;
     }
 
     .filtro:focus {
@@ -256,6 +258,25 @@
       cursor: pointer;
     }
 
+    .error-box {
+      background: rgba(239,68,68,.15);
+      border: 1px solid rgba(239,68,68,.4);
+      border-radius: 18px;
+      padding: 25px 18px;
+      text-align: center;
+      color: #fecaca;
+    }
+
+    .error-box button {
+      margin-top: 15px;
+      padding: 11px 18px;
+      border: none;
+      border-radius: 12px;
+      background: #d4af37;
+      color: #07152f;
+      font-weight: bold;
+    }
+
     /* NAV INFERIOR */
 
     .bottom-nav {
@@ -315,7 +336,6 @@
 
     .badge {
       position: absolute;
-
       top: 5px;
       right: 17%;
 
@@ -355,8 +375,7 @@
       opacity: 0;
       pointer-events: none;
 
-      transition:
-        .25s ease;
+      transition: .25s ease;
 
       z-index: 2000;
 
@@ -421,8 +440,6 @@
   </div>
 
 
-  <!-- FILTROS -->
-
   <div class="filtros">
 
     <h3>
@@ -483,8 +500,6 @@
   </div>
 
 
-  <!-- CONTENIDO -->
-
   <div
     id="contenido"
     class="estado-carga"
@@ -501,23 +516,14 @@
 </div>
 
 
-<!-- NAV INFERIOR -->
-
 <nav class="bottom-nav">
 
   <a
     class="nav-item"
     href="./perfil.html"
   >
-
-    <span class="icon">
-      👤
-    </span>
-
-    <span>
-      Perfil
-    </span>
-
+    <span class="icon">👤</span>
+    <span>Perfil</span>
   </a>
 
 
@@ -525,15 +531,8 @@
     class="nav-item activo"
     href="./descubrir.html"
   >
-
-    <span class="icon">
-      🔎
-    </span>
-
-    <span>
-      Descubrir
-    </span>
-
+    <span class="icon">🔎</span>
+    <span>Descubrir</span>
   </a>
 
 
@@ -541,15 +540,8 @@
     class="nav-item"
     href="./likes.html"
   >
-
-    <span class="icon">
-      ❤️
-    </span>
-
-    <span>
-      Me gustas
-    </span>
-
+    <span class="icon">❤️</span>
+    <span>Me gustas</span>
   </a>
 
 
@@ -557,15 +549,8 @@
     class="nav-item"
     href="./chat.html"
   >
-
-    <span class="icon">
-      💕
-    </span>
-
-    <span>
-      Matches
-    </span>
-
+    <span class="icon">💕</span>
+    <span>Matches</span>
   </a>
 
 
@@ -573,14 +558,8 @@
     class="nav-item"
     href="./notificaciones.html"
   >
-
-    <span class="icon">
-      🔔
-    </span>
-
-    <span>
-      Notificaciones
-    </span>
+    <span class="icon">🔔</span>
+    <span>Notificaciones</span>
 
     <span
       id="badgeNotificaciones"
@@ -637,14 +616,38 @@ async function iniciar() {
 
   try {
 
+    mostrarCarga(
+      "⏳ Verificando sesión..."
+    );
+
+
     const {
-      data: {
-        session
-      }
+      data,
+      error
     } =
       await supabaseClient
         .auth
         .getSession();
+
+
+    if (error) {
+
+      console.error(
+        "Error de sesión:",
+        error
+      );
+
+      mostrarError(
+        "No se pudo verificar la sesión."
+      );
+
+      return;
+
+    }
+
+
+    const session =
+      data.session;
 
 
     if (!session) {
@@ -653,12 +656,19 @@ async function iniciar() {
         "./index.html";
 
       return;
+
     }
 
 
     usuarioActual =
       session.user;
 
+
+    /*
+      Los bloqueos y swipes son filtros
+      adicionales. Si alguno falla,
+      no impedimos cargar perfiles.
+    */
 
     await cargarBloqueados();
 
@@ -672,10 +682,13 @@ async function iniciar() {
 
   catch (error) {
 
-    console.error(error);
+    console.error(
+      "Error general:",
+      error
+    );
 
     mostrarError(
-      "No se pudo iniciar EmiMatch."
+      "Ocurrió un error al cargar EmiMatch."
     );
 
   }
@@ -689,58 +702,86 @@ async function iniciar() {
 
 async function cargarBloqueados() {
 
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("user_blocks")
-      .select(
-        "blocker_id, blocked_id"
-      )
-      .or(
-        `blocker_id.eq.${usuarioActual.id},blocked_id.eq.${usuarioActual.id}`
+  try {
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+        .from("user_blocks")
+        .select(
+          "blocker_id, blocked_id"
+        )
+        .or(
+          `blocker_id.eq.${usuarioActual.id},blocked_id.eq.${usuarioActual.id}`
+        );
+
+
+    if (error) {
+
+      console.warn(
+        "No se pudieron cargar bloqueados:",
+        error
       );
 
+      /*
+        No detenemos Descubrir.
+      */
 
-  if (error) {
+      bloqueados =
+        new Set();
 
-    console.error(
-      "Error cargando bloqueados:",
+      return;
+
+    }
+
+
+    bloqueados =
+      new Set();
+
+
+    (data || []).forEach(
+      bloqueo => {
+
+        if (
+          bloqueo.blocker_id ===
+          usuarioActual.id
+        ) {
+
+          bloqueados.add(
+            bloqueo.blocked_id
+          );
+
+        }
+
+        else if (
+          bloqueo.blocked_id ===
+          usuarioActual.id
+        ) {
+
+          bloqueados.add(
+            bloqueo.blocker_id
+          );
+
+        }
+
+      }
+    );
+
+  }
+
+  catch (error) {
+
+    console.warn(
+      "Error en bloqueados:",
       error
     );
 
-    return;
+    bloqueados =
+      new Set();
+
   }
-
-
-  bloqueados =
-    new Set();
-
-
-  (data || []).forEach(
-    bloqueo => {
-
-      if (
-        bloqueo.blocker_id ===
-        usuarioActual.id
-      ) {
-
-        bloqueados.add(
-          bloqueo.blocked_id
-        );
-
-      }
-      else {
-
-        bloqueados.add(
-          bloqueo.blocker_id
-        );
-
-      }
-
-    }
-  );
 
 }
 
@@ -751,39 +792,59 @@ async function cargarBloqueados() {
 
 async function cargarSwipes() {
 
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("swipes")
-      .select(
-        "target_user_id, action"
-      )
-      .eq(
-        "user_id",
-        usuarioActual.id
+  try {
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+        .from("swipes")
+        .select(
+          "target_user_id, action"
+        )
+        .eq(
+          "user_id",
+          usuarioActual.id
+        );
+
+
+    if (error) {
+
+      console.warn(
+        "No se pudieron cargar swipes:",
+        error
       );
 
+      swipesRealizados =
+        new Set();
 
-  if (error) {
+      return;
 
-    console.error(
+    }
+
+
+    swipesRealizados =
+      new Set(
+        (data || []).map(
+          swipe =>
+            swipe.target_user_id
+        )
+      );
+
+  }
+
+  catch (error) {
+
+    console.warn(
       "Error cargando swipes:",
       error
     );
 
-    return;
+    swipesRealizados =
+      new Set();
+
   }
-
-
-  swipesRealizados =
-    new Set(
-      (data || []).map(
-        swipe =>
-          swipe.target_user_id
-      )
-    );
 
 }
 
@@ -799,80 +860,114 @@ async function cargarPerfiles() {
   );
 
 
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("profiles")
-      .select(
-        `
-        id,
-        nombre,
-        edad,
-        ciudad,
-        descripcion,
-        foto_url,
-        intereses,
-        online,
-        last_seen
-        `
-      )
-      .neq(
-        "id",
-        usuarioActual.id
-      )
-      .order(
-        "created_at",
-        {
-          ascending: false
+  try {
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+        .from("profiles")
+        .select(
+          `
+          id,
+          nombre,
+          edad,
+          ciudad,
+          descripcion,
+          foto_url,
+          intereses,
+          online,
+          last_seen,
+          created_at
+          `
+        )
+        .neq(
+          "id",
+          usuarioActual.id
+        )
+        .order(
+          "created_at",
+          {
+            ascending: false
+          }
+        );
+
+
+    if (error) {
+
+      console.error(
+        "Error cargando perfiles:",
+        error
+      );
+
+      mostrarError(
+        "No se pudieron cargar los perfiles."
+      );
+
+      return;
+
+    }
+
+
+    perfiles =
+      (data || []).filter(
+        perfil => {
+
+          /*
+            No mostrar usuarios bloqueados.
+          */
+
+          if (
+            bloqueados.has(
+              perfil.id
+            )
+          ) {
+
+            return false;
+
+          }
+
+
+          /*
+            No mostrar perfiles
+            que ya fueron pasados
+            o marcados con like.
+          */
+
+          if (
+            swipesRealizados.has(
+              perfil.id
+            )
+          ) {
+
+            return false;
+
+          }
+
+
+          return true;
+
         }
       );
 
 
-  if (error) {
+    aplicarFiltros();
 
-    console.error(error);
-
-    mostrarError(
-      "No se pudieron cargar los perfiles."
-    );
-
-    return;
   }
 
+  catch (error) {
 
-  perfiles =
-    (data || []).filter(
-      perfil => {
-
-        if (
-          bloqueados.has(
-            perfil.id
-          )
-        ) {
-
-          return false;
-        }
-
-
-        if (
-          swipesRealizados.has(
-            perfil.id
-          )
-        ) {
-
-          return false;
-        }
-
-
-        return true;
-
-      }
+    console.error(
+      "Error inesperado cargando perfiles:",
+      error
     );
 
+    mostrarError(
+      "Ocurrió un error al buscar perfiles."
+    );
 
-  aplicarFiltros();
+  }
 
 }
 
@@ -1022,6 +1117,7 @@ function mostrarPerfil() {
     `;
 
     return;
+
   }
 
 
@@ -1102,17 +1198,22 @@ function mostrarPerfil() {
     perfil.foto_url
   ) {
 
+    const fotoUrl =
+      escaparHTML(
+        perfil.foto_url
+      );
+
+
     fotoHTML = `
 
       <img
         class="foto-perfil"
-        src="${escaparHTML(
-          perfil.foto_url
-        )}"
+        src="${fotoUrl}"
         alt="Foto de ${nombre}"
         onerror="
           this.style.display='none';
-          document.getElementById('fotoSin').style.display='flex';
+          const foto = document.getElementById('fotoSin');
+          if (foto) foto.style.display='flex';
         "
       >
 
@@ -1127,6 +1228,7 @@ function mostrarPerfil() {
     `;
 
   }
+
   else {
 
     fotoHTML = `
@@ -1160,6 +1262,7 @@ function mostrarPerfil() {
 
         </div>
 
+
         ${
           ciudad
             ? `
@@ -1170,9 +1273,11 @@ function mostrarPerfil() {
             : ''
         }
 
+
         <div class="descripcion">
           ${descripcion}
         </div>
+
 
         ${
           interesesHTML
@@ -1195,6 +1300,7 @@ function mostrarPerfil() {
         >
           ❌ Pasar
         </button>
+
 
         <button
           class="accion like"
@@ -1236,6 +1342,13 @@ async function registrarSwipe(
     ];
 
 
+  if (!perfil) {
+
+    return;
+
+  }
+
+
   const botones =
     document.querySelectorAll(
       ".accion"
@@ -1248,214 +1361,28 @@ async function registrarSwipe(
   );
 
 
-  const {
-    error
-  } =
-    await supabaseClient
-      .from("swipes")
-      .insert({
-
-        user_id:
-          usuarioActual.id,
-
-        target_user_id:
-          perfil.id,
-
-        action:
-          accion
-
-      });
-
-
-  if (error) {
-
-    console.error(error);
-
-    botones.forEach(
-      boton =>
-        boton.disabled = false
-    );
-
-    mostrarToast(
-      "No se pudo guardar la acción."
-    );
-
-    return;
-
-  }
-
-
-  swipesRealizados.add(
-    perfil.id
-  );
-
-
-  if (
-    accion === "like"
-  ) {
-
-    await comprobarMatch(
-      perfil.id
-    );
-
-  }
-
-
-  indiceActual++;
-
-  mostrarPerfil();
-
-}
-
-
-/* =========================
-   MATCH
-========================= */
-
-async function comprobarMatch(
-  targetId
-) {
-
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("matches")
-      .select(
-        "id"
-      )
-      .or(
-        `and(user1_id.eq.${usuarioActual.id},user2_id.eq.${targetId}),and(user1_id.eq.${targetId},user2_id.eq.${usuarioActual.id})`
-      )
-      .limit(1);
-
-
-  if (error) {
-
-    console.error(
-      "Error comprobando match:",
-      error
-    );
-
-    return;
-
-  }
-
-
-  if (
-    data &&
-    data.length
-  ) {
-
-    mostrarToast(
-      "💕 ¡Es un Match! Ya pueden hablar."
-    );
-
-  }
-  else {
-
-    mostrarToast(
-      "❤️ Me gusta enviado"
-    );
-
-  }
-
-}
-
-
-/* =========================
-   LIMPIAR FILTROS
-========================= */
-
-function limpiarFiltros() {
-
-  document.getElementById(
-    "edadMin"
-  ).value = "";
-
-  document.getElementById(
-    "edadMax"
-  ).value = "";
-
-  document.getElementById(
-    "ciudadFiltro"
-  ).value = "";
-
-  document.getElementById(
-    "estadoFiltro"
-  ).value = "todos";
-
-
-  aplicarFiltros();
-
-}
-
-
-/* =========================
-   NOTIFICACIONES
-========================= */
-
-async function cargarNotificaciones() {
-
   try {
 
     const {
-      data: matches,
       error
     } =
       await supabaseClient
-        .from("matches")
-        .select(
-          "id, user1_id, user2_id"
-        )
-        .or(
-          `user1_id.eq.${usuarioActual.id},user2_id.eq.${usuarioActual.id}`
-        );
+        .from("swipes")
+        .insert({
+
+          user_id:
+            usuarioActual.id,
+
+          target_user_id:
+            perfil.id,
+
+          action:
+            accion
+
+        });
 
 
     if (error) {
 
       console.error(
-        "Error matches:",
-        error
-      );
-
-      return;
-
-    }
-
-
-    if (
-      !matches ||
-      !matches.length
-    ) {
-
-      return;
-
-    }
-
-
-    const matchIds =
-      matches.map(
-        match =>
-          match.id
-      );
-
-
-    const {
-      data: mensajes,
-      error: errorMensajes
-    } =
-      await supabaseClient
-        .from("messages")
-        .select(
-          "id"
-        )
-        .in(
-          "match_id",
-          matchIds
-        )
-        .neq(
-          "sender_id",
-          usuarioActua
+        "Error guardando
