@@ -1,1926 +1,738 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Conversación - EmiMatch</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<style>
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  min-height: 100vh;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #07152f, #102b55);
-  color: white;
-  padding-bottom: 150px;
-}
-
-.chat {
-  max-width: 600px;
-  margin: auto;
-}
-
-/* =========================
-   CABECERA
-========================= */
-
-.head {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-
-  display: flex;
-  align-items: center;
-  gap: 10px;
-
-  padding: 12px 14px;
-
-  background: rgba(7,21,47,.98);
-
-  border-bottom: 1px solid rgba(255,255,255,.12);
-}
-
-.back {
-  width: 42px;
-  height: 42px;
-
-  border: none;
-  border-radius: 50%;
-
-  background: rgba(255,255,255,.10);
-
-  color: white;
-
-  font-size: 22px;
-
-  cursor: pointer;
-}
-
-.avatar {
-  width: 46px;
-  height: 46px;
-
-  min-width: 46px;
-
-  border-radius: 50%;
-
-  object-fit: cover;
-
-  border: 2px solid #d4af37;
-
-  background: #eeeeee;
-}
-
-.name {
-  font-weight: bold;
-  font-size: 17px;
-
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.status {
-  font-size: 12px;
-
-  color: #94a3b8;
-
-  margin-top: 3px;
-}
-
-.online {
-  color: #4ade80;
-}
-
-.block {
-  margin-left: auto;
-
-  border: none;
-
-  border-radius: 10px;
-
-  padding: 9px;
-
-  background: rgba(239,68,68,.15);
-
-  color: #fca5a5;
-
-  font-size: 14px;
-
-  cursor: pointer;
-}
-
-
-/* =========================
-   MENSAJES
-========================= */
-
-.msgs {
-  padding: 18px 12px;
-
-  min-height:
-    calc(100vh - 170px);
-
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 8px;
-
-  overflow-y: auto;
-}
-
-.loading {
-  text-align: center;
-
-  padding: 35px 10px;
-
-  color: #cbd5e1;
-}
-
-.row {
-  display: flex;
-
-  width: 100%;
-}
-
-.mine {
-  justify-content: flex-end;
-}
-
-.other {
-  justify-content: flex-start;
-}
-
-.bubble {
-  max-width: 82%;
-
-  padding: 10px 12px;
-
-  border-radius: 18px;
-
-  word-break: break-word;
-
-  box-shadow:
-    0 5px 15px rgba(0,0,0,.16);
-}
-
-.mine .bubble {
-
-  background:
-    linear-gradient(
-      135deg,
-      #d4af37,
-      #f0cf62
-    );
-
-  color: #07152f;
-
-  border-bottom-right-radius: 5px;
-}
-
-.other .bubble {
-
-  background: white;
-
-  color: #172033;
-
-  border-bottom-left-radius: 5px;
-}
-
-.text {
-
-  white-space: pre-wrap;
-
-  line-height: 1.4;
-
-  font-size: 15px;
-}
-
-.time {
-
-  text-align: right;
-
-  font-size: 10px;
-
-  opacity: .7;
-
-  margin-top: 4px;
-}
-
-.blue {
-
-  color: #2563eb;
-
-  font-weight: bold;
-}
-
-
-/* =========================
-   COMPOSER
-========================= */
-
-.composer {
-
-  position: fixed;
-
-  left: 0;
-  right: 0;
-  bottom: 0;
-
-  z-index: 500;
-
-  background:
-    rgba(7,21,47,.98);
-
-  border-top:
-    1px solid
-    rgba(255,255,255,.12);
-
-  padding: 10px;
-}
-
-.compose {
-
-  max-width: 600px;
-
-  margin: auto;
-
-  display: flex;
-
-  gap: 8px;
-
-  align-items: flex-end;
-}
-
-#input {
-
-  flex: 1;
-
-  min-height: 45px;
-
-  max-height: 120px;
-
-  resize: none;
-
-  border: none;
-
-  outline: none;
-
-  border-radius: 18px;
-
-  padding:
-    12px 14px;
-
-  font-size: 15px;
-
-  background: white;
-
-  color: #172033;
-}
-
-#send {
-
-  width: 46px;
-
-  height: 46px;
-
-  border: none;
-
-  border-radius: 50%;
-
-  background: #d4af37;
-
-  color: #07152f;
-
-  font-size: 20px;
-
-  cursor: pointer;
-}
-
-#send:disabled {
-
-  opacity: .5;
-
-  cursor: not-allowed;
-}
-
-
-/* =========================
-   NAV
-========================= */
-
-.nav {
-
-  position: fixed;
-
-  left: 8px;
-  right: 8px;
-
-  bottom: 70px;
-
-  height: 62px;
-
-  max-width: 600px;
-
-  margin: auto;
-
-  z-index: 450;
-
-  display: grid;
-
-  grid-template-columns:
-    repeat(5,1fr);
-
-  background:
-    rgba(7,21,47,.97);
-
-  border:
-    1px solid
-    rgba(255,255,255,.14);
-
-  border-radius: 20px;
-
-  box-shadow:
-    0 10px 30px
-    rgba(0,0,0,.4);
-}
-
-.nav a {
-
-  display: flex;
-
-  flex-direction: column;
-
-  align-items: center;
-
-  justify-content: center;
-
-  color: #cbd5e1;
-
-  text-decoration: none;
-
-  font-size: 10px;
-
-  font-weight: bold;
-
-  gap: 2px;
-}
-
-.nav a.active {
-
-  color: #d4af37;
-}
-
-.badge {
-
-  position: absolute;
-
-  top: 3px;
-
-  right: 14%;
-
-  min-width: 18px;
-
-  height: 18px;
-
-  padding: 2px 5px;
-
-  border-radius: 20px;
-
-  background: #ef4444;
-
-  color: white;
-
-  font-size: 10px;
-
-  display: none;
-
-  align-items: center;
-
-  justify-content: center;
-}
-
-
-/* =========================
-   BLOQUEADO
-========================= */
-
-.notice {
-
-  display: none;
-
-  position: fixed;
-
-  left: 0;
-  right: 0;
-
-  bottom: 0;
-
-  z-index: 600;
-
-  padding: 14px;
-
-  background: #7f1d1d;
-
-  color: white;
-
-  text-align: center;
-
-  font-size: 14px;
-}
-
-.notice.show {
-
-  display: block;
-}
-
-
-/* =========================
-   TOAST
-========================= */
-
-.toast {
-
-  position: fixed;
-
-  left: 50%;
-
-  bottom: 145px;
-
-  transform:
-    translateX(-50%);
-
-  background: #111827;
-
-  color: white;
-
-  padding:
-    12px 17px;
-
-  border-radius: 14px;
-
-  display: none;
-
-  z-index: 2000;
-}
-
-.toast.show {
-
-  display: block;
-}
-
-</style>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Conversación · EmiMatch</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6fb;
+      color: #172033;
+    }
+
+    .app {
+      max-width: 700px;
+      margin: auto;
+      min-height: 100vh;
+      background: white;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 15px;
+      background: linear-gradient(135deg, #071b49, #123b91);
+      color: white;
+    }
+
+    .back {
+      border: 0;
+      background: transparent;
+      color: white;
+      font-size: 25px;
+      cursor: pointer;
+    }
+
+    .avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #ddd;
+    }
+
+    .header-info {
+      flex: 1;
+    }
+
+    .header-info strong {
+      display: block;
+      font-size: 17px;
+    }
+
+    .status {
+      font-size: 12px;
+      opacity: .9;
+      margin-top: 3px;
+    }
+
+    .messages {
+      flex: 1;
+      padding: 18px 12px 90px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .message {
+      max-width: 78%;
+      padding: 10px 13px;
+      border-radius: 17px;
+      font-size: 15px;
+      line-height: 1.35;
+      word-wrap: break-word;
+    }
+
+    .mine {
+      align-self: flex-end;
+      background: #123b91;
+      color: white;
+      border-bottom-right-radius: 5px;
+    }
+
+    .theirs {
+      align-self: flex-start;
+      background: #e9edf5;
+      color: #172033;
+      border-bottom-left-radius: 5px;
+    }
+
+    .time {
+      display: block;
+      font-size: 10px;
+      opacity: .7;
+      margin-top: 4px;
+      text-align: right;
+    }
+
+    .checks {
+      margin-left: 4px;
+      font-size: 11px;
+    }
+
+    .read {
+      color: #5ec8ff;
+    }
+
+    .typing {
+      padding: 0 15px 8px;
+      font-size: 12px;
+      color: #64748b;
+      min-height: 20px;
+    }
+
+    .composer {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 700px;
+      padding: 10px;
+      background: white;
+      border-top: 1px solid #ddd;
+      display: flex;
+      gap: 8px;
+      z-index: 20;
+    }
+
+    .composer textarea {
+      flex: 1;
+      resize: none;
+      border: 1px solid #ccd3df;
+      border-radius: 20px;
+      padding: 10px 14px;
+      outline: none;
+      font-family: inherit;
+      min-height: 42px;
+      max-height: 100px;
+    }
+
+    .send {
+      width: 45px;
+      height: 45px;
+      border: 0;
+      border-radius: 50%;
+      background: #123b91;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .send:disabled {
+      opacity: .5;
+    }
+
+    .empty,
+    .error {
+      text-align: center;
+      margin: auto;
+      color: #64748b;
+      padding: 30px;
+    }
+
+    .block-btn {
+      border: 0;
+      background: transparent;
+      color: white;
+      cursor: pointer;
+      font-size: 18px;
+    }
+  </style>
 </head>
-
 
 <body>
 
+<div class="app">
 
-<div class="chat">
+  <div class="header">
+    <button class="back" onclick="volver()">‹</button>
 
+    <img id="avatar" class="avatar" src="" alt="Foto">
 
-<!-- =========================
-     CABECERA
-========================= -->
+    <div class="header-info">
+      <strong id="nombreUsuario">Cargando...</strong>
+      <div id="estadoUsuario" class="status">⏳</div>
+    </div>
 
-<header class="head">
+    <button class="block-btn" onclick="bloquearUsuario()">🚫</button>
+  </div>
 
-<button
-  class="back"
-  onclick="volverMatches()"
->
-←
-</button>
+  <div id="messages" class="messages">
+    <div class="empty">⏳ Cargando conversación...</div>
+  </div>
 
+  <div id="typing" class="typing"></div>
 
-<div id="photo">
+  <div class="composer">
+    <textarea
+      id="inputMensaje"
+      placeholder="Escribí un mensaje..."
+      rows="1"
+      disabled
+    ></textarea>
 
-  <div
-    class="avatar"
-    style="
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    "
-  >
-    👤
+    <button
+      id="btnEnviar"
+      class="send"
+      onclick="enviarMensaje()"
+      disabled
+    >
+      ➤
+    </button>
   </div>
 
 </div>
 
-
-<div
-  style="
-    flex:1;
-    min-width:0;
-  "
->
-
-<div
-  id="name"
-  class="name"
->
-Cargando...
-</div>
-
-
-<div
-  id="status"
-  class="status"
->
-⏳
-</div>
-
-</div>
-
-
-<button
-  class="block"
-  onclick="bloquear()"
->
-🚫
-</button>
-
-</header>
-
-
-
-<!-- =========================
-     MENSAJES
-========================= -->
-
-<main
-  id="msgs"
-  class="msgs"
->
-
-<div class="loading">
-
-⏳ Cargando conversación...
-
-</div>
-
-</main>
-
-</div>
-
-
-
-<!-- =========================
-     NAVEGACIÓN
-========================= -->
-
-<nav class="nav">
-
-
-<a href="./perfil.html">
-
-👤
-
-<span>
-Perfil
-</span>
-
-</a>
-
-
-<a href="./descubrir.html">
-
-🔎
-
-<span>
-Descubrir
-</span>
-
-</a>
-
-
-<a href="./likes.html">
-
-❤️
-
-<span>
-Me gustas
-</span>
-
-</a>
-
-
-<a
-  href="./chat.html"
-  class="active"
->
-
-💕 
-
-<span>
-Matches
-</span>
-
-</a>
-
-
-<a
-  href="./notificaciones.html"
-  style="position:relative"
->
-
-🔔
-
-<span>
-Notificaciones
-</span>
-
-
-<b
-  id="badge"
-  class="badge"
->
-0
-</b>
-
-</a>
-
-</nav>
-
-
-
-<!-- =========================
-     COMPOSER
-========================= -->
-
-<div class="composer">
-
-<div class="compose">
-
-
-<textarea
-  id="input"
-  placeholder="Escribí un mensaje..."
-  maxlength="2000"
-  rows="1"
-></textarea>
-
-
-<button
-  id="send"
-  onclick="enviar()"
->
-➤
-</button>
-
-
-</div>
-
-</div>
-
-
-
-<!-- =========================
-     BLOQUEADO
-========================= -->
-
-<div
-  id="notice"
-  class="notice"
->
-
-🚫 Esta conversación está bloqueada.
-
-</div>
-
-
-
-<!-- =========================
-     TOAST
-========================= -->
-
-<div
-  id="toast"
-  class="toast"
->
-</div>
-
-
-
 <script>
 
+const SUPABASE_URL =
+  "https://kngiadwaesdbmvwivdev.supabase.co";
 
-/* =========================
-   SUPABASE
-========================= */
+const SUPABASE_KEY =
+  "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
 
-const URL_SUPA =
-"https://kngiadwaesdbmvwivdev.supabase.co";
+const supabaseClient =
+  supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+let usuarioActual = null;
+let usuarioDestino = null;
+let matchActual = null;
+let bloqueado = false;
 
-const KEY_SUPA =
-"sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
+const params = new URLSearchParams(window.location.search);
+const destinoId = params.get("user");
 
+const messagesDiv = document.getElementById("messages");
+const inputMensaje = document.getElementById("inputMensaje");
+const btnEnviar = document.getElementById("btnEnviar");
 
-const sb =
-supabase.createClient(
-  URL_SUPA,
-  KEY_SUPA
-);
-
-
-
-/* =========================
-   VARIABLES
-========================= */
-
-let me = null;
-
-let other = null;
-
-let match = null;
-
-let blocked = false;
-
-let channel = null;
-
-
-
-/* =========================
-   INICIAR
-========================= */
-
-async function init() {
+async function iniciar() {
 
   try {
 
     const {
-      data
-    } =
-      await sb.auth.getSession();
-
-
-    if (
-      !data.session
-    ) {
-
-      location.href =
-        "./index.html";
-
-      return;
-
-    }
-
-
-    me =
-      data.session.user;
-
-
-    const params =
-      new URLSearchParams(
-        location.search
-      );
-
-
-    other =
-      params.get(
-        "user"
-      );
-
-
-    if (!other) {
-
-      location.href =
-        "./chat.html";
-
-      return;
-
-    }
-
-
-    await profile();
-
-
-    await findMatch();
-
-
-    if (!match) {
-
-      show(
-        "⚠️ No existe un Match entre estas cuentas."
-      );
-
-      return;
-
-    }
-
-
-    await checkBlock();
-
-
-    await load();
-
-
-    await read();
-
-
-    await badge();
-
-
-    realtime();
-
-  }
-
-  catch(error) {
-
-    console.error(
-      "ERROR:",
+      data: { session },
       error
-    );
+    } = await supabaseClient.auth.getSession();
 
-    show(
-      "❌ Error al cargar la conversación."
-    );
+    if (error) throw error;
 
+    if (!session) {
+      window.location.href = "index.html";
+      return;
+    }
+
+    usuarioActual = session.user;
+
+    if (!destinoId) {
+      mostrarError("No se encontró el usuario.");
+      return;
+    }
+
+    await cargarUsuario();
+
+    await cargarMatch();
+
+    await comprobarBloqueo();
+
+    await cargarMensajes();
+
+    activarRealtime();
+
+    activarTyping();
+
+  } catch (error) {
+
+    console.error(error);
+
+    mostrarError(
+      "No se pudo cargar la conversación."
+    );
   }
-
 }
 
 
+async function cargarUsuario() {
 
-/* =========================
-   PERFIL
-========================= */
-
-async function profile() {
-
-  const {
-    data,
-    error
-  } =
-    await sb
+  const { data, error } =
+    await supabaseClient
       .from("profiles")
-      .select(
-        "id,nombre,edad,foto_url,online"
-      )
-      .eq(
-        "id",
-        other
-      )
-      .maybeSingle();
+      .select("*")
+      .eq("id", destinoId)
+      .single();
 
+  if (error) throw error;
 
-  if (error) {
+  usuarioDestino = data;
 
-    console.error(
-      "Error perfil:",
-      error
-    );
+  document.getElementById("nombreUsuario").textContent =
+    data.nombre || "Usuario";
 
-    return;
+  document.getElementById("avatar").src =
+    data.foto_url ||
+    "https://via.placeholder.com/100";
 
-  }
-
-
-  if (!data) {
-
-    return;
-
-  }
-
-
-  document.getElementById(
-    "name"
-  ).textContent =
-
-    (data.nombre ||
-      "Usuario")
-
-    +
-
-    (
-      data.edad
-      ? ", " + data.edad
-      : ""
-    );
-
-
-  const status =
-    document.getElementById(
-      "status"
-    );
-
-
-  if (
+  document.getElementById("estadoUsuario").textContent =
     data.online
-  ) {
-
-    status.innerHTML =
-      '<span class="online">● En línea</span>';
-
-  }
-
-  else {
-
-    status.textContent =
-      "Última conexión reciente";
-
-  }
-
-
-  if (
-    data.foto_url
-  ) {
-
-    const photo =
-      document.getElementById(
-        "photo"
-      );
-
-
-    photo.innerHTML = `
-
-      <img
-        class="avatar"
-        src="${esc(data.foto_url)}"
-        alt="Foto"
-        onerror="
-          this.style.display='none';
-        "
-      >
-
-    `;
-
-  }
-
+      ? "🟢 En línea"
+      : "⚪ Desconectado";
 }
 
 
+async function cargarMatch() {
 
-/* =========================
-   BUSCAR MATCH
-========================= */
-
-async function findMatch() {
-
-  const {
-    data,
-    error
-  } =
-    await sb
+  const { data, error } =
+    await supabaseClient
       .from("matches")
-      .select(
-        "id,user1_id,user2_id"
-      )
+      .select("*")
       .or(
-
-        "and(user1_id.eq." +
-        me.id +
-        ",user2_id.eq." +
-        other +
-        "),and(user1_id.eq." +
-        other +
-        ",user2_id.eq." +
-        me.id +
-        ")"
-
+        `and(user1_id.eq.${usuarioActual.id},user2_id.eq.${destinoId}),and(user1_id.eq.${destinoId},user2_id.eq.${usuarioActual.id})`
       )
       .limit(1);
 
+  if (error) throw error;
 
-  if (error) {
-
-    console.error(
-      "Error buscando Match:",
-      error
-    );
-
-    return;
-
+  if (!data || data.length === 0) {
+    throw new Error("No existe un Match.");
   }
 
-
-  if (
-    data &&
-    data.length
-  ) {
-
-    match =
-      data[0];
-
-  }
-
+  matchActual = data[0];
 }
 
 
+async function comprobarBloqueo() {
 
-/* =========================
-   CARGAR MENSAJES
-========================= */
+  const { data, error } =
+    await supabaseClient
+      .from("user_blocks")
+      .select("*")
+      .or(
+        `and(blocker_id.eq.${usuarioActual.id},blocked_id.eq.${destinoId}),and(blocker_id.eq.${destinoId},blocked_id.eq.${usuarioActual.id})`
+      );
 
-async function load() {
+  if (error) throw error;
 
-  const {
-    data,
-    error
-  } =
-    await sb
+  bloqueado = data && data.length > 0;
+
+  if (bloqueado) {
+
+    inputMensaje.disabled = true;
+    btnEnviar.disabled = true;
+
+    document.getElementById("estadoUsuario").textContent =
+      "🚫 Usuario bloqueado";
+  }
+}
+
+
+async function cargarMensajes() {
+
+  const { data, error } =
+    await supabaseClient
       .from("messages")
-      .select(
-        "id,sender_id,content,created_at,read_at,delivered_at"
-      )
-      .eq(
-        "match_id",
-        match.id
-      )
-      .order(
-        "created_at",
-        {
-          ascending: true
-        }
-      );
+      .select("*")
+      .eq("match_id", matchActual.id)
+      .order("created_at", { ascending: true });
 
+  if (error) throw error;
 
-  if (error) {
+  messagesDiv.innerHTML = "";
 
-    console.error(
-      "Error mensajes:",
-      error
-    );
+  if (!data || data.length === 0) {
 
-    show(
-      "❌ No se pudieron cargar los mensajes."
-    );
+    messagesDiv.innerHTML =
+      `<div class="empty">
+        💬 Todavía no hay mensajes.<br>
+        ¡Comenzá la conversación!
+      </div>`;
 
-    return;
+  } else {
 
-  }
+    for (const mensaje of data) {
 
+      await marcarMensajeComoLeido(mensaje);
 
-  render(
-    data || []
-  );
-
-}
-
-
-
-/* =========================
-   MOSTRAR MENSAJES
-========================= */
-
-function render(
-  list
-) {
-
-  const box =
-    document.getElementById(
-      "msgs"
-    );
-
-
-  if (
-    !list.length
-  ) {
-
-    box.innerHTML = `
-
-      <div class="loading">
-
-        💬 Comenzá la conversación
-
-      </div>
-
-    `;
-
-    return;
-
-  }
-
-
-  box.innerHTML =
-    "";
-
-
-  list.forEach(
-    message => {
-
-      const mine =
-        message.sender_id ===
-        me.id;
-
-
-      const row =
-        document.createElement(
-          "div"
-        );
-
-
-      row.className =
-        "row " +
-        (
-          mine
-          ? "mine"
-          : "other"
-        );
-
-
-      const bubble =
-        document.createElement(
-          "div"
-        );
-
-
-      bubble.className =
-        "bubble";
-
-
-      const text =
-        document.createElement(
-          "div"
-        );
-
-
-      text.className =
-        "text";
-
-
-      text.textContent =
-        message.content;
-
-
-      const time =
-        document.createElement(
-          "div"
-        );
-
-
-      time.className =
-        "time";
-
-
-      time.textContent =
-        new Date(
-          message.created_at
-        )
-        .toLocaleTimeString(
-          "es-AR",
-          {
-            hour:
-              "2-digit",
-
-            minute:
-              "2-digit"
-          }
-        );
-
-
-      if (mine) {
-
-        const check =
-          document.createElement(
-            "span"
-          );
-
-
-        if (
-          message.read_at
-        ) {
-
-          check.textContent =
-            "  ✓✓";
-
-          check.className =
-            "blue";
-
-        }
-
-        else if (
-          message.delivered_at
-        ) {
-
-          check.textContent =
-            "  ✓✓";
-
-        }
-
-        else {
-
-          check.textContent =
-            "  ✓";
-
-        }
-
-
-        time.appendChild(
-          check
-        );
-
-      }
-
-
-      bubble.appendChild(
-        text
-      );
-
-
-      bubble.appendChild(
-        time
-      );
-
-
-      row.appendChild(
-        bubble
-      );
-
-
-      box.appendChild(
-        row
-      );
-
+      mostrarMensaje(mensaje);
     }
-  );
+  }
 
+  if (!bloqueado) {
 
-  box.scrollTop =
-    box.scrollHeight;
+    inputMensaje.disabled = false;
+    btnEnviar.disabled = false;
+  }
 
+  bajarAlFinal();
 }
 
 
+function mostrarMensaje(mensaje) {
 
-/* =========================
-   MARCAR LEÍDOS
-========================= */
+  const mio =
+    mensaje.sender_id === usuarioActual.id;
 
-async function read() {
+  const div =
+    document.createElement("div");
 
-  if (!match) {
+  div.className =
+    "message " + (mio ? "mine" : "theirs");
 
-    return;
+  const fecha =
+    new Date(mensaje.created_at);
 
+  const hora =
+    fecha.toLocaleTimeString("es-AR", {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+
+  let checks = "";
+
+  if (mio) {
+
+    if (mensaje.read_at) {
+
+      checks =
+        `<span class="checks read">✓✓</span>`;
+
+    } else if (mensaje.delivered_at) {
+
+      checks =
+        `<span class="checks">✓✓</span>`;
+
+    } else {
+
+      checks =
+        `<span class="checks">✓</span>`;
+    }
   }
 
+  div.innerHTML = `
+    ${escapeHtml(mensaje.content)}
+    <span class="time">
+      ${hora}
+      ${checks}
+    </span>
+  `;
 
-  const now =
-    new Date()
-      .toISOString();
-
-
-  await sb
-    .from("messages")
-    .update({
-
-      delivered_at:
-        now
-
-    })
-    .eq(
-      "match_id",
-      match.id
-    )
-    .neq(
-      "sender_id",
-      me.id
-    )
-    .is(
-      "delivered_at",
-      null
-    );
-
-
-  await sb
-    .from("messages")
-    .update({
-
-      read_at:
-        now,
-
-      delivered_at:
-        now
-
-    })
-    .eq(
-      "match_id",
-      match.id
-    )
-    .neq(
-      "sender_id",
-      me.id
-    )
-    .is(
-      "read_at",
-      null
-    );
-
+  messagesDiv.appendChild(div);
 }
 
 
+async function marcarMensajeComoLeido(mensaje) {
 
-/* =========================
-   ENVIAR MENSAJE
-========================= */
-
-async function enviar() {
-
-  if (
-    blocked ||
-    !match
-  ) {
-
+  if (mensaje.sender_id === usuarioActual.id) {
     return;
-
   }
 
+  if (!mensaje.delivered_at || !mensaje.read_at) {
 
-  const input =
-    document.getElementById(
-      "input"
-    );
+    const ahora =
+      new Date().toISOString();
+
+    await supabaseClient
+      .from("messages")
+      .update({
+        delivered_at:
+          mensaje.delivered_at || ahora,
+
+        read_at:
+          ahora
+      })
+      .eq("id", mensaje.id)
+      .eq("match_id", matchActual.id);
+  }
+}
 
 
-  const button =
-    document.getElementById(
-      "send"
-    );
+async function enviarMensaje() {
 
+  const texto =
+    inputMensaje.value.trim();
 
-  const content =
-    input.value.trim();
-
-
-  if (!content) {
-
+  if (!texto || !matchActual || bloqueado) {
     return;
-
   }
 
+  btnEnviar.disabled = true;
 
-  button.disabled =
-    true;
-
-
-  const {
-    error
-  } =
-    await sb
+  const { data, error } =
+    await supabaseClient
       .from("messages")
       .insert({
-
-        match_id:
-          match.id,
-
-        sender_id:
-          me.id,
-
-        content:
-          content
-
-      });
-
-
-  button.disabled =
-    false;
-
+        match_id: matchActual.id,
+        sender_id: usuarioActual.id,
+        content: texto
+      })
+      .select()
+      .single();
 
   if (error) {
 
-    console.error(
-      "Error enviando:",
-      error
+    console.error(error);
+
+    alert(
+      "No se pudo enviar el mensaje."
     );
 
-
-    showToast(
-      "❌ No se pudo enviar el mensaje."
-    );
-
-
+    btnEnviar.disabled = false;
     return;
-
   }
 
+  inputMensaje.value = "";
 
-  input.value =
-    "";
+  mostrarMensaje(data);
 
+  bajarAlFinal();
 
-  await load();
-
-
-  await badge();
-
+  btnEnviar.disabled = false;
 }
 
 
+function activarRealtime() {
 
-/* =========================
-   ENTER
-========================= */
+  supabaseClient
+    .channel(
+      "mensajes-" + matchActual.id
+    )
+    .on(
+      "postgres_changes",
+      {
+        event: "*",
+        schema: "public",
+        table: "messages",
+        filter:
+          `match_id=eq.${matchActual.id}`
+      },
+      async payload => {
 
-document
-  .getElementById(
-    "input"
-  )
-  .addEventListener(
-    "keydown",
-    function(event) {
-
-      if (
-        event.key ===
-          "Enter" &&
-        !event.shiftKey
-      ) {
-
-        event.preventDefault();
-
-        enviar();
-
-      }
-
-    }
-  );
-
-
-
-/* =========================
-   REALTIME
-========================= */
-
-function realtime() {
-
-  if (!match) {
-
-    return;
-
-  }
-
-
-  channel =
-    sb
-      .channel(
-        "chat-" +
-        match.id
-      )
-
-
-      .on(
-        "postgres_changes",
-
-        {
-          event:
-            "INSERT",
-
-          schema:
-            "public",
-
-          table:
-            "messages",
-
-          filter:
-            "match_id=eq." +
-            match.id
-        },
-
-        async payload => {
-
-          await load();
-
+        if (
+          payload.eventType === "INSERT"
+        ) {
 
           if (
             payload.new.sender_id !==
-            me.id
+            usuarioActual.id
           ) {
 
-            await read();
-
+            await marcarMensajeComoLeido(
+              payload.new
+            );
           }
 
-
-          await badge();
-
-        }
-
-      )
-
-
-      .on(
-        "postgres_changes",
-
-        {
-          event:
-            "UPDATE",
-
-          schema:
-            "public",
-
-          table:
-            "messages",
-
-          filter:
-            "match_id=eq." +
-            match.id
-        },
-
-        async () => {
-
-          await load();
+          await cargarMensajes();
 
         }
 
-      )
+        if (
+          payload.eventType === "UPDATE"
+        ) {
 
+          await cargarMensajes();
+        }
 
-      .subscribe();
-
+      }
+    )
+    .subscribe();
 }
 
 
+function activarTyping() {
 
-/* =========================
-   BLOQUEO
-========================= */
+  let timeout;
 
-async function checkBlock() {
+  inputMensaje.addEventListener(
+    "input",
+    async () => {
 
-  const {
-    data,
-    error
-  } =
-    await sb
-      .from("user_blocks")
-      .select(
-        "blocker_id,blocked_id"
-      )
-      .or(
+      clearTimeout(timeout);
 
-        "and(blocker_id.eq." +
-        me.id +
-        ",blocked_id.eq." +
-        other +
-        "),and(blocker_id.eq." +
-        other +
-        ",blocked_id.eq." +
-        me.id +
-        ")"
+      await actualizarTyping(true);
 
-      );
-
-
-  if (error) {
-
-    console.error(
-      "Error bloqueo:",
-      error
-    );
-
-    return;
-
-  }
-
-
-  blocked =
-    !!(
-      data &&
-      data.length
-    );
-
-
-  updateBlock();
-
+      timeout =
+        setTimeout(
+          () => actualizarTyping(false),
+          1200
+        );
+    }
+  );
 }
 
 
+async function actualizarTyping(valor) {
 
-/* =========================
-   ACTUALIZAR BLOQUEO
-========================= */
+  if (!matchActual) return;
 
-function updateBlock() {
-
-  const input =
-    document.getElementById(
-      "input"
-    );
-
-
-  const button =
-    document.getElementById(
-      "send"
-    );
-
-
-  const notice =
-    document.getElementById(
-      "notice"
-    );
-
-
-  if (blocked) {
-
-    input.disabled =
-      true;
-
-    button.disabled =
-      true;
-
-    input.placeholder =
-      "Conversación bloqueada";
-
-    notice.classList.add(
-      "show"
-    );
-
-  }
-
-  else {
-
-    input.disabled =
-      false;
-
-    button.disabled =
-      false;
-
-    input.placeholder =
-      "Escribí un mensaje...";
-
-    notice.classList.remove(
-      "show"
-    );
-
-  }
-
+  await supabaseClient
+    .from("typing_status")
+    .upsert({
+      match_id: matchActual.id,
+      user_id: usuarioActual.id,
+      is_typing: valor,
+      updated_at:
+        new Date().toISOString()
+    });
 }
 
 
+async function bloquearUsuario() {
 
-/* =========================
-   BLOQUEAR USUARIO
-========================= */
-
-async function bloquear() {
-
-  if (!other) {
-
-    return;
-
-  }
-
+  if (!usuarioDestino) return;
 
   const confirmar =
     confirm(
-      "¿Querés bloquear a este usuario?"
+      `¿Querés bloquear a ${usuarioDestino.nombre}?`
     );
 
+  if (!confirmar) return;
 
-  if (!confirmar) {
-
-    return;
-
-  }
-
-
-  const {
-    error
-  } =
-    await sb
+  const { error } =
+    await supabaseClient
       .from("user_blocks")
       .insert({
-
         blocker_id:
-          me.id,
+          usuarioActual.id,
 
         blocked_id:
-          other
-
+          destinoId
       });
 
-
   if (error) {
 
-    console.error(
-      "Error bloqueando:",
-      error
-    );
+    if (error.code === "23505") {
 
+      alert("Este usuario ya está bloqueado.");
 
-    showToast(
-      "❌ No se pudo bloquear."
-    );
+    } else {
 
+      console.error(error);
 
-    return;
-
-  }
-
-
-  blocked =
-    true;
-
-
-  updateBlock();
-
-
-  showToast(
-    "🚫 Usuario bloqueado"
-  );
-
-}
-
-
-
-/* =========================
-   BADGE
-========================= */
-
-async function badge() {
-
-  const badgeElement =
-    document.getElementById(
-      "badge"
-    );
-
-
-  const {
-    data,
-    error
-  } =
-    await sb
-      .from("messages")
-      .select(
-        "id"
-      )
-      .neq(
-        "sender_id",
-        me.id
-      )
-      .is(
-        "read_at",
-        null
-      );
-
-
-  if (error) {
-
-    console.error(
-      "Error badge:",
-      error
-    );
+      alert("No se pudo bloquear.");
+    }
 
     return;
-
   }
 
+  bloqueado = true;
 
-  const cantidad =
-    data
-      ? data.length
-      : 0;
-
-
-  if (
-    cantidad > 0
-  ) {
-
-    badgeElement.textContent =
-      cantidad > 99
-        ? "99+"
-        : cantidad;
-
-
-    badgeElement.style.display =
-      "flex";
-
-  }
-
-  else {
-
-    badgeElement.style.display =
-      "none";
-
-  }
-
-}
-
-
-
-/* =========================
-   UTILIDADES
-========================= */
-
-function esc(
-  value
-) {
-
-  return String(
-    value ?? ""
-  )
-
-  .replace(
-    /&/g,
-    "&amp;"
-  )
-
-  .replace(
-    /</g,
-    "&lt;"
-  )
-
-  .replace(
-    />/g,
-    "&gt;"
-  )
-
-  .replace(
-    /"/g,
-    "&quot;"
-  )
-
-  .replace(
-    /'/g,
-    "&#039;"
-  );
-
-}
-
-
-function show(
-  message
-) {
+  inputMensaje.disabled = true;
+  btnEnviar.disabled = true;
 
   document.getElementById(
-    "msgs"
-  ).innerHTML = `
+    "estadoUsuario"
+  ).textContent =
+    "🚫 Usuario bloqueado";
 
-    <div class="loading">
-
-      ${esc(message)}
-
-    </div>
-
-  `;
-
+  alert("Usuario bloqueado.");
 }
 
 
-function showToast(
-  message
-) {
+function bajarAlFinal() {
 
-  const toast =
-    document.getElementById(
-      "toast"
-    );
+  setTimeout(() => {
 
+    messagesDiv.scrollTop =
+      messagesDiv.scrollHeight;
 
-  toast.textContent =
-    message;
-
-
-  toast.classList.add(
-    "show"
-  );
-
-
-  setTimeout(
-    function() {
-
-      toast.classList.remove(
-        "show"
-      );
-
-    },
-    2500
-  );
-
+  }, 100);
 }
 
 
-function volverMatches() {
+function escapeHtml(texto) {
+
+  return String(texto)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+
+function mostrarError(texto) {
+
+  messagesDiv.innerHTML =
+    `<div class="error">
+      ❌ ${escapeHtml(texto)}
+    </div>`;
+}
+
+
+function volver() {
 
   window.location.href =
-    "./chat.html";
-
+    "chat.html";
 }
 
 
+inputMensaje.addEventListener(
+  "keydown",
+  event => {
 
-/* =========================
-   ARRANCAR
-========================= */
+    if (
+      event.key === "Enter" &&
+      !event.shiftKey
+    ) {
 
-init();
+      event.preventDefault();
+
+      enviarMensaje();
+    }
+  }
+);
+
+
+iniciar();
 
 </script>
 
 </body>
-
-  </html>
+</html>
