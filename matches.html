@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Mis Matches | EmiMatch</title>
+  <meta
+    name="description"
+    content="Mirá tus conexiones y matches en EmiMatch."
+  >
+  <meta name="theme-color" content="#111827">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
+      min-height: 100vh;
+
+      color: #ffffff;
+
+      background:
+        radial-gradient(
+          circle at top left,
+          rgba(124, 58, 237, 0.20),
+          transparent 35%
+        ),
+        linear-gradient(
+          135deg,
+          #07152f 0%,
+          #111827 50%,
+          #241044 100%
+        );
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    /* HEADER */
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+
+      width: 100%;
+
+      background: rgba(17, 24, 39, 0.90);
+      backdrop-filter: blur(14px);
+
+      border-bottom:
+        1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .header-content {
+      max-width: 1050px;
+      margin: auto;
+
+      padding: 16px 20px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 15px;
+    }
+
+    .logo {
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .logo span {
+      color: #d9ad45;
+    }
+
+    .back-button {
+      padding: 9px 15px;
+
+      border-radius: 999px;
+
+      border:
+        1px solid rgba(255, 255, 255, 0.13);
+
+      background:
+        rgba(255, 255, 255, 0.07);
+
+      color: #ffffff;
+
+      font-size: 13px;
+      font-weight: 600;
+
+      transition: 0.2s ease;
+    }
+
+    .back-button:hover {
+      background:
+        rgba(255, 255, 255, 0.14);
+
+      transform: translateY(-1px);
+    }
+
+    /* MAIN */
+
+    main {
+      max-width: 1050px;
+      margin: auto;
+
+      padding: 38px 20px 60px;
+    }
+
+    .hero {
+      text-align: center;
+
+      margin-bottom: 32px;
+    }
+
+    .hero h1 {
+      font-size: clamp(30px, 5vw, 44px);
+
+      margin-bottom: 10px;
+    }
+
+    .hero h1 span {
+      color: #d9ad45;
+    }
+
+    .hero p {
+      max-width: 620px;
+      margin: auto;
+
+      color: #cbd5e1;
+
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* STATUS */
+
+    .status {
+      display: none;
+
+      padding: 13px 16px;
+
+      margin-bottom: 20px;
+
+      border-radius: 13px;
+
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .status.error {
+      display: block;
+
+      color: #fecaca;
+
+      background:
+        rgba(239, 68, 68, 0.12);
+
+      border:
+        1px solid rgba(239, 68, 68, 0.25);
+    }
+
+    .status.info {
+      display: block;
+
+      color: #bfdbfe;
+
+      background:
+        rgba(59, 130, 246, 0.12);
+
+      border:
+        1px solid rgba(59, 130, 246, 0.25);
+    }
+
+    /* MATCHES GRID */
+
+    #matchesContainer {
+      display: grid;
+
+      grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+      gap: 20px;
+    }
+
+    .match-card {
+      overflow: hidden;
+
+      background:
+        rgba(255, 255, 255, 0.065);
+
+      border:
+        1px solid rgba(255, 255, 255, 0.10);
+
+      border-radius: 22px;
+
+      box-shadow:
+        0 18px 45px rgba(0, 0, 0, 0.22);
+
+      backdrop-filter: blur(12px);
+
+      transition: 0.25s ease;
+    }
+
+    .match-card:hover {
+      transform: translateY(-5px);
+
+      border-color:
+        rgba(217, 173, 69, 0.30);
+
+      box-shadow:
+        0 22px 55px rgba(0, 0, 0, 0.30);
+    }
+
+    /* FOTO */
+
+    .match-photo {
+      width: 100%;
+      height: 300px;
+
+      position: relative;
+
+      background:
+        linear-gradient(
+          135deg,
+          #312e81,
+          #7c3aed
+        );
+
+      overflow: hidden;
+    }
+
+    .match-photo img {
+      width: 100%;
+      height: 100%;
+
+      object-fit: cover;
+
+      display: block;
+    }
+
+    .photo-placeholder {
+      width: 100%;
+      height: 100%;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: 70px;
+    }
+
+    .match-badge {
+      position: absolute;
+
+      left: 14px;
+      top: 14px;
+
+      padding: 7px 11px;
+
+      border-radius: 999px;
+
+      background:
+        rgba(17, 24, 39, 0.78);
+
+      border:
+        1px solid rgba(255, 255, 255, 0.12);
+
+      backdrop-filter: blur(8px);
+
+      font-size: 12px;
+      font-weight: 700;
+
+      color: #f8fafc;
+    }
+
+    /* INFO */
+
+    .match-info {
+      padding: 19px;
+    }
+
+    .match-name {
+      font-size: 22px;
+      font-weight: 800;
+
+      margin-bottom: 5px;
+    }
+
+    .match-city {
+      color: #d9ad45;
+
+      font-size: 13px;
+
+      margin-bottom: 12px;
+    }
+
+    .match-description {
+      color: #cbd5e1;
+
+      font-size: 13px;
+      line-height: 1.55;
+
+      margin-bottom: 15px;
+
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+
+      overflow: hidden;
+    }
+
+    .interests {
+      display: flex;
+      flex-wrap: wrap;
+
+      gap: 6px;
+
+      margin-bottom: 17px;
+    }
+
+    .interest {
+      padding: 5px 9px;
+
+      border-radius: 999px;
+
+      color: #ddd6fe;
+
+      background:
+        rgba(124, 58, 237, 0.18);
+
+      border:
+        1px solid rgba(167, 139, 250, 0.18);
+
+      font-size: 11px;
+    }
+
+    /* CHAT BUTTON */
+
+    .chat-button {
+      width: 100%;
+
+      border: 0;
+
+      padding: 12px 15px;
+
+      border-radius: 13px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #7c3aed,
+          #a855f7
+        );
+
+      color: #ffffff;
+
+      font-weight: 800;
+
+      cursor: pointer;
+
+      transition: 0.2s ease;
+    }
+
+    .chat-button:hover {
+      transform: translateY(-2px);
+
+      box-shadow:
+        0 10px 25px rgba(124, 58, 237, 0.25);
+    }
+
+    /* EMPTY */
+
+    .empty-state {
+      grid-column: 1 / -1;
+
+      text-align: center;
+
+      padding: 65px 25px;
+
+      background:
+        rgba(255, 255, 255, 0.055);
+
+      border:
+        1px solid rgba(255, 255, 255, 0.09);
+
+      border-radius: 24px;
+    }
+
+    .empty-icon {
+      font-size: 60px;
+
+      margin-bottom: 15px;
+    }
+
+    .empty-state h2 {
+      font-size: 24px;
+
+      margin-bottom: 8px;
+    }
+
+    .empty-state p {
+      color: #94a3b8;
+
+      font-size: 14px;
+
+      line-height: 1.6;
+
+      max-width: 480px;
+
+      margin: 0 auto 22px;
+    }
+
+    .discover-button {
+      display: inline-block;
+
+      padding: 12px 20px;
+
+      border-radius: 999px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #d9ad45,
+          #f1cf78
+        );
+
+      color: #111827;
+
+      font-weight: 800;
+
+      font-size: 13px;
+    }
+
+    /* LOADING */
+
+    .loading {
+      grid-column: 1 / -1;
+
+      text-align: center;
+
+      padding: 70px 20px;
+
+      color: #94a3b8;
+    }
+
+    .loading-heart {
+      font-size: 42px;
+
+      margin-bottom: 12px;
+
+      animation: pulse 1.2s infinite;
+    }
+
+    @keyframes pulse {
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.12);
+      }
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width: 850px) {
+      #matchesContainer {
+        grid-template-columns:
+          repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 560px) {
+
+      .header-content {
+        padding: 13px 15px;
+      }
+
+      .logo {
+        font-size: 21px;
+      }
+
+      .back-button {
+        font-size: 12px;
+        padding: 8px 12px;
+      }
+
+      main {
+        padding:
+          28px 13px 45px;
+      }
+
+      #matchesContainer {
+        grid-template-columns: 1fr;
+      }
+
+      .match-photo {
+        height: 360px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+
+    <div class="header-content">
+
+      <a
+        href="perfil.html"
+        class="logo"
+      >
+        💕 Emi<span>Match</span>
+      </a>
+
+      <a
+        href="perfil.html"
+        class="back-button"
+      >
+        ← Mi perfil
+      </a>
+
+    </div>
+
+  </header>
+
+
+  <main>
+
+    <section class="hero">
+
+      <h1>
+        Tus <span>Matches</span> 💕
+      </h1>
+
+      <p>
+        Acá vas a encontrar las personas con las que
+        hubo interés mutuo. ¡Una conexión puede estar
+        a un mensaje de distancia!
+      </p>
+
+    </section>
+
+
+    <div
+      id="statusMessage"
+      class="status"
+    ></div>
+
+
+    <section id="matchesContainer">
+
+      <div class="loading">
+
+        <div class="loading-heart">
+          💕
+        </div>
+
+        <p>
+          Cargando tus matches...
+        </p>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <script>
+
+    /* ==========================================
+       SUPABASE
+       ========================================== */
+
+    const SUPABASE_URL =
+      "https://kng...supabase.co";
+
+    const SUPABASE_ANON_KEY =
+      "PEGÁ_ACÁ_TU_ANON_KEY";
+
+
+    const supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+      );
+
+
+    /* ==========================================
+       ELEMENTOS
+       ========================================== */
+
+    const matchesContainer =
+      document.getElementById(
+        "matchesContainer"
+      );
+
+    const statusMessage =
+      document.getElementById(
+        "statusMessage"
+      );
+
+
+    /* ==========================================
+       UTILIDADES
+       ========================================== */
+
+    function escapeHtml(value) {
+
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+    }
+
+
+    function showError(message) {
+
+      statusMessage.textContent =
+        message;
+
+      statusMessage.className =
+        "status error";
+
+    }
+
+
+    /* ==========================================
+       CARGAR SESIÓN
+       ========================================== */
+
+    async function loadMatches() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .auth
+          .getSession();
+
+
+      if (error) {
+
+        console.error(
+          "Error obteniendo sesión:",
+          error
+        );
+
+        showError(
+          "No pudimos comprobar tu sesión."
+        );
+
+        return;
+
+      }
+
+
+      const session =
+        data.session;
+
+
+      if (!session) {
+
+        window.location.href =
+          "index.html";
+
+        return;
+
+      }
+
+
+      await getMatches(
+        session.user.id
+      );
+
+    }
+
+
+    /* ==========================================
+       OBTENER MATCHES
+       ========================================== */
+
+    async function getMatches(
+      userId
+    ) {
+
+      matchesContainer.innerHTML = `
+        <div class="loading">
+          <div class="loading-heart">
+            💕
+          </div>
+          <p>
+            Buscando tus conexiones...
+          </p>
+        </div>
+      `;
+
+
+      /*
+       * Primero obtenemos los matches
+       */
+
+      const {
+        data: matches,
+        error: matchesError
+      } =
+        await supabaseClient
+          .from("matches")
+          .select(
+            "user1_id,user2_id"
+          )
+          .or(
+            `user1_id.eq.${userId},user2_id.eq.${userId}`
+          );
+
+
+      if (matchesError) {
+
+        console.error(
+          "Error obteniendo matches:",
+          matchesError
+        );
+
+        matchesContainer.innerHTML = "";
+
+        showError(
+          "No pudimos cargar tus matches: " +
+          matchesError.message
+        );
+
+        return;
+
+      }
+
+
+      if (
+        !matches ||
+        matches.length === 0
+      ) {
+
+        showEmpty();
+
+        return;
+
+      }
+
+
+      /*
+       * Sacamos el ID de la otra persona
+       */
+
+      const otherUserIds =
+        matches
+          .map(match => {
+
+            if (
+              match.user1_id === userId
+            ) {
+              return match.user2_id;
+            }
+
+            return match.user1_id;
+
+          })
+          .filter(Boolean);
+
+
+      if (
+        otherUserIds.length === 0
+      ) {
+
+        showEmpty();
+
+        return;
+
+      }
+
+
+      /*
+       * Buscamos sus perfiles
+       */
+
+      const {
+        data: profiles,
+        error: profilesError
+      } =
+        await supabaseClient
+          .from("profiles")
+          .select(`
+            id,
+            nombre,
+            edad,
+            ciudad,
+            descripcion,
+            foto_url,
+            intereses
+          `)
+          .in(
+            "id",
+            otherUserIds
+          );
+
+
+      if (profilesError) {
+
+        console.error(
+          "Error obteniendo perfiles:",
+          profilesError
+        );
+
+        matchesContainer.innerHTML = "";
+
+        showError(
+          "El match existe, pero no pudimos cargar el perfil: " +
+          profilesError.message
+        );
+
+        return;
+
+      }
+
+
+      renderMatches(
+        profiles || []
+      );
+
+    }
+
+
+    /* ==========================================
+       MOSTRAR MATCHES
+       ========================================== */
+
+    function renderMatches(
+      profiles
+    ) {
+
+      if (
+        !profiles ||
+        profiles.length === 0
+      ) {
+
+        showEmpty();
+
+        return;
+
+      }
+
+
+      matchesContainer.innerHTML =
+        profiles
+          .map(profile => {
+
+            const name =
+              profile.nombre ||
+              "Usuario EmiMatch";
+
+
+            const age =
+              profile.edad
+                ? `, ${profile.edad}`
+                : "";
+
+
+            const city =
+              profile.ciudad
+                ? `
+                  <div class="match-city">
+                    📍 ${escapeHtml(
+                      profile.ciudad
+                    )}
+                  </div>
+                `
+                : "";
+
+
+            const description =
+              profile.descripcion
+                ? `
+                  <div class="match-description">
+                    ${escapeHtml(
+                      profile.descripcion
+                    )}
+                  </div>
+                `
+                : "";
+
+
+            let interestsHtml = "";
+
+
+            if (
+              profile.intereses
+            ) {
+
+              const interests =
+                profile.intereses
+                  .split(",")
+                  .map(
+                    item => item.trim()
+                  )
+                  .filter(Boolean);
+
+
+              interestsHtml =
+                interests
+                  .slice(0, 6)
+                  .map(
+                    interest =>
+                      `
+                        <span class="interest">
+                          ${escapeHtml(
+                            interest
+                          )}
+                        </span>
+                      `
+                  )
+                  .join("");
+
+            }
+
+
+            const photo =
+              profile.foto_url
+                ? `
+                  <img
+                    src="${escapeHtml(
+                      profile.foto_url
+                    )}"
+                    alt="Foto de ${escapeHtml(
+                      name
+                    )}"
+                    onerror="
+                      this.style.display='none';
+                      this.nextElementSibling.style.display='flex';
+                    "
+                  >
+
+                  <div
+                    class="photo-placeholder"
+                    style="display:none;"
+                  >
+                    💕
+                  </div>
+                `
+                : `
+                  <div class="photo-placeholder">
+                    💕
+                  </div>
+                `;
+
+
+            return `
+              <article
+                class="match-card"
+              >
+
+                <div class="match-photo">
+
+                  ${photo}
+
+                  <div class="match-badge">
+                    💕 Match
+                  </div>
+
+                </div>
+
+
+                <div class="match-info">
+
+                  <div class="match-name">
+                    ${escapeHtml(
+                      name
+                    )}${escapeHtml(
+                      age
+                    )}
+                  </div>
+
+                  ${city}
+
+                  ${description}
+
+                  ${
+                    interestsHtml
+                      ? `
+                        <div class="interests">
+                          ${interestsHtml}
+                        </div>
+                      `
+                      : ""
+                  }
+
+
+                  <button
+                    class="chat-button"
+                    onclick="
+                      openChat('${escapeHtml(
+                        profile.id
+                      )}')
+                    "
+                  >
+                    💬 Enviar mensaje
+                  </button>
+
+                </div>
+
+              </article>
+            `;
+
+          })
+          .join("");
+
+    }
+
+
+    /* ==========================================
+       CHAT
+       ========================================== */
+
+    function openChat(
+      userId
+    ) {
+
+      window.location.href =
+        `chat.html?user=${encodeURIComponent(
+          userId
+        )}`;
+
+    }
+
+
+    /* ==========================================
+       SIN MATCHES
+       ========================================== */
+
+    function showEmpty() {
+
+      matchesContainer.innerHTML = `
+
+        <div class="empty-state">
+
+          <div class="empty-icon">
+            💕
+          </div>
+
+          <h2>
+            Todavía no tenés matches
+          </h2>
+
+          <p>
+            Seguí descubriendo personas,
+            conocé nuevos perfiles y cuando
+            haya interés de ambos lados,
+            tu conexión aparecerá acá.
+          </p>
+
+          <a
+            href="perfil.html"
+            class="discover-button"
+          >
+            ✨ Descubrir personas
+          </a>
+
+        </div>
+
+      `;
+
+    }
+
+
+    /* ==========================================
+       INICIAR
+       ========================================== */
+
+    loadMatches();
+
+  </script>
+
+</body>
+  </html>
