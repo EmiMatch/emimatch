@@ -1,40 +1,26 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>EmiMatch</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-
     * {
       box-sizing: border-box;
-      margin: 0;
-      padding: 0;
     }
 
     body {
-      font-family: Arial, sans-serif;
+      margin: 0;
       min-height: 100vh;
-
-      background: linear-gradient(
-        145deg,
-        #07152f,
-        #102d59
-      );
-
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #07152f, #102d59);
       display: flex;
-      align-items: center;
       justify-content: center;
-
+      align-items: center;
       padding: 20px;
     }
 
@@ -43,52 +29,46 @@
       max-width: 420px;
     }
 
-    .logo {
-      text-align: center;
-      margin-bottom: 25px;
-    }
-
-    .logo h1 {
-      color: #d9ad45;
-      font-size: 42px;
-    }
-
-    .logo p {
-      color: white;
-      margin-top: 8px;
-    }
-
     .card {
       background: white;
-      border-radius: 24px;
-      padding: 30px 24px;
+      border-radius: 22px;
+      padding: 30px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+    }
 
-      box-shadow:
-        0 15px 40px rgba(0,0,0,.35);
+    .logo {
+      text-align: center;
+      font-size: 34px;
+      font-weight: bold;
+      color: #d9ad45;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 25px;
     }
 
     h2 {
       text-align: center;
-      color: #15233d;
-      margin-bottom: 25px;
+      color: #102d59;
+      margin-bottom: 20px;
     }
 
     label {
       display: block;
-      color: #15233d;
+      margin-top: 15px;
+      margin-bottom: 6px;
       font-weight: bold;
-      margin-bottom: 7px;
+      color: #333;
     }
 
     input {
       width: 100%;
-      padding: 14px;
-
-      border: 1px solid #d5dbe5;
-      border-radius: 12px;
-
-      margin-bottom: 16px;
-
+      padding: 13px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
       font-size: 16px;
       outline: none;
     }
@@ -99,545 +79,497 @@
 
     button {
       width: 100%;
-
+      padding: 14px;
+      margin-top: 20px;
       border: none;
-
-      padding: 15px;
-
-      border-radius: 12px;
-
-      background: #d9ad45;
-
-      color: #101d34;
-
+      border-radius: 10px;
+      background: #102d59;
+      color: white;
       font-size: 16px;
-
       font-weight: bold;
-
       cursor: pointer;
-
-      margin-top: 5px;
     }
 
-    button:disabled {
-      opacity: .6;
-      cursor: not-allowed;
+    button:hover {
+      background: #07152f;
     }
 
     .secondary {
-      background: #102d59;
-      color: white;
-      margin-top: 12px;
+      background: #d9ad45;
+      color: #07152f;
     }
 
-    .third {
-      background: #f1f3f7;
-      color: #15233d;
-      margin-top: 12px;
+    .secondary:hover {
+      background: #c49b35;
     }
 
     .forgot {
       display: block;
-
       text-align: center;
-
-      margin-top: 18px;
-
-      color: #5b21b6;
-
-      font-weight: bold;
-
+      margin-top: 15px;
+      color: #102d59;
       text-decoration: none;
-
-      font-size: 14px;
+      font-weight: bold;
     }
 
     .forgot:hover {
       text-decoration: underline;
     }
 
-    .message {
-      text-align: center;
-
+    .terms {
       margin-top: 18px;
+      font-size: 13px;
+      color: #555;
+      line-height: 1.5;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
 
+    .terms input {
+      width: auto;
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .terms a {
+      color: #102d59;
       font-weight: bold;
-
-      line-height: 1.4;
     }
 
-    .session-box {
-      display: none;
-
-      background: #eef5ff;
-
-      border: 1px solid #cbdcf5;
-
-      border-radius: 14px;
-
-      padding: 14px;
-
-      margin-bottom: 20px;
-
+    .message {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 10px;
       text-align: center;
-
-      color: #15233d;
+      display: none;
+      font-size: 14px;
     }
 
-    .session-box strong {
-      display: block;
-      margin-bottom: 5px;
+    .success {
+      background: #e8f7ed;
+      color: #176b35;
     }
 
-    .small {
-      font-size: 12px;
-      color: #667085;
+    .error {
+      background: #fdeaea;
+      color: #a32121;
     }
 
+    .divider {
+      text-align: center;
+      margin: 25px 0 10px;
+      color: #888;
+      font-size: 14px;
+    }
+
+    .hidden {
+      display: none;
+    }
   </style>
-
 </head>
 
 <body>
 
-<div class="container">
+  <div class="container">
 
-  <div class="logo">
+    <div class="card">
 
-    <h1>
-      EmiMatch ❤️
-    </h1>
+      <div class="logo">💕 EmiMatch</div>
 
-    <p>
-      Conectá. Conocé. Hacé Match.
-    </p>
-
-  </div>
-
-  <div class="card">
-
-    <h2>
-      Bienvenido
-    </h2>
-
-    <div
-      id="sessionBox"
-      class="session-box"
-    >
-
-      <strong>
-        Hay una cuenta iniciada
-      </strong>
-
-      <div id="sessionEmail"></div>
-
-      <div class="small">
-        Podés entrar con esta cuenta
-        o crear otra.
+      <div class="subtitle">
+        Conocé personas, hacé Match y conectá.
       </div>
+
+      <!-- LOGIN -->
+
+      <div id="loginSection">
+
+        <h2>Iniciar sesión</h2>
+
+        <label for="loginEmail">Email</label>
+        <input
+          type="email"
+          id="loginEmail"
+          placeholder="Tu email"
+          autocomplete="email"
+        >
+
+        <label for="loginPassword">Contraseña</label>
+        <input
+          type="password"
+          id="loginPassword"
+          placeholder="Tu contraseña"
+          autocomplete="current-password"
+        >
+
+        <button id="loginButton">
+          Iniciar sesión
+        </button>
+
+        <a
+          class="forgot"
+          href="recuperar.html"
+        >
+          ¿Olvidaste tu contraseña?
+        </a>
+
+        <div class="divider">
+          ¿Todavía no tenés una cuenta?
+        </div>
+
+        <button
+          id="showRegisterButton"
+          class="secondary"
+        >
+          Crear cuenta
+        </button>
+
+      </div>
+
+      <!-- REGISTRO -->
+
+      <div id="registerSection" class="hidden">
+
+        <h2>Crear cuenta</h2>
+
+        <label for="registerEmail">Email</label>
+        <input
+          type="email"
+          id="registerEmail"
+          placeholder="Tu email"
+          autocomplete="email"
+        >
+
+        <label for="registerPassword">Contraseña</label>
+        <input
+          type="password"
+          id="registerPassword"
+          placeholder="Mínimo 6 caracteres"
+          autocomplete="new-password"
+        >
+
+        <label for="registerPassword2">Confirmar contraseña</label>
+        <input
+          type="password"
+          id="registerPassword2"
+          placeholder="Repetí tu contraseña"
+          autocomplete="new-password"
+        >
+
+        <label class="terms">
+
+          <input
+            type="checkbox"
+            id="acceptTerms"
+          >
+
+          <span>
+            Acepto los
+            <a
+              href="terminos.html"
+              target="_blank"
+            >
+              Términos y Condiciones
+            </a>
+            y la
+            <a
+              href="privacidad.html"
+              target="_blank"
+            >
+              Política de Privacidad
+            </a>
+            de EmiMatch.
+          </span>
+
+        </label>
+
+        <button id="registerButton">
+          Crear cuenta
+        </button>
+
+        <button
+          id="backLoginButton"
+          class="secondary"
+        >
+          Ya tengo una cuenta
+        </button>
+
+      </div>
+
+      <div
+        id="message"
+        class="message"
+      ></div>
 
     </div>
 
-    <label for="email">
-      Email
-    </label>
-
-    <input
-      type="email"
-      id="email"
-      placeholder="tu@email.com"
-      autocomplete="email"
-    >
-
-    <label for="password">
-      Contraseña
-    </label>
-
-    <input
-      type="password"
-      id="password"
-      placeholder="Tu contraseña"
-      autocomplete="current-password"
-    >
-
-    <button id="loginButton">
-      🔐 Iniciar sesión
-    </button>
-
-    <button
-      class="secondary"
-      id="registerButton"
-    >
-      ➕ Crear cuenta nueva
-    </button>
-
-    <button
-      class="third"
-      id="profileButton"
-      style="display:none;"
-    >
-      👤 Continuar con mi cuenta
-    </button>
-
-    <a
-      class="forgot"
-      href="recuperar.html"
-    >
-      ¿Olvidaste tu contraseña?
-    </a>
-
-    <div
-      class="message"
-      id="message"
-    ></div>
-
   </div>
 
-</div>
+  <script>
 
-<script>
+    const SUPABASE_URL =
+      "https://kngiadwaesdbmvwivdev.supabase.co";
 
-const SUPABASE_URL =
-  "https://kngiadwaesdbmvwivdev.supabase.co";
+    const SUPABASE_ANON_KEY =
+      "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
 
-const SUPABASE_ANON_KEY =
-  "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
-
-const supabaseClient =
-  window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
-  );
-
-
-const emailInput =
-  document.getElementById("email");
-
-const passwordInput =
-  document.getElementById("password");
-
-const message =
-  document.getElementById("message");
-
-const sessionBox =
-  document.getElementById("sessionBox");
-
-const sessionEmail =
-  document.getElementById("sessionEmail");
-
-const loginButton =
-  document.getElementById("loginButton");
-
-const registerButton =
-  document.getElementById("registerButton");
-
-const profileButton =
-  document.getElementById("profileButton");
-
-
-function mostrarMensaje(
-  texto,
-  error = false
-) {
-
-  message.textContent = texto;
-
-  message.style.color =
-    error
-      ? "#b42318"
-      : "#16803c";
-}
-
-
-async function comprobarSesion() {
-
-  try {
-
-    const {
-      data,
-      error
-    } =
-      await supabaseClient
-        .auth
-        .getSession();
-
-    if (error) {
-
-      console.error(error);
-
-      return;
-    }
-
-    const session =
-      data.session;
-
-    if (session) {
-
-      sessionBox.style.display =
-        "block";
-
-      sessionEmail.textContent =
-        session.user.email ||
-        "Cuenta actual";
-
-      profileButton.style.display =
-        "block";
-
-    } else {
-
-      sessionBox.style.display =
-        "none";
-
-      profileButton.style.display =
-        "none";
-    }
-
-  } catch (error) {
-
-    console.error(
-      "Error comprobando sesión:",
-      error
-    );
-  }
-}
-
-
-loginButton.onclick =
-async function() {
-
-  const email =
-    emailInput.value.trim();
-
-  const password =
-    passwordInput.value;
-
-  if (!email || !password) {
-
-    mostrarMensaje(
-      "Completá email y contraseña.",
-      true
-    );
-
-    return;
-  }
-
-  loginButton.disabled = true;
-
-  mostrarMensaje(
-    "Iniciando sesión..."
-  );
-
-  try {
-
-    const {
-      data,
-      error
-    } =
-      await supabaseClient
-        .auth
-        .signInWithPassword({
-
-          email: email,
-
-          password: password
-        });
-
-    if (error) {
-
-      mostrarMensaje(
-        error.message,
-        true
+    const supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
       );
 
-      return;
+    const loginSection =
+      document.getElementById("loginSection");
+
+    const registerSection =
+      document.getElementById("registerSection");
+
+    const message =
+      document.getElementById("message");
+
+    function showMessage(text, type) {
+
+      message.textContent = text;
+
+      message.className =
+        "message " + type;
+
+      message.style.display = "block";
     }
 
-    if (data.session) {
+    function clearMessage() {
 
-      mostrarMensaje(
-        "Sesión iniciada correctamente."
-      );
+      message.textContent = "";
 
-      setTimeout(
-        function() {
+      message.className =
+        "message";
+
+      message.style.display = "none";
+    }
+
+    document
+      .getElementById("showRegisterButton")
+      .addEventListener("click", () => {
+
+        clearMessage();
+
+        loginSection.classList.add("hidden");
+
+        registerSection.classList.remove("hidden");
+
+      });
+
+    document
+      .getElementById("backLoginButton")
+      .addEventListener("click", () => {
+
+        clearMessage();
+
+        registerSection.classList.add("hidden");
+
+        loginSection.classList.remove("hidden");
+
+      });
+
+    // =========================
+    // LOGIN
+    // =========================
+
+    document
+      .getElementById("loginButton")
+      .addEventListener("click", async () => {
+
+        clearMessage();
+
+        const email =
+          document
+            .getElementById("loginEmail")
+            .value
+            .trim();
+
+        const password =
+          document
+            .getElementById("loginPassword")
+            .value;
+
+        if (!email || !password) {
+
+          showMessage(
+            "Completá email y contraseña.",
+            "error"
+          );
+
+          return;
+        }
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient.auth.signInWithPassword({
+            email,
+            password
+          });
+
+        if (error) {
+
+          showMessage(
+            error.message,
+            "error"
+          );
+
+          return;
+        }
+
+        if (data.session) {
 
           window.location.href =
             "perfil.html";
 
-        },
-        500
-      );
+        }
+
+      });
+
+    // =========================
+    // REGISTRO
+    // =========================
+
+    document
+      .getElementById("registerButton")
+      .addEventListener("click", async () => {
+
+        clearMessage();
+
+        const email =
+          document
+            .getElementById("registerEmail")
+            .value
+            .trim();
+
+        const password =
+          document
+            .getElementById("registerPassword")
+            .value;
+
+        const password2 =
+          document
+            .getElementById("registerPassword2")
+            .value;
+
+        const accepted =
+          document
+            .getElementById("acceptTerms")
+            .checked;
+
+        if (!email || !password || !password2) {
+
+          showMessage(
+            "Completá todos los campos.",
+            "error"
+          );
+
+          return;
+        }
+
+        if (password.length < 6) {
+
+          showMessage(
+            "La contraseña debe tener al menos 6 caracteres.",
+            "error"
+          );
+
+          return;
+        }
+
+        if (password !== password2) {
+
+          showMessage(
+            "Las contraseñas no coinciden.",
+            "error"
+          );
+
+          return;
+        }
+
+        if (!accepted) {
+
+          showMessage(
+            "Debés aceptar los Términos y Condiciones y la Política de Privacidad.",
+            "error"
+          );
+
+          return;
+        }
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient.auth.signUp({
+            email,
+            password
+          });
+
+        if (error) {
+
+          showMessage(
+            error.message,
+            "error"
+          );
+
+          return;
+        }
+
+        if (data.session) {
+
+          showMessage(
+            "Cuenta creada correctamente.",
+            "success"
+          );
+
+          setTimeout(() => {
+
+            window.location.href =
+              "perfil.html";
+
+          }, 1200);
+
+        } else {
+
+          showMessage(
+            "Cuenta creada. Revisá tu email para confirmar tu cuenta.",
+            "success"
+          );
+
+        }
+
+      });
+
+    // =========================
+    // SESIÓN EXISTENTE
+    // =========================
+
+    async function comprobarSesion() {
+
+      const {
+        data
+      } =
+        await supabaseClient.auth.getSession();
+
+      if (data.session) {
+
+        window.location.href =
+          "perfil.html";
+
+      }
+
     }
 
-  } catch (error) {
+    comprobarSesion();
 
-    console.error(error);
-
-    mostrarMensaje(
-      "Ocurrió un error al iniciar sesión.",
-      true
-    );
-
-  } finally {
-
-    loginButton.disabled = false;
-  }
-};
-
-
-registerButton.onclick =
-async function() {
-
-  const email =
-    emailInput.value.trim();
-
-  const password =
-    passwordInput.value;
-
-  if (!email || !password) {
-
-    mostrarMensaje(
-      "Para crear la cuenta completá email y contraseña.",
-      true
-    );
-
-    return;
-  }
-
-  if (password.length < 6) {
-
-    mostrarMensaje(
-      "La contraseña debe tener al menos 6 caracteres.",
-      true
-    );
-
-    return;
-  }
-
-  registerButton.disabled = true;
-
-  mostrarMensaje(
-    "Preparando nueva cuenta..."
-  );
-
-  try {
-
-    const {
-      error: logoutError
-    } =
-      await supabaseClient
-        .auth
-        .signOut();
-
-    if (logoutError) {
-
-      console.warn(
-        "Aviso al cerrar sesión:",
-        logoutError
-      );
-    }
-
-    mostrarMensaje(
-      "Creando cuenta nueva..."
-    );
-
-    const {
-      data,
-      error
-    } =
-      await supabaseClient
-        .auth
-        .signUp({
-
-          email: email,
-
-          password: password
-        });
-
-    if (error) {
-
-      mostrarMensaje(
-        error.message,
-        true
-      );
-
-      await comprobarSesion();
-
-      return;
-    }
-
-    if (data.session) {
-
-      mostrarMensaje(
-        "Cuenta creada correctamente."
-      );
-
-      setTimeout(
-        function() {
-
-          window.location.href =
-            "perfil.html";
-
-        },
-        700
-      );
-
-      return;
-    }
-
-    mostrarMensaje(
-      "Cuenta creada. Revisá tu correo para confirmar la cuenta."
-    );
-
-    await comprobarSesion();
-
-  } catch (error) {
-
-    console.error(
-      "Error creando cuenta:",
-      error
-    );
-
-    mostrarMensaje(
-      error.message ||
-      "No se pudo crear la cuenta.",
-      true
-    );
-
-    await comprobarSesion();
-
-  } finally {
-
-    registerButton.disabled = false;
-  }
-};
-
-
-profileButton.onclick =
-function() {
-
-  window.location.href =
-    "perfil.html";
-};
-
-
-passwordInput.addEventListener(
-  "keydown",
-  function(event) {
-
-    if (
-      event.key === "Enter"
-    ) {
-
-      loginButton.click();
-    }
-  }
-);
-
-
-comprobarSesion();
-
-</script>
+  </script>
 
 </body>
 </html>
