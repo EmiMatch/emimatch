@@ -1,1398 +1,1246 @@
-<!DOCTYPE html><html lang="es">
+<!DOCTYPE html>
+<html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>Mi perfil - EmiMatch</title>  <meta name="description" content="Completá y actualizá tu perfil de EmiMatch.">
-  <meta name="theme-color" content="#111827">  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>  <style>
-    * {
-      box-sizing: border-box;
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Mi perfil | EmiMatch</title>
+
+  <meta
+    name="description"
+    content="Editá tu perfil de EmiMatch, actualizá tu foto, información e intereses y conectate con nuevas personas."
+  >
+
+  <meta name="theme-color" content="#080b1f">
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --bg: #070a18;
+      --bg-2: #0d1026;
+      --card: rgba(20, 24, 48, 0.88);
+      --card-light: rgba(255,255,255,0.07);
+      --primary: #8b5cf6;
+      --primary-2: #6d28d9;
+      --pink: #ec4899;
+      --gold: #f5c96a;
+      --white: #ffffff;
+      --text: #f5f7ff;
+      --muted: #a7aec7;
+      --border: rgba(255,255,255,0.09);
+      --success: #34d399;
+      --danger: #fb7185;
+      --shadow: 0 20px 60px rgba(0,0,0,.35);
     }
 
-    html {
-      scroll-behavior: smooth;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      margin: 0;
       min-height: 100vh;
-      font-family: Arial, sans-serif;
+      font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
+      color: var(--text);
+
       background:
-        radial-gradient(circle at top, rgba(124,58,237,.35), transparent 35%),
-        linear-gradient(145deg, #07152f 0%, #101b38 48%, #1e1b4b 100%);
-      color: white;
-      padding: 18px;
-      padding-bottom: 115px;
+        radial-gradient(
+          circle at 15% 10%,
+          rgba(139,92,246,.28),
+          transparent 32%
+        ),
+        radial-gradient(
+          circle at 90% 20%,
+          rgba(236,72,153,.20),
+          transparent 30%
+        ),
+        linear-gradient(
+          145deg,
+          #050713 0%,
+          #0a0e24 45%,
+          #111333 100%
+        );
+
+      overflow-x: hidden;
     }
 
-    .contenedor {
-      width: 100%;
-      max-width: 520px;
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(
+          120deg,
+          transparent 0%,
+          rgba(255,255,255,.025) 50%,
+          transparent 100%
+        );
+      z-index: -1;
+    }
+
+    /* HEADER */
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+
+      background: rgba(7,10,24,.78);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      max-width: 1100px;
       margin: auto;
+
+      min-height: 72px;
+
+      padding: 12px 18px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
     }
 
-    .cabecera {
-      text-align: center;
-      margin: 8px 0 22px;
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      text-decoration: none;
+      color: var(--white);
     }
 
-    .logo {
-      width: 70px;
-      height: 70px;
-      margin: 0 auto 12px;
-      border-radius: 22px;
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 38px;
-      background: linear-gradient(135deg, #7c3aed, #2563eb);
-      box-shadow: 0 12px 30px rgba(0,0,0,.30);
+
+      border-radius: 14px;
+
+      font-size: 21px;
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--pink),
+          var(--primary)
+        );
+
+      box-shadow:
+        0 8px 25px rgba(139,92,246,.30);
     }
 
-    .cabecera h1 {
-      margin: 0;
-      font-size: 30px;
+    .brand-text {
+      font-size: 21px;
       font-weight: 800;
       letter-spacing: -.5px;
     }
 
-    .cabecera p {
-      margin: 7px 0 0;
-      color: #cbd5e1;
-      font-size: 15px;
-      line-height: 1.5;
+    .brand-text span {
+      color: var(--gold);
     }
 
-    .estado {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 12px;
-      padding: 7px 13px;
-      border-radius: 999px;
-      background: rgba(34,197,94,.13);
-      border: 1px solid rgba(74,222,128,.20);
-      color: #86efac;
-      font-size: 13px;
-      font-weight: bold;
+    .logout-btn {
+      border: 1px solid rgba(255,255,255,.12);
+
+      background: rgba(255,255,255,.06);
+
+      color: #fff;
+
+      padding: 10px 14px;
+
+      border-radius: 12px;
+
+      cursor: pointer;
+
+      font-weight: 600;
+
+      transition: .2s;
     }
 
-    .card {
-      background: rgba(255,255,255,.97);
-      color: #172033;
+    .logout-btn:hover {
+      background: rgba(255,255,255,.12);
+      transform: translateY(-1px);
+    }
+
+    /* MAIN */
+
+    main {
+      width: min(100% - 28px, 1000px);
+      margin: 30px auto 100px;
+    }
+
+    .welcome {
+      margin-bottom: 22px;
+    }
+
+    .welcome small {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .welcome h1 {
+      margin-top: 5px;
+
+      font-size: clamp(28px, 6vw, 42px);
+      line-height: 1.1;
+
+      letter-spacing: -1.5px;
+    }
+
+    .welcome h1 span {
+      background:
+        linear-gradient(
+          90deg,
+          #fff,
+          #d8b4fe,
+          #f5c96a
+        );
+
+      -webkit-background-clip: text;
+      background-clip: text;
+
+      color: transparent;
+    }
+
+    /* PROFILE CARD */
+
+    .profile-card {
+      position: relative;
+
+      overflow: hidden;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255,255,255,.09),
+          rgba(255,255,255,.035)
+        );
+
+      border: 1px solid var(--border);
+
       border-radius: 28px;
-      padding: 24px 20px;
-      box-shadow:
-        0 20px 50px rgba(0,0,0,.30),
-        0 2px 8px rgba(0,0,0,.10);
+
+      box-shadow: var(--shadow);
+
+      padding: 22px;
     }
 
-    .seccion-titulo {
-      margin: 0 0 18px;
-      font-size: 18px;
-      font-weight: 800;
-      color: #111827;
-    }
+    .profile-card::before {
+      content: "";
 
-    .foto-container {
-      text-align: center;
-      margin-bottom: 25px;
-    }
+      position: absolute;
 
-    .foto-marco {
-      display: inline-block;
-      padding: 5px;
+      width: 220px;
+      height: 220px;
+
+      right: -100px;
+      top: -100px;
+
+      background: var(--primary);
+
+      opacity: .15;
+
+      filter: blur(60px);
+
       border-radius: 50%;
-      background: linear-gradient(135deg, #d4af37, #f5d76e, #d4af37);
-      box-shadow: 0 10px 25px rgba(0,0,0,.18);
     }
 
-    .foto-preview,
-    .sin-foto {
-      width: 155px;
-      height: 155px;
-      border-radius: 50%;
+    .section-title {
+      position: relative;
+
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      margin-bottom: 20px;
+    }
+
+    .section-title .icon {
+      width: 42px;
+      height: 42px;
+
       display: flex;
       align-items: center;
       justify-content: center;
+
+      border-radius: 13px;
+
+      background:
+        linear-gradient(
+          135deg,
+          rgba(139,92,246,.30),
+          rgba(236,72,153,.20)
+        );
+
+      font-size: 20px;
     }
 
-    .foto-preview {
-      object-fit: cover;
-      background: #e5e7eb;
-      border: 3px solid white;
+    .section-title h2 {
+      font-size: 20px;
     }
 
-    .sin-foto {
-      background: linear-gradient(135deg, #e5e7eb, #cbd5e1);
-      font-size: 65px;
-      border: 3px solid white;
-    }
-
-    .foto-ayuda {
-      margin-top: 12px;
-      color: #64748b;
+    .section-title p {
+      color: var(--muted);
       font-size: 13px;
+      margin-top: 2px;
     }
 
-    .foto-info {
-      margin-top: 5px;
-      color: #94a3b8;
-      font-size: 12px;
+    /* AVATAR */
+
+    .avatar-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      margin-bottom: 28px;
     }
 
-    .foto-input {
-      width: 100%;
-      margin-top: 10px;
-      padding: 11px;
-      border: 1px dashed #cbd5e1;
-      border-radius: 12px;
-      background: #f8fafc;
-      color: #475569;
-      font-size: 14px;
+    .avatar-wrapper {
+      position: relative;
+
+      width: 150px;
+      height: 150px;
     }
 
-    .campo {
-      margin-bottom: 17px;
+    .avatar {
+      width: 150px;
+      height: 150px;
+
+      border-radius: 50%;
+
+      object-fit: cover;
+
+      border: 4px solid rgba(255,255,255,.18);
+
+      background:
+        linear-gradient(
+          135deg,
+          #161b38,
+          #242951
+        );
+
+      box-shadow:
+        0 15px 45px rgba(0,0,0,.4),
+        0 0 0 7px rgba(139,92,246,.08);
+    }
+
+    .online-dot {
+      position: absolute;
+
+      width: 20px;
+      height: 20px;
+
+      right: 8px;
+      bottom: 10px;
+
+      border-radius: 50%;
+
+      background: var(--success);
+
+      border: 4px solid #10142d;
+
+      box-shadow: 0 0 15px rgba(52,211,153,.6);
+    }
+
+    .avatar-help {
+      color: var(--muted);
+
+      font-size: 13px;
+
+      margin-top: 12px;
+    }
+
+    /* FORM */
+
+    .form-grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+      gap: 17px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
     }
 
     label {
-      display: block;
-      margin-bottom: 7px;
-      font-size: 14px;
-      font-weight: 800;
-      color: #334155;
-    }
+      color: #dfe3f4;
 
-    .campo-icono {
-      margin-right: 5px;
+      font-size: 13px;
+
+      font-weight: 650;
+
+      padding-left: 3px;
     }
 
     input,
     textarea {
       width: 100%;
-      border: 1px solid #dbe1ea;
-      border-radius: 14px;
-      padding: 14px;
-      background: #f8fafc;
-      color: #172033;
-      font-size: 16px;
+
+      border: 1px solid var(--border);
+
+      border-radius: 15px;
+
+      background:
+        rgba(5,8,23,.58);
+
+      color: #fff;
+
       outline: none;
-      transition: .2s;
+
+      font-size: 15px;
+
+      padding: 14px 15px;
+
+      transition:
+        border-color .2s,
+        box-shadow .2s,
+        background .2s;
     }
 
     input::placeholder,
     textarea::placeholder {
-      color: #94a3b8;
+      color: #707896;
     }
 
     input:focus,
     textarea:focus {
-      border-color: #7c3aed;
-      background: white;
-      box-shadow: 0 0 0 4px rgba(124,58,237,.10);
+      border-color: rgba(139,92,246,.75);
+
+      background: rgba(8,11,29,.82);
+
+      box-shadow:
+        0 0 0 4px rgba(139,92,246,.10);
     }
 
     textarea {
-      min-height: 110px;
+      min-height: 125px;
+
       resize: vertical;
-      line-height: 1.5;
+
+      line-height: 1.55;
     }
 
-    .contador {
-      text-align: right;
-      margin-top: 5px;
-      color: #94a3b8;
-      font-size: 12px;
+    .field-note {
+      font-size: 11px;
+      color: #707896;
+      padding-left: 3px;
     }
 
-    .guardar {
+    /* SAVE */
+
+    .save-area {
+      margin-top: 24px;
+    }
+
+    .save-btn {
       width: 100%;
-      border: none;
-      border-radius: 15px;
-      padding: 16px;
-      margin-top: 4px;
-      background: linear-gradient(135deg, #d4af37, #f0c84b);
-      color: #111827;
-      font-size: 17px;
-      font-weight: 800;
+
+      border: 0;
+
+      padding: 15px 20px;
+
+      border-radius: 16px;
+
+      color: #fff;
+
+      font-size: 16px;
+
+      font-weight: 750;
+
       cursor: pointer;
-      box-shadow: 0 8px 20px rgba(212,175,55,.25);
-      transition: transform .15s, box-shadow .15s;
+
+      background:
+        linear-gradient(
+          135deg,
+          #8b5cf6,
+          #6d28d9
+        );
+
+      box-shadow:
+        0 12px 30px rgba(109,40,217,.28);
+
+      transition:
+        transform .2s,
+        box-shadow .2s,
+        opacity .2s;
     }
 
-    .guardar:active {
-      transform: scale(.98);
+    .save-btn:hover {
+      transform: translateY(-2px);
+
+      box-shadow:
+        0 16px 38px rgba(109,40,217,.38);
     }
 
-    .guardar:hover {
-      box-shadow: 0 10px 25px rgba(212,175,55,.35);
+    .save-btn:active {
+      transform: translateY(0);
     }
 
-    .guardar:disabled {
-      opacity: .6;
-      cursor: not-allowed;
-      transform: none;
+    .save-btn:disabled {
+      opacity: .65;
+      cursor: wait;
     }
 
-    .mensaje {
-      min-height: 22px;
-      margin-top: 13px;
-      text-align: center;
+    /* MESSAGE */
+
+    #mensaje {
+      margin-top: 15px;
+
+      padding: 12px 15px;
+
+      border-radius: 13px;
+
       font-size: 14px;
-      font-weight: bold;
+
+      display: none;
+
+      text-align: center;
     }
 
-    .cerrar {
-      width: 100%;
-      margin-top: 16px;
-      padding: 14px;
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 15px;
-      background: rgba(255,255,255,.07);
-      color: #cbd5e1;
-      font-size: 15px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: .2s;
+    #mensaje.success {
+      display: block;
+
+      background: rgba(52,211,153,.10);
+
+      border: 1px solid rgba(52,211,153,.25);
+
+      color: #86efac;
     }
 
-    .cerrar:hover {
-      background: rgba(255,255,255,.12);
-      color: white;
+    #mensaje.error {
+      display: block;
+
+      background: rgba(251,113,133,.10);
+
+      border: 1px solid rgba(251,113,133,.25);
+
+      color: #fda4af;
     }
 
-    .barra-inferior {
-      position: fixed;
-      left: 10px;
-      right: 10px;
-      bottom: 10px;
-      height: 70px;
-      background: rgba(255,255,255,.97);
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
-      border-radius: 22px;
+    /* QUICK NAV */
+
+    .quick-section {
+      margin-top: 22px;
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+      gap: 14px;
+    }
+
+    .quick-card {
+      position: relative;
+
+      text-decoration: none;
+
+      color: #fff;
+
+      padding: 18px;
+
+      border-radius: 20px;
+
+      border: 1px solid var(--border);
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255,255,255,.075),
+          rgba(255,255,255,.03)
+        );
+
+      overflow: hidden;
+
+      transition:
+        transform .2s,
+        border-color .2s,
+        background .2s;
+    }
+
+    .quick-card:hover {
+      transform: translateY(-3px);
+
+      border-color:
+        rgba(139,92,246,.42);
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(139,92,246,.13),
+          rgba(255,255,255,.04)
+        );
+    }
+
+    .quick-icon {
+      width: 42px;
+      height: 42px;
+
       display: flex;
       align-items: center;
-      justify-content: space-around;
-      box-shadow: 0 10px 35px rgba(0,0,0,.35);
-      z-index: 9999;
-      max-width: 600px;
-      margin: auto;
-      border: 1px solid rgba(255,255,255,.7);
+      justify-content: center;
+
+      border-radius: 13px;
+
+      background: rgba(255,255,255,.07);
+
+      font-size: 20px;
+
+      margin-bottom: 12px;
+    }
+
+    .quick-card h3 {
+      font-size: 15px;
+      margin-bottom: 5px;
+    }
+
+    .quick-card p {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    /* BOTTOM NAV */
+
+    .bottom-nav {
+      position: fixed;
+
+      left: 50%;
+      bottom: 14px;
+
+      transform: translateX(-50%);
+
+      width: min(
+        calc(100% - 24px),
+        520px
+      );
+
+      padding: 8px;
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(5, 1fr);
+
+      gap: 4px;
+
+      background:
+        rgba(10,13,31,.88);
+
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+
+      border: 1px solid var(--border);
+
+      border-radius: 20px;
+
+      box-shadow:
+        0 15px 45px rgba(0,0,0,.45);
+
+      z-index: 200;
     }
 
     .nav-item {
-      position: relative;
-      flex: 1;
-      height: 100%;
+      text-decoration: none;
+
+      color: #858ba6;
+
+      min-height: 54px;
+
+      border-radius: 14px;
+
       display: flex;
       flex-direction: column;
+
       align-items: center;
       justify-content: center;
-      text-decoration: none;
-      color: #64748b;
+
+      gap: 3px;
+
       font-size: 10px;
-      font-weight: 800;
+
       transition: .2s;
     }
 
-    .nav-icon {
-      font-size: 22px;
-      line-height: 25px;
-      margin-bottom: 3px;
-      transition: .2s;
+    .nav-item .nav-icon {
+      font-size: 19px;
     }
 
-    .nav-item.activo {
-      color: #6d28d9;
+    .nav-item.active {
+      color: #fff;
+
+      background:
+        linear-gradient(
+          135deg,
+          rgba(139,92,246,.24),
+          rgba(236,72,153,.13)
+        );
     }
 
-    .nav-item.activo .nav-icon {
-      transform: scale(1.15);
-    }
+    /* LOADING */
 
-    .nav-item:active .nav-icon {
-      transform: scale(.92);
-    }
+    #loading {
+      position: fixed;
+      inset: 0;
 
-    .badge {
-      position: absolute;
-      top: 6px;
-      right: 16%;
-      min-width: 19px;
-      height: 19px;
-      padding: 2px 5px;
-      border-radius: 20px;
-      background: #ef4444;
-      color: white;
-      font-size: 10px;
-      font-weight: 800;
-      display: none;
+      z-index: 999;
+
+      display: flex;
+
       align-items: center;
       justify-content: center;
-      border: 2px solid white;
+
+      background:
+        radial-gradient(
+          circle at center,
+          #151938,
+          #050713 75%
+        );
     }
 
-    @media (min-width: 700px) {
-      body {
-        padding-top: 35px;
+    .loading-box {
+      text-align: center;
+    }
+
+    .loading-heart {
+      font-size: 42px;
+
+      animation:
+        pulse 1s infinite;
+    }
+
+    .loading-box p {
+      margin-top: 10px;
+
+      color: var(--muted);
+
+      font-size: 14px;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
       }
 
-      .barra-inferior {
-        left: 50%;
-        right: auto;
-        transform: translateX(-50%);
-        width: 600px;
+      50% {
+        transform: scale(1.15);
       }
     }
 
-    @media (max-width: 380px) {
-      body {
-        padding-left: 12px;
-        padding-right: 12px;
+    /* RESPONSIVE */
+
+    @media (max-width: 700px) {
+
+      main {
+        width: min(100% - 18px, 600px);
+        margin-top: 20px;
       }
 
-      .card {
-        padding: 20px 15px;
+      .profile-card {
+        padding: 17px;
+
+        border-radius: 23px;
       }
 
-      .cabecera h1 {
-        font-size: 27px;
+      .form-grid {
+        grid-template-columns: 1fr;
       }
 
-      .foto-preview,
-      .sin-foto {
-        width: 140px;
-        height: 140px;
+      .field.full {
+        grid-column: auto;
       }
 
-      .nav-item {
-        font-size: 8px;
+      .quick-section {
+        grid-template-columns: 1fr;
       }
 
-      .nav-icon {
-        font-size: 20px;
+      .quick-card {
+        padding: 16px;
       }
 
-      .badge {
-        right: 8%;
+      .welcome h1 {
+        font-size: 30px;
+      }
+
+      .bottom-nav {
+        bottom: 10px;
       }
     }
-  </style></head><body><div class="contenedor">  <div class="cabecera"><div class="logo">💕</div>
 
-<h1>Mi perfil</h1>
+    @media (min-width: 701px) {
 
-<p>
-  Completá tu información para que te conozcan mejor
-</p>
+      .save-area {
+        max-width: 360px;
+        margin-left: auto;
+      }
 
-<div class="estado">
-  🟢 En línea
-</div>
+      .bottom-nav {
+        display: none;
+      }
+    }
+  </style>
+</head>
 
-  </div>  <div class="card"><h2 class="seccion-titulo">
-  👤 Información personal
-</h2>
+<body>
 
-<div class="foto-container">
+  <!-- LOADING -->
 
-  <div class="foto-marco">
+  <div id="loading">
+    <div class="loading-box">
+      <div class="loading-heart">💕</div>
+      <p>Cargando tu perfil...</p>
+    </div>
+  </div>
 
-    <div
-      id="sinFoto"
-      class="sin-foto">
-      👤
+
+  <!-- HEADER -->
+
+  <header>
+    <div class="header-inner">
+
+      <a href="perfil.html" class="brand">
+        <div class="brand-icon">💕</div>
+
+        <div class="brand-text">
+          Emi<span>Match</span>
+        </div>
+      </a>
+
+      <button
+        class="logout-btn"
+        id="logoutButton"
+      >
+        Cerrar sesión
+      </button>
+
+    </div>
+  </header>
+
+
+  <!-- MAIN -->
+
+  <main>
+
+    <div class="welcome">
+      <small>Tu espacio personal</small>
+
+      <h1>
+        Mi <span>perfil</span>
+      </h1>
     </div>
 
-    <img
-      id="fotoPreview"
-      class="foto-preview"
-      style="display:none;"
-      alt="Foto de perfil"
+
+    <!-- PROFILE -->
+
+    <section class="profile-card">
+
+      <div class="section-title">
+
+        <div class="icon">👤</div>
+
+        <div>
+          <h2>Tu información</h2>
+          <p>Contales a los demás un poco sobre vos.</p>
+        </div>
+
+      </div>
+
+
+      <!-- AVATAR -->
+
+      <div class="avatar-area">
+
+        <div class="avatar-wrapper">
+
+          <img
+            id="avatarPreview"
+            class="avatar"
+            src=""
+            alt="Foto de perfil"
+          >
+
+          <div class="online-dot"></div>
+
+        </div>
+
+        <div class="avatar-help">
+          Tu foto de perfil
+        </div>
+
+      </div>
+
+
+      <!-- FORM -->
+
+      <form id="profileForm">
+
+        <div class="form-grid">
+
+
+          <!-- PHOTO -->
+
+          <div class="field full">
+
+            <label for="foto_url">
+              📷 URL de tu foto
+            </label>
+
+            <input
+              type="url"
+              id="foto_url"
+              placeholder="https://..."
+              autocomplete="url"
+            >
+
+            <div class="field-note">
+              Usá una URL pública de una imagen.
+            </div>
+
+          </div>
+
+
+          <!-- NAME -->
+
+          <div class="field">
+
+            <label for="nombre">
+              👤 Nombre
+            </label>
+
+            <input
+              type="text"
+              id="nombre"
+              placeholder="Tu nombre"
+              maxlength="60"
+              autocomplete="name"
+              required
+            >
+
+          </div>
+
+
+          <!-- AGE -->
+
+          <div class="field">
+
+            <label for="edad">
+              🎂 Edad
+            </label>
+
+            <input
+              type="number"
+              id="edad"
+              placeholder="Tu edad"
+              min="18"
+              max="100"
+              required
+            >
+
+          </div>
+
+
+          <!-- CITY -->
+
+          <div class="field full">
+
+            <label for="ciudad">
+              📍 Ciudad
+            </label>
+
+            <input
+              type="text"
+              id="ciudad"
+              placeholder="Tu ciudad"
+              maxlength="80"
+              autocomplete="address-level2"
+              required
+            >
+
+          </div>
+
+
+          <!-- DESCRIPTION -->
+
+          <div class="field full">
+
+            <label for="descripcion">
+              ✨ Sobre mí
+            </label>
+
+            <textarea
+              id="descripcion"
+              placeholder="Contanos un poco sobre vos..."
+              maxlength="500"
+            ></textarea>
+
+            <div class="field-note">
+              Máximo 500 caracteres.
+            </div>
+
+          </div>
+
+
+          <!-- INTERESTS -->
+
+          <div class="field full">
+
+            <label for="intereses">
+              ❤️ Mis intereses
+            </label>
+
+            <input
+              type="text"
+              id="intereses"
+              placeholder="Música, fútbol, viajes..."
+              maxlength="300"
+            >
+
+            <div class="field-note">
+              Separalos con comas.
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- SAVE -->
+
+        <div class="save-area">
+
+          <button
+            type="submit"
+            class="save-btn"
+            id="guardarButton"
+          >
+            💾 Guardar cambios
+          </button>
+
+        </div>
+
+        <div id="mensaje"></div>
+
+      </form>
+
+    </section>
+
+
+    <!-- QUICK ACCESS -->
+
+    <section class="quick-section">
+
+
+      <a
+        href="likes.html"
+        class="quick-card"
+      >
+
+        <div class="quick-icon">
+          ❤️
+        </div>
+
+        <h3>Me gustas</h3>
+
+        <p>
+          Mirá quién mostró interés en vos.
+        </p>
+
+      </a>
+
+
+      <a
+        href="descubrir.html"
+        class="quick-card"
+      >
+
+        <div class="quick-icon">
+          🔎
+        </div>
+
+        <h3>Descubrir</h3>
+
+        <p>
+          Conocé nuevos perfiles y encontrá conexiones.
+        </p>
+
+      </a>
+
+
+      <a
+        href="chat.html"
+        class="quick-card"
+      >
+
+        <div class="quick-icon">
+          💬
+        </div>
+
+        <h3>Mis chats</h3>
+
+        <p>
+          Continuá tus conversaciones y conexiones.
+        </p>
+
+      </a>
+
+    </section>
+
+  </main>
+
+
+  <!-- MOBILE NAV -->
+
+  <nav class="bottom-nav">
+
+    <a
+      href="perfil.html"
+      class="nav-item active"
     >
+      <span class="nav-icon">👤</span>
+      Perfil
+    </a>
 
-  </div>
+    <a
+      href="descubrir.html"
+      class="nav-item"
+    >
+      <span class="nav-icon">🔎</span>
+      Descubrir
+    </a>
 
-  <div class="foto-ayuda">
-    📸 Elegí una foto de perfil
-  </div>
+    <a
+      href="likes.html"
+      class="nav-item"
+    >
+      <span class="nav-icon">❤️</span>
+      Likes
+    </a>
 
-  <div class="foto-info">
-    JPG, PNG o WEBP · Máximo 5 MB
-  </div>
+    <a
+      href="chat.html"
+      class="nav-item"
+    >
+      <span class="nav-icon">💬</span>
+      Chats
+    </a>
 
-  <input
-    type="file"
-    id="foto"
-    class="foto-input"
-    accept="image/jpeg,image/png,image/webp"
-  >
+    <a
+      href="configuracion.html"
+      class="nav-item"
+    >
+      <span class="nav-icon">⚙️</span>
+      Ajustes
+    </a>
 
-</div>
-
-<div class="campo">
-
-  <label for="nombre">
-    <span class="campo-icono">👤</span>
-    Nombre
-  </label>
-
-  <input
-    type="text"
-    id="nombre"
-    maxlength="60"
-    autocomplete="name"
-    placeholder="Tu nombre"
-  >
-
-</div>
-
-<div class="campo">
-
-  <label for="edad">
-    <span class="campo-icono">🎂</span>
-    Edad
-  </label>
-
-  <input
-    type="number"
-    id="edad"
-    min="18"
-    max="100"
-    inputmode="numeric"
-    placeholder="Tu edad"
-  >
-
-</div>
-
-<div class="campo">
-
-  <label for="ciudad">
-    <span class="campo-icono">📍</span>
-    Ciudad
-  </label>
-
-  <input
-    type="text"
-    id="ciudad"
-    maxlength="100"
-    autocomplete="address-level2"
-    placeholder="Tu ciudad"
-  >
-
-</div>
-
-<div class="campo">
-
-  <label for="descripcion">
-    <span class="campo-icono">💬</span>
-    Sobre mí
-  </label>
-
-  <textarea
-    id="descripcion"
-    maxlength="500"
-    placeholder="Contanos un poco sobre vos..."
-  ></textarea>
-
-  <div
-    id="contadorDescripcion"
-    class="contador">
-    0/500
-  </div>
-
-</div>
-
-<div class="campo">
-
-  <label for="intereses">
-    <span class="campo-icono">✨</span>
-    Intereses
-  </label>
-
-  <input
-    type="text"
-    id="intereses"
-    maxlength="300"
-    placeholder="Música, fútbol, viajes..."
-  >
-
-</div>
-
-<button
-  type="button"
-  class="guardar"
-  id="guardarBtn"
-  onclick="guardarPerfil()">
-
-  💾 Guardar perfil
-
-</button>
-
-<div
-  id="mensaje"
-  class="mensaje">
-</div>
-
-  </div><button
-type="button"
-class="cerrar"
-onclick="cerrarSesion()">
-
-🚪 Cerrar sesión
-
-  </button></div><nav class="barra-inferior"><a
-href="./perfil.html"
-class="nav-item activo">
-
-<span class="nav-icon">👤</span>
-Perfil
-
-  </a><a
-href="./descubrir.html"
-class="nav-item">
-
-<span class="nav-icon">🔎</span>
-Descubrir
-
-  </a><a
-href="./likes.html"
-class="nav-item">
-
-<span class="nav-icon">❤️</span>
-Me gustas
-
-  </a><a
-href="./chat.html"
-class="nav-item">
-
-<span class="nav-icon">💕</span>
-Matches
-
-  </a><a
-href="./notificaciones.html"
-class="nav-item">
-
-<span class="nav-icon">🔔</span>
-Notificaciones
-
-<span
-  id="badgeNotificaciones"
-  class="badge">
-  0
-</span>
-
-  </a></nav><script>
-
-const SUPABASE_URL =
-  "https://kngiadwaesdbmvwivdev.supabase.co";
-
-const SUPABASE_KEY =
-  "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
-
-const supabaseClient =
-  supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
-
-let usuarioActual = null;
-let fotoSeleccionada = null;
+  </nav>
 
 
-/* =========================
-   INICIAR
-========================= */
+  <script>
 
-async function iniciar() {
+    const SUPABASE_URL =
+      "https://kngiadwaesdbmvwivdev.supabase.co";
 
-  try {
+    const SUPABASE_KEY =
+      "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
 
-    const {
-      data: { session },
-      error
-    } =
-      await supabaseClient
-        .auth
-        .getSession();
 
-    if (
-      error ||
-      !session
-    ) {
-
-      window.location.replace(
-        "./index.html"
+    const supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
       );
 
-      return;
-    }
 
-    usuarioActual =
-      session.user;
+    const loading =
+      document.getElementById("loading");
 
-    await cargarPerfil();
+    const profileForm =
+      document.getElementById("profileForm");
 
-    await cargarNotificaciones();
+    const guardarButton =
+      document.getElementById("guardarButton");
 
-  } catch (error) {
+    const logoutButton =
+      document.getElementById("logoutButton");
 
-    console.error(
-      "Error al iniciar:",
-      error
-    );
+    const mensaje =
+      document.getElementById("mensaje");
 
-    window.location.replace(
-      "./index.html"
-    );
+    const avatarPreview =
+      document.getElementById("avatarPreview");
 
-  }
+    const fotoInput =
+      document.getElementById("foto_url");
 
-}
 
-
-/* =========================
-   CARGAR PERFIL
-========================= */
-
-async function cargarPerfil() {
-
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("profiles")
-      .select(
-        "id,nombre,edad,ciudad,descripcion,foto_url,intereses,created_at,online,last_seen"
-      )
-      .eq(
-        "id",
-        usuarioActual.id
-      )
-      .maybeSingle();
-
-  if (error) {
-
-    console.error(
-      "Error cargando perfil:",
-      error
-    );
-
-    mostrarMensaje(
-      "No se pudo cargar tu perfil.",
-      "error"
-    );
-
-    return;
-  }
-
-  if (!data) return;
-
-  document.getElementById("nombre").value =
-    data.nombre || "";
-
-  document.getElementById("edad").value =
-    data.edad || "";
-
-  document.getElementById("ciudad").value =
-    data.ciudad || "";
-
-  document.getElementById("descripcion").value =
-    data.descripcion || "";
-
-  document.getElementById("intereses").value =
-    data.intereses || "";
-
-  actualizarContador();
-
-  if (data.foto_url) {
-
-    mostrarFoto(
-      data.foto_url
-    );
-
-  }
-
-}
-
-
-/* =========================
-   MOSTRAR FOTO
-========================= */
-
-function mostrarFoto(url) {
-
-  const img =
-    document.getElementById(
-      "fotoPreview"
-    );
-
-  const sinFoto =
-    document.getElementById(
-      "sinFoto"
-    );
-
-  img.src = url;
-
-  img.style.display =
-    "block";
-
-  sinFoto.style.display =
-    "none";
-
-}
-
-
-/* =========================
-   FOTO SELECCIONADA
-========================= */
-
-document
-  .getElementById("foto")
-  .addEventListener(
-    "change",
-    function(event) {
-
-      const archivo =
-        event.target.files[0];
-
-      if (!archivo) return;
-
-      const tiposPermitidos = [
-        "image/jpeg",
-        "image/png",
-        "image/webp"
-      ];
-
-      if (
-        !tiposPermitidos.includes(
-          archivo.type
-        )
-      ) {
-
-        alert(
-          "Solo podés subir imágenes JPG, PNG o WEBP."
-        );
-
-        event.target.value = "";
-        fotoSeleccionada = null;
-
-        return;
-      }
-
-      const maximoMB = 5;
-
-      const maximoBytes =
-        maximoMB * 1024 * 1024;
-
-      if (
-        archivo.size >
-        maximoBytes
-      ) {
-
-        alert(
-          "La foto no puede superar los 5 MB."
-        );
-
-        event.target.value = "";
-        fotoSeleccionada = null;
-
-        return;
-      }
-
-      fotoSeleccionada =
-        archivo;
-
-      const url =
-        URL.createObjectURL(
-          archivo
-        );
-
-      mostrarFoto(url);
-
-    }
-  );
-
-
-/* =========================
-   CONTADOR DESCRIPCIÓN
-========================= */
-
-const descripcion =
-  document.getElementById(
-    "descripcion"
-  );
-
-descripcion.addEventListener(
-  "input",
-  actualizarContador
-);
-
-function actualizarContador() {
-
-  const contador =
-    document.getElementById(
-      "contadorDescripcion"
-    );
-
-  const cantidad =
-    descripcion.value.length;
-
-  contador.textContent =
-    cantidad + "/500";
-
-}
-
-
-/* =========================
-   MENSAJES
-========================= */
-
-function mostrarMensaje(
-  texto,
-  tipo
-) {
-
-  const mensaje =
-    document.getElementById(
-      "mensaje"
-    );
-
-  mensaje.textContent =
-    texto;
-
-  if (tipo === "success") {
-
-    mensaje.style.color =
-      "#16a34a";
-
-  } else {
-
-    mensaje.style.color =
-      "#dc2626";
-
-  }
-
-}
-
-
-/* =========================
-   GUARDAR PERFIL
-========================= */
-
-async function guardarPerfil() {
-
-  if (!usuarioActual) {
-
-    mostrarMensaje(
-      "Tu sesión expiró. Volvé a iniciar sesión.",
-      "error"
-    );
-
-    return;
-  }
-
-  const boton =
-    document.getElementById(
-      "guardarBtn"
-    );
-
-  boton.disabled =
-    true;
-
-  boton.textContent =
-    "Guardando...";
-
-  mostrarMensaje(
-    "Guardando...",
-    "success"
-  );
-
-  try {
-
-    const nombre =
-      document
-        .getElementById("nombre")
-        .value
-        .trim();
-
-    const edadTexto =
-      document
-        .getElementById("edad")
-        .value
-        .trim();
-
-    const ciudad =
-      document
-        .getElementById("ciudad")
-        .value
-        .trim();
-
-    const descripcionTexto =
-      document
-        .getElementById("descripcion")
-        .value
-        .trim();
-
-    const intereses =
-      document
-        .getElementById("intereses")
-        .value
-        .trim();
-
-
-    /* =========================
-       VALIDACIONES
-    ========================= */
-
-    if (
-      nombre.length < 2
+    function mostrarMensaje(
+      texto,
+      tipo = "success"
     ) {
 
-      throw new Error(
-        "El nombre debe tener al menos 2 caracteres."
-      );
+      mensaje.textContent = texto;
 
-    }
-
-    let edad = null;
-
-    if (edadTexto) {
-
-      edad =
-        Number(
-          edadTexto
-        );
-
-      if (
-        !Number.isInteger(edad) ||
-        edad < 18 ||
-        edad > 100
-      ) {
-
-        throw new Error(
-          "La edad debe estar entre 18 y 100 años."
-        );
-
-      }
-
-    }
-
-    if (
-      nombre.length > 60
-    ) {
-
-      throw new Error(
-        "El nombre es demasiado largo."
-      );
-
-    }
-
-    if (
-      ciudad.length > 100
-    ) {
-
-      throw new Error(
-        "La ciudad es demasiado larga."
-      );
-
-    }
-
-    if (
-      descripcionTexto.length > 500
-    ) {
-
-      throw new Error(
-        "La descripción no puede superar los 500 caracteres."
-      );
-
-    }
-
-    if (
-      intereses.length > 300
-    ) {
-
-      throw new Error(
-        "Los intereses son demasiado largos."
-      );
+      mensaje.className = tipo;
 
     }
 
 
-    /* =========================
-       FOTO
-    ========================= */
+    function ocultarMensaje() {
 
-    let fotoUrl = null;
+      mensaje.textContent = "";
 
-    if (fotoSeleccionada) {
-
-      const extension =
-        fotoSeleccionada.name
-          .split(".")
-          .pop()
-          .toLowerCase();
-
-      const nombreArchivo =
-        usuarioActual.id +
-        "_" +
-        Date.now() +
-        "." +
-        extension;
-
-      const ruta =
-        nombreArchivo;
-
-
-      const {
-        error: uploadError
-      } =
-        await supabaseClient
-          .storage
-          .from("avatars")
-          .upload(
-            ruta,
-            fotoSeleccionada,
-            {
-              upsert: false,
-              contentType:
-                fotoSeleccionada.type,
-              cacheControl:
-                "3600"
-            }
-          );
-
-
-      if (uploadError) {
-
-        throw uploadError;
-
-      }
-
-
-      const {
-        data: publicData
-      } =
-        supabaseClient
-          .storage
-          .from("avatars")
-          .getPublicUrl(
-            ruta
-          );
-
-
-      fotoUrl =
-        publicData.publicUrl;
+      mensaje.className = "";
 
     }
 
 
-    /* =========================
-       DATOS DEL PERFIL
-    ========================= */
+    function actualizarAvatar(url) {
 
-    const datos = {
+      const foto =
+        String(url || "").trim();
 
-      id:
-        usuarioActual.id,
+      if (foto) {
 
-      nombre:
-        nombre,
+        avatarPreview.src = foto;
 
-      edad:
-        edad,
+      } else {
 
-      ciudad:
-        ciudad,
-
-      descripcion:
-        descripcionTexto,
-
-      intereses:
-        intereses,
-
-      online:
-        true,
-
-      last_seen:
-        new Date()
-          .toISOString()
-
-    };
-
-
-    if (fotoUrl) {
-
-      datos.foto_url =
-        fotoUrl;
-
-    }
-
-
-    /* =========================
-       GUARDAR
-    ========================= */
-
-    const {
-      error
-    } =
-      await supabaseClient
-        .from("profiles")
-        .upsert(
-          datos,
-          {
-            onConflict:
-              "id"
-          }
-        );
-
-
-    if (error) {
-
-      throw error;
-
-    }
-
-
-    fotoSeleccionada =
-      null;
-
-    document.getElementById(
-      "foto"
-    ).value = "";
-
-
-    mostrarMensaje(
-      "✅ Perfil guardado correctamente",
-      "success"
-    );
-
-
-    setTimeout(
-      function() {
-
-        document.getElementById(
-          "mensaje"
-        ).textContent = "";
-
-      },
-      3000
-    );
-
-
-  } catch (error) {
-
-    console.error(
-      "Error guardando perfil:",
-      error
-    );
-
-    mostrarMensaje(
-      "❌ " +
-      (
-        error.message ||
-        "No se pudo guardar el perfil."
-      ),
-      "error"
-    );
-
-  } finally {
-
-    boton.disabled =
-      false;
-
-    boton.textContent =
-      "💾 Guardar perfil";
-
-  }
-
-}
-
-
-/* =========================
-   NOTIFICACIONES
-========================= */
-
-async function cargarNotificaciones() {
-
-  const badge =
-    document.getElementById(
-      "badgeNotificaciones"
-    );
-
-  try {
-
-    const {
-      data: { session }
-    } =
-      await supabaseClient
-        .auth
-        .getSession();
-
-    if (!session) return;
-
-    const usuario =
-      session.user.id;
-
-
-    const {
-      data: matches,
-      error: matchesError
-    } =
-      await supabaseClient
-        .from("matches")
-        .select(
-           "id,user1_id,user2_id"
-        )
-        .or(
-          `user1_id.eq.${usuario},user2_id.eq.${usuario}`
-        );
-
-
-    if (matchesError) {
-
-      console.error(
-        "Error cargando matches:",
-        matchesError
-      );
-
-      return;
-    }
-
-
-    if (
-      !matches ||
-      matches.length === 0
-    ) {
-
-      badge.style.display =
-        "none";
-
-      return;
-    }
-
-
-    let totalNoLeidos =
-      0;
-
-
-    for (
-      const match of matches
-    ) {
-
-      const {
-        data: mensajes,
-        error: mensajesError
-      } =
-        await supabaseClient
-          .from("messages")
-          .select("id")
-          .eq(
-            "match_id",
-            match.id
-          )
-          .neq(
-            "sender_id",
-            usuario
-          )
-          .is(
-            "read_at",
-            null
-          );
-
-
-      if (mensajesError) {
-
-        console.error(
-          "Error cargando mensajes:",
-          mensajesError
-        );
-
-        continue;
-      }
-
-
-      totalNoLeidos +=
-        mensajes?.length || 0;
-
-    }
-
-
-    if (
-      totalNoLeidos > 0
-    ) {
-
-      badge.textContent =
-        totalNoLeidos > 99
-          ? "99+"
-          : totalNoLeidos;
-
-      badge.style.display =
-        "flex";
-
-    } else {
-
-      badge.style.display =
-        "none";
-
-    }
-
-  } catch (error) {
-
-    console.error(
-      "Error en notificaciones:",
-      error
-    );
-
-  }
-
-}
-
-
-/* =========================
-   CERRAR SESIÓN
-========================= */
-
-async function cerrarSesion() {
-
-  const confirmar =
-    confirm(
-      "¿Querés cerrar sesión?"
-    );
-
-  if (!confirmar) return;
-
-
-  try {
-
-    await supabaseClient
-      .auth
-      .signOut();
-
-  } catch (error) {
-
-    console.error(
-      "Error cerrando sesión:",
-      error
-    );
-
-  }
-
-
-  window.location.replace(
-    "./index.html"
-  );
-
-}
-
-
-/* =========================
-   INICIAR APP
-========================= */
-
-iniciar();
-
-</script>
-
-</body>
-</html>
+        avatarPreview.src =
+          "data:image/svg+xml;charset=UTF-8," +
+          encodeURIComponent(`
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 width="300"
+                 height="300"
+      
