@@ -1,14 +1,7 @@
-<!DOCTYPE html>
-<html lang="es">
+<!DOCTYPE html><html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>EmiMatch · Descubrir</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>EmiMatch · Descubrir</title>  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>  <style>
     * {
       box-sizing: border-box;
     }
@@ -20,6 +13,7 @@
       --blanco: #ffffff;
       --muted: #cbd5e1;
       --rosa: #e11d48;
+      --rojo: #be123c;
     }
 
     body {
@@ -210,6 +204,24 @@
       color: #fff;
     }
 
+    .btn-bloquear {
+      display: block;
+      width: calc(100% - 40px);
+      margin: 0 20px 20px;
+      padding: 12px;
+      border: 1px solid #fecaca;
+      border-radius: 13px;
+      background: #fff1f2;
+      color: var(--rojo);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-bloquear:active {
+      transform: scale(.98);
+    }
+
     .toast {
       position: fixed;
       left: 50%;
@@ -293,122 +305,86 @@
         height: 350px;
       }
     }
-  </style>
-</head>
-
-<body>
-
-<header>
+  </style></head><body><header>
   <div class="logo">💕 EmiMatch</div>
   <p>Descubrí nuevas personas y conectá</p>
-</header>
+</header><main class="contenedor">  <section class="filtros"><h3>🎯 Buscar perfiles</h3>
 
-<main class="contenedor">
+<div class="fila">
 
-  <section class="filtros">
+  <input
+    id="edadMin"
+    type="number"
+    min="18"
+    max="100"
+    placeholder="Edad mín."
+  >
 
-    <h3>🎯 Buscar perfiles</h3>
+  <input
+    id="edadMax"
+    type="number"
+    min="18"
+    max="100"
+    placeholder="Edad máx."
+  >
 
-    <div class="fila">
+</div>
 
-      <input
-        id="edadMin"
-        type="number"
-        min="18"
-        max="100"
-        placeholder="Edad mín."
-      >
+<select
+  id="ciudad"
+  style="margin-top:10px"
+>
+  <option value="">
+    Todas las ciudades
+  </option>
+</select>
 
-      <input
-        id="edadMax"
-        type="number"
-        min="18"
-        max="100"
-        placeholder="Edad máx."
-      >
+<button
+  id="btnFiltros"
+  class="btn-filtro"
+>
+  🔎 Aplicar filtros
+</button>
 
-    </div>
-
-    <select
-      id="ciudad"
-      style="margin-top:10px"
-    >
-      <option value="">
-        Todas las ciudades
-      </option>
-    </select>
-
-    <button
-      id="btnFiltros"
-      class="btn-filtro"
-    >
-      🔎 Aplicar filtros
-    </button>
-
-  </section>
-
-  <div
+  </section>  <div
     id="contador"
     class="contador"
-  ></div>
+  ></div>  <div id="contenido"><div class="cargando">
+  🔐 Verificando sesión...
+</div>
 
-  <div id="contenido">
-
-    <div class="cargando">
-      🔐 Verificando sesión...
-    </div>
-
-  </div>
-
-</main>
-
-<div
+  </div></main><div
   id="toast"
   class="toast"
-></div>
-
-<nav class="nav">
-
-  <a href="perfil.html">
+></div><nav class="nav">  <a href="perfil.html">
     <span>👤</span>
     Perfil
-  </a>
+  </a><a
+href="descubrir.html"
+class="activo"
 
-  <a
-    href="descubrir.html"
-    class="activo"
-  >
-    <span>🔎</span>
-    Descubrir
-  </a>
+«»
 
-  <a href="likes.html">
+<span>🔎</span>
+Descubrir
+
+  </a>  <a href="likes.html">
     <span>❤️</span>
     Me gustas
-  </a>
-
-  <a href="chat.html">
+  </a>  <a href="chat.html">
     <span>💕</span>
     Matches
-  </a>
+  </a>  <a href="notificaciones.html"><span>🔔</span>
+Notificaciones
 
-  <a href="notificaciones.html">
+<b
+  id="badge"
+  class="badge"
+>
+  0
+</b>
 
-    <span>🔔</span>
-    Notificaciones
-
-    <b
-      id="badge"
-      class="badge"
-    >
-      0
-    </b>
-
-  </a>
-
-</nav>
-
-<script>
+  </a></nav><script>
 
 const SUPABASE_URL =
   "https://kngiadwaesdbmvwivdev.supabase.co";
@@ -1083,6 +1059,14 @@ function mostrarPerfil() {
 
       </div>
 
+
+      <button
+        id="btnBloquear"
+        class="btn-bloquear"
+      >
+        🚫 Bloquear usuario
+      </button>
+
     </article>
 
   `;
@@ -1104,6 +1088,15 @@ function mostrarPerfil() {
       registrarSwipe(
         perfil,
         "like"
+      )
+  );
+
+
+  $("btnBloquear").addEventListener(
+    "click",
+    () =>
+      bloquearUsuario(
+        perfil
       )
   );
 
@@ -1129,6 +1122,15 @@ async function registrarSwipe(
     boton =>
       boton.disabled = true
   );
+
+
+  const botonBloquear =
+    $("btnBloquear");
+
+
+  if (botonBloquear) {
+    botonBloquear.disabled = true;
+  }
 
 
   try {
@@ -1177,21 +1179,21 @@ async function registrarSwipe(
         data
       } =
         await supabaseClient
-          .from("swipes")
-          .select("id")
-          .eq(
-            "user_id",
-            perfil.id
-          )
-          .eq(
-            "target_user_id",
-            usuarioActual.id
-          )
-          .eq(
-            "action",
-            "like"
-          )
-          .limit(1);
+        .from("swipes")
+        .select("id")
+        .eq(
+          "user_id",
+          perfil.id
+        )
+        .eq(
+          "target_user_id",
+          usuarioActual.id
+        )
+        .eq(
+          "action",
+          "like"
+        )
+        .limit(1);
 
 
       if (
@@ -1258,6 +1260,140 @@ async function registrarSwipe(
         boton.disabled = false
     );
 
+
+    if (botonBloquear) {
+      botonBloquear.disabled = false;
+    }
+
+  }
+
+}
+
+
+// ==========================================
+// BLOQUEAR USUARIO
+// ==========================================
+
+async function bloquearUsuario(
+  perfil
+) {
+
+  const nombre =
+    perfil.nombre ||
+    "este usuario";
+
+
+  const confirmar =
+    confirm(
+      `¿Querés bloquear a ${nombre}?`
+    );
+
+
+  if (!confirmar) {
+    return;
+  }
+
+
+  const boton =
+    $("btnBloquear");
+
+
+  if (boton) {
+
+    boton.disabled = true;
+
+    boton.textContent =
+      "⏳ Bloqueando...";
+
+  }
+
+
+  try {
+
+    const {
+      error
+    } =
+      await supabaseClient
+        .from("user_blocks")
+        .insert({
+
+          blocker_id:
+            usuarioActual.id,
+
+          blocked_id:
+            perfil.id
+
+        });
+
+
+    if (
+      error &&
+      error.code !==
+      "23505"
+    ) {
+
+      throw error;
+
+    }
+
+
+    bloqueados.add(
+      perfil.id
+    );
+
+
+    swipesRealizados.add(
+      perfil.id
+    );
+
+
+    perfilesFiltrados =
+      perfilesFiltrados.filter(
+        item =>
+          item.id !== perfil.id
+      );
+
+
+    mostrarToast(
+      "🚫 Usuario bloqueado"
+    );
+
+
+    setTimeout(
+      () => {
+
+        actualizarContador();
+
+        mostrarPerfil();
+
+      },
+      500
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Error al bloquear:",
+      error
+    );
+
+
+    mostrarToast(
+      "⚠️ No se pudo bloquear al usuario"
+    );
+
+
+    if (boton) {
+
+      boton.disabled =
+        false;
+
+      boton.textContent =
+        "🚫 Bloquear usuario";
+
+    }
+
   }
 
 }
@@ -1278,7 +1414,7 @@ async function cargarNotificaciones() {
       await supabaseClient
         .from("messages")
         .select("id")
-        .neq(
+     .neq(
           "sender_id",
           usuarioActual.id
         )
@@ -1410,7 +1546,7 @@ function mostrarError(
 
 
 // ==========================================
-// SEGURIDAD HTML
+// ESCAPAR HTML
 // ==========================================
 
 function escapar(
@@ -1444,6 +1580,3 @@ function escapar(
 }
 
 </script>
-
-</body>
-</html>
