@@ -2,171 +2,67 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>Mi perfil | EmiMatch</title>
 
   <meta
     name="description"
-    content="Administrá tu perfil de EmiMatch y conectate con nuevas personas."
+    content="Completá y administrá tu perfil de EmiMatch."
   >
 
-  <meta name="theme-color" content="#080b1f">
+  <link rel="icon" href="favicon.svg">
 
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
-
-  <!-- SUPABASE -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-    :root {
-      --bg: #060817;
-      --bg2: #0d1027;
-      --card: rgba(18, 23, 49, 0.92);
-
-      --primary: #8b5cf6;
-      --primary-dark: #6d28d9;
-      --pink: #ec4899;
-      --gold: #f5c96a;
-
-      --white: #ffffff;
-      --text: #f5f7ff;
-      --muted: #9da5c3;
-
-      --border: rgba(255,255,255,.09);
-
-      --success: #34d399;
-      --danger: #fb7185;
-
-      --shadow:
-        0 25px 70px rgba(0,0,0,.40);
-    }
-
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
 
-    html {
-      scroll-behavior: smooth;
-    }
-
     body {
-      min-height: 100vh;
-
       font-family:
         Inter,
         -apple-system,
         BlinkMacSystemFont,
         "Segoe UI",
+        Roboto,
         Arial,
         sans-serif;
 
-      color: var(--text);
+      min-height: 100vh;
 
       background:
         radial-gradient(
-          circle at 10% 0%,
-          rgba(139,92,246,.28),
-          transparent 30%
-        ),
-        radial-gradient(
-          circle at 100% 15%,
-          rgba(236,72,153,.20),
-          transparent 28%
+          circle at top left,
+          rgba(124, 58, 237, 0.35),
+          transparent 35%
         ),
         linear-gradient(
-          145deg,
-          #040611 0%,
-          #0a0e22 50%,
-          #11142f 100%
+          135deg,
+          #080b16,
+          #111827 50%,
+          #241044
         );
 
-      padding-bottom: 100px;
+      color: #fff;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
     }
 
     button,
     input,
     textarea {
-      font-family: inherit;
-    }
-
-    /* =========================
-       LOADING
-    ========================= */
-
-    #loading {
-      position: fixed;
-      inset: 0;
-
-      z-index: 99999;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      background:
-        radial-gradient(
-          circle at center,
-          #171b3d 0%,
-          #070918 65%,
-          #04050e 100%
-        );
-
-      transition: opacity .25s ease;
-    }
-
-    .loading-content {
-      text-align: center;
-      padding: 30px;
-    }
-
-    .loading-logo {
-      width: 74px;
-      height: 74px;
-
-      margin: 0 auto 18px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      border-radius: 24px;
-
-      font-size: 35px;
-
-      background:
-        linear-gradient(
-          135deg,
-          var(--pink),
-          var(--primary)
-        );
-
-      box-shadow:
-        0 15px 40px rgba(139,92,246,.35);
-
-      animation: heartbeat 1.2s infinite;
-    }
-
-    .loading-content h2 {
-      font-size: 20px;
-      margin-bottom: 7px;
-    }
-
-    .loading-content p {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    @keyframes heartbeat {
-      0%, 100% {
-        transform: scale(1);
-      }
-
-      50% {
-        transform: scale(1.08);
-      }
+      font: inherit;
     }
 
     /* =========================
@@ -176,24 +72,28 @@
     header {
       position: sticky;
       top: 0;
-      z-index: 500;
+      z-index: 50;
 
       background:
-        rgba(6,8,23,.82);
+        linear-gradient(
+          135deg,
+          #111827,
+          #4c1d95,
+          #7c3aed
+        );
 
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,.12);
 
-      border-bottom:
-        1px solid var(--border);
+      box-shadow:
+        0 8px 30px rgba(0,0,0,.25);
     }
 
     .header-inner {
-      width: min(100% - 28px, 1050px);
-
-      min-height: 72px;
+      width: min(1100px, calc(100% - 30px));
 
       margin: auto;
+
+      min-height: 72px;
 
       display: flex;
       align-items: center;
@@ -202,82 +102,62 @@
       gap: 15px;
     }
 
-    .brand {
+    .logo {
       display: flex;
       align-items: center;
       gap: 10px;
 
-      text-decoration: none;
-
-      color: white;
+      font-size: 23px;
+      font-weight: 900;
     }
 
-    .brand-icon {
-      width: 43px;
-      height: 43px;
+    .logo span {
+      color: #f4c95d;
+    }
 
+    .user-status {
       display: flex;
       align-items: center;
-      justify-content: center;
+      gap: 7px;
 
-      border-radius: 14px;
+      color: rgba(255,255,255,.8);
 
-      font-size: 21px;
+      font-size: 12px;
+    }
 
-      background:
-        linear-gradient(
-          135deg,
-          var(--pink),
-          var(--primary)
-        );
+    .online-dot {
+      width: 9px;
+      height: 9px;
+
+      border-radius: 50%;
+
+      background: #22c55e;
 
       box-shadow:
-        0 8px 25px rgba(139,92,246,.30);
+        0 0 10px rgba(34,197,94,.8);
     }
 
-    .brand-name {
-      font-size: 21px;
-      font-weight: 800;
-      letter-spacing: -.5px;
-    }
+    .logout-button {
+      border: 1px solid rgba(255,255,255,.2);
 
-    .brand-name span {
-      color: var(--gold);
-    }
-
-    #logoutButton {
-      border:
-        1px solid rgba(255,255,255,.11);
-
-      background:
-        rgba(255,255,255,.06);
+      background: rgba(255,255,255,.08);
 
       color: white;
 
-      padding:
-        10px 14px;
+      padding: 10px 15px;
 
       border-radius: 12px;
 
-      font-size: 13px;
-      font-weight: 650;
-
       cursor: pointer;
+
+      font-weight: 700;
 
       transition: .2s;
     }
 
-    #logoutButton:hover {
-      background:
-        rgba(255,255,255,.11);
-
-      transform:
-        translateY(-1px);
-    }
-
-    #logoutButton:disabled {
-      opacity: .6;
-      cursor: wait;
+    .logout-button:hover {
+      background: rgba(255,255,255,.16);
+      transform: translateY(-1px);
     }
 
     /* =========================
@@ -285,704 +165,604 @@
     ========================= */
 
     main {
-      width: min(100% - 28px, 950px);
+      width: min(1100px, calc(100% - 30px));
 
-      margin:
-        32px auto 40px;
+      margin: 35px auto 60px;
     }
 
-    .intro {
-      margin-bottom: 22px;
+    .page-title {
+      margin-bottom: 25px;
     }
 
-    .intro small {
-      color: var(--muted);
+    .page-title h1 {
+      font-size: clamp(28px, 5vw, 42px);
 
-      font-size: 13px;
+      line-height: 1.1;
+
+      margin-bottom: 9px;
     }
 
-    .intro h1 {
-      margin-top: 5px;
+    .page-title p {
+      color: rgba(255,255,255,.68);
 
-      font-size:
-        clamp(31px, 7vw, 46px);
-
-      line-height: 1.05;
-
-      letter-spacing: -1.8px;
-    }
-
-    .intro h1 span {
-      background:
-        linear-gradient(
-          90deg,
-          #ffffff,
-          #d8b4fe,
-          var(--gold)
-        );
-
-      -webkit-background-clip: text;
-      background-clip: text;
-
-      color: transparent;
-    }
-
-    .intro p {
-      margin-top: 10px;
-
-      max-width: 600px;
-
-      color: var(--muted);
-
-      font-size: 14px;
-
-      line-height: 1.5;
+      font-size: 15px;
     }
 
     /* =========================
-       PROFILE CARD
+       LOADING
     ========================= */
 
-    .profile-card {
-      position: relative;
+    #loading {
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      gap: 12px;
+
+      min-height: 260px;
+
+      color: rgba(255,255,255,.85);
+    }
+
+    .spinner {
+      width: 25px;
+      height: 25px;
+
+      border: 3px solid rgba(255,255,255,.18);
+
+      border-top-color: #f4c95d;
+
+      border-radius: 50%;
+
+      animation: spin .8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* =========================
+       CONTENT
+    ========================= */
+
+    #contenido {
+      display: none;
+    }
+
+    .grid {
+      display: grid;
+
+      grid-template-columns:
+        minmax(0, 1fr)
+        320px;
+
+      gap: 24px;
+
+      align-items: start;
+    }
+
+    .card {
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255,255,255,.09),
+          rgba(255,255,255,.045)
+        );
+
+      border: 1px solid rgba(255,255,255,.1);
+
+      border-radius: 24px;
+
+      padding: 25px;
+
+      box-shadow:
+        0 20px 60px rgba(0,0,0,.25);
+
+      backdrop-filter: blur(14px);
+    }
+
+    .card h2 {
+      font-size: 21px;
+
+      margin-bottom: 6px;
+    }
+
+    .card-subtitle {
+      color: rgba(255,255,255,.6);
+
+      font-size: 13px;
+
+      margin-bottom: 22px;
+    }
+
+    /* =========================
+       FOTO
+    ========================= */
+
+    .photo-section {
+      display: flex;
+
+      flex-direction: column;
+
+      align-items: center;
+
+      margin-bottom: 25px;
+    }
+
+    .photo-preview {
+      width: 145px;
+      height: 145px;
+
+      border-radius: 50%;
 
       overflow: hidden;
 
       background:
         linear-gradient(
-          145deg,
-          rgba(255,255,255,.075),
-          rgba(255,255,255,.025)
+          135deg,
+          #312e81,
+          #7c3aed
         );
 
-      border:
-        1px solid var(--border);
+      border: 4px solid rgba(255,255,255,.15);
 
-      border-radius: 28px;
-
-      padding: 24px;
-
-      box-shadow: var(--shadow);
-    }
-
-    .profile-card::before {
-      content: "";
-
-      position: absolute;
-
-      width: 240px;
-      height: 240px;
-
-      top: -150px;
-      right: -100px;
-
-      border-radius: 50%;
-
-      background:
-        var(--primary);
-
-      opacity: .12;
-
-      filter: blur(55px);
-
-      pointer-events: none;
-    }
-
-    .section-heading {
-      position: relative;
+      box-shadow:
+        0 15px 40px rgba(0,0,0,.3);
 
       display: flex;
-      align-items: center;
 
-      gap: 12px;
-
-      margin-bottom: 25px;
-    }
-
-    .section-icon {
-      width: 46px;
-      height: 46px;
-
-      display: flex;
       align-items: center;
       justify-content: center;
 
-      border-radius: 15px;
+      font-size: 52px;
 
-      background:
-        linear-gradient(
-          135deg,
-          rgba(139,92,246,.25),
-          rgba(236,72,153,.15)
-        );
-
-      font-size: 21px;
+      margin-bottom: 14px;
     }
 
-    .section-heading h2 {
-      font-size: 20px;
-    }
-
-    .section-heading p {
-      margin-top: 3px;
-
-      color: var(--muted);
-
-      font-size: 13px;
-    }
-
-    /* =========================
-       AVATAR
-    ========================= */
-
-    .avatar-area {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-
-      margin-bottom: 30px;
-    }
-
-    .avatar-container {
-      position: relative;
-
-      width: 150px;
-      height: 150px;
-    }
-
-    #avatarPreview {
-      display: block;
-
-      width: 150px;
-      height: 150px;
-
-      border-radius: 50%;
+    .photo-preview img {
+      width: 100%;
+      height: 100%;
 
       object-fit: cover;
 
-      background:
-        #151a36;
-
-      border:
-        4px solid rgba(255,255,255,.15);
-
-      box-shadow:
-        0 18px 45px rgba(0,0,0,.42),
-        0 0 0 7px rgba(139,92,246,.07);
+      display: none;
     }
 
-    .online-indicator {
-      position: absolute;
-
-      right: 8px;
-      bottom: 9px;
-
-      width: 21px;
-      height: 21px;
-
-      border-radius: 50%;
-
-      background:
-        var(--success);
-
-      border:
-        4px solid #11152f;
-
-      box-shadow:
-        0 0 15px rgba(52,211,153,.55);
-    }
-
-    .avatar-caption {
-      margin-top: 12px;
-
-      color: var(--muted);
+    .photo-label {
+      color: rgba(255,255,255,.6);
 
       font-size: 12px;
+
+      text-align: center;
     }
 
     /* =========================
        FORM
     ========================= */
 
-    .form-grid {
-      position: relative;
-
-      display: grid;
-
-      grid-template-columns:
-        repeat(2, minmax(0, 1fr));
-
-      gap: 17px;
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-
-      gap: 7px;
-    }
-
-    .field.full {
-      grid-column: 1 / -1;
+    .form-group {
+      margin-bottom: 18px;
     }
 
     label {
-      padding-left: 2px;
+      display: block;
 
-      color: #e4e7f5;
+      margin-bottom: 7px;
 
       font-size: 13px;
 
       font-weight: 700;
+
+      color: rgba(255,255,255,.88);
+    }
+
+    .required {
+      color: #f4c95d;
     }
 
     input,
     textarea {
       width: 100%;
 
-      border:
-        1px solid var(--border);
+      border: 1px solid rgba(255,255,255,.12);
 
-      border-radius: 15px;
-
-      outline: none;
-
-      padding:
-        14px 15px;
-
-      background:
-        rgba(4,7,20,.62);
+      background: rgba(0,0,0,.22);
 
       color: white;
 
-      font-size: 15px;
+      border-radius: 13px;
 
-      transition:
-        border-color .2s,
-        box-shadow .2s,
-        background .2s;
+      padding: 13px 14px;
+
+      outline: none;
+
+      transition: .2s;
     }
 
     input::placeholder,
     textarea::placeholder {
-      color: #69718f;
+      color: rgba(255,255,255,.35);
     }
 
     input:focus,
     textarea:focus {
-      border-color:
-        rgba(139,92,246,.75);
+      border-color: #a78bfa;
 
-      background:
-        rgba(5,8,23,.85);
+      background: rgba(0,0,0,.3);
 
       box-shadow:
-        0 0 0 4px
-        rgba(139,92,246,.10);
+        0 0 0 3px rgba(124,58,237,.15);
     }
 
     textarea {
-      min-height: 125px;
+      min-height: 120px;
 
       resize: vertical;
-
-      line-height: 1.55;
     }
 
-    .help-text {
-      color: #707896;
+    .counter {
+      text-align: right;
+
+      color: rgba(255,255,255,.4);
 
       font-size: 11px;
+
+      margin-top: 5px;
+    }
+
+    .two-columns {
+      display: grid;
+
+      grid-template-columns: 1fr 1fr;
+
+      gap: 15px;
     }
 
     /* =========================
-       SAVE BUTTON
+       BUTTON
     ========================= */
 
-    #guardarButton {
-      position: relative;
-
+    .save-button {
       width: 100%;
 
-      margin-top: 24px;
+      border: none;
 
-      border: 0;
+      padding: 15px;
 
-      border-radius: 16px;
-
-      padding: 16px 20px;
-
-      color: white;
+      border-radius: 14px;
 
       background:
         linear-gradient(
           135deg,
-          var(--primary),
-          var(--primary-dark)
+          #f4c95d,
+          #d9a928
         );
 
-      font-size: 16px;
+      color: #17120a;
 
-      font-weight: 800;
+      font-weight: 900;
 
       cursor: pointer;
 
       box-shadow:
-        0 13px 35px
-        rgba(109,40,217,.30);
+        0 10px 30px rgba(217,169,40,.2);
 
-      transition:
-        transform .2s,
-        box-shadow .2s,
-        opacity .2s;
+      transition: .2s;
     }
 
-    #guardarButton:hover {
-      transform:
-        translateY(-2px);
+    .save-button:hover {
+      transform: translateY(-2px);
 
       box-shadow:
-        0 17px 42px
-        rgba(109,40,217,.40);
+        0 15px 35px rgba(217,169,40,.3);
     }
 
-    #guardarButton:active {
-      transform:
-        translateY(0);
-    }
+    .save-button:disabled {
+      opacity: .6;
 
-    #guardarButton:disabled {
-      opacity: .65;
       cursor: wait;
+
       transform: none;
     }
 
     /* =========================
-       MESSAGE
+       MENSAJES
     ========================= */
 
     #mensaje {
       display: none;
 
-      margin-top: 15px;
+      margin-bottom: 18px;
 
       padding: 13px 15px;
 
       border-radius: 13px;
 
-      text-align: center;
-
       font-size: 14px;
+
+      line-height: 1.45;
     }
 
     #mensaje.success {
       display: block;
 
+      background: rgba(34,197,94,.12);
+
+      border: 1px solid rgba(34,197,94,.3);
+
       color: #86efac;
-
-      background:
-        rgba(52,211,153,.09);
-
-      border:
-        1px solid rgba(52,211,153,.23);
     }
 
     #mensaje.error {
       display: block;
 
-      color: #fda4af;
+      background: rgba(239,68,68,.12);
 
-      background:
-        rgba(251,113,133,.09);
+      border: 1px solid rgba(239,68,68,.3);
 
-      border:
-        1px solid rgba(251,113,133,.23);
+      color: #fca5a5;
+    }
+
+    #mensaje.info {
+      display: block;
+
+      background: rgba(59,130,246,.12);
+
+      border: 1px solid rgba(59,130,246,.3);
+
+      color: #93c5fd;
     }
 
     /* =========================
-       QUICK ACCESS
+       SIDE CARD
     ========================= */
 
-    .quick-section {
-      display: grid;
+    .profile-status {
+      text-align: center;
 
-      grid-template-columns:
-        repeat(3, minmax(0,1fr));
+      padding-bottom: 22px;
 
-      gap: 14px;
+      margin-bottom: 20px;
 
-      margin-top: 18px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
     }
 
-    .quick-card {
-      display: block;
+    .status-icon {
+      width: 65px;
+      height: 65px;
 
-      text-decoration: none;
-
-      color: white;
-
-      padding: 19px;
-
-      border:
-        1px solid var(--border);
+      margin: 0 auto 12px;
 
       border-radius: 20px;
 
-      background:
-        linear-gradient(
-          145deg,
-          rgba(255,255,255,.065),
-          rgba(255,255,255,.025)
-        );
-
-      transition:
-        transform .2s,
-        border-color .2s,
-        background .2s;
-    }
-
-    .quick-card:hover {
-      transform:
-        translateY(-3px);
-
-      border-color:
-        rgba(139,92,246,.42);
-
-      background:
-        linear-gradient(
-          145deg,
-          rgba(139,92,246,.13),
-          rgba(255,255,255,.035)
-        );
-    }
-
-    .quick-icon {
-      width: 43px;
-      height: 43px;
-
       display: flex;
+
       align-items: center;
       justify-content: center;
 
-      border-radius: 13px;
-
       background:
-        rgba(255,255,255,.07);
+        rgba(124,58,237,.18);
 
-      font-size: 20px;
-
-      margin-bottom: 12px;
+      font-size: 30px;
     }
 
-    .quick-card h3 {
-      font-size: 15px;
+    .profile-status strong {
+      display: block;
 
       margin-bottom: 5px;
     }
 
-    .quick-card p {
-      color: var(--muted);
+    .profile-status p {
+      color: rgba(255,255,255,.55);
 
-      font-size: 12px;
+      font-size: 13px;
 
-      line-height: 1.45;
+      line-height: 1.5;
     }
 
-    /* =========================
-       MOBILE NAV
-    ========================= */
-
-    .bottom-nav {
-      position: fixed;
-
-      left: 50%;
-      bottom: 10px;
-
-      transform:
-        translateX(-50%);
-
-      width:
-        calc(100% - 20px);
-
-      max-width: 540px;
-
-      z-index: 1000;
-
-      display: grid;
-
-      grid-template-columns:
-        repeat(5, 1fr);
-
-      gap: 3px;
-
-      padding: 7px;
-
-      border:
-        1px solid var(--border);
-
-      border-radius: 20px;
-
-      background:
-        rgba(8,11,29,.92);
-
-      backdrop-filter:
-        blur(22px);
-
-      -webkit-backdrop-filter:
-        blur(22px);
-
-      box-shadow:
-        0 15px 45px
-        rgba(0,0,0,.45);
-    }
-
-    .bottom-nav a {
-      min-height: 53px;
-
+    .quick-links {
       display: flex;
+
       flex-direction: column;
 
+      gap: 10px;
+    }
+
+    .quick-link {
+      display: flex;
+
       align-items: center;
-      justify-content: center;
 
-      gap: 2px;
+      justify-content: space-between;
 
-      text-decoration: none;
-
-      color: #8087a4;
+      padding: 14px;
 
       border-radius: 14px;
 
-      font-size: 10px;
+      background: rgba(255,255,255,.05);
+
+      border: 1px solid rgba(255,255,255,.08);
 
       transition: .2s;
     }
 
-    .bottom-nav a span {
-      font-size: 19px;
+    .quick-link:hover {
+      background: rgba(255,255,255,.09);
+
+      transform: translateX(2px);
     }
 
-    .bottom-nav a.active {
+    .quick-link-left {
+      display: flex;
+
+      align-items: center;
+
+      gap: 10px;
+    }
+
+    .quick-icon {
+      width: 35px;
+      height: 35px;
+
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 10px;
+
+      background: rgba(124,58,237,.18);
+    }
+
+    .quick-text strong {
+      display: block;
+
+      font-size: 13px;
+    }
+
+    .quick-text span {
+      display: block;
+
+      color: rgba(255,255,255,.45);
+
+      font-size: 11px;
+
+      margin-top: 2px;
+    }
+
+    .arrow {
+      color: rgba(255,255,255,.4);
+    }
+
+    /* =========================
+       USER ID
+    ========================= */
+
+    .account-info {
+      margin-top: 20px;
+
+      padding: 12px;
+
+      border-radius: 12px;
+
+      background: rgba(0,0,0,.18);
+
+      color: rgba(255,255,255,.4);
+
+      font-size: 10px;
+
+      word-break: break-all;
+
+      line-height: 1.5;
+    }
+
+    /* =========================
+       ERROR SCREEN
+    ========================= */
+
+    #errorScreen {
+      display: none;
+
+      max-width: 650px;
+
+      margin: 80px auto;
+
+      text-align: center;
+    }
+
+    #errorScreen .error-icon {
+      font-size: 55px;
+
+      margin-bottom: 20px;
+    }
+
+    #errorScreen h2 {
+      margin-bottom: 12px;
+    }
+
+    #errorScreen p {
+      color: rgba(255,255,255,.6);
+
+      line-height: 1.6;
+
+      margin-bottom: 20px;
+    }
+
+    .retry-button {
+      border: none;
+
+      padding: 12px 20px;
+
+      border-radius: 12px;
+
+      background: #7c3aed;
+
       color: white;
 
-      background:
-        linear-gradient(
-          135deg,
-          rgba(139,92,246,.23),
-          rgba(236,72,153,.11)
-        );
+      font-weight: 800;
+
+      cursor: pointer;
     }
 
     /* =========================
-       DESKTOP
+       RESPONSIVE
     ========================= */
 
-    @media (min-width: 701px) {
-
-      .bottom-nav {
-        display: none;
+    @media (max-width: 820px) {
+      .grid {
+        grid-template-columns: 1fr;
       }
 
+      .side-card {
+        order: -1;
+      }
     }
 
-    /* =========================
-       MOBILE
-    ========================= */
-
-    @media (max-width: 700px) {
-
-      body {
-        padding-bottom: 90px;
+    @media (max-width: 550px) {
+      main {
+        margin-top: 22px;
       }
 
       .header-inner {
-        width:
-          calc(100% - 18px);
-
-        min-height: 65px;
+        min-height: 64px;
       }
 
-      .brand-name {
+      .logo {
         font-size: 19px;
       }
 
-      .brand-icon {
-        width: 39px;
-        height: 39px;
+      .user-status {
+        display: none;
       }
 
-      #logoutButton {
-        padding:
-          9px 11px;
+      .logout-button {
+        padding: 8px 11px;
 
-        font-size: 11px;
+        font-size: 12px;
       }
 
-      main {
-        width:
-          calc(100% - 18px);
+      .card {
+        padding: 19px;
 
-        margin-top: 21px;
+        border-radius: 20px;
       }
 
-      .profile-card {
-        padding: 18px;
-
-        border-radius: 23px;
-      }
-
-      .section-heading {
-        margin-bottom: 22px;
-      }
-
-      .form-grid {
+      .two-columns {
         grid-template-columns: 1fr;
       }
 
-      .field.full {
-        grid-column: auto;
+      .photo-preview {
+        width: 125px;
+        height: 125px;
       }
-
-      .quick-section {
-        grid-template-columns: 1fr;
-      }
-
-      .quick-card {
-        padding: 16px;
-      }
-
-      .intro h1 {
-        font-size: 33px;
-      }
-
     }
   </style>
 </head>
 
 <body>
-
-  <!-- =========================
-       LOADING
-  ========================= -->
-
-  <div id="loading">
-
-    <div class="loading-content">
-
-      <div class="loading-logo">
-        💕
-      </div>
-
-      <h2>EmiMatch</h2>
-
-      <p id="loadingText">
-        Cargando tu perfil...
-      </p>
-
-    </div>
-
-  </div>
-
 
   <!-- =========================
        HEADER
@@ -992,25 +772,19 @@
 
     <div class="header-inner">
 
-      <a
-        href="perfil.html"
-        class="brand"
-      >
-
-        <div class="brand-icon">
-          💕
-        </div>
-
-        <div class="brand-name">
-          Emi<span>Match</span>
-        </div>
-
+      <a href="perfil.html" class="logo">
+        💕 <span>EmiMatch</span>
       </a>
 
+      <div class="user-status">
+        <span class="online-dot"></span>
+        Cuenta activa
+      </div>
 
       <button
-        id="logoutButton"
         type="button"
+        class="logout-button"
+        id="logoutButton"
       >
         Cerrar sesión
       </button>
@@ -1026,265 +800,412 @@
 
   <main>
 
-    <div class="intro">
+    <!-- CARGANDO -->
 
-      <small>
-        Tu espacio personal
-      </small>
+    <div id="loading">
 
-      <h1>
-        Mi <span>perfil</span>
-      </h1>
+      <div class="spinner"></div>
 
-      <p>
-        Completá tu información para que otras personas
-        puedan conocerte mejor.
-      </p>
+      <span>Cargando tu perfil...</span>
 
     </div>
 
 
-    <!-- PROFILE -->
+    <!-- ERROR -->
 
-    <section class="profile-card">
+    <div id="errorScreen">
 
-      <div class="section-heading">
-
-        <div class="section-icon">
-          👤
-        </div>
-
-        <div>
-
-          <h2>
-            Tu información
-          </h2>
-
-          <p>
-            Mantené tu perfil actualizado.
-          </p>
-
-        </div>
-
+      <div class="error-icon">
+        ⚠️
       </div>
 
+      <h2>No pudimos cargar tu perfil</h2>
 
-      <!-- AVATAR -->
+      <p id="errorText">
+        Ocurrió un problema al conectar con EmiMatch.
+      </p>
 
-      <div class="avatar-area">
-
-        <div class="avatar-container">
-
-          <img
-            id="avatarPreview"
-            alt="Foto de perfil"
-          >
-
-          <div class="online-indicator"></div>
-
-        </div>
-
-        <div class="avatar-caption">
-          Vista previa de tu foto
-        </div>
-
-      </div>
-
-
-      <!-- FORM -->
-
-      <form
-        id="profileForm"
-        novalidate
+      <button
+        type="button"
+        class="retry-button"
+        id="retryButton"
       >
+        Intentar nuevamente
+      </button>
 
-        <div class="form-grid">
-
-
-          <!-- PHOTO -->
-
-          <div class="field full">
-
-            <label for="foto_url">
-              📷 URL de foto
-            </label>
-
-            <input
-              type="url"
-              id="foto_url"
-              placeholder="https://..."
-              autocomplete="url"
-            >
-
-            <div class="help-text">
-              Pegá una URL pública de una imagen.
-            </div>
-
-          </div>
+    </div>
 
 
-          <!-- NAME -->
+    <!-- CONTENIDO -->
 
-          <div class="field">
+    <section id="contenido">
 
-            <label for="nombre">
-              👤 Nombre
-            </label>
+      <div class="page-title">
 
-            <input
-              type="text"
-              id="nombre"
-              placeholder="Tu nombre"
-              maxlength="60"
-              autocomplete="name"
-              required
-            >
-
-          </div>
-
-
-          <!-- AGE -->
-
-          <div class="field">
-
-            <label for="edad">
-              🎂 Edad
-            </label>
-
-            <input
-              type="number"
-              id="edad"
-              placeholder="Tu edad"
-              min="18"
-              max="100"
-              inputmode="numeric"
-              required
-            >
-
-          </div>
-
-
-          <!-- CITY -->
-
-          <div class="field full">
-
-            <label for="ciudad">
-              📍 Ciudad
-            </label>
-
-            <input
-              type="text"
-              id="ciudad"
-              placeholder="Tu ciudad"
-              maxlength="80"
-              autocomplete="address-level2"
-              required
-            >
-
-          </div>
-
-
-          <!-- DESCRIPTION -->
-
-          <div class="field full">
-
-            <label for="descripcion">
-              ✨ Sobre mí
-            </label>
-
-            <textarea
-              id="descripcion"
-              placeholder="Contanos un poco sobre vos..."
-              maxlength="500"
-            ></textarea>
-
-            <div class="help-text">
-              Máximo 500 caracteres.
-            </div>
-
-          </div>
-
-
-          <!-- INTERESTS -->
-
-          <div class="field full">
-
-            <label for="intereses">
-              ❤️ Intereses
-            </label>
-
-            <input
-              type="text"
-              id="intereses"
-              placeholder="Música, fútbol, viajes..."
-              maxlength="300"
-            >
-
-            <div class="help-text">
-              Podés separarlos con comas.
-            </div>
-
-          </div>
-
-
-        </div>
-
-
-        <!-- SAVE -->
-
-        <button
-          id="guardarButton"
-          type="submit"
-        >
-          💾 Guardar perfil
-        </button>
-
-
-        <div id="mensaje"></div>
-
-
-      </form>
-
-    </section>
-
-
-    <!-- QUICK ACCESS -->
-
-    <section class="quick-section">
-
-
-      <a
-        href="likes.html"
-        class="quick-card"
-      >
-
-        <div class="quick-icon">
-          ❤️
-        </div>
-
-        <h3>
-          Mis Likes
-        </h3>
+        <h1>Mi perfil 💕</h1>
 
         <p>
-          Mirá quién mostró interés en vos.
+          Completá tus datos para que otras personas puedan conocerte.
         </p>
 
-      </a>
+      </div>
 
 
-      <a
-        href="descubrir.html"
-        class="quick-card"
-      >
+      <div id="mensaje"></div>
 
-        <div class="quick-icon">
-          🔎
-        </div>
 
-        <h3>
-          Descubrir
-        </h3>
+      <div class="grid">
 
-        <p>
-          Conocé nuevos perfiles
+
+        <!-- =========================
+             FORMULARIO
+        ========================= -->
+
+        <section class="card">
+
+          <h2>Información personal</h2>
+
+          <p class="card-subtitle">
+            Mantené tu perfil actualizado para mejorar tus coincidencias.
+          </p>
+
+
+          <!-- FOTO -->
+
+          <div class="photo-section">
+
+            <div
+              class="photo-preview"
+              id="photoPreview"
+            >
+
+              <span id="photoEmoji">
+                👤
+              </span>
+
+              <img
+                id="photoImage"
+                src=""
+                alt="Foto de perfil"
+              >
+
+            </div>
+
+            <div class="photo-label">
+              Pegá abajo la URL de tu foto
+            </div>
+
+          </div>
+
+
+          <form id="profileForm">
+
+            <!-- FOTO URL -->
+
+            <div class="form-group">
+
+              <label for="foto_url">
+                URL de tu foto
+              </label>
+
+              <input
+                type="url"
+                id="foto_url"
+                name="foto_url"
+                placeholder="https://ejemplo.com/mi-foto.jpg"
+                autocomplete="url"
+              >
+
+            </div>
+
+
+            <!-- NOMBRE -->
+
+            <div class="form-group">
+
+              <label for="nombre">
+                Nombre <span class="required">*</span>
+              </label>
+
+              <input
+                type="text"
+                id="nombre"
+                name="nombre"
+                placeholder="¿Cómo te llamás?"
+                maxlength="80"
+                autocomplete="name"
+                required
+              >
+
+            </div>
+
+
+            <!-- EDAD + CIUDAD -->
+
+            <div class="two-columns">
+
+              <div class="form-group">
+
+                <label for="edad">
+                  Edad <span class="required">*</span>
+                </label>
+
+                <input
+                  type="number"
+                  id="edad"
+                  name="edad"
+                  min="18"
+                  max="100"
+                  placeholder="Ej. 30"
+                  required
+                >
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="ciudad">
+                  Ciudad <span class="required">*</span>
+                </label>
+
+                <input
+                  type="text"
+                  id="ciudad"
+                  name="ciudad"
+                  placeholder="Ej. Pilar"
+                  maxlength="100"
+                  autocomplete="address-level2"
+                  required
+                >
+
+              </div>
+
+            </div>
+
+
+            <!-- DESCRIPCIÓN -->
+
+            <div class="form-group">
+
+              <label for="descripcion">
+                Sobre mí
+              </label>
+
+              <textarea
+                id="descripcion"
+                name="descripcion"
+                maxlength="500"
+                placeholder="Contá algo sobre vos, tus gustos, tu personalidad..."
+              ></textarea>
+
+              <div
+                class="counter"
+                id="descripcionCounter"
+              >
+                0 / 500
+              </div>
+
+            </div>
+
+
+            <!-- INTERESES -->
+
+            <div class="form-group">
+
+              <label for="intereses">
+                Mis intereses
+              </label>
+
+              <input
+                type="text"
+                id="intereses"
+                name="intereses"
+                maxlength="300"
+                placeholder="Fútbol, música, viajes, películas..."
+              >
+
+            </div>
+
+
+            <!-- GUARDAR -->
+
+            <button
+              type="submit"
+              class="save-button"
+              id="guardarButton"
+            >
+              💾 Guardar mi perfil
+            </button>
+
+          </form>
+
+        </section>
+
+
+        <!-- =========================
+             PANEL LATERAL
+        ========================= -->
+
+        <aside class="card side-card">
+
+          <div class="profile-status">
+
+            <div class="status-icon">
+              💕
+            </div>
+
+            <strong>
+              Tu cuenta está activa
+            </strong>
+
+            <p>
+              Completá tu perfil para comenzar a descubrir personas y generar matches.
+            </p>
+
+          </div>
+
+
+          <div class="quick-links">
+
+
+            <a
+              href="descubrir.html"
+              class="quick-link"
+            >
+
+              <div class="quick-link-left">
+
+                <div class="quick-icon">
+                  🔎
+                </div>
+
+                <div class="quick-text">
+
+                  <strong>
+                    Descubrir personas
+                  </strong>
+
+                  <span>
+                    Buscá nuevos perfiles
+                  </span>
+
+                </div>
+
+              </div>
+
+              <span class="arrow">
+                →
+              </span>
+
+            </a>
+
+
+            <a
+              href="likes.html"
+              class="quick-link"
+            >
+
+              <div class="quick-link-left">
+
+                <div class="quick-icon">
+                  ❤️
+                </div>
+
+                <div class="quick-text">
+
+                  <strong>
+                    Likes y Matches
+                  </strong>
+
+                  <span>
+                    Mirá tus coincidencias
+                  </span>
+
+                </div>
+
+              </div>
+
+              <span class="arrow">
+                →
+              </span>
+
+            </a>
+
+
+            <a
+              href="chat.html"
+              class="quick-link"
+            >
+
+              <div class="quick-link-left">
+
+                <div class="quick-icon">
+                  💬
+                </div>
+
+                <div class="quick-text">
+
+                  <strong>
+                    Mis chats
+                  </strong>
+
+                  <span>
+                    Hablá con tus matches
+                  </span>
+
+                </div>
+
+              </div>
+
+              <span class="arrow">
+                →
+              </span>
+
+            </a>
+
+
+            <a
+              href="notificaciones.html"
+              class="quick-link"
+            >
+
+              <div class="quick-link-left">
+
+                <div class="quick-icon">
+                  🔔
+                </div>
+
+                <div class="quick-text">
+
+                  <strong>
+                    Notificaciones
+                  </strong>
+
+                  <span>
+                    Revisá tus novedades
+                  </span>
+
+                </div>
+
+              </div>
+
+              <span class="arrow">
+                →
+              </span>
+
+            </a>
+
+
+            <a
+              href="configuracion.html"
+              class="quick-link"
+            >
+
+              <div class="quick-link-left">
+
+                <div class="quick-icon">
+                  ⚙️
+                </div>
+
+      
