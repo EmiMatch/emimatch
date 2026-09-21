@@ -1,115 +1,397 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>EmiMatch</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  >
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <title>EmiMatch — Conocé personas y hacé Match</title>
+
+  <meta
+    name="description"
+    content="EmiMatch es una plataforma para conocer personas, descubrir perfiles, hacer Match y comenzar nuevas conversaciones."
+  >
+
+  <meta name="author" content="EmiMatch">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#07152f">
+
+  <link
+    rel="icon"
+    type="image/svg+xml"
+    href="favicon.svg"
+  >
+
+  <link
+    rel="canonical"
+    href="https://emimatch.github.io/emimatch/"
+  >
+
+  <!-- Open Graph -->
+
+  <meta
+    property="og:type"
+    content="website"
+  >
+
+  <meta
+    property="og:title"
+    content="EmiMatch — Conocé personas y hacé Match"
+  >
+
+  <meta
+    property="og:description"
+    content="Descubrí perfiles, hacé Match y comenzá nuevas conversaciones con EmiMatch."
+  >
+
+  <meta
+    property="og:url"
+    content="https://emimatch.github.io/emimatch/"
+  >
+
+  <meta
+    property="og:site_name"
+    content="EmiMatch"
+  >
 
   <style>
+
     * {
       box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #07152f, #102d59);
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
+      background:
+        radial-gradient(
+          circle at 15% 10%,
+          rgba(124, 58, 237, 0.35),
+          transparent 35%
+        ),
+        radial-gradient(
+          circle at 85% 20%,
+          rgba(217, 173, 69, 0.18),
+          transparent 30%
+        ),
+        linear-gradient(
+          145deg,
+          #040b1c 0%,
+          #07152f 45%,
+          #102d59 100%
+        );
+
+      color: #ffffff;
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 20px;
+      overflow-x: hidden;
     }
 
-    .container {
+    body::before {
+      content: "";
+      position: fixed;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      background: rgba(124, 58, 237, 0.14);
+      filter: blur(50px);
+      top: -100px;
+      left: -100px;
+      pointer-events: none;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      background: rgba(217, 173, 69, 0.10);
+      filter: blur(60px);
+      right: -100px;
+      bottom: -100px;
+      pointer-events: none;
+    }
+
+    .app {
       width: 100%;
-      max-width: 420px;
+      max-width: 440px;
+      position: relative;
+      z-index: 2;
     }
 
-    .card {
-      background: white;
-      border-radius: 22px;
-      padding: 30px;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.25);
-    }
-
-    .logo {
+    .brand {
       text-align: center;
-      font-size: 34px;
-      font-weight: bold;
-      color: #d9ad45;
-      margin-bottom: 8px;
-    }
-
-    .subtitle {
-      text-align: center;
-      color: #666;
-      margin-bottom: 25px;
-    }
-
-    h2 {
-      text-align: center;
-      color: #102d59;
       margin-bottom: 20px;
     }
 
-    label {
-      display: block;
-      margin-top: 15px;
-      margin-bottom: 6px;
-      font-weight: bold;
-      color: #333;
+    .brand-icon {
+      width: 82px;
+      height: 82px;
+      margin: 0 auto 14px;
+      border-radius: 25px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background:
+        linear-gradient(
+          145deg,
+          #d9ad45,
+          #f1d37b
+        );
+
+      box-shadow:
+        0 15px 35px rgba(0, 0, 0, 0.35),
+        0 0 35px rgba(217, 173, 69, 0.18);
+
+      font-size: 42px;
     }
 
-    input {
-      width: 100%;
-      padding: 13px;
-      border: 1px solid #ddd;
+    .brand h1 {
+      margin: 0;
+      font-size: 38px;
+      letter-spacing: -1px;
+
+      background:
+        linear-gradient(
+          90deg,
+          #ffffff,
+          #d9ad45
+        );
+
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .brand p {
+      margin: 7px 0 0;
+      color: #b9c4d8;
+      font-size: 15px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.97);
+      color: #172033;
+
+      border-radius: 26px;
+      padding: 27px;
+
+      box-shadow:
+        0 25px 60px rgba(0, 0, 0, 0.35);
+
+      backdrop-filter: blur(15px);
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: #eef1f7;
+      border-radius: 13px;
+      padding: 4px;
+      margin-bottom: 24px;
+    }
+
+    .tab {
+      border: 0;
+      background: transparent;
+      color: #697386;
+
+      padding: 11px;
       border-radius: 10px;
-      font-size: 16px;
-      outline: none;
-    }
 
-    input:focus {
-      border-color: #d9ad45;
-    }
+      font-size: 14px;
+      font-weight: 700;
 
-    button {
-      width: 100%;
-      padding: 14px;
-      margin-top: 20px;
-      border: none;
-      border-radius: 10px;
-      background: #102d59;
-      color: white;
-      font-size: 16px;
-      font-weight: bold;
       cursor: pointer;
     }
 
-    button:hover {
-      background: #07152f;
+    .tab.active {
+      background: #ffffff;
+      color: #102d59;
+
+      box-shadow:
+        0 3px 10px rgba(0,0,0,0.08);
     }
 
-    .secondary {
-      background: #d9ad45;
+    .section-title {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      color: #102d59;
+      font-size: 24px;
+    }
+
+    .section-title p {
+      margin: 7px 0 0;
+      color: #788196;
+      font-size: 14px;
+    }
+
+    .field {
+      margin-bottom: 15px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 7px;
+
+      color: #344054;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .input-wrapper span {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 17px;
+      pointer-events: none;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      height: 50px;
+
+      border: 1px solid #d9deea;
+      border-radius: 13px;
+
+      padding: 0 14px 0 43px;
+
+      background: #f9fafc;
+      color: #172033;
+
+      font-size: 15px;
+      outline: none;
+
+      transition:
+        border-color .2s,
+        box-shadow .2s,
+        background .2s;
+    }
+
+    input:focus {
+      border-color: #7c3aed;
+      background: #ffffff;
+
+      box-shadow:
+        0 0 0 4px rgba(124, 58, 237, 0.10);
+    }
+
+    .password-wrapper input {
+      padding-right: 48px;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+
+      border: 0;
+      background: transparent;
+
+      width: 35px;
+      height: 35px;
+
+      cursor: pointer;
+      font-size: 17px;
+      color: #687386;
+    }
+
+    .main-button {
+      width: 100%;
+      height: 52px;
+
+      border: 0;
+      border-radius: 14px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #7c3aed,
+          #5b21b6
+        );
+
+      color: #ffffff;
+
+      font-size: 15px;
+      font-weight: 800;
+
+      cursor: pointer;
+
+      box-shadow:
+        0 10px 24px rgba(92, 33, 182, 0.25);
+
+      transition:
+        transform .15s,
+        box-shadow .15s;
+    }
+
+    .main-button:hover {
+      transform: translateY(-1px);
+      box-shadow:
+        0 13px 28px rgba(92, 33, 182, 0.32);
+    }
+
+    .main-button:active {
+      transform: scale(0.98);
+    }
+
+    .gold-button {
+      background:
+        linear-gradient(
+          135deg,
+          #d9ad45,
+          #b88924
+        );
+
       color: #07152f;
-    }
 
-    .secondary:hover {
-      background: #c49b35;
+      box-shadow:
+        0 10px 24px rgba(184, 137, 36, 0.22);
     }
 
     .forgot {
       display: block;
       text-align: center;
-      margin-top: 15px;
-      color: #102d59;
+
+      margin: 16px 0;
+
+      color: #5b21b6;
       text-decoration: none;
-      font-weight: bold;
+
+      font-size: 13px;
+      font-weight: 700;
     }
 
     .forgot:hover {
@@ -117,93 +399,272 @@
     }
 
     .terms {
-      margin-top: 18px;
-      font-size: 13px;
-      color: #555;
-      line-height: 1.5;
       display: flex;
       align-items: flex-start;
-      gap: 8px;
+      gap: 9px;
+
+      margin: 17px 0;
+
+      color: #667085;
+      font-size: 12px;
+      line-height: 1.55;
     }
 
     .terms input {
-      width: auto;
       margin-top: 3px;
       flex-shrink: 0;
+
+      width: 16px;
+      height: 16px;
+
+      accent-color: #7c3aed;
     }
 
     .terms a {
-      color: #102d59;
-      font-weight: bold;
-    }
-
-    .message {
-      margin-top: 15px;
-      padding: 12px;
-      border-radius: 10px;
-      text-align: center;
-      display: none;
-      font-size: 14px;
-    }
-
-    .success {
-      background: #e8f7ed;
-      color: #176b35;
-    }
-
-    .error {
-      background: #fdeaea;
-      color: #a32121;
+      color: #5b21b6;
+      font-weight: 700;
     }
 
     .divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      margin: 20px 0;
+
+      color: #98a2b3;
+      font-size: 12px;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: "";
+      height: 1px;
+      flex: 1;
+      background: #e5e7eb;
+    }
+
+    .message {
+      display: none;
+
+      margin-top: 16px;
+      padding: 12px 14px;
+
+      border-radius: 12px;
+
       text-align: center;
-      margin: 25px 0 10px;
-      color: #888;
-      font-size: 14px;
+
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .success {
+      display: block;
+      background: #ecfdf3;
+      color: #067647;
+      border: 1px solid #abefc6;
+    }
+
+    .error {
+      display: block;
+      background: #fef3f2;
+      color: #b42318;
+      border: 1px solid #fecdca;
     }
 
     .hidden {
-      display: none;
+      display: none !important;
     }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+
+      margin-top: 16px;
+    }
+
+    .feature {
+      text-align: center;
+      color: #b9c4d8;
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .feature-icon {
+      display: block;
+      font-size: 19px;
+      margin-bottom: 4px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+
+      margin-top: 18px;
+
+      font-size: 11px;
+    }
+
+    .footer-links a {
+      color: #aebbd0;
+      text-decoration: none;
+    }
+
+    .footer-links a:hover {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+
+    .loading {
+      opacity: 0.65;
+      pointer-events: none;
+    }
+
+    @media (max-width: 480px) {
+
+      body {
+        padding:
+          18px
+          14px
+          calc(18px + env(safe-area-inset-bottom));
+      }
+
+      .brand-icon {
+        width: 72px;
+        height: 72px;
+        font-size: 36px;
+      }
+
+      .brand h1 {
+        font-size: 34px;
+      }
+
+      .card {
+        padding: 22px 18px;
+        border-radius: 23px;
+      }
+
+      .features {
+        margin-top: 14px;
+      }
+
+    }
+
   </style>
 </head>
 
 <body>
 
-  <div class="container">
+  <main class="app">
 
-    <div class="card">
+    <header class="brand">
 
-      <div class="logo">💕 EmiMatch</div>
+      <div class="brand-icon">
+        💕
+      </div>
 
-      <div class="subtitle">
-        Conocé personas, hacé Match y conectá.
+      <h1>EmiMatch</h1>
+
+      <p>
+        Conocé personas. Hacé Match. Conectá.
+      </p>
+
+    </header>
+
+    <section class="card">
+
+      <div class="tabs">
+
+        <button
+          id="loginTab"
+          class="tab active"
+          type="button"
+        >
+          Iniciar sesión
+        </button>
+
+        <button
+          id="registerTab"
+          class="tab"
+          type="button"
+        >
+          Crear cuenta
+        </button>
+
       </div>
 
       <!-- LOGIN -->
 
       <div id="loginSection">
 
-        <h2>Iniciar sesión</h2>
+        <div class="section-title">
 
-        <label for="loginEmail">Email</label>
-        <input
-          type="email"
-          id="loginEmail"
-          placeholder="Tu email"
-          autocomplete="email"
+          <h2>Bienvenido/a</h2>
+
+          <p>
+            Entrá a tu cuenta para continuar.
+          </p>
+
+        </div>
+
+        <div class="field">
+
+          <label for="loginEmail">
+            Email
+          </label>
+
+          <div class="input-wrapper">
+
+            <span>✉️</span>
+
+            <input
+              type="email"
+              id="loginEmail"
+              placeholder="tuemail@ejemplo.com"
+              autocomplete="email"
+            >
+
+          </div>
+
+        </div>
+
+        <div class="field">
+
+          <label for="loginPassword">
+            Contraseña
+          </label>
+
+          <div class="input-wrapper password-wrapper">
+
+            <span>🔒</span>
+
+            <input
+              type="password"
+              id="loginPassword"
+              placeholder="Tu contraseña"
+              autocomplete="current-password"
+            >
+
+            <button
+              type="button"
+              class="password-toggle"
+              data-target="loginPassword"
+              aria-label="Mostrar contraseña"
+            >
+              👁️
+            </button>
+
+          </div>
+
+        </div>
+
+        <button
+          id="loginButton"
+          class="main-button"
+          type="button"
         >
-
-        <label for="loginPassword">Contraseña</label>
-        <input
-          type="password"
-          id="loginPassword"
-          placeholder="Tu contraseña"
-          autocomplete="current-password"
-        >
-
-        <button id="loginButton">
           Iniciar sesión
         </button>
 
@@ -214,48 +675,105 @@
           ¿Olvidaste tu contraseña?
         </a>
 
-        <div class="divider">
-          ¿Todavía no tenés una cuenta?
-        </div>
-
-        <button
-          id="showRegisterButton"
-          class="secondary"
-        >
-          Crear cuenta
-        </button>
-
       </div>
 
       <!-- REGISTRO -->
 
-      <div id="registerSection" class="hidden">
+      <div
+        id="registerSection"
+        class="hidden"
+      >
 
-        <h2>Crear cuenta</h2>
+        <div class="section-title">
 
-        <label for="registerEmail">Email</label>
-        <input
-          type="email"
-          id="registerEmail"
-          placeholder="Tu email"
-          autocomplete="email"
-        >
+          <h2>Crear cuenta</h2>
 
-        <label for="registerPassword">Contraseña</label>
-        <input
-          type="password"
-          id="registerPassword"
-          placeholder="Mínimo 6 caracteres"
-          autocomplete="new-password"
-        >
+          <p>
+            Empezá a conocer nuevas personas.
+          </p>
 
-        <label for="registerPassword2">Confirmar contraseña</label>
-        <input
-          type="password"
-          id="registerPassword2"
-          placeholder="Repetí tu contraseña"
-          autocomplete="new-password"
-        >
+        </div>
+
+        <div class="field">
+
+          <label for="registerEmail">
+            Email
+          </label>
+
+          <div class="input-wrapper">
+
+            <span>✉️</span>
+
+            <input
+              type="email"
+              id="registerEmail"
+              placeholder="tuemail@ejemplo.com"
+              autocomplete="email"
+            >
+
+          </div>
+
+        </div>
+
+        <div class="field">
+
+          <label for="registerPassword">
+            Contraseña
+          </label>
+
+          <div class="input-wrapper password-wrapper">
+
+            <span>🔒</span>
+
+            <input
+              type="password"
+              id="registerPassword"
+              placeholder="Mínimo 6 caracteres"
+              autocomplete="new-password"
+            >
+
+            <button
+              type="button"
+              class="password-toggle"
+              data-target="registerPassword"
+              aria-label="Mostrar contraseña"
+            >
+              👁️
+            </button>
+
+          </div>
+
+        </div>
+
+        <div class="field">
+
+          <label for="registerPassword2">
+            Confirmar contraseña
+          </label>
+
+          <div class="input-wrapper password-wrapper">
+
+            <span>🔐</span>
+
+            <input
+              type="password"
+              id="registerPassword2"
+              placeholder="Repetí tu contraseña"
+              autocomplete="new-password"
+            >
+
+            <button
+              type="button"
+              class="password-toggle"
+              data-target="registerPassword2"
+              aria-label="Mostrar contraseña"
+            >
+              👁️
+            </button>
+
+          </div>
+
+        </div>
 
         <label class="terms">
 
@@ -265,34 +783,39 @@
           >
 
           <span>
+
             Acepto los
+
             <a
               href="terminos.html"
               target="_blank"
+              rel="noopener noreferrer"
             >
               Términos y Condiciones
             </a>
+
             y la
+
             <a
               href="privacidad.html"
               target="_blank"
+              rel="noopener noreferrer"
             >
               Política de Privacidad
             </a>
+
             de EmiMatch.
+
           </span>
 
         </label>
 
-        <button id="registerButton">
-          Crear cuenta
-        </button>
-
         <button
-          id="backLoginButton"
-          class="secondary"
+          id="registerButton"
+          class="main-button gold-button"
+          type="button"
         >
-          Ya tengo una cuenta
+          Crear mi cuenta
         </button>
 
       </div>
@@ -300,11 +823,44 @@
       <div
         id="message"
         class="message"
+        role="alert"
+        aria-live="polite"
       ></div>
+
+    </section>
+
+    <div class="features">
+
+      <div class="feature">
+        <span class="feature-icon">🔎</span>
+        Descubrí perfiles
+      </div>
+
+      <div class="feature">
+        <span class="feature-icon">💕</span>
+        Hacé Match
+      </div>
+
+      <div class="feature">
+        <span class="feature-icon">💬</span>
+        Comenzá a hablar
+      </div>
 
     </div>
 
-  </div>
+    <nav class="footer-links">
+
+      <a href="terminos.html">
+        Términos
+      </a>
+
+      <a href="privacidad.html">
+        Privacidad
+      </a>
+
+    </nav>
+
+  </main>
 
   <script>
 
@@ -326,6 +882,12 @@
     const registerSection =
       document.getElementById("registerSection");
 
+    const loginTab =
+      document.getElementById("loginTab");
+
+    const registerTab =
+      document.getElementById("registerTab");
+
     const message =
       document.getElementById("message");
 
@@ -336,7 +898,6 @@
       message.className =
         "message " + type;
 
-      message.style.display = "block";
     }
 
     function clearMessage() {
@@ -346,230 +907,242 @@
       message.className =
         "message";
 
-      message.style.display = "none";
     }
 
+    function showLogin() {
+
+      clearMessage();
+
+      loginSection.classList.remove("hidden");
+
+      registerSection.classList.add("hidden");
+
+      loginTab.classList.add("active");
+
+      registerTab.classList.remove("active");
+
+    }
+
+    function showRegister() {
+
+      clearMessage();
+
+      loginSection.classList.add("hidden");
+
+      registerSection.classList.remove("hidden");
+
+      loginTab.classList.remove("active");
+
+      registerTab.classList.add("active");
+
+    }
+
+    loginTab.addEventListener(
+      "click",
+      showLogin
+    );
+
+    registerTab.addEventListener(
+      "click",
+      showRegister
+    );
+
+    // Mostrar / ocultar contraseña
+
     document
-      .getElementById("showRegisterButton")
-      .addEventListener("click", () => {
+      .querySelectorAll(".password-toggle")
+      .forEach(button => {
 
-        clearMessage();
+        button.addEventListener(
+          "click",
+          () => {
 
-        loginSection.classList.add("hidden");
+            const target =
+              document.getElementById(
+                button.dataset.target
+              );
 
-        registerSection.classList.remove("hidden");
+            if (target.type === "password") {
+
+              target.type = "text";
+
+              button.textContent = "🙈";
+
+            } else {
+
+              target.type = "password";
+
+              button.textContent = "👁️";
+
+            }
+
+          }
+        );
 
       });
 
-    document
-      .getElementById("backLoginButton")
-      .addEventListener("click", () => {
-
-        clearMessage();
-
-        registerSection.classList.add("hidden");
-
-        loginSection.classList.remove("hidden");
-
-      });
-
-    // =========================
     // LOGIN
-    // =========================
 
     document
       .getElementById("loginButton")
-      .addEventListener("click", async () => {
+      .addEventListener(
+        "click",
+        async () => {
 
-        clearMessage();
+          clearMessage();
 
-        const email =
-          document
-            .getElementById("loginEmail")
-            .value
-            .trim();
+          const button =
+            document.getElementById(
+              "loginButton"
+            );
 
-        const password =
-          document
-            .getElementById("loginPassword")
-            .value;
+          const email =
+            document
+              .getElementById("loginEmail")
+              .value
+              .trim();
 
-        if (!email || !password) {
+          const password =
+            document
+              .getElementById("loginPassword")
+              .value;
 
-          showMessage(
-            "Completá email y contraseña.",
-            "error"
+          if (!email || !password) {
+
+            showMessage(
+              "Completá tu email y contraseña.",
+              "error"
+            );
+
+            return;
+
+          }
+
+          button.textContent =
+            "Ingresando...";
+
+          button.classList.add(
+            "loading"
           );
 
-          return;
-        }
+          const {
+            data,
+            error
+          } =
+            await supabaseClient.auth
+              .signInWithPassword({
+                email,
+                password
+              });
 
-        const {
-          data,
-          error
-        } =
-          await supabaseClient.auth.signInWithPassword({
-            email,
-            password
-          });
+          button.textContent =
+            "Iniciar sesión";
 
-        if (error) {
-
-          showMessage(
-            error.message,
-            "error"
+          button.classList.remove(
+            "loading"
           );
 
-          return;
-        }
+          if (error) {
 
-        if (data.session) {
+            showMessage(
+              error.message,
+              "error"
+            );
 
-          window.location.href =
-            "perfil.html";
+            return;
 
-        }
+          }
 
-      });
-
-    // =========================
-    // REGISTRO
-    // =========================
-
-    document
-      .getElementById("registerButton")
-      .addEventListener("click", async () => {
-
-        clearMessage();
-
-        const email =
-          document
-            .getElementById("registerEmail")
-            .value
-            .trim();
-
-        const password =
-          document
-            .getElementById("registerPassword")
-            .value;
-
-        const password2 =
-          document
-            .getElementById("registerPassword2")
-            .value;
-
-        const accepted =
-          document
-            .getElementById("acceptTerms")
-            .checked;
-
-        if (!email || !password || !password2) {
-
-          showMessage(
-            "Completá todos los campos.",
-            "error"
-          );
-
-          return;
-        }
-
-        if (password.length < 6) {
-
-          showMessage(
-            "La contraseña debe tener al menos 6 caracteres.",
-            "error"
-          );
-
-          return;
-        }
-
-        if (password !== password2) {
-
-          showMessage(
-            "Las contraseñas no coinciden.",
-            "error"
-          );
-
-          return;
-        }
-
-        if (!accepted) {
-
-          showMessage(
-            "Debés aceptar los Términos y Condiciones y la Política de Privacidad.",
-            "error"
-          );
-
-          return;
-        }
-
-        const {
-          data,
-          error
-        } =
-          await supabaseClient.auth.signUp({
-            email,
-            password
-          });
-
-        if (error) {
-
-          showMessage(
-            error.message,
-            "error"
-          );
-
-          return;
-        }
-
-        if (data.session) {
-
-          showMessage(
-            "Cuenta creada correctamente.",
-            "success"
-          );
-
-          setTimeout(() => {
+          if (data.session) {
 
             window.location.href =
               "perfil.html";
 
-          }, 1200);
-
-        } else {
-
-          showMessage(
-            "Cuenta creada. Revisá tu email para confirmar tu cuenta.",
-            "success"
-          );
+          }
 
         }
+      );
 
-      });
+    // REGISTRO
 
-    // =========================
-    // SESIÓN EXISTENTE
-    // =========================
+    document
+      .getElementById("registerButton")
+      .addEventListener(
+        "click",
+        async () => {
 
-    async function comprobarSesion() {
+          clearMessage();
 
-      const {
-        data
-      } =
-        await supabaseClient.auth.getSession();
+          const button =
+            document.getElementById(
+              "registerButton"
+            );
 
-      if (data.session) {
+          const email =
+            document
+              .getElementById("registerEmail")
+              .value
+              .trim();
 
-        window.location.href =
-          "perfil.html";
+          const password =
+            document
+              .getElementById("registerPassword")
+              .value;
 
-      }
+          const password2 =
+            document
+              .getElementById("registerPassword2")
+              .value;
 
-    }
+          const accepted =
+            document
+              .getElementById("acceptTerms")
+              .checked;
 
-    comprobarSesion();
+          if (!email) {
 
-  </script>
+            showMessage(
+              "Ingresá tu email.",
+              "error"
+            );
 
-</body>
-</html>
+            return;
+
+          }
+
+          if (!password) {
+
+            showMessage(
+              "Ingresá una contraseña.",
+              "error"
+            );
+
+            return;
+
+          }
+
+          if (password.length < 6) {
+
+            showMessage(
+              "La contraseña debe tener al menos 6 caracteres.",
+              "error"
+            );
+
+            return;
+
+          }
+
+          if (password !== password2) {
+
+            showMessage(
+              "Las contraseñas no coinciden.",
+              "error"
+            );
+
+            return;
+
+          }
+
+          if (!accepted) {
+
+            
