@@ -6,6 +6,8 @@
 
   <title>Mi perfil - EmiMatch</title>
 
+  <meta name="theme-color" content="#111827">
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
@@ -13,145 +15,268 @@
       box-sizing: border-box;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
       font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #07152f, #102b55);
+      background:
+        radial-gradient(circle at top, rgba(124,58,237,.35), transparent 35%),
+        linear-gradient(145deg, #07152f 0%, #101b38 48%, #1e1b4b 100%);
       color: white;
-      padding: 20px;
-      padding-bottom: 105px;
+      padding: 18px;
+      padding-bottom: 115px;
     }
 
     .contenedor {
-      max-width: 500px;
+      width: 100%;
+      max-width: 520px;
       margin: auto;
     }
+
+    /* =========================
+       CABECERA
+    ========================= */
 
     .cabecera {
       text-align: center;
-      margin-bottom: 20px;
+      margin: 8px 0 22px;
     }
 
-    .cabecera h1 {
-      margin: 5px 0;
-      font-size: 30px;
-    }
-
-    .cabecera p {
-      margin: 0;
-      color: #cbd5e1;
-    }
-
-    .estado {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 7px 13px;
-      border-radius: 20px;
-      background: rgba(34,197,94,.15);
-      color: #4ade80;
-      font-size: 14px;
-    }
-
-    .card {
-      background: white;
-      color: #172033;
-      border-radius: 24px;
-      padding: 22px;
-      box-shadow: 0 15px 35px rgba(0,0,0,.3);
-    }
-
-    .foto-container {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .foto-preview {
-      width: 150px;
-      height: 150px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 5px solid #d4af37;
-      background: #e5e7eb;
-    }
-
-    .sin-foto {
-      width: 150px;
-      height: 150px;
-      border-radius: 50%;
-      background: #e5e7eb;
+    .logo {
+      width: 70px;
+      height: 70px;
+      margin: 0 auto 12px;
+      border-radius: 22px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: auto;
-      font-size: 65px;
-      border: 5px solid #d4af37;
+      font-size: 38px;
+      background: linear-gradient(135deg, #7c3aed, #2563eb);
+      box-shadow: 0 12px 30px rgba(0,0,0,.30);
     }
 
+    .cabecera h1 {
+      margin: 0;
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -.5px;
+    }
+
+    .cabecera p {
+      margin: 7px 0 0;
+      color: #cbd5e1;
+      font-size: 15px;
+    }
+
+    .estado {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 12px;
+      padding: 7px 13px;
+      border-radius: 999px;
+      background: rgba(34,197,94,.13);
+      border: 1px solid rgba(74,222,128,.20);
+      color: #86efac;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    /* =========================
+       TARJETA
+    ========================= */
+
+    .card {
+      background: rgba(255,255,255,.97);
+      color: #172033;
+      border-radius: 28px;
+      padding: 24px 20px;
+      box-shadow:
+        0 20px 50px rgba(0,0,0,.30),
+        0 2px 8px rgba(0,0,0,.10);
+    }
+
+    .seccion-titulo {
+      margin: 0 0 18px;
+      font-size: 18px;
+      font-weight: 800;
+      color: #111827;
+    }
+
+    /* =========================
+       FOTO
+    ========================= */
+
+    .foto-container {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .foto-marco {
+      display: inline-block;
+      padding: 5px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #d4af37, #f5d76e, #d4af37);
+      box-shadow: 0 10px 25px rgba(0,0,0,.18);
+    }
+
+    .foto-preview,
+    .sin-foto {
+      width: 155px;
+      height: 155px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .foto-preview {
+      object-fit: cover;
+      background: #e5e7eb;
+      border: 3px solid white;
+    }
+
+    .sin-foto {
+      background:
+        linear-gradient(135deg, #e5e7eb, #cbd5e1);
+      font-size: 65px;
+      border: 3px solid white;
+    }
+
+    .foto-ayuda {
+      margin-top: 12px;
+      color: #64748b;
+      font-size: 13px;
+    }
+
+    .foto-input {
+      width: 100%;
+      margin-top: 10px;
+      padding: 11px;
+      border: 1px dashed #cbd5e1;
+      border-radius: 12px;
+      background: #f8fafc;
+      color: #475569;
+      font-size: 14px;
+    }
+
+    /* =========================
+       CAMPOS
+    ========================= */
+
     .campo {
-      margin-bottom: 15px;
+      margin-bottom: 17px;
     }
 
     label {
       display: block;
-      font-weight: bold;
-      margin-bottom: 6px;
+      margin-bottom: 7px;
+      font-size: 14px;
+      font-weight: 800;
+      color: #334155;
+    }
+
+    .campo-icono {
+      margin-right: 5px;
     }
 
     input,
     textarea {
       width: 100%;
-      border: 1px solid #cbd5e1;
-      border-radius: 12px;
-      padding: 13px;
+      border: 1px solid #dbe1ea;
+      border-radius: 14px;
+      padding: 14px;
+      background: #f8fafc;
+      color: #172033;
       font-size: 16px;
       outline: none;
+      transition: .2s;
     }
 
-    textarea {
-      min-height: 100px;
-      resize: vertical;
+    input::placeholder,
+    textarea::placeholder {
+      color: #94a3b8;
     }
 
     input:focus,
     textarea:focus {
-      border-color: #d4af37;
+      border-color: #7c3aed;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(124,58,237,.10);
     }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    /* =========================
+       BOTÓN GUARDAR
+    ========================= */
 
     .guardar {
       width: 100%;
       border: none;
-      border-radius: 14px;
-      padding: 15px;
-      background: #d4af37;
-      color: #07152f;
+      border-radius: 15px;
+      padding: 16px;
+      margin-top: 4px;
+      background: linear-gradient(135deg, #d4af37, #f0c84b);
+      color: #111827;
       font-size: 17px;
-      font-weight: bold;
+      font-weight: 800;
       cursor: pointer;
-      margin-top: 5px;
+      box-shadow: 0 8px 20px rgba(212,175,55,.25);
+      transition: transform .15s, box-shadow .15s;
+    }
+
+    .guardar:active {
+      transform: scale(.98);
+    }
+
+    .guardar:hover {
+      box-shadow: 0 10px 25px rgba(212,175,55,.35);
     }
 
     .guardar:disabled {
       opacity: .6;
       cursor: not-allowed;
+      transform: none;
     }
 
     .mensaje {
+      min-height: 22px;
+      margin-top: 13px;
       text-align: center;
-      margin-top: 12px;
-      min-height: 20px;
       font-size: 14px;
+      font-weight: bold;
     }
+
+    /* =========================
+       CERRAR SESIÓN
+    ========================= */
 
     .cerrar {
       width: 100%;
-      margin-top: 18px;
-      padding: 13px;
-      border: none;
-      border-radius: 14px;
-      background: rgba(255,255,255,.1);
+      margin-top: 16px;
+      padding: 14px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 15px;
+      background: rgba(255,255,255,.07);
       color: #cbd5e1;
+      font-size: 15px;
+      font-weight: bold;
       cursor: pointer;
+      transition: .2s;
+    }
+
+    .cerrar:hover {
+      background: rgba(255,255,255,.12);
+      color: white;
     }
 
     /* =========================
@@ -163,10 +288,11 @@
       left: 10px;
       right: 10px;
       bottom: 10px;
-
       height: 70px;
 
       background: rgba(255,255,255,.97);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
 
       border-radius: 22px;
 
@@ -175,19 +301,18 @@
       justify-content: space-around;
 
       box-shadow:
-        0 8px 30px rgba(0,0,0,.35);
+        0 10px 35px rgba(0,0,0,.35);
 
       z-index: 9999;
 
       max-width: 600px;
       margin: auto;
+      border: 1px solid rgba(255,255,255,.7);
     }
 
     .nav-item {
       position: relative;
-
       flex: 1;
-
       height: 100%;
 
       display: flex;
@@ -196,35 +321,37 @@
       justify-content: center;
 
       text-decoration: none;
+      color: #64748b;
 
-      color: #777;
-
-      font-size: 11px;
-
-      font-weight: bold;
+      font-size: 10px;
+      font-weight: 800;
 
       transition: .2s;
     }
 
     .nav-icon {
-      font-size: 23px;
+      font-size: 22px;
       line-height: 25px;
       margin-bottom: 3px;
+      transition: .2s;
     }
 
     .nav-item.activo {
-      color: #123b78;
+      color: #6d28d9;
     }
 
     .nav-item.activo .nav-icon {
-      transform: scale(1.12);
+      transform: scale(1.15);
+    }
+
+    .nav-item:active .nav-icon {
+      transform: scale(.92);
     }
 
     .badge {
       position: absolute;
-
-      top: 7px;
-      right: 18%;
+      top: 6px;
+      right: 16%;
 
       min-width: 19px;
       height: 19px;
@@ -234,20 +361,26 @@
       border-radius: 20px;
 
       background: #ef4444;
-
       color: white;
 
       font-size: 10px;
+      font-weight: 800;
 
       display: none;
-
       align-items: center;
       justify-content: center;
 
       border: 2px solid white;
     }
 
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
     @media (min-width: 700px) {
+      body {
+        padding-top: 35px;
+      }
 
       .barra-inferior {
         left: 50%;
@@ -255,23 +388,39 @@
         transform: translateX(-50%);
         width: 600px;
       }
-
     }
 
     @media (max-width: 380px) {
+      body {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .card {
+        padding: 20px 15px;
+      }
+
+      .cabecera h1 {
+        font-size: 27px;
+      }
+
+      .foto-preview,
+      .sin-foto {
+        width: 140px;
+        height: 140px;
+      }
 
       .nav-item {
-        font-size: 9px;
+        font-size: 8px;
       }
 
       .nav-icon {
-        font-size: 21px;
+        font-size: 20px;
       }
 
       .badge {
-        right: 10%;
+        right: 8%;
       }
-
     }
   </style>
 </head>
@@ -282,10 +431,14 @@
 
   <div class="cabecera">
 
-    <h1>👤 Mi perfil</h1>
+    <div class="logo">
+      💕
+    </div>
+
+    <h1>Mi perfil</h1>
 
     <p>
-      Completá tu información
+      Completá tu información para que te conozcan mejor
     </p>
 
     <div class="estado">
@@ -297,34 +450,40 @@
 
   <div class="card">
 
+    <h2 class="seccion-titulo">
+      👤 Información personal
+    </h2>
+
+
     <div class="foto-container">
 
-      <div
-        id="sinFoto"
-        class="sin-foto">
-        👤
-      </div>
+      <div class="foto-marco">
 
-      <img
-        id="fotoPreview"
-        class="foto-preview"
-        style="display:none;"
-        alt="Foto de perfil"
-      >
+        <div
+          id="sinFoto"
+          class="sin-foto">
+          👤
+        </div>
 
-      <div style="margin-top:12px;">
-
-        <label for="foto">
-          📸 Foto de perfil
-        </label>
-
-        <input
-          type="file"
-          id="foto"
-          accept="image/*"
+        <img
+          id="fotoPreview"
+          class="foto-preview"
+          style="display:none;"
+          alt="Foto de perfil"
         >
 
       </div>
+
+      <div class="foto-ayuda">
+        📸 Elegí una foto de perfil
+      </div>
+
+      <input
+        type="file"
+        id="foto"
+        class="foto-input"
+        accept="image/*"
+      >
 
     </div>
 
@@ -332,6 +491,7 @@
     <div class="campo">
 
       <label for="nombre">
+        <span class="campo-icono">👤</span>
         Nombre
       </label>
 
@@ -347,6 +507,7 @@
     <div class="campo">
 
       <label for="edad">
+        <span class="campo-icono">🎂</span>
         Edad
       </label>
 
@@ -364,6 +525,7 @@
     <div class="campo">
 
       <label for="ciudad">
+        <span class="campo-icono">📍</span>
         Ciudad
       </label>
 
@@ -379,11 +541,13 @@
     <div class="campo">
 
       <label for="descripcion">
+        <span class="campo-icono">💬</span>
         Sobre mí
       </label>
 
       <textarea
         id="descripcion"
+        maxlength="500"
         placeholder="Contanos un poco sobre vos..."
       ></textarea>
 
@@ -393,6 +557,7 @@
     <div class="campo">
 
       <label for="intereses">
+        <span class="campo-icono">✨</span>
         Intereses
       </label>
 
@@ -433,10 +598,6 @@
 
 </div>
 
-
-<!-- =========================
-     NAVEGACIÓN INFERIOR
-========================= -->
 
 <nav class="barra-inferior">
 
@@ -739,8 +900,6 @@ async function guardarPerfil() {
     let fotoUrl = null;
 
 
-    /* FOTO */
-
     if (fotoSeleccionada) {
 
       const extension =
@@ -800,8 +959,6 @@ async function guardarPerfil() {
 
     }
 
-
-    /* DATOS */
 
     const datos = {
 
