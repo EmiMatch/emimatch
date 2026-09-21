@@ -1,44 +1,63 @@
-<!DOCTYPE html>
-<html lang="es">
+<!DOCTYPE html><html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>EmiMatch - Matches</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>EmiMatch - Mis Matches</title>  <meta name="description" content="Tus Matches de EmiMatch.">
+  <meta name="theme-color" content="#07152f">  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>  <style>
     * {
       box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     body {
       margin: 0;
       min-height: 100vh;
-      padding-bottom: 90px;
-      font-family: Arial, sans-serif;
+      padding-bottom: 105px;
+      font-family: Arial, Helvetica, sans-serif;
       color: white;
-      background: linear-gradient(135deg,#07152f,#102b5c);
+      background:
+        radial-gradient(circle at top right, rgba(124,58,237,.28), transparent 35%),
+        radial-gradient(circle at top left, rgba(212,175,55,.12), transparent 30%),
+        linear-gradient(145deg, #050d20, #0b1c3d 55%, #102b5c);
     }
 
     header {
+      padding: 32px 18px 22px;
       text-align: center;
-      padding: 25px 15px;
+    }
+
+    .logo {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 14px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      background: linear-gradient(135deg, #d4af37, #f4d77b);
+      color: #07152f;
+      box-shadow: 0 12px 35px rgba(0,0,0,.3);
     }
 
     header h1 {
       margin: 0;
-      font-size: 28px;
+      font-size: 29px;
+      font-weight: 800;
+      letter-spacing: -.5px;
     }
 
     header p {
-      color: #cbd5e1;
+      margin: 8px 0 0;
+      color: #b8c4d9;
+      font-size: 14px;
     }
 
     .contenedor {
-      width: 92%;
-      max-width: 550px;
+      width: calc(100% - 28px);
+      max-width: 600px;
       margin: auto;
     }
 
@@ -50,87 +69,160 @@
 
     button {
       border: 0;
-      border-radius: 12px;
-      padding: 13px;
-      font-weight: bold;
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-weight: 700;
+      font-size: 14px;
       cursor: pointer;
+      transition:
+        transform .18s ease,
+        opacity .18s ease,
+        box-shadow .18s ease;
+    }
+
+    button:active {
+      transform: scale(.97);
     }
 
     .btn {
       flex: 1;
-      background: #d4af37;
+      background: linear-gradient(135deg, #d4af37, #f1d36a);
       color: #07152f;
+      box-shadow: 0 8px 22px rgba(212,175,55,.18);
     }
 
     .btn-secundario {
-      background: #374151;
+      background: rgba(255,255,255,.10);
       color: white;
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: none;
     }
 
     .estado {
-      padding: 25px;
-      border-radius: 18px;
+      padding: 34px 22px;
+      border-radius: 24px;
       text-align: center;
-      background: rgba(255,255,255,.08);
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.09);
+      box-shadow: 0 15px 40px rgba(0,0,0,.20);
+      backdrop-filter: blur(12px);
+    }
+
+    .estado h2,
+    .estado h3 {
+      margin: 14px 0 8px;
+    }
+
+    .estado p {
+      color: #c4cedf;
+      line-height: 1.5;
+    }
+
+    .estado small {
+      color: #aebbd0;
+      word-break: break-word;
     }
 
     .match {
+      position: relative;
       display: flex;
       align-items: center;
       gap: 15px;
+      width: 100%;
       padding: 15px;
-      margin-bottom: 15px;
-      background: white;
-      color: #111;
-      border-radius: 20px;
+      margin-bottom: 14px;
+      background: rgba(255,255,255,.97);
+      color: #111827;
+      border-radius: 22px;
       cursor: pointer;
-      box-shadow: 0 8px 25px rgba(0,0,0,.3);
+      border: 1px solid rgba(255,255,255,.5);
+      box-shadow: 0 12px 30px rgba(0,0,0,.25);
+      transition:
+        transform .18s ease,
+        box-shadow .18s ease;
+      overflow: hidden;
     }
 
-    .avatar {
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      object-fit: cover;
-      flex-shrink: 0;
+    .match::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: linear-gradient(#d4af37, #7c3aed);
     }
 
+    .match:active {
+      transform: scale(.985);
+    }
+
+    .avatar,
     .avatar-vacio {
       width: 70px;
       height: 70px;
+      min-width: 70px;
       border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+      border: 3px solid white;
+      box-shadow: 0 5px 15px rgba(0,0,0,.18);
+    }
+
+    .avatar-vacio {
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #d4af37;
-      font-size: 35px;
-      flex-shrink: 0;
+      background: linear-gradient(135deg, #d4af37, #f4d77b);
+      color: #07152f;
+      font-size: 32px;
     }
 
     .datos {
       flex: 1;
+      min-width: 0;
     }
 
     .nombre {
-      font-size: 19px;
-      font-weight: bold;
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1.25;
+      word-break: break-word;
     }
 
     .ciudad {
-      color: #666;
-      margin-top: 5px;
-      font-size: 14px;
+      color: #64748b;
+      margin-top: 6px;
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .online {
-      color: #16a34a;
-      margin-top: 5px;
-      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      margin-top: 7px;
+      padding: 4px 8px;
+      border-radius: 20px;
+      background: #dcfce7;
+      color: #15803d;
+      font-size: 11px;
+      font-weight: 700;
     }
 
     .flecha {
-      font-size: 28px;
-      color: #999;
+      width: 34px;
+      height: 34px;
+      min-width: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f1f5f9;
+      color: #64748b;
+      font-size: 25px;
+      line-height: 1;
     }
 
     .nav {
@@ -138,112 +230,155 @@
       left: 10px;
       right: 10px;
       bottom: 10px;
-      height: 65px;
-      border-radius: 20px;
-      background: rgba(7,21,47,.97);
+      height: 68px;
+      padding: 5px;
+      border-radius: 22px;
+      background: rgba(5,13,32,.96);
+      border: 1px solid rgba(255,255,255,.08);
       display: flex;
       justify-content: space-around;
       align-items: center;
       z-index: 100;
+      box-shadow: 0 12px 35px rgba(0,0,0,.45);
+      backdrop-filter: blur(14px);
     }
 
     .nav a {
-      color: #cbd5e1;
+      position: relative;
+      flex: 1;
+      color: #9aa8be;
       text-decoration: none;
       text-align: center;
-      font-size: 10px;
+      font-size: 9px;
+      font-weight: 600;
+      padding: 5px 2px;
+      border-radius: 15px;
+      transition: .18s ease;
     }
 
     .nav a span {
       display: block;
-      font-size: 21px;
+      font-size: 20px;
+      margin-bottom: 2px;
     }
 
     .nav .activo {
-      color: #d4af37;
+      color: #f1d36a;
+      background: rgba(212,175,55,.10);
     }
-  </style>
-</head>
 
-<body>
+    @media (min-width: 601px) {
+      .match:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 16px 35px rgba(0,0,0,.30);
+      }
 
-<header>
+      .nav {
+        max-width: 600px;
+        left: 50%;
+        right: auto;
+        width: calc(100% - 20px);
+        transform: translateX(-50%);
+      }
+    }
 
-  <h1>💕 Mis Matches</h1>
+    @media (max-width: 380px) {
+      header {
+        padding-top: 25px;
+      }
 
-  <p>
+      header h1 {
+        font-size: 25px;
+      }
+
+      .logo {
+        width: 56px;
+        height: 56px;
+        font-size: 28px;
+      }
+
+      .acciones {
+        gap: 7px;
+      }
+
+      button {
+        padding: 13px 10px;
+        font-size: 13px;
+      }
+
+      .match {
+        gap: 11px;
+        padding: 13px;
+      }
+
+      .avatar,
+      .avatar-vacio {
+        width: 62px;
+        height: 62px;
+        min-width: 62px;
+      }
+
+      .nombre {
+        font-size: 16px;
+      }
+
+      .flecha {
+        width: 30px;
+        height: 30px;
+        min-width: 30px;
+        font-size: 22px;
+      }
+
+      .nav a {
+        font-size: 8px;
+      }
+
+      .nav a span {
+        font-size: 18px;
+      }
+    }
+  </style></head><body><header>  <div class="logo">💕</div>  <h1>Mis Matches</h1>  <p>
     Tus conexiones en EmiMatch
-  </p>
+  </p></header><div class="contenedor">  <div class="acciones"><button
+  class="btn"
+  onclick="location.href='descubrir.html'"
+>
+  🔎 Descubrir
+</button>
 
-</header>
+<button
+  class="btn btn-secundario"
+  onclick="cargarMatches()"
+>
+  🔄 Actualizar
+</button>
 
-
-<div class="contenedor">
-
-  <div class="acciones">
-
-    <button
-      class="btn"
-      onclick="location.href='descubrir.html'"
-    >
-      🔎 Descubrir
-    </button>
-
-    <button
-      class="btn btn-secundario"
-      onclick="cargarMatches()"
-    >
-      🔄 Actualizar
-    </button>
-
-  </div>
-
-
-  <div id="contenido">
-
-    <div class="estado">
-      🚀 EMI-2026 · Iniciando Matches...
-    </div>
-
-  </div>
-
+  </div>  <div id="contenido"><div class="estado">
+  🚀 EMI-2026 · Iniciando Matches...
 </div>
 
-
-<nav class="nav">
-
-  <a href="perfil.html">
+  </div></div><nav class="nav">  <a href="perfil.html">
     <span>👤</span>
     Perfil
-  </a>
-
-  <a href="descubrir.html">
+  </a>  <a href="descubrir.html">
     <span>🔎</span>
     Descubrir
-  </a>
-
-  <a href="likes.html">
+  </a>  <a href="likes.html">
     <span>❤️</span>
     Me gustas
-  </a>
+  </a><a
+href="chat.html"
+class="activo"
 
-  <a
-    href="chat.html"
-    class="activo"
-  >
-    <span>💕</span>
-    Matches
-  </a>
+«»
 
-  <a href="notificaciones.html">
+<span>💕</span>
+Matches
+
+  </a>  <a href="notificaciones.html">
     <span>🔔</span>
     Notificaciones
-  </a>
-
-</nav>
-
-
-<script>
+  </a></nav><script>
 
 const SUPABASE_URL =
   "https://kngiadwaesdbmvwivdev.supabase.co";
@@ -755,7 +890,5 @@ function escapar(
 
 }
 
-</script>
-
-</body>
+</script></body>
 </html>
