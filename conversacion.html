@@ -45,7 +45,7 @@
       border: 0;
       background: transparent;
       color: white;
-      font-size: 25px;
+      font-size: 28px;
       cursor: pointer;
     }
 
@@ -74,7 +74,7 @@
 
     .messages {
       flex: 1;
-      padding: 18px 12px 90px;
+      padding: 18px 12px 95px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
@@ -107,7 +107,7 @@
     .time {
       display: block;
       font-size: 10px;
-      opacity: .7;
+      opacity: .72;
       margin-top: 4px;
       text-align: right;
     }
@@ -122,10 +122,11 @@
     }
 
     .typing {
-      padding: 0 15px 8px;
+      min-height: 24px;
+      padding: 0 15px 7px;
       font-size: 12px;
       color: #64748b;
-      min-height: 20px;
+      font-style: italic;
     }
 
     .composer {
@@ -168,6 +169,7 @@
 
     .send:disabled {
       opacity: .5;
+      cursor: not-allowed;
     }
 
     .empty,
@@ -193,25 +195,53 @@
 <div class="app">
 
   <div class="header">
+
     <button class="back" onclick="volver()">‹</button>
 
-    <img id="avatar" class="avatar" src="" alt="Foto">
+    <img
+      id="avatar"
+      class="avatar"
+      src="https://via.placeholder.com/100"
+      alt="Foto"
+    >
 
     <div class="header-info">
-      <strong id="nombreUsuario">Cargando...</strong>
-      <div id="estadoUsuario" class="status">⏳</div>
+
+      <strong id="nombreUsuario">
+        Cargando...
+      </strong>
+
+      <div id="estadoUsuario" class="status">
+        ⏳
+      </div>
+
     </div>
 
-    <button class="block-btn" onclick="bloquearUsuario()">🚫</button>
+    <button
+      class="block-btn"
+      onclick="bloquearUsuario()"
+      title="Bloquear"
+    >
+      🚫
+    </button>
+
   </div>
 
+
   <div id="messages" class="messages">
-    <div class="empty">⏳ Cargando conversación...</div>
+
+    <div class="empty">
+      ⏳ Cargando conversación...
+    </div>
+
   </div>
+
 
   <div id="typing" class="typing"></div>
 
+
   <div class="composer">
+
     <textarea
       id="inputMensaje"
       placeholder="Escribí un mensaje..."
@@ -227,9 +257,11 @@
     >
       ➤
     </button>
+
   </div>
 
 </div>
+
 
 <script>
 
@@ -240,19 +272,50 @@ const SUPABASE_KEY =
   "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
 
 const supabaseClient =
-  supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
 
 let usuarioActual = null;
 let usuarioDestino = null;
 let matchActual = null;
 let bloqueado = false;
 
-const params = new URLSearchParams(window.location.search);
-const destinoId = params.get("user");
+let canalMensajes = null;
+let canalTyping = null;
 
-const messagesDiv = document.getElementById("messages");
-const inputMensaje = document.getElementById("inputMensaje");
-const btnEnviar = document.getElementById("btnEnviar");
+let typingTimeout = null;
+let ultimoEstadoTyping = false;
+
+
+const params =
+  new URLSearchParams(
+    window.location.search
+  );
+
+const destinoId =
+  params.get("user");
+
+
+const messagesDiv =
+  document.getElementById("messages");
+
+const inputMensaje =
+  document.getElementById("inputMensaje");
+
+const btnEnviar =
+  document.getElementById("btnEnviar");
+
+const typingDiv =
+  document.getElementById("typing");
+
+
+
+/* =========================
+   INICIAR
+========================= */
 
 async function iniciar() {
 
@@ -261,21 +324,34 @@ async function iniciar() {
     const {
       data: { session },
       error
-    } = await supabaseClient.auth.getSession();
+    } =
+      await supabaseClient.auth.getSession();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     if (!session) {
-      window.location.href = "index.html";
+
+      window.location.href =
+        "index.html";
+
       return;
     }
 
-    usuarioActual = session.user;
+    usuarioActual =
+      session.user;
+
 
     if (!destinoId) {
-      mostrarError("No se encontró el usuario.");
+
+      mostrarError(
+        "No se encontró el usuario."
+      );
+
       return;
     }
+
 
     await cargarUsuario();
 
@@ -285,13 +361,19 @@ async function iniciar() {
 
     await cargarMensajes();
 
-    activarRealtime();
+    activarRealtimeMensajes();
 
-    activarTyping();
+    activarRealtimeTyping();
+
+    activarInputTyping();
+
 
   } catch (error) {
 
-    console.error(error);
+    console.error(
+      "Error al iniciar:",
+      error
+    );
 
     mostrarError(
       "No se pudo cargar la conversación."
@@ -300,36 +382,103 @@ async function iniciar() {
 }
 
 
+
+/* =========================
+   USUARIO
+========================= */
+
 async function cargarUsuario() {
 
-  const { data, error } =
+  const {
+    data,
+    error
+  } =
     await supabaseClient
       .from("profiles")
       .select("*")
       .eq("id", destinoId)
       .single();
 
-  if (error) throw error;
 
-  usuarioDestino = data;
+  if (error) {
+    throw error;
+  }
 
-  document.getElementById("nombreUsuario").textContent =
+
+  usuarioDestino =
+    data;
+
+
+  document.getElementById(
+    "nombreUsuario"
+  ).textContent =
     data.nombre || "Usuario";
 
-  document.getElementById("avatar").src =
+
+  document.getElementById(
+    "avatar"
+  ).src =
     data.foto_url ||
     "https://via.placeholder.com/100";
 
-  document.getElementById("estadoUsuario").textContent =
-    data.online
-      ? "🟢 En línea"
-      : "⚪ Desconectado";
+
+  actualizarEstadoUsuario();
+
 }
 
 
+
+/* =========================
+   ESTADO ONLINE
+========================= */
+
+function actualizarEstadoUsuario() {
+
+  if (!usuarioDestino) {
+    return;
+  }
+
+
+  const estado =
+    document.getElementById(
+      "estadoUsuario"
+    );
+
+
+  if (bloqueado) {
+
+    estado.textContent =
+      "🚫 Usuario bloqueado";
+
+    return;
+  }
+
+
+  if (usuarioDestino.online) {
+
+    estado.textContent =
+      "🟢 En línea";
+
+  } else {
+
+    estado.textContent =
+      "⚪ Desconectado";
+  }
+
+}
+
+
+
+/* =========================
+   MATCH
+========================= */
+
 async function cargarMatch() {
 
-  const { data, error } =
+  const {
+    data,
+    error
+  } =
     await supabaseClient
       .from("matches")
       .select("*")
@@ -338,19 +487,39 @@ async function cargarMatch() {
       )
       .limit(1);
 
-  if (error) throw error;
 
-  if (!data || data.length === 0) {
-    throw new Error("No existe un Match.");
+  if (error) {
+    throw error;
   }
 
-  matchActual = data[0];
+
+  if (
+    !data ||
+    data.length === 0
+  ) {
+
+    throw new Error(
+      "No existe un Match."
+    );
+  }
+
+
+  matchActual =
+    data[0];
 }
 
 
+
+/* =========================
+   BLOQUEO
+========================= */
+
 async function comprobarBloqueo() {
 
-  const { data, error } =
+  const {
+    data,
+    error
+  } =
     await supabaseClient
       .from("user_blocks")
       .select("*")
@@ -358,83 +527,166 @@ async function comprobarBloqueo() {
         `and(blocker_id.eq.${usuarioActual.id},blocked_id.eq.${destinoId}),and(blocker_id.eq.${destinoId},blocked_id.eq.${usuarioActual.id})`
       );
 
-  if (error) throw error;
 
-  bloqueado = data && data.length > 0;
+  if (error) {
+    throw error;
+  }
+
+
+  bloqueado =
+    data &&
+    data.length > 0;
+
 
   if (bloqueado) {
 
-    inputMensaje.disabled = true;
-    btnEnviar.disabled = true;
+    inputMensaje.disabled =
+      true;
 
-    document.getElementById("estadoUsuario").textContent =
-      "🚫 Usuario bloqueado";
-  }
-}
-
-
-async function cargarMensajes() {
-
-  const { data, error } =
-    await supabaseClient
-      .from("messages")
-      .select("*")
-      .eq("match_id", matchActual.id)
-      .order("created_at", { ascending: true });
-
-  if (error) throw error;
-
-  messagesDiv.innerHTML = "";
-
-  if (!data || data.length === 0) {
-
-    messagesDiv.innerHTML =
-      `<div class="empty">
-        💬 Todavía no hay mensajes.<br>
-        ¡Comenzá la conversación!
-      </div>`;
+    btnEnviar.disabled =
+      true;
 
   } else {
 
-    for (const mensaje of data) {
+    inputMensaje.disabled =
+      false;
 
-      await marcarMensajeComoLeido(mensaje);
+    btnEnviar.disabled =
+      false;
+  }
 
-      mostrarMensaje(mensaje);
+
+  actualizarEstadoUsuario();
+}
+
+
+
+/* =========================
+   CARGAR MENSAJES
+========================= */
+
+async function cargarMensajes() {
+
+  if (!matchActual) {
+    return;
+  }
+
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("messages")
+      .select("*")
+      .eq(
+        "match_id",
+        matchActual.id
+      )
+      .order(
+        "created_at",
+        {
+          ascending: true
+        }
+      );
+
+
+  if (error) {
+    throw error;
+  }
+
+
+  messagesDiv.innerHTML = "";
+
+
+  if (
+    !data ||
+    data.length === 0
+  ) {
+
+    messagesDiv.innerHTML = `
+      <div class="empty">
+        💬 Todavía no hay mensajes.<br>
+        ¡Comenzá la conversación!
+      </div>
+    `;
+
+  } else {
+
+    for (
+      const mensaje of data
+    ) {
+
+      await marcarMensajeComoLeido(
+        mensaje
+      );
+
+      mostrarMensaje(
+        mensaje
+      );
     }
   }
 
+
   if (!bloqueado) {
 
-    inputMensaje.disabled = false;
-    btnEnviar.disabled = false;
+    inputMensaje.disabled =
+      false;
+
+    btnEnviar.disabled =
+      false;
   }
+
 
   bajarAlFinal();
 }
 
 
+
+/* =========================
+   MOSTRAR MENSAJE
+========================= */
+
 function mostrarMensaje(mensaje) {
 
   const mio =
-    mensaje.sender_id === usuarioActual.id;
+    mensaje.sender_id ===
+    usuarioActual.id;
+
 
   const div =
-    document.createElement("div");
+    document.createElement(
+      "div"
+    );
+
 
   div.className =
-    "message " + (mio ? "mine" : "theirs");
+    "message " +
+    (
+      mio
+        ? "mine"
+        : "theirs"
+    );
+
 
   const fecha =
-    new Date(mensaje.created_at);
+    new Date(
+      mensaje.created_at
+    );
+
 
   const hora =
-    fecha.toLocaleTimeString("es-AR", {
-      hour: "2-digit",
-      minute: "2-digit"
-    });
+    fecha.toLocaleTimeString(
+      "es-AR",
+      {
+        hour: "2-digit",
+        minute: "2-digit"
+      }
+    );
+
 
   let checks = "";
+
 
   if (mio) {
 
@@ -443,7 +695,9 @@ function mostrarMensaje(mensaje) {
       checks =
         `<span class="checks read">✓✓</span>`;
 
-    } else if (mensaje.delivered_at) {
+    } else if (
+      mensaje.delivered_at
+    ) {
 
       checks =
         `<span class="checks">✓✓</span>`;
@@ -455,263 +709,515 @@ function mostrarMensaje(mensaje) {
     }
   }
 
+
   div.innerHTML = `
-    ${escapeHtml(mensaje.content)}
+    ${escapeHtml(
+      mensaje.content
+    )}
+
     <span class="time">
       ${hora}
       ${checks}
     </span>
   `;
 
-  messagesDiv.appendChild(div);
+
+  messagesDiv.appendChild(
+    div
+  );
 }
 
 
-async function marcarMensajeComoLeido(mensaje) {
 
-  if (mensaje.sender_id === usuarioActual.id) {
+/* =========================
+   MARCAR LEÍDO
+========================= */
+
+async function marcarMensajeComoLeido(
+  mensaje
+) {
+
+  if (
+    mensaje.sender_id ===
+    usuarioActual.id
+  ) {
     return;
   }
 
-  if (!mensaje.delivered_at || !mensaje.read_at) {
+
+  if (
+    !mensaje.delivered_at ||
+    !mensaje.read_at
+  ) {
 
     const ahora =
       new Date().toISOString();
 
+
     await supabaseClient
       .from("messages")
       .update({
+
         delivered_at:
-          mensaje.delivered_at || ahora,
+          mensaje.delivered_at ||
+          ahora,
 
         read_at:
           ahora
+
       })
-      .eq("id", mensaje.id)
-      .eq("match_id", matchActual.id);
+      .eq(
+        "id",
+        mensaje.id
+      )
+      .eq(
+        "match_id",
+        matchActual.id
+      );
   }
 }
 
+
+
+/* =========================
+   ENVIAR MENSAJE
+========================= */
 
 async function enviarMensaje() {
 
   const texto =
     inputMensaje.value.trim();
 
-  if (!texto || !matchActual || bloqueado) {
+
+  if (
+    !texto ||
+    !matchActual ||
+    bloqueado
+  ) {
     return;
   }
 
-  btnEnviar.disabled = true;
 
-  const { data, error } =
+  btnEnviar.disabled =
+    true;
+
+
+  await actualizarTyping(
+    false
+  );
+
+
+  const {
+    data,
+    error
+  } =
     await supabaseClient
       .from("messages")
       .insert({
-        match_id: matchActual.id,
-        sender_id: usuarioActual.id,
-        content: texto
+
+        match_id:
+          matchActual.id,
+
+        sender_id:
+          usuarioActual.id,
+
+        content:
+          texto
+
       })
       .select()
       .single();
 
+
   if (error) {
 
-    console.error(error);
+    console.error(
+      "Error enviando:",
+      error
+    );
 
     alert(
       "No se pudo enviar el mensaje."
     );
 
-    btnEnviar.disabled = false;
+    btnEnviar.disabled =
+      false;
+
     return;
   }
 
-  inputMensaje.value = "";
 
-  mostrarMensaje(data);
+  inputMensaje.value =
+    "";
+
+
+  mostrarMensaje(
+    data
+  );
+
 
   bajarAlFinal();
 
-  btnEnviar.disabled = false;
+
+  btnEnviar.disabled =
+    false;
 }
 
 
-function activarRealtime() {
 
-  supabaseClient
-    .channel(
-      "mensajes-" + matchActual.id
-    )
-    .on(
-      "postgres_changes",
-      {
-        event: "*",
-        schema: "public",
-        table: "messages",
-        filter:
-          `match_id=eq.${matchActual.id}`
-      },
-      async payload => {
+/* =========================
+   REALTIME MENSAJES
+========================= */
 
-        if (
-          payload.eventType === "INSERT"
-        ) {
+function activarRealtimeMensajes() {
+
+  if (!matchActual) {
+    return;
+  }
+
+
+  canalMensajes =
+    supabaseClient
+      .channel(
+        "mensajes-" +
+        matchActual.id
+      )
+
+      .on(
+
+        "postgres_changes",
+
+        {
+          event: "*",
+          schema: "public",
+          table: "messages",
+          filter:
+            `match_id=eq.${matchActual.id}`
+        },
+
+        async payload => {
 
           if (
-            payload.new.sender_id !==
-            usuarioActual.id
+            payload.eventType ===
+            "INSERT"
           ) {
 
-            await marcarMensajeComoLeido(
-              payload.new
-            );
+            if (
+              payload.new.sender_id !==
+              usuarioActual.id
+            ) {
+
+              await marcarMensajeComoLeido(
+                payload.new
+              );
+            }
+
+            await cargarMensajes();
+
           }
 
-          await cargarMensajes();
+
+          if (
+            payload.eventType ===
+            "UPDATE"
+          ) {
+
+            await cargarMensajes();
+          }
 
         }
 
-        if (
-          payload.eventType === "UPDATE"
-        ) {
+      )
 
-          await cargarMensajes();
-        }
-
-      }
-    )
-    .subscribe();
+      .subscribe();
 }
 
 
-function activarTyping() {
 
-  let timeout;
+/* =========================
+   REALTIME TYPING
+========================= */
+
+function activarRealtimeTyping() {
+
+  if (!matchActual) {
+    return;
+  }
+
+
+  canalTyping =
+    supabaseClient
+      .channel(
+        "typing-" +
+        matchActual.id
+      )
+
+      .on(
+
+        "postgres_changes",
+
+        {
+          event: "*",
+          schema: "public",
+          table: "typing_status",
+          filter:
+            `match_id=eq.${matchActual.id}`
+        },
+
+        payload => {
+
+          const typing =
+            payload.new;
+
+
+          if (!typing) {
+            return;
+          }
+
+
+          if (
+            typing.user_id ===
+            usuarioActual.id
+          ) {
+            return;
+          }
+
+
+          if (
+            typing.is_typing
+          ) {
+
+            typingDiv.textContent =
+              `✍️ ${usuarioDestino.nombre} está escribiendo...`;
+
+          } else {
+
+            typingDiv.textContent =
+              "";
+          }
+
+        }
+
+      )
+
+      .subscribe();
+}
+
+
+
+/* =========================
+   DETECTAR ESCRITURA
+========================= */
+
+function activarInputTyping() {
 
   inputMensaje.addEventListener(
     "input",
     async () => {
 
-      clearTimeout(timeout);
+      clearTimeout(
+        typingTimeout
+      );
 
-      await actualizarTyping(true);
 
-      timeout =
-        setTimeout(
-          () => actualizarTyping(false),
-          1200
+      if (
+        !inputMensaje.value.trim()
+      ) {
+
+        await actualizarTyping(
+          false
         );
+
+        return;
+      }
+
+
+      if (
+        !ultimoEstadoTyping
+      ) {
+
+        await actualizarTyping(
+          true
+        );
+      }
+
+
+      typingTimeout =
+        setTimeout(
+          async () => {
+
+            await actualizarTyping(
+              false
+            );
+
+          },
+          1500
+        );
+
     }
   );
 }
 
 
-async function actualizarTyping(valor) {
 
-  if (!matchActual) return;
+/* =========================
+   ACTUALIZAR TYPING
+========================= */
 
-  await supabaseClient
-    .from("typing_status")
-    .upsert({
-      match_id: matchActual.id,
-      user_id: usuarioActual.id,
-      is_typing: valor,
-      updated_at:
-        new Date().toISOString()
-    });
+async function actualizarTyping(
+  valor
+) {
+
+  if (
+    !matchActual ||
+    !usuarioActual
+  ) {
+    return;
+  }
+
+
+  if (
+    ultimoEstadoTyping ===
+    valor
+  ) {
+    return;
+  }
+
+
+  ultimoEstadoTyping =
+    valor;
+
+
+  try {
+
+    await supabaseClient
+      .from("typing_status")
+      .upsert(
+
+        {
+          match_id:
+            matchActual.id,
+
+          user_id:
+            usuarioActual.id,
+
+          is_typing:
+            valor,
+
+          updated_at:
+            new Date().toISOString()
+        },
+
+        {
+          onConflict:
+            "match_id,user_id"
+        }
+
+      );
+
+  } catch (error) {
+
+    console.error(
+      "Error typing:",
+      error
+    );
+  }
 }
 
 
+
+/* =========================
+   BLOQUEAR
+========================= */
+
 async function bloquearUsuario() {
 
-  if (!usuarioDestino) return;
+  if (!usuarioDestino) {
+    return;
+  }
+
 
   const confirmar =
     confirm(
       `¿Querés bloquear a ${usuarioDestino.nombre}?`
     );
 
-  if (!confirmar) return;
 
-  const { error } =
+  if (!confirmar) {
+    return;
+  }
+
+
+  const {
+    error
+  } =
     await supabaseClient
       .from("user_blocks")
       .insert({
+
         blocker_id:
           usuarioActual.id,
 
         blocked_id:
           destinoId
+
       });
+
 
   if (error) {
 
-    if (error.code === "23505") {
+    if (
+      error.code ===
+      "23505"
+    ) {
 
-      alert("Este usuario ya está bloqueado.");
+      alert(
+        "Este usuario ya está bloqueado."
+      );
 
     } else {
 
-      console.error(error);
+      console.error(
+        error
+      );
 
-      alert("No se pudo bloquear.");
+      alert(
+        "No se pudo bloquear."
+      );
     }
 
     return;
   }
 
-  bloqueado = true;
 
-  inputMensaje.disabled = true;
-  btnEnviar.disabled = true;
+  bloqueado =
+    true;
 
-  document.getElementById(
-    "estadoUsuario"
-  ).textContent =
-    "🚫 Usuario bloqueado";
 
-  alert("Usuario bloqueado.");
+  inputMensaje.disabled =
+    true;
+
+  btnEnviar.disabled =
+    true;
+
+
+  typingDiv.textContent =
+    "";
+
+
+  actualizarEstadoUsuario();
+
+
+  alert(
+    "Usuario bloqueado."
+  );
 }
 
 
-function bajarAlFinal() {
 
-  setTimeout(() => {
-
-    messagesDiv.scrollTop =
-      messagesDiv.scrollHeight;
-
-  }, 100);
-}
-
-
-function escapeHtml(texto) {
-
-  return String(texto)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
-
-function mostrarError(texto) {
-
-  messagesDiv.innerHTML =
-    `<div class="error">
-      ❌ ${escapeHtml(texto)}
-    </div>`;
-}
-
-
-function volver() {
-
-  window.location.href =
-    "chat.html";
-}
-
+/* =========================
+   ENTER
+========================= */
 
 inputMensaje.addEventListener(
   "keydown",
@@ -726,9 +1232,137 @@ inputMensaje.addEventListener(
 
       enviarMensaje();
     }
+
   }
 );
 
+
+
+/* =========================
+   SCROLL
+========================= */
+
+function bajarAlFinal() {
+
+  setTimeout(
+    () => {
+
+      messagesDiv.scrollTop =
+        messagesDiv.scrollHeight;
+
+    },
+    100
+  );
+}
+
+
+
+/* =========================
+   ESCAPAR HTML
+========================= */
+
+function escapeHtml(texto) {
+
+  return String(texto)
+
+    .replaceAll(
+      "&",
+      "&amp;"
+    )
+
+    .replaceAll(
+      "<",
+      "&lt;"
+    )
+
+    .replaceAll(
+      ">",
+      "&gt;"
+    )
+
+    .replaceAll(
+      '"',
+      "&quot;"
+    )
+
+    .replaceAll(
+      "'",
+      "&#039;"
+    );
+}
+
+
+
+/* =========================
+   ERROR
+========================= */
+
+function mostrarError(texto) {
+
+  messagesDiv.innerHTML = `
+    <div class="error">
+      ❌ ${escapeHtml(texto)}
+    </div>
+  `;
+}
+
+
+
+/* =========================
+   VOLVER
+========================= */
+
+function volver() {
+
+  window.location.href =
+    "chat.html";
+}
+
+
+
+/* =========================
+   LIMPIAR AL SALIR
+========================= */
+
+window.addEventListener(
+  "beforeunload",
+  () => {
+
+    if (
+      matchActual &&
+      usuarioActual
+    ) {
+
+      supabaseClient
+        .from("typing_status")
+        .upsert({
+
+          match_id:
+            matchActual.id,
+
+          user_id:
+            usuarioActual.id,
+
+          is_typing:
+            false,
+
+          updated_at:
+            new Date().toISOString()
+
+        }, {
+          onConflict:
+            "match_id,user_id"
+        });
+    }
+
+  }
+);
+
+
+
+/* =========================
+   ARRANCAR
+========================= */
 
 iniciar();
 
