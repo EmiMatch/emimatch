@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>EmiMatch - Mis Matches</title>
+  <title>EmiMatch - Matches</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -15,16 +15,16 @@
 
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #07152f, #102b5c);
-      color: white;
       min-height: 100vh;
-      padding-bottom: 95px;
+      padding-bottom: 90px;
+      font-family: Arial, sans-serif;
+      color: white;
+      background: linear-gradient(135deg,#07152f,#102b5c);
     }
 
     header {
       text-align: center;
-      padding: 25px 15px 10px;
+      padding: 25px 15px;
     }
 
     header h1 {
@@ -34,7 +34,6 @@
 
     header p {
       color: #cbd5e1;
-      margin: 8px 0;
     }
 
     .contenedor {
@@ -46,136 +45,92 @@
     .acciones {
       display: flex;
       gap: 10px;
-      margin: 15px 0;
+      margin-bottom: 20px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 13px;
+      font-weight: bold;
+      cursor: pointer;
     }
 
     .btn {
       flex: 1;
-      border: none;
-      border-radius: 12px;
-      padding: 12px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .btn-descubrir {
       background: #d4af37;
       color: #07152f;
     }
 
-    .btn-actualizar {
+    .btn-secundario {
       background: #374151;
       color: white;
     }
 
-    .cargando,
-    .vacio,
-    .error {
-      margin-top: 20px;
+    .estado {
       padding: 25px;
       border-radius: 18px;
       text-align: center;
       background: rgba(255,255,255,.08);
     }
 
-    .error {
-      border: 1px solid #ef4444;
-      background: rgba(220,38,38,.15);
-    }
-
     .match {
-      background: white;
-      color: #111;
-      border-radius: 18px;
-      margin-bottom: 14px;
-      padding: 15px;
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 15px;
+      padding: 15px;
+      margin-bottom: 15px;
+      background: white;
+      color: #111;
+      border-radius: 20px;
       cursor: pointer;
-      box-shadow: 0 8px 20px rgba(0,0,0,.25);
-    }
-
-    .match:active {
-      transform: scale(.98);
+      box-shadow: 0 8px 25px rgba(0,0,0,.3);
     }
 
     .avatar {
-      width: 68px;
-      height: 68px;
+      width: 70px;
+      height: 70px;
       border-radius: 50%;
       object-fit: cover;
-      background: #d4af37;
       flex-shrink: 0;
     }
 
-    .avatar-placeholder {
-      width: 68px;
-      height: 68px;
+    .avatar-vacio {
+      width: 70px;
+      height: 70px;
       border-radius: 50%;
-      background: linear-gradient(135deg,#d4af37,#f5e6a8);
-      color: #07152f;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 32px;
+      background: #d4af37;
+      font-size: 35px;
       flex-shrink: 0;
     }
 
     .datos {
       flex: 1;
-      min-width: 0;
     }
 
     .nombre {
-      font-size: 18px;
+      font-size: 19px;
       font-weight: bold;
     }
 
     .ciudad {
       color: #666;
-      font-size: 13px;
-      margin-top: 4px;
-    }
-
-    .ultimo {
-      color: #555;
-      font-size: 14px;
-      margin-top: 7px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .hora {
-      color: #888;
-      font-size: 11px;
       margin-top: 5px;
-    }
-
-    .flecha {
-      font-size: 24px;
-      color: #999;
+      font-size: 14px;
     }
 
     .online {
       color: #16a34a;
-      font-size: 12px;
-      margin-top: 4px;
+      margin-top: 5px;
+      font-size: 13px;
     }
 
-    .badge {
-      min-width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: #e11d48;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      font-weight: bold;
-      margin-left: auto;
+    .flecha {
+      font-size: 28px;
+      color: #999;
     }
 
     .nav {
@@ -184,63 +139,28 @@
       right: 10px;
       bottom: 10px;
       height: 65px;
-      background: rgba(7,21,47,.97);
-      border: 1px solid rgba(255,255,255,.1);
       border-radius: 20px;
+      background: rgba(7,21,47,.97);
       display: flex;
       justify-content: space-around;
       align-items: center;
-      z-index: 900;
-      box-shadow: 0 5px 25px rgba(0,0,0,.4);
+      z-index: 100;
     }
 
     .nav a {
       color: #cbd5e1;
       text-decoration: none;
-      font-size: 10px;
       text-align: center;
+      font-size: 10px;
     }
 
     .nav a span {
       display: block;
       font-size: 21px;
-      margin-bottom: 2px;
     }
 
-    .nav a.activo {
+    .nav .activo {
       color: #d4af37;
-    }
-
-    .nav-notificacion {
-      position: relative;
-    }
-
-    .nav-badge {
-      position: absolute;
-      top: 2px;
-      right: 7px;
-      min-width: 17px;
-      height: 17px;
-      border-radius: 50%;
-      background: #ef4444;
-      color: white;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      font-size: 9px;
-    }
-
-    .toast {
-      position: fixed;
-      bottom: 95px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #111827;
-      color: white;
-      padding: 13px 20px;
-      border-radius: 12px;
-      display: none;
-      z-index: 1000;
     }
   </style>
 </head>
@@ -248,44 +168,46 @@
 <body>
 
 <header>
+
   <h1>💕 Mis Matches</h1>
-  <p>Tus conexiones en EmiMatch</p>
+
+  <p>
+    Tus conexiones en EmiMatch
+  </p>
+
 </header>
+
 
 <div class="contenedor">
 
   <div class="acciones">
 
     <button
-      class="btn btn-descubrir"
+      class="btn"
       onclick="location.href='descubrir.html'"
     >
       🔎 Descubrir
     </button>
 
     <button
-      class="btn btn-actualizar"
-      id="btnActualizar"
+      class="btn btn-secundario"
+      onclick="cargarMatches()"
     >
       🔄 Actualizar
     </button>
 
   </div>
 
+
   <div id="contenido">
 
-    <div class="cargando">
-      ⏳ Cargando tus Matches...
+    <div class="estado">
+      🚀 EMI-2026 · Iniciando Matches...
     </div>
 
   </div>
 
 </div>
-
-<div
-  id="toast"
-  class="toast"
-></div>
 
 
 <nav class="nav">
@@ -313,16 +235,9 @@
     Matches
   </a>
 
-  <a
-    href="notificaciones.html"
-    class="nav-notificacion"
-  >
+  <a href="notificaciones.html">
     <span>🔔</span>
     Notificaciones
-    <b
-      id="navBadge"
-      class="nav-badge"
-    >0</b>
   </a>
 
 </nav>
@@ -336,6 +251,7 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
   "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
 
+
 const supabaseClient =
   window.supabase.createClient(
     SUPABASE_URL,
@@ -345,29 +261,15 @@ const supabaseClient =
 
 let usuarioActual = null;
 
-let matches = [];
-
-let intervalo = null;
-
 
 const contenido =
   document.getElementById(
     "contenido"
   );
 
-const btnActualizar =
-  document.getElementById(
-    "btnActualizar"
-  );
-
-const toast =
-  document.getElementById(
-    "toast"
-  );
-
 
 // ==========================================
-// INICIO
+// INICIAR
 // ==========================================
 
 document.addEventListener(
@@ -378,13 +280,14 @@ document.addEventListener(
 
 async function iniciar() {
 
-  try {
+  contenido.innerHTML = `
+    <div class="estado">
+      🔐 Verificando sesión...
+    </div>
+  `;
 
-    contenido.innerHTML = `
-      <div class="cargando">
-        🔐 Verificando sesión...
-      </div>
-    `;
+
+  try {
 
     const {
       data,
@@ -392,41 +295,71 @@ async function iniciar() {
     } =
       await supabaseClient.auth.getSession();
 
+
     if (error) {
       throw error;
     }
 
+
     if (!data.session) {
 
-      location.href =
-        "index.html";
+      contenido.innerHTML = `
+        <div class="estado">
+          ⚠️ No hay una sesión activa.
+          <br><br>
+          <button
+            class="btn"
+            onclick="location.href='index.html'"
+          >
+            🔐 Iniciar sesión
+          </button>
+        </div>
+      `;
 
       return;
 
     }
 
+
     usuarioActual =
       data.session.user;
 
+
     await cargarMatches();
-
-    await cargarBadge();
-
-    iniciarRealtime();
-
-    iniciarActualizacionAutomatica();
 
   } catch (error) {
 
     console.error(
-      "Error:",
       error
     );
 
-    mostrarError(
-      "No se pudo cargar la sección Matches.",
-      error
-    );
+    contenido.innerHTML = `
+
+      <div class="estado">
+
+        ⚠️ Error al iniciar Matches.
+
+        <br><br>
+
+        <small>
+          ${escapar(
+            error.message ||
+            "Error desconocido"
+          )}
+        </small>
+
+        <br><br>
+
+        <button
+          class="btn"
+          onclick="location.reload()"
+        >
+          🔄 Reintentar
+        </button>
+
+      </div>
+
+    `;
 
   }
 
@@ -439,11 +372,38 @@ async function iniciar() {
 
 async function cargarMatches() {
 
+  if (!usuarioActual) {
+
+    const {
+      data
+    } =
+      await supabaseClient.auth.getSession();
+
+    if (
+      !data.session
+    ) {
+
+      location.href =
+        "index.html";
+
+      return;
+
+    }
+
+    usuarioActual =
+      data.session.user;
+
+  }
+
+
   contenido.innerHTML = `
-    <div class="cargando">
+
+    <div class="estado">
       🔎 Buscando tus Matches...
     </div>
+
   `;
+
 
   try {
 
@@ -453,35 +413,61 @@ async function cargarMatches() {
     } =
       await supabaseClient
         .from("matches")
-        .select(`
-          id,
-          user1_id,
-          user2_id,
-          created_at
-        `)
+        .select(
+          "id,user1_id,user2_id,created_at"
+        )
         .or(
           `user1_id.eq.${usuarioActual.id},user2_id.eq.${usuarioActual.id}`
         );
+
 
     if (error) {
       throw error;
     }
 
+
     const lista =
       data || [];
+
 
     if (
       lista.length === 0
     ) {
 
-      mostrarVacio();
+      contenido.innerHTML = `
+
+        <div class="estado">
+
+          <div style="font-size:60px;">
+            💕
+          </div>
+
+          <h2>
+            Todavía no tenés Matches
+          </h2>
+
+          <p>
+            Andá a Descubrir y
+            enviá algunos ❤️
+          </p>
+
+          <button
+            class="btn"
+            onclick="location.href='descubrir.html'"
+          >
+            🔎 Descubrir personas
+          </button>
+
+        </div>
+
+      `;
 
       return;
 
     }
 
 
-    const resultados = [];
+    contenido.innerHTML = "";
 
 
     for (
@@ -489,17 +475,39 @@ async function cargarMatches() {
       of lista
     ) {
 
-      const otroUsuario =
+      const otroId =
         match.user1_id ===
         usuarioActual.id
           ? match.user2_id
           : match.user1_id;
 
 
-      const perfil =
-        await obtenerPerfil(
-          otroUsuario
+      const {
+        data: perfil,
+        error:
+          errorPerfil
+      } =
+        await supabaseClient
+          .from("profiles")
+          .select(
+            "id,nombre,edad,ciudad,foto_url,online"
+          )
+          .eq(
+            "id",
+            otroId
+          )
+          .maybeSingle();
+
+
+      if (errorPerfil) {
+
+        console.warn(
+          errorPerfil
         );
+
+        continue;
+
+      }
 
 
       if (!perfil) {
@@ -507,80 +515,73 @@ async function cargarMatches() {
       }
 
 
-      const ultimoMensaje =
-        await obtenerUltimoMensaje(
-          match.id
-        );
-
-
-      const noLeidos =
-        await obtenerNoLeidos(
-          match.id
-        );
-
-
-      resultados.push({
-
-        match: match,
-
-        perfil: perfil,
-
-        ultimoMensaje:
-          ultimoMensaje,
-
-        noLeidos:
-          noLeidos
-
-      });
+      crearTarjeta(
+        match,
+        perfil
+      );
 
     }
 
 
-    matches =
-      resultados;
+    if (
+      contenido.children.length === 0
+    ) {
 
+      contenido.innerHTML = `
 
-    // Ordenar por mensaje más reciente
-    matches.sort(
-      (a,b) => {
+        <div class="estado">
 
-        const fechaA =
-          a.ultimoMensaje
-            ? new Date(
-                a.ultimoMensaje.created_at
-              ).getTime()
-            : new Date(
-                a.match.created_at
-              ).getTime();
+          ⚠️
 
-        const fechaB =
-          b.ultimoMensaje
-            ? new Date(
-                b.ultimoMensaje.created_at
-              ).getTime()
-            : new Date(
-                b.match.created_at
-              ).getTime();
+          <h3>
+            Encontramos el Match,
+            pero no pudimos cargar
+            el perfil.
+          </h3>
 
-        return fechaB - fechaA;
+        </div>
 
-      }
-    );
+      `;
 
-
-    mostrarMatches();
+    }
 
   } catch (error) {
 
     console.error(
-      "Error matches:",
+      "Error Matches:",
       error
     );
 
-    mostrarError(
-      "No se pudieron cargar tus Matches.",
-      error
-    );
+
+    contenido.innerHTML = `
+
+      <div class="estado">
+
+        <div style="font-size:50px;">
+          ⚠️
+        </div>
+
+        <h2>
+          Error cargando Matches
+        </h2>
+
+        <p>
+          ${escapar(
+            error.message ||
+            "Error desconocido"
+          )}
+        </p>
+
+        <button
+          class="btn"
+          onclick="cargarMatches()"
+        >
+          🔄 Reintentar
+        </button>
+
+      </div>
+
+    `;
 
   }
 
@@ -588,742 +589,91 @@ async function cargarMatches() {
 
 
 // ==========================================
-// PERFIL
+// TARJETA
 // ==========================================
 
-async function obtenerPerfil(
-  userId
+function crearTarjeta(
+  match,
+  perfil
 ) {
 
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("profiles")
-      .select(`
-        id,
-        nombre,
-        edad,
-        ciudad,
-        foto_url,
-        descripcion,
-        intereses,
-        online,
-        last_seen
-      `)
-      .eq(
-        "id",
-        userId
-      )
-      .maybeSingle();
-
-  if (error) {
-
-    console.warn(
-      "Perfil:",
-      error
+  const tarjeta =
+    document.createElement(
+      "div"
     );
 
-    return null;
 
-  }
-
-  return data;
-
-}
+  tarjeta.className =
+    "match";
 
 
-// ==========================================
-// ÚLTIMO MENSAJE
-// ==========================================
+  let avatar;
 
-async function obtenerUltimoMensaje(
-  matchId
-) {
-
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("messages")
-      .select(`
-        id,
-        content,
-        sender_id,
-        created_at,
-        read_at,
-        delivered_at
-      `)
-      .eq(
-        "match_id",
-        matchId
-      )
-      .order(
-        "created_at",
-        {
-          ascending: false
-        }
-      )
-      .limit(1)
-      .maybeSingle();
-
-  if (error) {
-
-    console.warn(
-      "Último mensaje:",
-      error
-    );
-
-    return null;
-
-  }
-
-  return data;
-
-}
-
-
-// ==========================================
-// NO LEÍDOS
-// ==========================================
-
-async function obtenerNoLeidos(
-  matchId
-) {
-
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("messages")
-      .select(
-        "id"
-      )
-      .eq(
-        "match_id",
-        matchId
-      )
-      .neq(
-        "sender_id",
-        usuarioActual.id
-      )
-      .is(
-        "read_at",
-        null
-      );
-
-  if (error) {
-
-    console.warn(
-      "No leídos:",
-      error
-    );
-
-    return 0;
-
-  }
-
-  return (
-    data
-      ? data.length
-      : 0
-  );
-
-}
-
-
-// ==========================================
-// MOSTRAR MATCHES
-// ==========================================
-
-function mostrarMatches() {
 
   if (
-    !matches ||
-    matches.length === 0
+    perfil.foto_url
   ) {
 
-    mostrarVacio();
+    avatar = `
 
-    return;
+      <img
+        class="avatar"
+        src="${escapar(
+          perfil.foto_url
+        )}"
+        alt="Foto"
+        onerror="
+          this.outerHTML =
+          '<div class=&quot;avatar-vacio&quot;>👤</div>'
+        "
+      >
+
+    `;
+
+  } else {
+
+    avatar = `
+
+      <div class="avatar-vacio">
+        👤
+      </div>
+
+    `;
 
   }
 
 
-  contenido.innerHTML = "";
+  tarjeta.innerHTML = `
 
+    ${avatar}
 
-  matches.forEach(
-    item => {
+    <div class="datos">
 
-      const perfil =
-        item.perfil;
+      <div class="nombre">
 
-      const mensaje =
-        item.ultimoMensaje;
-
-
-      let fotoHTML;
-
-
-      if (
-        perfil.foto_url
-      ) {
-
-        fotoHTML = `
-
-          <img
-            class="avatar"
-            src="${escapar(
-              perfil.foto_url
-            )}"
-            alt="Foto"
-            onerror="
-              this.outerHTML =
-              '<div class=&quot;avatar-placeholder&quot;>👤</div>'
-            "
-          >
-
-        `;
-
-      } else {
-
-        fotoHTML = `
-
-          <div class="avatar-placeholder">
-            👤
-          </div>
-
-        `;
-
-      }
-
-
-      const nombre =
-        `${escapar(
+        ${escapar(
           perfil.nombre ||
           "Usuario"
-        )}${
+        )}
+
+        ${
           perfil.edad
             ? ", " +
               escapar(
                 perfil.edad
               )
             : ""
-        }`;
-
-
-      const ciudad =
-        perfil.ciudad
-          ? `📍 ${escapar(
-              perfil.ciudad
-            )}`
-          : "";
-
-
-      const estado =
-        perfil.online
-          ? `<div class="online">🟢 En línea</div>`
-          : "";
-
-
-      let textoMensaje =
-        "💕 Nuevo Match";
-
-      if (
-        mensaje
-      ) {
-
-        textoMensaje =
-          mensaje.sender_id ===
-          usuarioActual.id
-            ? `Vos: ${escapar(
-                mensaje.content
-              )}`
-            : escapar(
-                mensaje.content
-              );
-
-      }
-
-
-      const hora =
-        mensaje
-          ? formatearFecha(
-              mensaje.created_at
-            )
-          : formatearFecha(
-              item.match.created_at
-            );
-
-
-      const badge =
-        item.noLeidos > 0
-          ? `
-            <div class="badge">
-              ${
-                item.noLeidos > 9
-                  ? "9+"
-                  : item.noLeidos
-              }
-            </div>
-          `
-          : "";
-
-
-      const elemento =
-        document.createElement(
-          "div"
-        );
-
-
-      elemento.className =
-        "match";
-
-
-      elemento.innerHTML = `
-
-        ${fotoHTML}
-
-        <div class="datos">
-
-          <div class="nombre">
-            ${nombre}
-          </div>
-
-          <div class="ciudad">
-            ${ciudad}
-          </div>
-
-          ${estado}
-
-          <div class="ultimo">
-            ${textoMensaje}
-          </div>
-
-          <div class="hora">
-            ${hora}
-          </div>
-
-        </div>
-
-        ${badge}
-
-        <div class="flecha">
-          ›
-        </div>
-
-      `;
-
-
-      elemento.addEventListener(
-        "click",
-        () => {
-
-          location.href =
-            `conversacion.html?user=${encodeURIComponent(
-              perfil.id
-            )}`;
-
         }
-      );
 
-
-      contenido.appendChild(
-        elemento
-      );
-
-    }
-  );
-
-}
-
-
-// ==========================================
-// VACÍO
-// ==========================================
-
-function mostrarVacio() {
-
-  contenido.innerHTML = `
-
-    <div class="vacio">
-
-      <div style="font-size:60px;">
-        💕
       </div>
 
-      <h2>
-        Todavía no tenés Matches
-      </h2>
-
-      <p>
-        Descubrí personas,
-        enviá un ❤️ y esperá
-        un Like de vuelta.
-      </p>
-
-      <button
-        class="btn btn-descubrir"
-        onclick="location.href='descubrir.html'"
-      >
-        🔎 Descubrir personas
-      </button>
-
-    </div>
-
-  `;
-
-}
-
-
-// ==========================================
-// ACTUALIZAR
-// ==========================================
-
-btnActualizar.addEventListener(
-  "click",
-  async () => {
-
-    btnActualizar.disabled =
-      true;
-
-    btnActualizar.textContent =
-      "⏳ Cargando...";
-
-    await cargarMatches();
-
-    await cargarBadge();
-
-    btnActualizar.disabled =
-      false;
-
-    btnActualizar.textContent =
-      "🔄 Actualizar";
-
-  }
-);
-
-
-// ==========================================
-// REALTIME
-// ==========================================
-
-function iniciarRealtime() {
-
-  supabaseClient
-    .channel(
-      "chat-matches-" +
-      usuarioActual.id
-    )
-    .on(
-      "postgres_changes",
-      {
-        event: "*",
-        schema: "public",
-        table: "messages"
-      },
-      async () => {
-
-        await cargarMatches();
-
-        await cargarBadge();
-
-      }
-    )
-    .subscribe();
-
-}
-
-
-// ==========================================
-// ACTUALIZACIÓN AUTOMÁTICA
-// ==========================================
-
-function iniciarActualizacionAutomatica() {
-
-  if (intervalo) {
-    clearInterval(
-      intervalo
-    );
-  }
-
-  intervalo =
-    setInterval(
-      async () => {
-
-        await cargarMatches();
-
-        await cargarBadge();
-
-      },
-      5000
-    );
-
-}
-
-
-// ==========================================
-// BADGE
-// ==========================================
-
-async function cargarBadge() {
-
-  try {
-
-    const {
-      data: matches
-    } =
-      await supabaseClient
-        .from("matches")
-        .select(
-          "id"
-        )
-        .or(
-          `user1_id.eq.${usuarioActual.id},user2_id.eq.${usuarioActual.id}`
-        );
-
-
-    if (
-      !matches ||
-      matches.length === 0
-    ) {
-
-      actualizarBadge(
-        0
-      );
-
-      return;
-
-    }
-
-
-    const ids =
-      matches.map(
-        match =>
-          match.id
-      );
-
-
-    const {
-      data: mensajes,
-      error
-    } =
-      await supabaseClient
-        .from("messages")
-        .select(
-          "id"
-        )
-        .in(
-          "match_id",
-          ids
-        )
-        .neq(
-          "sender_id",
-          usuarioActual.id
-        )
-        .is(
-          "read_at",
-          null
-        );
-
-
-    if (error) {
-
-      actualizarBadge(
-        0
-      );
-
-      return;
-
-    }
-
-
-    actualizarBadge(
-      mensajes
-        ? mensajes.length
-        : 0
-    );
-
-  } catch (error) {
-
-    console.warn(
-      "Badge:",
-      error
-    );
-
-  }
-
-}
-
-
-function actualizarBadge(
-  cantidad
-) {
-
-  const badge =
-    document.getElementById(
-      "navBadge"
-    );
-
-  if (!badge) {
-    return;
-  }
-
-
-  if (
-    cantidad > 0
-  ) {
-
-    badge.textContent =
-      cantidad > 9
-        ? "9+"
-        : cantidad;
-
-    badge.style.display =
-      "flex";
-
-  } else {
-
-    badge.style.display =
-      "none";
-
-  }
-
-}
-
-
-// ==========================================
-// FECHA
-// ==========================================
-
-function formatearFecha(
-  fecha
-) {
-
-  if (!fecha) {
-    return "";
-  }
-
-  const date =
-    new Date(
-      fecha
-    );
-
-  const ahora =
-    new Date();
-
-  const diferencia =
-    ahora.getTime() -
-    date.getTime();
-
-
-  const minutos =
-    Math.floor(
-      diferencia /
-      60000
-    );
-
-
-  if (
-    minutos < 1
-  ) {
-    return "Ahora";
-  }
-
-
-  if (
-    minutos < 60
-  ) {
-
-    return (
-      `Hace ${minutos} min`
-    );
-
-  }
-
-
-  const horas =
-    Math.floor(
-      minutos / 60
-    );
-
-
-  if (
-    horas < 24
-  ) {
-
-    return (
-      `Hace ${horas} h`
-    );
-
-  }
-
-
-  return date.toLocaleDateString(
-    "es-AR",
-    {
-      day: "2-digit",
-      month: "2-digit"
-    }
-  );
-
-}
-
-
-// ==========================================
-// ERROR
-// ==========================================
-
-function mostrarError(
-  mensaje,
-  error
-) {
-
-  console.error(
-    error
-  );
-
-
-  const detalle =
-    error &&
-    error.message
-      ? error.message
-      : "";
-
-
-  contenido.innerHTML = `
-
-    <div class="error">
-
-      <div style="font-size:50px;">
-        ⚠️
-      </div>
-
-      <h2>
-        Ocurrió un problema
-      </h2>
-
-      <p>
-        ${escapar(
-          mensaje
-        )}
-      </p>
 
       ${
-        detalle
+        perfil.ciudad
           ? `
-            <div style="
-              font-size:12px;
-              margin-top:12px;
-              word-break:break-word;
-              color:#fecaca;
-            ">
-              ${escapar(
-                detalle
+            <div class="ciudad">
+              📍 ${escapar(
+                perfil.ciudad
               )}
             </div>
           `
@@ -1331,23 +681,48 @@ function mostrarError(
       }
 
 
-      <button
-        class="btn btn-descubrir"
-        style="margin-top:15px;"
-        onclick="location.reload()"
-      >
-        🔄 Intentar nuevamente
-      </button>
+      ${
+        perfil.online
+          ? `
+            <div class="online">
+              🟢 En línea
+            </div>
+          `
+          : ""
+      }
 
     </div>
 
+
+    <div class="flecha">
+      ›
+    </div>
+
   `;
+
+
+  tarjeta.addEventListener(
+    "click",
+    () => {
+
+      location.href =
+        `conversacion.html?user=${encodeURIComponent(
+          perfil.id
+        )}`;
+
+    }
+  );
+
+
+  contenido.appendChild(
+    tarjeta
+  );
 
 }
 
 
 // ==========================================
-// SEGURIDAD HTML
+// ESCAPAR
 // ==========================================
 
 function escapar(
