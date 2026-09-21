@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+Disallow: /perfil.html
+Disallow: /descubrir.html
+Disallow: /likes.html
+Disallow: /chat.html
+Disallow: /conversacion.html
+Disallow: /notificaciones.html
+Disallow: /configuracion.html
+Disallow: /recuperar.html
+Disallow: /nueva-contrasena.html
+
+Sitemap: https://emimatch.github.io/emimatch/sitemap.xml
