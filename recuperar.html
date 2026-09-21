@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Recuperar contraseña - EmiMatch</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #07152f, #102d59);
+      color: #fff;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 430px;
+      background: rgba(255,255,255,.97);
+      color: #111827;
+      border-radius: 24px;
+      padding: 30px 24px;
+      box-shadow: 0 20px 50px rgba(0,0,0,.3);
+    }
+
+    .logo {
+      text-align: center;
+      font-size: 30px;
+      font-weight: bold;
+      color: #d9ad45;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 0 0 10px;
+      font-size: 25px;
+    }
+
+    .descripcion {
+      text-align: center;
+      color: #64748b;
+      line-height: 1.5;
+      margin-bottom: 25px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #7c3aed;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 16px;
+      padding: 14px;
+      border: 0;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #7c3aed, #5b21b6);
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+
+    .mensaje {
+      display: none;
+      margin-top: 18px;
+      padding: 13px;
+      border-radius: 12px;
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    .exito {
+      display: block;
+      background: #ecfdf5;
+      color: #047857;
+    }
+
+    .error {
+      display: block;
+      background: #fef2f2;
+      color: #b91c1c;
+    }
+
+    .volver {
+      display: block;
+      margin-top: 20px;
+      text-align: center;
+      color: #5b21b6;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="card">
+
+    <div class="logo">💕 EmiMatch</div>
+
+    <h1>Recuperar contraseña</h1>
+
+    <p class="descripcion">
+      Ingresá tu email y te enviaremos un enlace para crear una nueva contraseña.
+    </p>
+
+    <form id="formularioRecuperacion">
+
+      <label for="email">Email</label>
+
+      <input
+        type="email"
+        id="email"
+        placeholder="tu@email.com"
+        autocomplete="email"
+        required
+      >
+
+      <button type="submit" id="botonEnviar">
+        📧 Enviar enlace
+      </button>
+
+    </form>
+
+    <div id="mensaje" class="mensaje"></div>
+
+    <a class="volver" href="index.html">
+      ← Volver al inicio
+    </a>
+
+  </div>
+
+  <script>
+    const SUPABASE_URL =
+      "https://kngiadwaesdbmvwivdev.supabase.co";
+
+    const SUPABASE_KEY =
+      "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
+
+    const supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+
+    const formulario =
+      document.getElementById("formularioRecuperacion");
+
+    const emailInput =
+      document.getElementById("email");
+
+    const boton =
+      document.getElementById("botonEnviar");
+
+    const mensaje =
+      document.getElementById("mensaje");
+
+    function mostrarMensaje(texto, tipo) {
+      mensaje.textContent = texto;
+      mensaje.className = "mensaje " + tipo;
+    }
+
+    formulario.addEventListener("submit", async (event) => {
+
+      event.preventDefault();
+
+      const email = emailInput.value.trim();
+
+      if (!email) {
+        mostrarMensaje(
+          "⚠️ Ingresá tu email.",
+          "error"
+        );
+        return;
+      }
+
+      boton.disabled = true;
+      boton.textContent = "⏳ Enviando...";
+
+      try {
+
+        const { error } =
+          await supabaseClient.auth.resetPasswordForEmail(
+            email,
+            {
+              redirectTo:
+                "https://emimatch.github.io/emimatch/recuperar.html"
+            }
+          );
+
+        if (error) {
+          throw error;
+        }
+
+        mostrarMensaje(
+          "✅ Si el email está registrado, recibirás un enlace para recuperar tu contraseña. Revisá también la carpeta de spam.",
+          "exito"
+        );
+
+        emailInput.value = "";
+
+      } catch (error) {
+
+        console.error(
+          "Error recuperación:",
+          error
+        );
+
+        mostrarMensaje(
+          "⚠️ No se pudo enviar el enlace. Intentá nuevamente.",
+          "error"
+        );
+
+      } finally {
+
+        boton.disabled = false;
+        boton.textContent = "📧 Enviar enlace";
+
+      }
+
+    });
+  </script>
+
+</body>
+</html>
