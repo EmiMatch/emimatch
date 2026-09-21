@@ -1,8 +1,13 @@
 <!DOCTYPE html><html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>EmiMatch · Descubrir</title><meta name="description" content="Descubrí nuevas personas y conectá con ellas en EmiMatch.">
-<meta name="theme-color" content="#06122b"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>EmiMatch · Descubrir</title><meta
+name="description"
+content="Descubrí nuevas personas y conectá con ellas en EmiMatch."
+
+«»
+
+<meta name="theme-color" content="#06122b"><link rel="icon" href="favicon.svg"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><style>
 *{
   box-sizing:border-box;
 }
@@ -33,12 +38,26 @@ body{
   font-family:Arial,Helvetica,sans-serif;
   color:var(--blanco);
   background:
-    radial-gradient(circle at 90% 0%,rgba(212,175,55,.18),transparent 32%),
-    radial-gradient(circle at 0% 40%,rgba(124,58,237,.15),transparent 30%),
-    linear-gradient(145deg,var(--azul),var(--azul2));
+    radial-gradient(
+      circle at 90% 0%,
+      rgba(212,175,55,.18),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 0% 40%,
+      rgba(124,58,237,.15),
+      transparent 30%
+    ),
+    linear-gradient(
+      145deg,
+      var(--azul),
+      var(--azul2)
+    );
 }
 
-button,input,select{
+button,
+input,
+select{
   font-family:inherit;
 }
 
@@ -51,7 +70,9 @@ button:disabled{
   cursor:not-allowed;
 }
 
-/* HEADER */
+/* =========================
+   HEADER
+========================= */
 
 header{
   padding:25px 16px 18px;
@@ -73,8 +94,15 @@ header{
   align-items:center;
   justify-content:center;
   border-radius:14px;
-  background:linear-gradient(135deg,var(--dorado),#f7df86);
-  box-shadow:0 8px 25px rgba(212,175,55,.2);
+  background:
+    linear-gradient(
+      135deg,
+      var(--dorado),
+      #f7df86
+    );
+  box-shadow:
+    0 8px 25px
+    rgba(212,175,55,.2);
   font-size:22px;
 }
 
@@ -88,7 +116,9 @@ header p{
   font-size:13px;
 }
 
-/* CONTENEDOR */
+/* =========================
+   CONTENEDOR
+========================= */
 
 .contenedor{
   width:calc(100% - 20px);
@@ -96,14 +126,18 @@ header p{
   margin:auto;
 }
 
-/* FILTROS */
+/* =========================
+   FILTROS
+========================= */
 
 .filtros{
   padding:17px;
   border-radius:24px;
   background:rgba(255,255,255,.08);
   border:1px solid rgba(255,255,255,.12);
-  box-shadow:0 18px 45px rgba(0,0,0,.25);
+  box-shadow:
+    0 18px 45px
+    rgba(0,0,0,.25);
   backdrop-filter:blur(14px);
 }
 
@@ -127,7 +161,8 @@ header p{
   align-items:center;
   justify-content:center;
   border-radius:13px;
-  background:rgba(212,175,55,.15);
+  background:
+    rgba(212,175,55,.15);
   font-size:20px;
 }
 
@@ -174,7 +209,9 @@ select{
 
 input:focus,
 select:focus{
-  box-shadow:0 0 0 3px rgba(212,175,55,.28);
+  box-shadow:
+    0 0 0 3px
+    rgba(212,175,55,.28);
 }
 
 .ciudad{
@@ -187,18 +224,27 @@ select:focus{
   margin-top:12px;
   border:0;
   border-radius:14px;
-  background:linear-gradient(135deg,var(--dorado),#f1d36a);
+  background:
+    linear-gradient(
+      135deg,
+      var(--dorado),
+      #f1d36a
+    );
   color:var(--azul);
   font-size:14px;
   font-weight:900;
-  box-shadow:0 8px 22px rgba(212,175,55,.2);
+  box-shadow:
+    0 8px 22px
+    rgba(212,175,55,.2);
 }
 
 .btn-filtro:active{
   transform:scale(.98);
 }
 
-/* CONTADOR */
+/* =========================
+   CONTADOR
+========================= */
 
 .contador{
   min-height:20px;
@@ -209,7 +255,9 @@ select:focus{
   font-weight:700;
 }
 
-/* ESTADOS */
+/* =========================
+   ESTADOS
+========================= */
 
 .cargando,
 .mensaje,
@@ -218,8 +266,11 @@ select:focus{
   padding:35px 22px;
   border-radius:24px;
   text-align:center;
-  background:rgba(255,255,255,.07);
-  border:1px solid rgba(255,255,255,.1);
+  background:
+    rgba(255,255,255,.07);
+  border:
+    1px solid
+    rgba(255,255,255,.1);
 }
 
 .cargando{
@@ -243,8 +294,10 @@ select:focus{
 }
 
 .error{
-  background:rgba(239,68,68,.12);
-  border-color:rgba(239,68,68,.4);
+  background:
+    rgba(239,68,68,.12);
+  border-color:
+    rgba(239,68,68,.4);
 }
 
 .error h3{
@@ -259,25 +312,35 @@ select:focus{
   word-break:break-word;
 }
 
-/* TARJETA */
+/* =========================
+   TARJETA
+========================= */
 
 .tarjeta{
   overflow:hidden;
   background:#fff;
   color:var(--texto);
   border-radius:28px;
-  box-shadow:0 25px 65px rgba(0,0,0,.4);
-  animation:aparecer .25s ease;
+  box-shadow:
+    0 25px 65px
+    rgba(0,0,0,.4);
+  animation:
+    aparecer .25s ease;
 }
 
 @keyframes aparecer{
   from{
     opacity:0;
-    transform:translateY(12px) scale(.99);
+    transform:
+      translateY(12px)
+      scale(.99);
   }
+
   to{
     opacity:1;
-    transform:translateY(0) scale(1);
+    transform:
+      translateY(0)
+      scale(1);
   }
 }
 
@@ -303,8 +366,16 @@ select:focus{
   align-items:center;
   justify-content:center;
   background:
-    radial-gradient(circle at 30% 20%,#fff1a8,transparent 28%),
-    linear-gradient(135deg,#b58b22,#f4df91);
+    radial-gradient(
+      circle at 30% 20%,
+      #fff1a8,
+      transparent 28%
+    ),
+    linear-gradient(
+      135deg,
+      #b58b22,
+      #f4df91
+    );
   font-size:90px;
 }
 
@@ -314,7 +385,11 @@ select:focus{
   right:0;
   bottom:0;
   height:190px;
-  background:linear-gradient(transparent,rgba(0,0,0,.68));
+  background:
+    linear-gradient(
+      transparent,
+      rgba(0,0,0,.68)
+    );
   pointer-events:none;
 }
 
@@ -327,7 +402,8 @@ select:focus{
   gap:6px;
   padding:8px 11px;
   border-radius:999px;
-  background:rgba(0,0,0,.55);
+  background:
+    rgba(0,0,0,.55);
   color:#fff;
   font-size:10px;
   font-weight:800;
@@ -343,7 +419,9 @@ select:focus{
 
 .estado.online .estado-dot{
   background:var(--verde);
-  box-shadow:0 0 0 3px rgba(34,197,94,.18);
+  box-shadow:
+    0 0 0 3px
+    rgba(34,197,94,.18);
 }
 
 .ubicacion-foto{
@@ -394,7 +472,9 @@ select:focus{
   line-height:1.5;
 }
 
-/* ACCIONES */
+/* =========================
+   ACCIONES
+========================= */
 
 .acciones{
   display:flex;
@@ -419,13 +499,22 @@ select:focus{
 .btn-no{
   background:#f1f5f9;
   color:#334155;
-  box-shadow:inset 0 0 0 1px #e2e8f0;
+  box-shadow:
+    inset 0 0 0 1px
+    #e2e8f0;
 }
 
 .btn-si{
-  background:linear-gradient(135deg,var(--rosa),var(--rosa2));
+  background:
+    linear-gradient(
+      135deg,
+      var(--rosa),
+      var(--rosa2)
+    );
   color:#fff;
-  box-shadow:0 9px 22px rgba(225,29,72,.25);
+  box-shadow:
+    0 9px 22px
+    rgba(225,29,72,.25);
 }
 
 .accion small{
@@ -451,13 +540,15 @@ select:focus{
   transform:scale(.98);
 }
 
-/* TOAST */
+/* =========================
+   TOAST
+========================= */
 
 .toast{
   position:fixed;
   left:50%;
   bottom:91px;
-  z-index:2000;
+  z-index:3000;
   display:none;
   transform:translateX(-50%);
   width:max-content;
@@ -469,10 +560,268 @@ select:focus{
   font-size:13px;
   font-weight:700;
   text-align:center;
-  box-shadow:0 10px 30px rgba(0,0,0,.35);
+  box-shadow:
+    0 10px 30px
+    rgba(0,0,0,.35);
 }
 
-/* NAV */
+/* =========================
+   MODAL MATCH
+========================= */
+
+.match-overlay{
+  position:fixed;
+  inset:0;
+  z-index:5000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:
+    rgba(3,8,24,.82);
+  backdrop-filter:blur(12px);
+}
+
+.match-overlay.visible{
+  display:flex;
+}
+
+.match-modal{
+  position:relative;
+  width:100%;
+  max-width:430px;
+  overflow:hidden;
+  padding:30px 22px 24px;
+  border:
+    1px solid
+    rgba(255,255,255,.15);
+  border-radius:32px;
+  background:
+    linear-gradient(
+      160deg,
+      #0b1838,
+      #172c61
+    );
+  box-shadow:
+    0 30px 100px
+    rgba(0,0,0,.65);
+  text-align:center;
+  animation:
+    matchEntrada .45s
+    cubic-bezier(.2,.9,.2,1);
+}
+
+@keyframes matchEntrada{
+  from{
+    opacity:0;
+    transform:
+      translateY(35px)
+      scale(.82);
+  }
+
+  to{
+    opacity:1;
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+.match-cerrar{
+  position:absolute;
+  top:12px;
+  right:12px;
+  width:38px;
+  height:38px;
+  border:0;
+  border-radius:50%;
+  background:
+    rgba(255,255,255,.1);
+  color:#fff;
+  font-size:18px;
+}
+
+.match-cerrar:hover{
+  background:
+    rgba(255,255,255,.18);
+}
+
+.match-corazones{
+  position:relative;
+  height:74px;
+  margin-bottom:4px;
+}
+
+.corazon-grande{
+  display:inline-block;
+  font-size:62px;
+  filter:
+    drop-shadow(
+      0 8px 18px
+      rgba(225,29,72,.45)
+    );
+  animation:
+    latido 1s infinite;
+}
+
+@keyframes latido{
+  0%,100%{
+    transform:scale(1);
+  }
+
+  15%{
+    transform:scale(1.16);
+  }
+
+  30%{
+    transform:scale(.98);
+  }
+
+  45%{
+    transform:scale(1.1);
+  }
+
+  60%{
+    transform:scale(1);
+  }
+}
+
+.match-titulo{
+  margin:5px 0 4px;
+  color:#fff;
+  font-size:32px;
+  font-weight:1000;
+}
+
+.match-subtitulo{
+  margin:0 auto;
+  max-width:320px;
+  color:#c9d5ea;
+  font-size:13px;
+  line-height:1.55;
+}
+
+.match-fotos{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:0;
+  margin:23px 0;
+}
+
+.match-avatar{
+  width:116px;
+  height:116px;
+  overflow:hidden;
+  border:4px solid #fff;
+  border-radius:50%;
+  background:
+    linear-gradient(
+      135deg,
+      #b58b22,
+      #f4df91
+    );
+  box-shadow:
+    0 15px 30px
+    rgba(0,0,0,.3);
+}
+
+.match-avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.match-avatar-placeholder{
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:45px;
+}
+
+.match-avatar:first-child{
+  transform:
+    translateX(10px);
+}
+
+.match-avatar:last-child{
+  transform:
+    translateX(-10px);
+}
+
+.match-mini-heart{
+  position:relative;
+  z-index:2;
+  width:42px;
+  height:42px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:3px solid #fff;
+  border-radius:50%;
+  background:
+    linear-gradient(
+      135deg,
+      var(--rosa),
+      var(--rosa2)
+    );
+  color:#fff;
+  font-size:20px;
+  box-shadow:
+    0 8px 20px
+    rgba(225,29,72,.4);
+}
+
+.match-nombre{
+  margin:-7px 0 18px;
+  color:#fff;
+  font-size:17px;
+  font-weight:900;
+}
+
+.match-acciones{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.match-btn{
+  width:100%;
+  height:52px;
+  border:0;
+  border-radius:16px;
+  font-size:14px;
+  font-weight:900;
+}
+
+.match-btn-chat{
+  background:
+    linear-gradient(
+      135deg,
+      var(--dorado),
+      #f1d36a
+    );
+  color:#06122b;
+  box-shadow:
+    0 10px 25px
+    rgba(212,175,55,.22);
+}
+
+.match-btn-seguir{
+  background:
+    rgba(255,255,255,.09);
+  color:#fff;
+  border:
+    1px solid
+    rgba(255,255,255,.15);
+}
+
+/* =========================
+   NAV
+========================= */
 
 .nav{
   position:fixed;
@@ -485,10 +834,15 @@ select:focus{
   align-items:center;
   justify-content:space-around;
   padding:0 4px;
-  border:1px solid rgba(255,255,255,.12);
+  border:
+    1px solid
+    rgba(255,255,255,.12);
   border-radius:23px;
-  background:rgba(5,17,38,.97);
-  box-shadow:0 10px 35px rgba(0,0,0,.5);
+  background:
+    rgba(5,17,38,.97);
+  box-shadow:
+    0 10px 35px
+    rgba(0,0,0,.5);
   backdrop-filter:blur(15px);
 }
 
@@ -527,12 +881,17 @@ select:focus{
   color:#fff;
   font-size:9px;
   font-weight:900;
-  border:2px solid var(--azul);
+  border:
+    2px solid
+    var(--azul);
 }
 
-/* DESKTOP */
+/* =========================
+   DESKTOP
+========================= */
 
 @media(min-width:700px){
+
   .contenedor{
     max-width:570px;
   }
@@ -543,6 +902,7 @@ select:focus{
 }
 
 @media(max-width:380px){
+
   .contenedor{
     width:calc(100% - 16px);
   }
@@ -563,79 +923,273 @@ select:focus{
   .nav a span{
     font-size:19px;
   }
+
+  .match-avatar{
+    width:100px;
+    height:100px;
+  }
+
+  .match-titulo{
+    font-size:28px;
+  }
 }
-</style></head><body><header>
-  <div class="logo">
-    <div class="logo-icon">💕</div>
-    <div class="logo-text">EmiMatch</div>
-  </div>  <p>Descubrí personas que podrían conectar con vos</p>
-</header><main class="contenedor"><section class="filtros">  <div class="filtros-top"><div class="filtros-titulo">
+</style></head><body><header>  <div class="logo"><div class="logo-icon">
+  💕
+</div>
 
-  <div class="filtros-icono">🎯</div>
+<div class="logo-text">
+  EmiMatch
+</div>
 
-  <div>
-    <h2>Buscar perfiles</h2>
-    <div class="filtros-sub">Personalizá tu búsqueda</div>
+  </div>  <p>
+    Descubrí personas que podrían conectar con vos
+  </p></header><main class="contenedor">  <section class="filtros"><div class="filtros-top">
+
+  <div class="filtros-titulo">
+
+    <div class="filtros-icono">
+      🎯
+    </div>
+
+    <div>
+
+      <h2>
+        Buscar perfiles
+      </h2>
+
+      <div class="filtros-sub">
+        Personalizá tu búsqueda
+      </div>
+
+    </div>
+
   </div>
 
 </div>
 
-  </div>  <div class="fila"><div class="campo">
-  <label class="campo-label">EDAD MÍNIMA</label>
+<div class="fila">
 
-  <input
-    id="edadMin"
-    type="number"
-    min="18"
-    max="100"
-    placeholder="18"
-  >
+  <div class="campo">
+
+    <label
+      class="campo-label"
+      for="edadMin"
+    >
+      EDAD MÍNIMA
+    </label>
+
+    <input
+      id="edadMin"
+      type="number"
+      min="18"
+      max="100"
+      placeholder="18"
+    >
+
+  </div>
+
+  <div class="campo">
+
+    <label
+      class="campo-label"
+      for="edadMax"
+    >
+      EDAD MÁXIMA
+    </label>
+
+    <input
+      id="edadMax"
+      type="number"
+      min="18"
+      max="100"
+      placeholder="100"
+    >
+
+  </div>
+
 </div>
 
-<div class="campo">
-  <label class="campo-label">EDAD MÁXIMA</label>
+<div class="ciudad">
 
-  <input
-    id="edadMax"
-    type="number"
-    min="18"
-    max="100"
-    placeholder="100"
+  <label
+    class="campo-label"
+    for="ciudad"
   >
+    CIUDAD
+  </label>
+
+  <select id="ciudad">
+
+    <option value="">
+      Todas las ciudades
+    </option>
+
+  </select>
+
 </div>
 
-  </div>  <div class="ciudad"><label class="campo-label">CIUDAD</label>
+<button
+  id="btnFiltros"
+  class="btn-filtro"
+  type="button"
+>
+  🔎 Aplicar filtros
+</button>
 
-<select id="ciudad">
-  <option value="">Todas las ciudades</option>
-</select>
+  </section>  <div
+    id="contador"
+    class="contador"
+  ></div>  <div id="contenido"><div class="cargando">
+  🔐 Verificando sesión...
+</div>
 
-  </div><button
-id="btnFiltros"
-class="btn-filtro"
+  </div></main><div
+  id="toast"
+  class="toast"
+></div><!-- =========================
+     MODAL MATCH
+========================= --><div
+  id="matchOverlay"
+  class="match-overlay"
+  aria-hidden="true"
+>  <div
+    class="match-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="matchTitulo"
+  ><button
+  id="matchCerrar"
+  class="match-cerrar"
+  type="button"
+  aria-label="Cerrar"
+>
+  ✕
+</button>
+
+<div class="match-corazones">
+
+  <span class="corazon-grande">
+    💕
+  </span>
+
+</div>
+
+<h2
+  id="matchTitulo"
+  class="match-titulo"
+>
+  ¡Es un Match!
+</h2>
+
+<p class="match-subtitulo">
+  Los dos se dieron Like.
+  Ahora pueden empezar una conversación.
+</p>
+
+<div class="match-fotos">
+
+  <div class="match-avatar">
+
+    <img
+      id="matchFotoPropia"
+      src=""
+      alt="Tu foto"
+      style="display:none;"
+    >
+
+    <div
+      id="matchPlaceholderPropio"
+      class="match-avatar-placeholder"
+    >
+      👤
+    </div>
+
+  </div>
+
+  <div class="match-mini-heart">
+    ❤️
+  </div>
+
+  <div class="match-avatar">
+
+    <img
+      id="matchFotoOtra"
+      src=""
+      alt="Foto del match"
+      style="display:none;"
+    >
+
+    <div
+      id="matchPlaceholderOtra"
+      class="match-avatar-placeholder"
+    >
+      👤
+    </div>
+
+  </div>
+
+</div>
+
+<div
+  id="matchNombre"
+  class="match-nombre"
+>
+  ¡Hicieron Match!
+</div>
+
+<div class="match-acciones">
+
+  <button
+    id="matchChat"
+    class="match-btn match-btn-chat"
+    type="button"
+  >
+    💬 Enviar mensaje
+  </button>
+
+  <button
+    id="matchSeguir"
+    class="match-btn match-btn-seguir"
+    type="button"
+  >
+    🔎 Seguir descubriendo
+  </button>
+
+</div>
+
+  </div></div><nav class="nav">  <a href="perfil.html"><span>👤</span>
+
+Perfil
+
+  </a><a
+href="descubrir.html"
+class="activo"
 
 «»
 
-🔎 Aplicar filtros
+<span>🔎</span>
 
-  </button></section><div id="contador" class="contador"></div><div id="contenido">  <div class="cargando">
-    🔐 Verificando sesión...
-  </div></div></main><div id="toast" class="toast"></div><nav class="nav">  <a href="perfil.html">
-    <span>👤</span>
-    Perfil
-  </a>  <a href="descubrir.html" class="activo">
-    <span>🔎</span>
-    Descubrir
-  </a>  <a href="likes.html">
-    <span>❤️</span>
-    Me gustas
-  </a>  <a href="chat.html">
-    <span>💕</span>
-    Matches
-  </a>  <a href="notificaciones.html">
-    <span>🔔</span>
-    Notificaciones
-    <b id="badge" class="badge">0</b>
+Descubrir
+
+  </a>  <a href="likes.html"><span>❤️</span>
+
+Me gustas
+
+  </a>  <a href="chat.html"><span>💕</span>
+
+Matches
+
+  </a>  <a href="notificaciones.html"><span>🔔</span>
+
+Notificaciones
+
+<b
+  id="badge"
+  class="badge"
+>
+  0
+</b>
+
   </a></nav><script>
 const SUPABASE_URL =
   "https://kngiadwaesdbmvwivdev.supabase.co";
@@ -650,21 +1204,54 @@ const supabaseClient =
   );
 
 let usuarioActual = null;
+
 let perfiles = [];
+
 let perfilesFiltrados = [];
+
 let indiceActual = 0;
-let bloqueados = new Set();
-let swipesRealizados = new Set();
+
+let bloqueados =
+  new Set();
+
+let swipesRealizados =
+  new Set();
+
+let perfilMatchActual =
+  null;
 
 const $ = id =>
   document.getElementById(id);
 
-const contenido = $("contenido");
-const contador = $("contador");
-const ciudadSelect = $("ciudad");
-const edadMin = $("edadMin");
-const edadMax = $("edadMax");
-const toast = $("toast");
+const contenido =
+  $("contenido");
+
+const contador =
+  $("contador");
+
+const ciudadSelect =
+  $("ciudad");
+
+const edadMin =
+  $("edadMin");
+
+const edadMax =
+  $("edadMax");
+
+const toast =
+  $("toast");
+
+const matchOverlay =
+  $("matchOverlay");
+
+const matchCerrar =
+  $("matchCerrar");
+
+const matchChat =
+  $("matchChat");
+
+const matchSeguir =
+  $("matchSeguir");
 
 document.addEventListener(
   "DOMContentLoaded",
@@ -674,6 +1261,51 @@ document.addEventListener(
 $("btnFiltros").addEventListener(
   "click",
   aplicarFiltros
+);
+
+matchCerrar.addEventListener(
+  "click",
+  cerrarMatch
+);
+
+matchSeguir.addEventListener(
+  "click",
+  cerrarMatch
+);
+
+matchChat.addEventListener(
+  "click",
+  abrirChatMatch
+);
+
+matchOverlay.addEventListener(
+  "click",
+  function(event){
+
+    if(
+      event.target ===
+      matchOverlay
+    ){
+      cerrarMatch();
+    }
+
+  }
+);
+
+document.addEventListener(
+  "keydown",
+  function(event){
+
+    if(
+      event.key === "Escape" &&
+      matchOverlay.classList.contains(
+        "visible"
+      )
+    ){
+      cerrarMatch();
+    }
+
+  }
 );
 
 /* =========================
@@ -694,7 +1326,10 @@ async function iniciar(){
       throw error;
     }
 
-    if(!data.session){
+    if(
+      !data ||
+      !data.session
+    ){
 
       window.location.href =
         "index.html";
@@ -705,18 +1340,69 @@ async function iniciar(){
     usuarioActual =
       data.session.user;
 
+    await cargarPerfilPropio();
+
     await cargarPerfiles();
+
     await cargarNotificaciones();
 
   }catch(error){
 
-    console.error(error);
+    console.error(
+      "ERROR INICIAR:",
+      error
+    );
 
     mostrarError(
       "No se pudo iniciar Descubrir.",
       error
     );
+
   }
+
+}
+
+/* =========================
+   PERFIL PROPIO
+========================= */
+
+async function cargarPerfilPropio(){
+
+  try{
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+        .from("profiles")
+        .select(
+          "id,nombre,foto_url"
+        )
+        .eq(
+          "id",
+          usuarioActual.id
+        )
+        .maybeSingle();
+
+    if(error){
+      throw error;
+    }
+
+    usuarioActual.perfil =
+      data || null;
+
+  }catch(error){
+
+    console.warn(
+      "No se pudo cargar el perfil propio:",
+      error
+    );
+
+    usuarioActual.perfil =
+      null;
+  }
+
 }
 
 /* =========================
@@ -745,7 +1431,7 @@ async function cargarPerfiles(){
           edad,
           ciudad,
           descripcion,
-          foto_url,
+    foto_url,
           intereses,
           online,
           last_seen
@@ -759,27 +1445,33 @@ async function cargarPerfiles(){
       data || [];
 
     await cargarBloqueados();
+
     await cargarSwipes();
 
     prepararCiudades();
+
     aplicarFiltros();
 
   }catch(error){
 
-    console.error(error);
+    console.error(
+      "ERROR PERFILES:",
+      error
+    );
 
     mostrarError(
       "No se pudieron cargar los perfiles.",
       error
     );
+
   }
+
 }
 
 /* =========================
    BLOQUEADOS
 ========================= */
-
-async function cargarBloqueados(){
+    async function cargarBloqueados(){
 
   bloqueados =
     new Set();
@@ -806,13 +1498,20 @@ async function cargarBloqueados(){
     return;
   }
 
-  (data || []).forEach(item => {
+  (data || []).forEach(
+    item => {
 
-    bloqueados.add(
-      item.blocked_id
-    );
+      if(item.blocked_id){
 
-  });
+        bloqueados.add(
+          item.blocked_id
+        );
+
+      }
+
+    }
+  );
+
 }
 
 /* =========================
@@ -830,7 +1529,9 @@ async function cargarSwipes(){
   } =
     await supabaseClient
       .from("swipes")
-      .select("target_user_id")
+      .select(
+        "target_user_id"
+      )
       .eq(
         "user_id",
         usuarioActual.id
@@ -846,13 +1547,22 @@ async function cargarSwipes(){
     return;
   }
 
-  (data || []).forEach(item => {
+  (data || []).forEach(
+    item => {
 
-    swipesRealizados.add(
-      item.target_user_id
-    );
+      if(
+        item.target_user_id
+      ){
 
-  });
+        swipesRealizados.add(
+          item.target_user_id
+        );
+
+      }
+
+    }
+  );
+
 }
 
 /* =========================
@@ -866,14 +1576,17 @@ function prepararCiudades(){
       ...new Set(
         perfiles
           .map(
-            perfil => perfil.ciudad
+            perfil =>
+              perfil.ciudad
           )
           .filter(Boolean)
       )
     ]
     .sort(
       (a,b) =>
-        a.localeCompare(b)
+        String(a).localeCompare(
+          String(b)
+        )
     );
 
   ciudadSelect.innerHTML = `
@@ -882,25 +1595,29 @@ function prepararCiudades(){
     </option>
   `;
 
-  ciudades.forEach(ciudad => {
+  ciudades.forEach(
+    ciudad => {
 
-    const option =
-      document.createElement(
-        "option"
+      const option =
+        document.createElement(
+          "option"
+        );
+
+      option.value =
+        ciudad;
+
+      option.textContent =
+        ciudad;
+
+      ciudadSelect.appendChild(
+        option
       );
 
-    option.value =
-      ciudad;
+    }
+  );
 
-    option.textContent =
-      ciudad;
-
-    ciudadSelect.appendChild(
-      option
-    );
-  });
 }
-
+   
 /* =========================
    FILTROS
 ========================= */
@@ -938,73 +1655,77 @@ function aplicarFiltros(){
   }
 
   perfilesFiltrados =
-    perfiles.filter(perfil => {
+    perfiles.filter(
+      perfil => {
 
-      if(
-        perfil.id ===
-        usuarioActual.id
-      ){
-        return false;
+        if(
+          perfil.id ===
+          usuarioActual.id
+        ){
+          return false;
+        }
+
+        if(
+          bloqueados.has(
+            perfil.id
+          )
+        ){
+          return false;
+        }
+
+        if(
+          swipesRealizados.has(
+            perfil.id
+          )
+        ){
+          return false;
+        }
+
+        if(
+          !Number.isNaN(min) &&
+          (
+            perfil.edad == null ||
+            Number(perfil.edad) < min
+          )
+        ){
+          return false;
+        }
+
+        if(
+          !Number.isNaN(max) &&
+          (
+            perfil.edad == null ||
+            Number(perfil.edad) > max
+          )
+        ){
+          return false;
+        }
+
+        if(
+          ciudad &&
+          String(
+            perfil.ciudad || ""
+          )
+          .trim()
+          .toLowerCase() !==
+          ciudad
+        ){
+          return false;
+        }
+
+        return true;
+
       }
-
-      if(
-        bloqueados.has(
-          perfil.id
-        )
-      ){
-        return false;
-      }
-
-      if(
-        swipesRealizados.has(
-          perfil.id
-        )
-      ){
-        return false;
-      }
-
-      if(
-        !Number.isNaN(min) &&
-        (
-          perfil.edad == null ||
-          perfil.edad < min
-        )
-      ){
-        return false;
-      }
-
-      if(
-        !Number.isNaN(max) &&
-        (
-          perfil.edad == null ||
-          perfil.edad > max
-        )
-      ){
-        return false;
-      }
-
-      if(
-        ciudad &&
-        String(
-          perfil.ciudad || ""
-        )
-        .trim()
-        .toLowerCase() !== ciudad
-      ){
-        return false;
-      }
-
-      return true;
-    });
+    );
 
   indiceActual = 0;
 
   actualizarContador();
 
   mostrarPerfilActual();
-}
 
-/* =========================
+}
+   /* =========================
    CONTADOR
 ========================= */
 
@@ -1021,12 +1742,19 @@ function actualizarContador(){
     return;
   }
 
+  const restante =
+    Math.max(
+      total - indiceActual,
+      0
+    );
+
   contador.textContent =
-    `${total} perfil${total === 1 ? "" : "es"} disponible${total === 1 ? "" : "s"}`;
+    `${restante} perfil${restante === 1 ? "" : "es"} disponible${restante === 1 ? "" : "s"}`;
+
 }
 
 /* =========================
-   PERFIL ACTUAL
+   MOSTRAR PERFIL
 ========================= */
 
 function mostrarPerfilActual(){
@@ -1117,6 +1845,7 @@ function mostrarPerfilActual(){
             loading="eager"
             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
           >
+
           <div
             class="sin-foto"
             style="display:none;"
@@ -1134,7 +1863,9 @@ function mostrarPerfilActual(){
 
         <div class="foto-overlay"></div>
 
-        <div class="estado ${online ? "online" : ""}">
+        <div
+          class="estado ${online ? "online" : ""}"
+        >
 
           <span class="estado-dot"></span>
 
@@ -1155,7 +1886,14 @@ function mostrarPerfilActual(){
       <div class="datos">
 
         <div class="nombre">
-          ${nombre}${perfil.edad ? `, ${perfil.edad}` : ""}
+          ${nombre}
+          ${
+            perfil.edad
+            ?
+            `, ${escapar(perfil.edad)}`
+            :
+            ""
+          }
         </div>
 
         <div class="info">
@@ -1176,47 +1914,60 @@ function mostrarPerfilActual(){
 
         <button
           class="accion btn-no"
+          type="button"
           onclick="registrarSwipe('pass')"
         >
           ❌
-          <small>Pasar</small>
+          <small>
+            Pasar
+          </small>
         </button>
 
         <button
           class="accion btn-si"
+          type="button"
           onclick="registrarSwipe('like')"
         >
           ❤️
-          <small>Me gusta</small>
+          <small>
+            Me gusta
+          </small>
         </button>
 
       </div>
 
       <button
         class="btn-bloquear"
+        type="button"
         onclick="bloquearPerfil()"
       >
         🚫 Bloquear perfil
       </button>
 
     </article>
+
   `;
 
   actualizarContador();
-}
 
-/* =========================
+} 
+   /* =========================
    LIKE / PASS
 ========================= */
 
-async function registrarSwipe(action){
+async function registrarSwipe(
+  action
+){
 
   const perfil =
     perfilesFiltrados[
       indiceActual
     ];
 
-  if(!perfil){
+  if(
+    !perfil ||
+    !usuarioActual
+  ){
     return;
   }
 
@@ -1232,29 +1983,54 @@ async function registrarSwipe(action){
 
   try{
 
+    /*
+      Usamos INSERT y no UPSERT.
+
+      Esto permite que el trigger
+      de Supabase cree el Match
+      cuando ambos usuarios dieron Like.
+    */
+
     const {
       error
     } =
       await supabaseClient
         .from("swipes")
-        .upsert(
-          {
-            user_id:
-              usuarioActual.id,
+        .insert({
+          user_id:
+            usuarioActual.id,
 
-            target_user_id:
-              perfil.id,
+          target_user_id:
+            perfil.id,
 
-            action:
-              action
-          },
-          {
-            onConflict:
-              "user_id,target_user_id"
-          }
-        );
+          action:
+            action
+        });
 
     if(error){
+
+      /*
+        Si el swipe ya existe,
+        simplemente avanzamos.
+      */
+
+      if(
+        error.code === "23505"
+      ){
+
+        swipesRealizados.add(
+          perfil.id
+        );
+
+        indiceActual++;
+
+        actualizarContador();
+
+        mostrarPerfilActual();
+
+        return;
+      }
+
       throw error;
     }
 
@@ -1262,11 +2038,24 @@ async function registrarSwipe(action){
       perfil.id
     );
 
-    if(action === "like"){
+    if(
+      action === "like"
+    ){
 
-      await comprobarMatch(
-        perfil.id
-      );
+      const huboMatch =
+        await comprobarMatch(
+          perfil.id
+        );
+
+      if(huboMatch){
+
+        await mostrarMatch(
+          perfil
+        );
+
+        return;
+      }
+
     }
 
     indiceActual++;
@@ -1277,21 +2066,26 @@ async function registrarSwipe(action){
 
   }catch(error){
 
-    console.error(error);
-
-    mostrarToast(
-      "No se pudo guardar tu elección."
-      );
+    console.error(
+      "SWIPE ERROR:",
+      error
+    );
 
     botones.forEach(
       boton =>
         boton.disabled = false
     );
-  }
-}
 
+    mostrarToast(
+      "No se pudo guardar tu elección."
+    );
+
+  }
+
+    }
+  
 /* =========================
-   MATCH
+   COMPROBAR MATCH
 ========================= */
 
 async function comprobarMatch(
@@ -1306,47 +2100,215 @@ async function comprobarMatch(
     } =
       await supabaseClient
         .from("matches")
-        .select("id")
+        .select(
+          "id,user1_id,user2_id"
+        )
         .or(
           `and(user1_id.eq.${usuarioActual.id},user2_id.eq.${otroUsuarioId}),and(user1_id.eq.${otroUsuarioId},user2_id.eq.${usuarioActual.id})`
         )
         .limit(1);
 
     if(error){
+
       console.warn(
-        "Match:",
+        "MATCH CHECK:",
         error
       );
-      return;
+
+      return false;
     }
 
-    if(
+    return Boolean(
       data &&
-      data.length
-    ){
-
-      mostrarToast(
-        "💕 ¡Es un Match! Pueden comenzar a hablar."
-      );
-
-      return;
-    }
-
-    mostrarToast(
-      "❤️ Me gusta enviado"
+      data.length > 0
     );
 
   }catch(error){
 
     console.warn(
-      "Comprobar match:",
+      "MATCH EXCEPTION:",
       error
     );
+
+    return false;
   }
+
 }
 
 /* =========================
-   BLOQUEAR
+   MOSTRAR MATCH
+========================= */
+
+async function mostrarMatch(
+  perfil
+){
+
+  perfilMatchActual =
+    perfil;
+
+  const fotoPropia =
+    usuarioActual &&
+    usuarioActual.perfil &&
+    usuarioActual.perfil.foto_url
+      ?
+      String(
+        usuarioActual.perfil.foto_url
+      ).trim()
+      :
+      "";
+
+  const fotoOtra =
+    perfil &&
+    perfil.foto_url
+      ?
+      String(
+        perfil.foto_url
+      ).trim()
+      :
+      "";
+
+  const imgPropia =
+    $("matchFotoPropia");
+
+  const placeholderPropio =
+    $("matchPlaceholderPropio");
+
+  const imgOtra =
+    $("matchFotoOtra");
+
+  const placeholderOtra =
+    $("matchPlaceholderOtra");
+
+  if(fotoPropia){
+
+    imgPropia.src =
+      fotoPropia;
+
+    imgPropia.style.display =
+      "block";
+
+    placeholderPropio.style.display =
+      "none";
+
+    imgPropia.onerror =
+      function(){
+
+        imgPropia.style.display =
+          "none";
+
+        placeholderPropio.style.display =
+          "flex";
+
+      };
+
+  }else{
+
+    imgPropia.style.display =
+      "none";
+
+    placeholderPropio.style.display =
+      "flex";
+
+  }
+
+  if(fotoOtra){
+
+    imgOtra.src =
+      fotoOtra;
+
+    imgOtra.style.display =
+      "block";
+
+    placeholderOtra.style.display =
+      "none";
+
+    imgOtra.onerror =
+      function(){
+
+        imgOtra.style.display =
+          "none";
+
+        placeholderOtra.style.display =
+          "flex";
+
+      };
+
+  }else{
+
+    imgOtra.style.display =
+      "none";
+
+    placeholderOtra.style.display =
+      "flex";
+
+  }
+
+  $("matchNombre").textContent =
+    `${perfil.nombre || "Usuario"} y vos hicieron Match`;
+
+  matchOverlay.classList.add(
+    "visible"
+  );
+
+  matchOverlay.setAttribute(
+    "aria-hidden",
+    "false"
+  );
+
+  document.body.style.overflow =
+    "hidden";
+
+}
+ /* =========================
+   CERRAR MATCH
+========================= */
+
+function cerrarMatch(){
+
+  matchOverlay.classList.remove(
+    "visible"
+  );
+
+  matchOverlay.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+  document.body.style.overflow =
+    "";
+
+  indiceActual++;
+
+  actualizarContador();
+
+  mostrarPerfilActual();
+
+  perfilMatchActual =
+    null;
+}
+
+/* =========================
+   ABRIR CHAT DEL MATCH
+========================= */
+
+async function abrirChatMatch(){
+
+  if(
+    !perfilMatchActual ||
+    !perfilMatchActual.id
+  ){
+    return;
+  }
+
+  const userId =
+    perfilMatchActual.id;
+
+  window.location.href =
+    `conversacion.html?user=${encodeURIComponent(userId)}`;
+}
+
+/* =========================
+   BLOQUEAR PERFIL
 ========================= */
 
 async function bloquearPerfil(){
@@ -1356,15 +2318,16 @@ async function bloquearPerfil(){
       indiceActual
     ];
 
-  if(!perfil){
+  if(
+    !perfil ||
+    !usuarioActual
+  ){
     return;
   }
 
   const confirmar =
-    confirm(
-      `¿Querés bloquear a ${
-        perfil.nombre || "este usuario"
-      }?`
+    window.confirm(
+      `¿Querés bloquear a ${perfil.nombre || "este usuario"}?\n\nNo volverás a verlo en Descubrir.`
     );
 
   if(!confirmar){
@@ -1388,47 +2351,50 @@ async function bloquearPerfil(){
 
     if(error){
 
+      /*
+        Si ya estaba bloqueado,
+        igualmente lo ocultamos.
+      */
+
       if(
-        error.code ===
-        "23505"
+        error.code !== "23505"
       ){
-
-        mostrarToast(
-          "Este usuario ya está bloqueado."
-        );
-
-      }else{
-
         throw error;
       }
 
-    }else{
-
-      bloqueados.add(
-        perfil.id
-      );
-
-      swipesRealizados.add(
-        perfil.id
-      );
-
-      mostrarToast(
-        "🚫 Perfil bloqueado"
-      );
     }
 
+    bloqueados.add(
+      perfil.id
+    );
+
+    swipesRealizados.add(
+      perfil.id
+    );
+
+    mostrarToast(
+      "🚫 Perfil bloqueado."
+    );
+
     indiceActual++;
+
+    actualizarContador();
 
     mostrarPerfilActual();
 
   }catch(error){
 
-    console.error(error);
+    console.error(
+      "BLOCK ERROR:",
+      error
+    );
 
     mostrarToast(
       "No se pudo bloquear el perfil."
     );
+
   }
+
 }
 
 /* =========================
@@ -1441,7 +2407,7 @@ async function cargarNotificaciones(){
 
     const {
       data: matches,
-      error: matchError
+      error: matchesError
     } =
       await supabaseClient
         .from("matches")
@@ -1452,8 +2418,14 @@ async function cargarNotificaciones(){
           `user1_id.eq.${usuarioActual.id},user2_id.eq.${usuarioActual.id}`
         );
 
-    if(matchError){
-      throw matchError;
+    if(matchesError){
+
+      console.warn(
+        "MATCHES NOTIFICATIONS:",
+        matchesError
+      );
+
+      return;
     }
 
     if(
@@ -1468,7 +2440,8 @@ async function cargarNotificaciones(){
 
     const matchIds =
       matches.map(
-        match => match.id
+        match =>
+          match.id
       );
 
     const {
@@ -1478,7 +2451,7 @@ async function cargarNotificaciones(){
       await supabaseClient
         .from("messages")
         .select(
-          "id,match_id,sender_id,read_at"
+          "id"
         )
         .in(
           "match_id",
@@ -1494,7 +2467,13 @@ async function cargarNotificaciones(){
         );
 
     if(mensajesError){
-      throw mensajesError;
+
+      console.warn(
+        "MESSAGES NOTIFICATIONS:",
+        mensajesError
+      );
+
+      return;
     }
 
     actualizarBadge(
@@ -1506,12 +2485,12 @@ async function cargarNotificaciones(){
   }catch(error){
 
     console.warn(
-      "Notificaciones:",
+      "NOTIFICATION ERROR:",
       error
     );
 
-    actualizarBadge(0);
   }
+
 }
 
 /* =========================
@@ -1525,36 +2504,50 @@ function actualizarBadge(
   const badge =
     $("badge");
 
-  if(!badge){
+  if(
+    !badge
+  ){
     return;
   }
 
-  if(cantidad > 0){
+  const numero =
+    Number(cantidad) || 0;
 
-    badge.style.display =
-      "flex";
-
-    badge.textContent =
-      cantidad > 99
-      ? "99+"
-      : cantidad;
-
-  }else{
+  if(numero <= 0){
 
     badge.style.display =
       "none";
+
+    badge.textContent =
+      "0";
+
+    return;
   }
+
+  badge.style.display =
+    "flex";
+
+  badge.textContent =
+    numero > 99
+      ? "99+"
+      : String(numero);
+
 }
 
 /* =========================
    TOAST
 ========================= */
 
-let toastTimer = null;
+let toastTimer =
+  null;
 
 function mostrarToast(
   mensaje
 ){
+
+  if(!toast){
+    return;
+  }
 
   toast.textContent =
     mensaje;
@@ -1568,12 +2561,15 @@ function mostrarToast(
 
   toastTimer =
     setTimeout(
-      () => {
+      function(){
+
         toast.style.display =
           "none";
+
       },
       2600
     );
+
 }
 
 /* =========================
@@ -1609,14 +2605,18 @@ function mostrarError(
       }
 
     </div>
+
   `;
+
 }
 
 /* =========================
    SEGURIDAD HTML
 ========================= */
 
-function escapar(valor){
+function escapar(
+  valor
+){
 
   return String(
     valor ?? ""
@@ -1636,13 +2636,10 @@ function escapar(valor){
   .replace(
     /"/g,
     "&quot;"
-  )
+   )
   .replace(
     /'/g,
     "&#039;"
   );
-}
-</script>
-
-</body>
-</html>
+>
+  
