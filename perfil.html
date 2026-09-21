@@ -1,16 +1,8 @@
-<!DOCTYPE html>
-<html lang="es">
+<!DOCTYPE html><html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Mi perfil - EmiMatch</title>
-
-  <meta name="theme-color" content="#111827">
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>Mi perfil - EmiMatch</title>  <meta name="description" content="Completá y actualizá tu perfil de EmiMatch.">
+  <meta name="theme-color" content="#111827">  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>  <style>
     * {
       box-sizing: border-box;
     }
@@ -36,10 +28,6 @@
       max-width: 520px;
       margin: auto;
     }
-
-    /* =========================
-       CABECERA
-    ========================= */
 
     .cabecera {
       text-align: center;
@@ -70,6 +58,7 @@
       margin: 7px 0 0;
       color: #cbd5e1;
       font-size: 15px;
+      line-height: 1.5;
     }
 
     .estado {
@@ -85,10 +74,6 @@
       font-size: 13px;
       font-weight: bold;
     }
-
-    /* =========================
-       TARJETA
-    ========================= */
 
     .card {
       background: rgba(255,255,255,.97);
@@ -106,10 +91,6 @@
       font-weight: 800;
       color: #111827;
     }
-
-    /* =========================
-       FOTO
-    ========================= */
 
     .foto-container {
       text-align: center;
@@ -141,8 +122,7 @@
     }
 
     .sin-foto {
-      background:
-        linear-gradient(135deg, #e5e7eb, #cbd5e1);
+      background: linear-gradient(135deg, #e5e7eb, #cbd5e1);
       font-size: 65px;
       border: 3px solid white;
     }
@@ -151,6 +131,12 @@
       margin-top: 12px;
       color: #64748b;
       font-size: 13px;
+    }
+
+    .foto-info {
+      margin-top: 5px;
+      color: #94a3b8;
+      font-size: 12px;
     }
 
     .foto-input {
@@ -163,10 +149,6 @@
       color: #475569;
       font-size: 14px;
     }
-
-    /* =========================
-       CAMPOS
-    ========================= */
 
     .campo {
       margin-bottom: 17px;
@@ -215,9 +197,12 @@
       line-height: 1.5;
     }
 
-    /* =========================
-       BOTÓN GUARDAR
-    ========================= */
+    .contador {
+      text-align: right;
+      margin-top: 5px;
+      color: #94a3b8;
+      font-size: 12px;
+    }
 
     .guardar {
       width: 100%;
@@ -256,10 +241,6 @@
       font-weight: bold;
     }
 
-    /* =========================
-       CERRAR SESIÓN
-    ========================= */
-
     .cerrar {
       width: 100%;
       margin-top: 16px;
@@ -279,32 +260,21 @@
       color: white;
     }
 
-    /* =========================
-       BARRA INFERIOR
-    ========================= */
-
     .barra-inferior {
       position: fixed;
       left: 10px;
       right: 10px;
       bottom: 10px;
       height: 70px;
-
       background: rgba(255,255,255,.97);
       backdrop-filter: blur(15px);
       -webkit-backdrop-filter: blur(15px);
-
       border-radius: 22px;
-
       display: flex;
       align-items: center;
       justify-content: space-around;
-
-      box-shadow:
-        0 10px 35px rgba(0,0,0,.35);
-
+      box-shadow: 0 10px 35px rgba(0,0,0,.35);
       z-index: 9999;
-
       max-width: 600px;
       margin: auto;
       border: 1px solid rgba(255,255,255,.7);
@@ -314,18 +284,14 @@
       position: relative;
       flex: 1;
       height: 100%;
-
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-
       text-decoration: none;
       color: #64748b;
-
       font-size: 10px;
       font-weight: 800;
-
       transition: .2s;
     }
 
@@ -352,30 +318,19 @@
       position: absolute;
       top: 6px;
       right: 16%;
-
       min-width: 19px;
       height: 19px;
-
       padding: 2px 5px;
-
       border-radius: 20px;
-
       background: #ef4444;
       color: white;
-
       font-size: 10px;
       font-weight: 800;
-
       display: none;
       align-items: center;
       justify-content: center;
-
       border: 2px solid white;
     }
-
-    /* =========================
-       RESPONSIVE
-    ========================= */
 
     @media (min-width: 700px) {
       body {
@@ -422,259 +377,211 @@
         right: 8%;
       }
     }
-  </style>
-</head>
+  </style></head><body><div class="contenedor">  <div class="cabecera"><div class="logo">💕</div>
 
-<body>
+<h1>Mi perfil</h1>
 
-<div class="contenedor">
+<p>
+  Completá tu información para que te conozcan mejor
+</p>
 
-  <div class="cabecera">
+<div class="estado">
+  🟢 En línea
+</div>
 
-    <div class="logo">
-      💕
-    </div>
+  </div>  <div class="card"><h2 class="seccion-titulo">
+  👤 Información personal
+</h2>
 
-    <h1>Mi perfil</h1>
+<div class="foto-container">
 
-    <p>
-      Completá tu información para que te conozcan mejor
-    </p>
-
-    <div class="estado">
-      🟢 En línea
-    </div>
-
-  </div>
-
-
-  <div class="card">
-
-    <h2 class="seccion-titulo">
-      👤 Información personal
-    </h2>
-
-
-    <div class="foto-container">
-
-      <div class="foto-marco">
-
-        <div
-          id="sinFoto"
-          class="sin-foto">
-          👤
-        </div>
-
-        <img
-          id="fotoPreview"
-          class="foto-preview"
-          style="display:none;"
-          alt="Foto de perfil"
-        >
-
-      </div>
-
-      <div class="foto-ayuda">
-        📸 Elegí una foto de perfil
-      </div>
-
-      <input
-        type="file"
-        id="foto"
-        class="foto-input"
-        accept="image/*"
-      >
-
-    </div>
-
-
-    <div class="campo">
-
-      <label for="nombre">
-        <span class="campo-icono">👤</span>
-        Nombre
-      </label>
-
-      <input
-        type="text"
-        id="nombre"
-        placeholder="Tu nombre"
-      >
-
-    </div>
-
-
-    <div class="campo">
-
-      <label for="edad">
-        <span class="campo-icono">🎂</span>
-        Edad
-      </label>
-
-      <input
-        type="number"
-        id="edad"
-        min="18"
-        max="100"
-        placeholder="Tu edad"
-      >
-
-    </div>
-
-
-    <div class="campo">
-
-      <label for="ciudad">
-        <span class="campo-icono">📍</span>
-        Ciudad
-      </label>
-
-      <input
-        type="text"
-        id="ciudad"
-        placeholder="Tu ciudad"
-      >
-
-    </div>
-
-
-    <div class="campo">
-
-      <label for="descripcion">
-        <span class="campo-icono">💬</span>
-        Sobre mí
-      </label>
-
-      <textarea
-        id="descripcion"
-        maxlength="500"
-        placeholder="Contanos un poco sobre vos..."
-      ></textarea>
-
-    </div>
-
-
-    <div class="campo">
-
-      <label for="intereses">
-        <span class="campo-icono">✨</span>
-        Intereses
-      </label>
-
-      <input
-        type="text"
-        id="intereses"
-        placeholder="Música, fútbol, viajes..."
-      >
-
-    </div>
-
-
-    <button
-      class="guardar"
-      id="guardarBtn"
-      onclick="guardarPerfil()">
-
-      💾 Guardar perfil
-
-    </button>
-
+  <div class="foto-marco">
 
     <div
-      id="mensaje"
-      class="mensaje">
+      id="sinFoto"
+      class="sin-foto">
+      👤
     </div>
+
+    <img
+      id="fotoPreview"
+      class="foto-preview"
+      style="display:none;"
+      alt="Foto de perfil"
+    >
 
   </div>
 
+  <div class="foto-ayuda">
+    📸 Elegí una foto de perfil
+  </div>
 
-  <button
-    class="cerrar"
-    onclick="cerrarSesion()">
+  <div class="foto-info">
+    JPG, PNG o WEBP · Máximo 5 MB
+  </div>
 
-    🚪 Cerrar sesión
-
-  </button>
+  <input
+    type="file"
+    id="foto"
+    class="foto-input"
+    accept="image/jpeg,image/png,image/webp"
+  >
 
 </div>
 
+<div class="campo">
 
-<nav class="barra-inferior">
+  <label for="nombre">
+    <span class="campo-icono">👤</span>
+    Nombre
+  </label>
 
-  <a
-    href="./perfil.html"
-    class="nav-item activo">
+  <input
+    type="text"
+    id="nombre"
+    maxlength="60"
+    autocomplete="name"
+    placeholder="Tu nombre"
+  >
 
-    <span class="nav-icon">
-      👤
-    </span>
+</div>
 
-    Perfil
+<div class="campo">
 
-  </a>
+  <label for="edad">
+    <span class="campo-icono">🎂</span>
+    Edad
+  </label>
 
+  <input
+    type="number"
+    id="edad"
+    min="18"
+    max="100"
+    inputmode="numeric"
+    placeholder="Tu edad"
+  >
 
-  <a
-    href="./descubrir.html"
-    class="nav-item">
+</div>
 
-    <span class="nav-icon">
-      🔎
-    </span>
+<div class="campo">
 
-    Descubrir
+  <label for="ciudad">
+    <span class="campo-icono">📍</span>
+    Ciudad
+  </label>
 
-  </a>
+  <input
+    type="text"
+    id="ciudad"
+    maxlength="100"
+    autocomplete="address-level2"
+    placeholder="Tu ciudad"
+  >
 
+</div>
 
-  <a
-    href="./likes.html"
-    class="nav-item">
+<div class="campo">
 
-    <span class="nav-icon">
-      ❤️
-    </span>
+  <label for="descripcion">
+    <span class="campo-icono">💬</span>
+    Sobre mí
+  </label>
 
-    Me gustas
+  <textarea
+    id="descripcion"
+    maxlength="500"
+    placeholder="Contanos un poco sobre vos..."
+  ></textarea>
 
-  </a>
+  <div
+    id="contadorDescripcion"
+    class="contador">
+    0/500
+  </div>
 
+</div>
 
-  <a
-    href="./chat.html"
-    class="nav-item">
+<div class="campo">
 
-    <span class="nav-icon">
-      💕
-    </span>
+  <label for="intereses">
+    <span class="campo-icono">✨</span>
+    Intereses
+  </label>
 
-    Matches
+  <input
+    type="text"
+    id="intereses"
+    maxlength="300"
+    placeholder="Música, fútbol, viajes..."
+  >
 
-  </a>
+</div>
 
+<button
+  type="button"
+  class="guardar"
+  id="guardarBtn"
+  onclick="guardarPerfil()">
 
-  <a
-    href="./notificaciones.html"
-    class="nav-item">
+  💾 Guardar perfil
 
-    <span class="nav-icon">
-      🔔
-    </span>
+</button>
 
-    Notificaciones
+<div
+  id="mensaje"
+  class="mensaje">
+</div>
 
-    <span
-      id="badgeNotificaciones"
-      class="badge">
-      0
-    </span>
+  </div><button
+type="button"
+class="cerrar"
+onclick="cerrarSesion()">
 
-  </a>
+🚪 Cerrar sesión
 
-</nav>
+  </button></div><nav class="barra-inferior"><a
+href="./perfil.html"
+class="nav-item activo">
 
+<span class="nav-icon">👤</span>
+Perfil
 
-<script>
+  </a><a
+href="./descubrir.html"
+class="nav-item">
+
+<span class="nav-icon">🔎</span>
+Descubrir
+
+  </a><a
+href="./likes.html"
+class="nav-item">
+
+<span class="nav-icon">❤️</span>
+Me gustas
+
+  </a><a
+href="./chat.html"
+class="nav-item">
+
+<span class="nav-icon">💕</span>
+Matches
+
+  </a><a
+href="./notificaciones.html"
+class="nav-item">
+
+<span class="nav-icon">🔔</span>
+Notificaciones
+
+<span
+  id="badgeNotificaciones"
+  class="badge">
+  0
+</span>
+
+  </a></nav><script>
 
 const SUPABASE_URL =
   "https://kngiadwaesdbmvwivdev.supabase.co";
@@ -682,16 +589,13 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
   "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
 
-
 const supabaseClient =
   supabase.createClient(
     SUPABASE_URL,
     SUPABASE_KEY
   );
 
-
 let usuarioActual = null;
-
 let fotoSeleccionada = null;
 
 
@@ -701,36 +605,47 @@ let fotoSeleccionada = null;
 
 async function iniciar() {
 
-  const {
-    data: { session },
-    error
-  } =
-    await supabaseClient
-      .auth
-      .getSession();
+  try {
 
+    const {
+      data: { session },
+      error
+    } =
+      await supabaseClient
+        .auth
+        .getSession();
 
-  if (
-    error ||
-    !session
-  ) {
+    if (
+      error ||
+      !session
+    ) {
+
+      window.location.replace(
+        "./index.html"
+      );
+
+      return;
+    }
+
+    usuarioActual =
+      session.user;
+
+    await cargarPerfil();
+
+    await cargarNotificaciones();
+
+  } catch (error) {
+
+    console.error(
+      "Error al iniciar:",
+      error
+    );
 
     window.location.replace(
       "./index.html"
     );
 
-    return;
-
   }
-
-
-  usuarioActual =
-    session.user;
-
-
-  await cargarPerfil();
-
-  await cargarNotificaciones();
 
 }
 
@@ -747,55 +662,48 @@ async function cargarPerfil() {
   } =
     await supabaseClient
       .from("profiles")
-      .select("*")
+      .select(
+        "id,nombre,edad,ciudad,descripcion,foto_url,intereses,created_at,online,last_seen"
+      )
       .eq(
         "id",
         usuarioActual.id
       )
       .maybeSingle();
 
-
   if (error) {
 
-    console.error(error);
+    console.error(
+      "Error cargando perfil:",
+      error
+    );
+
+    mostrarMensaje(
+      "No se pudo cargar tu perfil.",
+      "error"
+    );
 
     return;
-
   }
-
 
   if (!data) return;
 
-
-  document.getElementById(
-    "nombre"
-  ).value =
+  document.getElementById("nombre").value =
     data.nombre || "";
 
-
-  document.getElementById(
-    "edad"
-  ).value =
+  document.getElementById("edad").value =
     data.edad || "";
 
-
-  document.getElementById(
-    "ciudad"
-  ).value =
+  document.getElementById("ciudad").value =
     data.ciudad || "";
 
-
-  document.getElementById(
-    "descripcion"
-  ).value =
+  document.getElementById("descripcion").value =
     data.descripcion || "";
 
-
-  document.getElementById(
-    "intereses"
-  ).value =
+  document.getElementById("intereses").value =
     data.intereses || "";
 
+  actualizarContador();
 
   if (data.foto_url) {
 
@@ -824,7 +732,6 @@ function mostrarFoto(url) {
       "sinFoto"
     );
 
-
   img.src = url;
 
   img.style.display =
@@ -837,7 +744,7 @@ function mostrarFoto(url) {
 
 
 /* =========================
-   SELECCIONAR FOTO
+   FOTO SELECCIONADA
 ========================= */
 
 document
@@ -849,19 +756,57 @@ document
       const archivo =
         event.target.files[0];
 
-
       if (!archivo) return;
 
+      const tiposPermitidos = [
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+      ];
+
+      if (
+        !tiposPermitidos.includes(
+          archivo.type
+        )
+      ) {
+
+        alert(
+          "Solo podés subir imágenes JPG, PNG o WEBP."
+        );
+
+        event.target.value = "";
+        fotoSeleccionada = null;
+
+        return;
+      }
+
+      const maximoMB = 5;
+
+      const maximoBytes =
+        maximoMB * 1024 * 1024;
+
+      if (
+        archivo.size >
+        maximoBytes
+      ) {
+
+        alert(
+          "La foto no puede superar los 5 MB."
+        );
+
+        event.target.value = "";
+        fotoSeleccionada = null;
+
+        return;
+      }
 
       fotoSeleccionada =
         archivo;
-
 
       const url =
         URL.createObjectURL(
           archivo
         );
-
 
       mostrarFoto(url);
 
@@ -870,35 +815,215 @@ document
 
 
 /* =========================
-   GUARDAR PERFIL
+   CONTADOR DESCRIPCIÓN
 ========================= */
 
-async function guardarPerfil() {
+const descripcion =
+  document.getElementById(
+    "descripcion"
+  );
 
-  const boton =
+descripcion.addEventListener(
+  "input",
+  actualizarContador
+);
+
+function actualizarContador() {
+
+  const contador =
     document.getElementById(
-      "guardarBtn"
+      "contadorDescripcion"
     );
 
+  const cantidad =
+    descripcion.value.length;
+
+  contador.textContent =
+    cantidad + "/500";
+
+}
+
+
+/* =========================
+   MENSAJES
+========================= */
+
+function mostrarMensaje(
+  texto,
+  tipo
+) {
 
   const mensaje =
     document.getElementById(
       "mensaje"
     );
 
+  mensaje.textContent =
+    texto;
+
+  if (tipo === "success") {
+
+    mensaje.style.color =
+      "#16a34a";
+
+  } else {
+
+    mensaje.style.color =
+      "#dc2626";
+
+  }
+
+}
+
+
+/* =========================
+   GUARDAR PERFIL
+========================= */
+
+async function guardarPerfil() {
+
+  if (!usuarioActual) {
+
+    mostrarMensaje(
+      "Tu sesión expiró. Volvé a iniciar sesión.",
+      "error"
+    );
+
+    return;
+  }
+
+  const boton =
+    document.getElementById(
+      "guardarBtn"
+    );
 
   boton.disabled =
     true;
 
-
-  mensaje.textContent =
+  boton.textContent =
     "Guardando...";
 
+  mostrarMensaje(
+    "Guardando...",
+    "success"
+  );
 
   try {
 
-    let fotoUrl = null;
+    const nombre =
+      document
+        .getElementById("nombre")
+        .value
+        .trim();
 
+    const edadTexto =
+      document
+        .getElementById("edad")
+        .value
+        .trim();
+
+    const ciudad =
+      document
+        .getElementById("ciudad")
+        .value
+        .trim();
+
+    const descripcionTexto =
+      document
+        .getElementById("descripcion")
+        .value
+        .trim();
+
+    const intereses =
+      document
+        .getElementById("intereses")
+        .value
+        .trim();
+
+
+    /* =========================
+       VALIDACIONES
+    ========================= */
+
+    if (
+      nombre.length < 2
+    ) {
+
+      throw new Error(
+        "El nombre debe tener al menos 2 caracteres."
+      );
+
+    }
+
+    let edad = null;
+
+    if (edadTexto) {
+
+      edad =
+        Number(
+          edadTexto
+        );
+
+      if (
+        !Number.isInteger(edad) ||
+        edad < 18 ||
+        edad > 100
+      ) {
+
+        throw new Error(
+          "La edad debe estar entre 18 y 100 años."
+        );
+
+      }
+
+    }
+
+    if (
+      nombre.length > 60
+    ) {
+
+      throw new Error(
+        "El nombre es demasiado largo."
+      );
+
+    }
+
+    if (
+      ciudad.length > 100
+    ) {
+
+      throw new Error(
+        "La ciudad es demasiado larga."
+      );
+
+    }
+
+    if (
+      descripcionTexto.length > 500
+    ) {
+
+      throw new Error(
+        "La descripción no puede superar los 500 caracteres."
+      );
+
+    }
+
+    if (
+      intereses.length > 300
+    ) {
+
+      throw new Error(
+        "Los intereses son demasiado largos."
+      );
+
+    }
+
+
+    /* =========================
+       FOTO
+    ========================= */
+
+    let fotoUrl = null;
 
     if (fotoSeleccionada) {
 
@@ -908,14 +1033,12 @@ async function guardarPerfil() {
           .pop()
           .toLowerCase();
 
-
       const nombreArchivo =
         usuarioActual.id +
         "_" +
         Date.now() +
         "." +
         extension;
-
 
       const ruta =
         nombreArchivo;
@@ -931,7 +1054,11 @@ async function guardarPerfil() {
             ruta,
             fotoSeleccionada,
             {
-              upsert: true
+              upsert: false,
+              contentType:
+                fotoSeleccionada.type,
+              cacheControl:
+                "3600"
             }
           );
 
@@ -960,59 +1087,32 @@ async function guardarPerfil() {
     }
 
 
+    /* =========================
+       DATOS DEL PERFIL
+    ========================= */
+
     const datos = {
 
       id:
         usuarioActual.id,
 
       nombre:
-        document
-          .getElementById(
-            "nombre"
-          )
-          .value
-          .trim(),
+        nombre,
 
       edad:
-        document
-          .getElementById(
-            "edad"
-          )
-          .value
-          ? Number(
-              document
-                .getElementById(
-                  "edad"
-                )
-                .value
-            )
-          : null,
+        edad,
 
       ciudad:
-        document
-          .getElementById(
-            "ciudad"
-          )
-          .value
-          .trim(),
+        ciudad,
 
       descripcion:
-        document
-          .getElementById(
-            "descripcion"
-          )
-          .value
-          .trim(),
+        descripcionTexto,
 
       intereses:
-        document
-          .getElementById(
-            "intereses"
-          )
-          .value
-          .trim(),
+        intereses,
 
-      online: true,
+      online:
+        true,
 
       last_seen:
         new Date()
@@ -1028,6 +1128,10 @@ async function guardarPerfil() {
 
     }
 
+
+    /* =========================
+       GUARDAR
+    ========================= */
 
     const {
       error
@@ -1053,20 +1157,23 @@ async function guardarPerfil() {
     fotoSeleccionada =
       null;
 
+    document.getElementById(
+      "foto"
+    ).value = "";
 
-    mensaje.textContent =
-      "✅ Perfil guardado correctamente";
 
-
-    mensaje.style.color =
-      "#16a34a";
+    mostrarMensaje(
+      "✅ Perfil guardado correctamente",
+      "success"
+    );
 
 
     setTimeout(
-      () => {
+      function() {
 
-        mensaje.textContent =
-          "";
+        document.getElementById(
+          "mensaje"
+        ).textContent = "";
 
       },
       3000
@@ -1075,21 +1182,27 @@ async function guardarPerfil() {
 
   } catch (error) {
 
-    console.error(error);
+    console.error(
+      "Error guardando perfil:",
+      error
+    );
 
-
-    mensaje.textContent =
-      "❌ No se pudo guardar el perfil";
-
-
-    mensaje.style.color =
-      "#dc2626";
-
+    mostrarMensaje(
+      "❌ " +
+      (
+        error.message ||
+        "No se pudo guardar el perfil."
+      ),
+      "error"
+    );
 
   } finally {
 
     boton.disabled =
       false;
+
+    boton.textContent =
+      "💾 Guardar perfil";
 
   }
 
@@ -1107,99 +1220,129 @@ async function cargarNotificaciones() {
       "badgeNotificaciones"
     );
 
-
-  const {
-    data: { session }
-  } =
-    await supabaseClient
-      .auth
-      .getSession();
-
-
-  if (!session) return;
-
-
-  const usuario =
-    session.user.id;
-
-
-  const {
-    data: matches
-  } =
-    await supabaseClient
-      .from("matches")
-      .select(
-        "id,user1_id,user2_id"
-      )
-      .or(
-        `user1_id.eq.${usuario},user2_id.eq.${usuario}`
-      );
-
-
-  if (
-    !matches ||
-    matches.length === 0
-  ) {
-
-    badge.style.display =
-      "none";
-
-    return;
-
-  }
-
-
-  let totalNoLeidos =
-    0;
-
-
-  for (
-    const match of matches
-  ) {
+  try {
 
     const {
-      data: mensajes
+      data: { session }
     } =
       await supabaseClient
-        .from("messages")
-        .select("id")
-        .eq(
-          "match_id",
-          match.id
+        .auth
+        .getSession();
+
+    if (!session) return;
+
+    const usuario =
+      session.user.id;
+
+
+    const {
+      data: matches,
+      error: matchesError
+    } =
+      await supabaseClient
+        .from("matches")
+        .select(
+           "id,user1_id,user2_id"
         )
-        .neq(
-          "sender_id",
-          usuario
-        )
-        .is(
-          "read_at",
-          null
+        .or(
+          `user1_id.eq.${usuario},user2_id.eq.${usuario}`
         );
 
 
-    totalNoLeidos +=
-      mensajes?.length || 0;
+    if (matchesError) {
 
-  }
+      console.error(
+        "Error cargando matches:",
+        matchesError
+      );
 
-
-  if (
-    totalNoLeidos > 0
-  ) {
-
-    badge.textContent =
-      totalNoLeidos > 99
-        ? "99+"
-        : totalNoLeidos;
+      return;
+    }
 
 
-    badge.style.display =
-      "flex";
+    if (
+      !matches ||
+      matches.length === 0
+    ) {
 
-  } else {
+      badge.style.display =
+        "none";
 
-    badge.style.display =
-      "none";
+      return;
+    }
+
+
+    let totalNoLeidos =
+      0;
+
+
+    for (
+      const match of matches
+    ) {
+
+      const {
+        data: mensajes,
+        error: mensajesError
+      } =
+        await supabaseClient
+          .from("messages")
+          .select("id")
+          .eq(
+            "match_id",
+            match.id
+          )
+          .neq(
+            "sender_id",
+            usuario
+          )
+          .is(
+            "read_at",
+            null
+          );
+
+
+      if (mensajesError) {
+
+        console.error(
+          "Error cargando mensajes:",
+          mensajesError
+        );
+
+        continue;
+      }
+
+
+      totalNoLeidos +=
+        mensajes?.length || 0;
+
+    }
+
+
+    if (
+      totalNoLeidos > 0
+    ) {
+
+      badge.textContent =
+        totalNoLeidos > 99
+          ? "99+"
+          : totalNoLeidos;
+
+      badge.style.display =
+        "flex";
+
+    } else {
+
+      badge.style.display =
+        "none";
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Error en notificaciones:",
+      error
+    );
 
   }
 
@@ -1217,13 +1360,23 @@ async function cerrarSesion() {
       "¿Querés cerrar sesión?"
     );
 
-
   if (!confirmar) return;
 
 
-  await supabaseClient
-    .auth
-    .signOut();
+  try {
+
+    await supabaseClient
+      .auth
+      .signOut();
+
+  } catch (error) {
+
+    console.error(
+      "Error cerrando sesión:",
+      error
+    );
+
+  }
 
 
   window.location.replace(
@@ -1234,7 +1387,7 @@ async function cerrarSesion() {
 
 
 /* =========================
-   INICIAR
+   INICIAR APP
 ========================= */
 
 iniciar();
