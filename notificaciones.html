@@ -1,106 +1,255 @@
-<!DOCTYPE html>
-<html lang="es">
+<!DOCTYPE html><html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>Notificaciones | EmiMatch</title><meta
+name="description"
+content="Revisá tus mensajes y actividad reciente en EmiMatch."
 
-  <title>Notificaciones - EmiMatch</title>
+«»
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
+  <meta name="theme-color" content="#07152f">  <link rel="icon" href="favicon.svg" type="image/svg+xml">  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>  <style>
     * {
       box-sizing: border-box;
     }
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(180deg, #071a3d, #0b2454);
-      color: white;
-      min-height: 100vh;
-      padding-bottom: 90px;
+    :root {
+      --bg-1: #050b1d;
+      --bg-2: #0b1d43;
+      --card: rgba(255,255,255,.075);
+      --card-hover: rgba(255,255,255,.12);
+      --border: rgba(255,255,255,.10);
+      --text: #ffffff;
+      --muted: rgba(255,255,255,.68);
+      --gold: #d9ad45;
+      --pink: #ff3f70;
+      --purple: #7c3aed;
+      --green: #22c55e;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding-bottom: 92px;
+      font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(
+          circle at 20% 0%,
+          rgba(124,58,237,.25),
+          transparent 34%
+        ),
+        radial-gradient(
+          circle at 90% 20%,
+          rgba(217,173,69,.10),
+          transparent 30%
+        ),
+        linear-gradient(
+          180deg,
+          var(--bg-1) 0%,
+          var(--bg-2) 55%,
+          #07152f 100%
+        );
+    }
+
+    button,
+    a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* =========================
+       HEADER
+    ========================= */
+
     header {
-      padding: 22px 18px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 20px 18px 18px;
       text-align: center;
-      background: rgba(0,0,0,.18);
-      border-bottom: 1px solid rgba(255,255,255,.1);
+      background: rgba(5,11,29,.82);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      margin-bottom: 5px;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      background:
+        linear-gradient(
+          135deg,
+          #d9ad45,
+          #f4d47b
+        );
+      color: #241600;
+      font-size: 20px;
+      box-shadow:
+        0 8px 24px rgba(217,173,69,.20);
     }
 
     header h1 {
       margin: 0;
-      font-size: 25px;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -.4px;
     }
 
     header p {
       margin: 7px 0 0;
-      opacity: .75;
-      font-size: 14px;
+      color: var(--muted);
+      font-size: 13px;
     }
+
+    /* =========================
+       ACTIONS
+    ========================= */
 
     .acciones {
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 10px;
-      padding: 15px;
-    }
-
-    button {
-      border: 0;
-      border-radius: 12px;
-      padding: 11px 14px;
-      font-weight: bold;
-      cursor: pointer;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 16px 15px;
     }
 
     .btn {
-      flex: 1;
-      background: white;
-      color: #09204a;
+      min-height: 46px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 11px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      color: #fff;
+      background: rgba(255,255,255,.075);
+      box-shadow: 0 8px 24px rgba(0,0,0,.12);
+      transition:
+        transform .18s ease,
+        background .18s ease,
+        border-color .18s ease;
     }
 
+    .btn:hover {
+      background: rgba(255,255,255,.12);
+      border-color: rgba(255,255,255,.18);
+    }
+
+    .btn:active {
+      transform: scale(.97);
+    }
+
+    /* =========================
+       CONTENEDOR
+    ========================= */
+
     .contenedor {
+      width: 100%;
+      max-width: 680px;
+      margin: 0 auto;
       padding: 0 15px;
     }
 
     .estado {
       text-align: center;
-      padding: 40px 20px;
-      opacity: .8;
+      padding: 55px 20px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
     }
+
+    .estado:first-letter {
+      font-size: 30px;
+    }
+
+    /* =========================
+       NOTIFICACION
+    ========================= */
 
     .notificacion {
       display: flex;
       align-items: center;
-      gap: 12px;
-      background: rgba(255,255,255,.10);
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 16px;
-      padding: 13px;
+      gap: 13px;
+      width: 100%;
+      min-height: 82px;
       margin-bottom: 10px;
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
       cursor: pointer;
+      background:
+        linear-gradient(
+          135deg,
+          rgba(255,255,255,.085),
+          rgba(255,255,255,.045)
+        );
+      box-shadow:
+        0 10px 30px rgba(0,0,0,.14);
+      transition:
+        transform .18s ease,
+        background .18s ease,
+        border-color .18s ease;
+    }
+
+    .notificacion:hover {
+      background: var(--card-hover);
+      border-color: rgba(255,255,255,.16);
+      transform: translateY(-1px);
+    }
+
+    .notificacion:active {
+      transform: scale(.985);
+    }
+
+    .foto,
+    .foto-placeholder {
+      width: 54px;
+      height: 54px;
+      min-width: 54px;
+      border-radius: 50%;
     }
 
     .foto {
-      width: 52px;
-      height: 52px;
-      min-width: 52px;
-      border-radius: 50%;
+      display: block;
       object-fit: cover;
+      border: 2px solid rgba(217,173,69,.45);
       background: #193b72;
     }
 
     .foto-placeholder {
-      width: 52px;
-      height: 52px;
-      min-width: 52px;
-      border-radius: 50%;
-      background: #193b72;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
+      background:
+        linear-gradient(
+          135deg,
+          #193b72,
+          #273b69
+        );
+      border: 1px solid rgba(255,255,255,.10);
+      font-size: 23px;
     }
 
     .info {
@@ -109,137 +258,231 @@
     }
 
     .nombre {
-      font-weight: bold;
-      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      min-width: 0;
+      font-size: 15px;
+      font-weight: 800;
     }
 
     .mensaje {
-      margin-top: 4px;
-      opacity: .85;
-      font-size: 14px;
+      margin-top: 5px;
+      color: rgba(255,255,255,.82);
+      font-size: 13px;
+      line-height: 1.35;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
     .hora {
-      margin-top: 5px;
-      font-size: 12px;
-      opacity: .55;
+      margin-top: 6px;
+      color: rgba(255,255,255,.46);
+      font-size: 11px;
     }
 
     .punto {
-      width: 11px;
-      height: 11px;
-      background: #ff3158;
+      width: 10px;
+      height: 10px;
+      min-width: 10px;
       border-radius: 50%;
-      flex-shrink: 0;
+      background: var(--pink);
+      box-shadow:
+        0 0 0 4px rgba(255,63,112,.10),
+        0 0 12px rgba(255,63,112,.55);
     }
+
+    /* =========================
+       BOTTOM NAV
+    ========================= */
 
     nav {
       position: fixed;
-      bottom: 0;
       left: 0;
       right: 0;
-      height: 72px;
-      background: rgba(4,14,35,.97);
-      border-top: 1px solid rgba(255,255,255,.1);
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
+      bottom: 0;
       z-index: 100;
+      height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding:
+        6px 5px
+        env(safe-area-inset-bottom, 0);
+      background: rgba(4,10,27,.94);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(255,255,255,.10);
+      box-shadow:
+        0 -10px 30px rgba(0,0,0,.20);
     }
 
     nav a {
-      text-decoration: none;
-      color: white;
-      font-size: 11px;
-      text-align: center;
-      opacity: .85;
       position: relative;
+      min-width: 58px;
+      padding: 5px 4px;
+      color: rgba(255,255,255,.66);
+      text-decoration: none;
+      text-align: center;
+      font-size: 10px;
+      font-weight: 600;
+      transition: color .18s ease;
+    }
+
+    nav a:hover {
+      color: #fff;
     }
 
     nav a span {
       display: block;
-      font-size: 22px;
       margin-bottom: 3px;
+      font-size: 21px;
+      line-height: 25px;
+    }
+
+    nav a:last-child {
+      color: #fff;
     }
 
     .badge {
       position: absolute;
-      top: -5px;
-      right: 4px;
-      background: #ff3158;
-      color: white;
-      border-radius: 20px;
-      min-width: 17px;
-      height: 17px;
+      top: 0;
+      right: 3px;
+      min-width: 18px;
+      height: 18px;
       padding: 2px 5px;
-      font-size: 10px;
-      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 20px;
+      background: var(--pink);
+      color: white;
+      font-size: 9px;
+      font-weight: 800;
+      border: 2px solid #07152f;
+      box-shadow:
+        0 4px 12px rgba(255,63,112,.35);
     }
-  </style>
-</head>
 
-<body>
+    /* =========================
+       DESKTOP
+    ========================= */
 
-<header>
-  <h1>🔔 Notificaciones</h1>
-  <p>Mensajes y actividad reciente</p>
-</header>
+    @media (min-width: 700px) {
 
-<div class="acciones">
-  <button class="btn" onclick="cargarNotificaciones()">
-    🔄 Actualizar
-  </button>
+      header {
+        padding-top: 26px;
+        padding-bottom: 22px;
+      }
 
-  <button class="btn" onclick="marcarTodasLeidas()">
-    ✓✓ Marcar leídas
-  </button>
-</div>
+      header h1 {
+        font-size: 28px;
+      }
 
-<div class="contenedor">
+      .acciones {
+        padding-top: 20px;
+        padding-bottom: 18px;
+      }
 
-  <div id="estado" class="estado">
+      .notificacion {
+        min-height: 88px;
+      }
+
+      nav {
+        height: 72px;
+      }
+    }
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width: 420px) {
+
+      .acciones {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .btn {
+        font-size: 12px;
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+
+      .notificacion {
+        gap: 11px;
+        padding: 11px;
+      }
+
+      .foto,
+      .foto-placeholder {
+        width: 50px;
+        height: 50px;
+        min-width: 50px;
+      }
+
+      .nombre {
+        font-size: 14px;
+      }
+
+      .mensaje {
+        font-size: 12px;
+      }
+
+      nav a {
+        min-width: 52px;
+        font-size: 9px;
+      }
+
+      nav a span {
+        font-size: 20px;
+      }
+    }
+  </style></head><body><header>  <div class="logo">
+    <div class="logo-icon">💕</div>
+    <h1>Notificaciones</h1>
+  </div>  <p>Mensajes y actividad reciente</p></header><div class="acciones"><button
+class="btn"
+onclick="cargarNotificaciones()"
+
+«»
+
+🔄 Actualizar
+
+  </button><button
+class="btn"
+onclick="marcarTodasLeidas()"
+
+«»
+
+✓✓ Marcar leídas
+
+  </button></div><div class="contenedor">  <div id="estado" class="estado">
     ⏳<br><br>
     Cargando notificaciones...
-  </div>
-
-  <div id="lista"></div>
-
-</div>
-
-<nav>
-
-  <a href="perfil.html">
+  </div>  <div id="lista"></div></div><nav>  <a href="perfil.html">
     <span>👤</span>
     Perfil
-  </a>
-
-  <a href="descubrir.html">
+  </a>  <a href="descubrir.html">
     <span>🔎</span>
     Descubrir
-  </a>
-
-  <a href="likes.html">
+  </a>  <a href="likes.html">
     <span>❤️</span>
     Me gustas
-  </a>
-
-  <a href="chat.html">
+  </a>  <a href="chat.html">
     <span>💕</span>
     Matches
-  </a>
-
-  <a href="notificaciones.html">
+  </a>  <a href="notificaciones.html">
     <span>🔔</span>
     Notificaciones
-    <b id="badge" class="badge" style="display:none;">0</b>
-  </a>
-
-</nav>
-
-<script>
+    <b
+      id="badge"
+      class="badge"
+      style="display:none;"
+    >0</b>
+  </a></nav><script>
 
 const SUPABASE_URL =
   "https://kngiadwaesdbmvwivdev.supabase.co";
@@ -248,7 +491,10 @@ const SUPABASE_KEY =
   "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
 
 const supabaseClient =
-  supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
 let usuarioActual = null;
 
@@ -264,7 +510,8 @@ async function iniciar() {
     const {
       data: { session },
       error
-    } = await supabaseClient.auth.getSession();
+    } =
+      await supabaseClient.auth.getSession();
 
     if (error) {
       throw error;
@@ -272,13 +519,16 @@ async function iniciar() {
 
     if (!session) {
 
-      document.getElementById("estado").innerHTML =
+      document.getElementById(
+        "estado"
+      ).innerHTML =
         "🔐<br><br>Necesitás iniciar sesión.";
 
       return;
     }
 
-    usuarioActual = session.user;
+    usuarioActual =
+      session.user;
 
     await cargarNotificaciones();
 
@@ -286,9 +536,14 @@ async function iniciar() {
 
     console.error(error);
 
-    document.getElementById("estado").innerHTML =
-      "❌<br><br>No se pudieron cargar las notificaciones.<br><br>" +
-      "<small>" + escapar(error.message) + "</small>";
+    document.getElementById(
+      "estado"
+    ).innerHTML =
+      "❌<br><br>" +
+      "No se pudieron cargar las notificaciones.<br><br>" +
+      "<small>" +
+      escapar(error.message) +
+      "</small>";
   }
 }
 
@@ -307,7 +562,8 @@ async function cargarNotificaciones() {
   const lista =
     document.getElementById("lista");
 
-  estado.style.display = "block";
+  estado.style.display =
+    "block";
 
   estado.innerHTML =
     "⏳<br><br>Cargando notificaciones...";
@@ -316,14 +572,15 @@ async function cargarNotificaciones() {
 
   try {
 
-    /*
-      Primero obtenemos los matches
-    */
-
-    const { data: matches, error: errorMatches } =
+    const {
+      data: matches,
+      error: errorMatches
+    } =
       await supabaseClient
         .from("matches")
-        .select("id,user1_id,user2_id")
+        .select(
+          "id,user1_id,user2_id"
+        )
         .or(
           "user1_id.eq." +
           usuarioActual.id +
@@ -335,230 +592,257 @@ async function cargarNotificaciones() {
       throw errorMatches;
     }
 
-    if (!matches || matches.length === 0) {
+    if (
+      !matches ||
+      matches.length === 0
+    ) {
 
       estado.innerHTML =
-        "🔔<br><br>No tenés notificaciones todavía.";
+        "🔔<br><br>" +
+        "No tenés notificaciones todavía.";
 
       actualizarBadge(0);
 
       return;
     }
-
-
-    /*
-      Buscamos los mensajes de esos matches
-    */
 
     let todas = [];
 
     for (const match of matches) {
 
       const otroUsuario =
-        match.user1_id === usuarioActual.id
+        match.user1_id ===
+        usuarioActual.id
           ? match.user2_id
           : match.user1_id;
 
-
-      const { data: mensajes, error: errorMensajes } =
+      const {
+        data: mensajes,
+        error: errorMensajes
+      } =
         await supabaseClient
           .from("messages")
           .select(
             "id,match_id,sender_id,content,created_at,read_at,delivered_at"
           )
-          .eq("match_id", match.id)
-          .eq("sender_id", otroUsuario)
-          .order("created_at", { ascending: false })
+          .eq(
+            "match_id",
+            match.id
+          )
+          .eq(
+            "sender_id",
+            otroUsuario
+          )
+          .order(
+            "created_at",
+            {
+              ascending: false
+            }
+          )
           .limit(20);
 
-
       if (errorMensajes) {
-        console.error(errorMensajes);
+
+        console.error(
+          errorMensajes
+        );
+
         continue;
       }
 
-
-      if (!mensajes || mensajes.length === 0) {
+      if (
+        !mensajes ||
+        mensajes.length === 0
+      ) {
         continue;
       }
 
-
-      /*
-        Perfil del usuario
-      */
-
-      const { data: perfil, error: errorPerfil } =
+      const {
+        data: perfil,
+        error: errorPerfil
+      } =
         await supabaseClient
           .from("profiles")
           .select(
             "id,nombre,edad,ciudad,foto_url,online"
           )
-          .eq("id", otroUsuario)
+          .eq(
+            "id",
+            otroUsuario
+          )
           .maybeSingle();
 
-
       if (errorPerfil) {
-        console.error(errorPerfil);
+        console.error(
+          errorPerfil
+        );
       }
 
-
-      for (const mensaje of mensajes) {
+      for (
+        const mensaje of mensajes
+      ) {
 
         todas.push({
-
           mensaje: mensaje,
-
           perfil: perfil,
-
           otroUsuario: otroUsuario
-
         });
 
       }
-
     }
 
+    todas.sort(
+      function(a, b) {
 
-    /*
-      Ordenar por fecha
-    */
+        return new Date(
+          b.mensaje.created_at
+        ) -
+        new Date(
+          a.mensaje.created_at
+        );
 
-    todas.sort(function(a, b) {
-
-      return new Date(
-        b.mensaje.created_at
-      ) - new Date(
-        a.mensaje.created_at
-      );
-
-    });
-
+      }
+    );
 
     if (todas.length === 0) {
 
       estado.innerHTML =
-        "🔔<br><br>No tenés mensajes nuevos.";
+        "🔔<br><br>" +
+        "No tenés mensajes nuevos.";
 
       actualizarBadge(0);
 
       return;
     }
 
-
-    /*
-      Mostrar
-    */
-
-    estado.style.display = "none";
+    estado.style.display =
+      "none";
 
     let noLeidas = 0;
 
-    todas.forEach(function(item) {
+    todas.forEach(
+      function(item) {
 
-      const mensaje = item.mensaje;
-      const perfil = item.perfil;
+        const mensaje =
+          item.mensaje;
 
-      if (!mensaje.read_at) {
-        noLeidas++;
+        const perfil =
+          item.perfil;
+
+        if (!mensaje.read_at) {
+          noLeidas++;
+        }
+
+        const nombre =
+          perfil &&
+          perfil.nombre
+            ? perfil.nombre
+            : "Usuario";
+
+        const foto =
+          perfil &&
+          perfil.foto_url
+            ? `
+              <img
+                class="foto"
+                src="${escapar(
+                  perfil.foto_url
+                )}"
+                onerror="
+                  this.style.display='none';
+                  this.nextElementSibling.style.display='flex';
+                "
+              >
+
+              <div
+                class="foto-placeholder"
+                style="display:none;"
+              >
+                👤
+              </div>
+            `
+            : `
+              <div class="foto-placeholder">
+                👤
+              </div>
+            `;
+
+        const texto =
+          mensaje.content || "";
+
+        const hora =
+          tiempoRelativo(
+            mensaje.created_at
+          );
+
+        const punto =
+          mensaje.read_at
+            ? ""
+            : `<div class="punto"></div>`;
+
+        const div =
+          document.createElement(
+            "div"
+          );
+
+        div.className =
+          "notificacion";
+
+        div.innerHTML = `
+
+          ${foto}
+
+          <div class="info">
+
+            <div class="nombre">
+              ${escapar(nombre)}
+              ${
+                perfil &&
+                perfil.online
+                  ? " 🟢"
+                  : ""
+              }
+            </div>
+
+            <div class="mensaje">
+              ${escapar(texto)}
+            </div>
+
+            <div class="hora">
+              ${hora}
+            </div>
+
+          </div>
+
+          ${punto}
+
+        `;
+
+        div.onclick =
+          function() {
+
+            abrirConversacion(
+              mensaje.id,
+              item.otroUsuario
+            );
+
+          };
+
+        lista.appendChild(div);
+
       }
+    );
 
-
-      const nombre =
-        perfil && perfil.nombre
-          ? perfil.nombre
-          : "Usuario";
-
-
-      const foto =
-        perfil && perfil.foto_url
-          ? `
-            <img
-              class="foto"
-              src="${escapar(perfil.foto_url)}"
-              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-            >
-            <div
-              class="foto-placeholder"
-              style="display:none;"
-            >
-              👤
-            </div>
-          `
-          : `
-            <div class="foto-placeholder">
-              👤
-            </div>
-          `;
-
-
-      const texto =
-        mensaje.content || "";
-
-
-      const hora =
-        tiempoRelativo(mensaje.created_at);
-
-
-      const punto =
-        mensaje.read_at
-          ? ""
-          : `<div class="punto"></div>`;
-
-
-      const div =
-        document.createElement("div");
-
-      div.className = "notificacion";
-
-      div.innerHTML = `
-
-        ${foto}
-
-        <div class="info">
-
-          <div class="nombre">
-            ${escapar(nombre)}
-            ${perfil && perfil.online ? " 🟢" : ""}
-          </div>
-
-          <div class="mensaje">
-            ${escapar(texto)}
-          </div>
-
-          <div class="hora">
-            ${hora}
-          </div>
-
-        </div>
-
-        ${punto}
-
-      `;
-
-
-      div.onclick = function() {
-
-        abrirConversacion(
-          mensaje.id,
-          item.otroUsuario
-        );
-
-      };
-
-
-      lista.appendChild(div);
-
-    });
-
-
-    actualizarBadge(noLeidas);
-
+    actualizarBadge(
+      noLeidas
+    );
 
   } catch (error) {
 
     console.error(error);
 
-    estado.style.display = "block";
+    estado.style.display =
+      "block";
 
     estado.innerHTML =
       "❌<br><br>" +
@@ -566,9 +850,7 @@ async function cargarNotificaciones() {
       "<small>" +
       escapar(error.message) +
       "</small>";
-
   }
-
 }
 
 
@@ -586,11 +868,19 @@ async function abrirConversacion(
     await supabaseClient
       .from("messages")
       .update({
-        delivered_at: new Date().toISOString(),
-        read_at: new Date().toISOString()
+        delivered_at:
+          new Date().toISOString(),
+        read_at:
+          new Date().toISOString()
       })
-      .eq("id", mensajeId)
-      .eq("sender_id", otroUsuario);
+      .eq(
+        "id",
+        mensajeId
+      )
+      .eq(
+        "sender_id",
+        otroUsuario
+      );
 
   } catch (error) {
 
@@ -600,8 +890,9 @@ async function abrirConversacion(
 
   window.location.href =
     "conversacion.html?user=" +
-    encodeURIComponent(otroUsuario);
-
+    encodeURIComponent(
+      otroUsuario
+    );
 }
 
 
@@ -615,46 +906,57 @@ async function marcarTodasLeidas() {
 
   try {
 
-    /*
-      Primero buscamos mensajes recibidos
-    */
-
-    const { data, error } =
+    const {
+      data,
+      error
+    } =
       await supabaseClient
         .from("messages")
         .select("id")
-        .neq("sender_id", usuarioActual.id)
-        .is("read_at", null);
+        .neq(
+          "sender_id",
+          usuarioActual.id
+        )
+        .is(
+          "read_at",
+          null
+        );
 
     if (error) {
       throw error;
     }
 
-    if (!data || data.length === 0) {
+    if (
+      !data ||
+      data.length === 0
+    ) {
 
       actualizarBadge(0);
 
       return;
     }
 
-
     const ids =
-      data.map(function(m) {
-        return m.id;
-      });
-
+      data.map(
+        function(m) {
+          return m.id;
+        }
+      );
 
     await supabaseClient
       .from("messages")
       .update({
-        read_at: new Date().toISOString(),
-        delivered_at: new Date().toISOString()
+        read_at:
+          new Date().toISOString(),
+        delivered_at:
+          new Date().toISOString()
       })
-      .in("id", ids);
-
+      .in(
+        "id",
+        ids
+      );
 
     await cargarNotificaciones();
-
 
   } catch (error) {
 
@@ -663,9 +965,7 @@ async function marcarTodasLeidas() {
     alert(
       "No se pudieron marcar las notificaciones."
     );
-
   }
-
 }
 
 
@@ -673,16 +973,21 @@ async function marcarTodasLeidas() {
    BADGE
 ========================= */
 
-function actualizarBadge(numero) {
+function actualizarBadge(
+  numero
+) {
 
   const badge =
-    document.getElementById("badge");
+    document.getElementById(
+      "badge"
+    );
 
   if (!badge) return;
 
   if (numero > 0) {
 
-    badge.style.display = "block";
+    badge.style.display =
+      "flex";
 
     badge.textContent =
       numero > 99
@@ -691,10 +996,9 @@ function actualizarBadge(numero) {
 
   } else {
 
-    badge.style.display = "none";
-
+    badge.style.display =
+      "none";
   }
-
 }
 
 
@@ -702,7 +1006,9 @@ function actualizarBadge(numero) {
    TIEMPO
 ========================= */
 
-function tiempoRelativo(fecha) {
+function tiempoRelativo(
+  fecha
+) {
 
   const ahora =
     new Date();
@@ -712,7 +1018,10 @@ function tiempoRelativo(fecha) {
 
   const segundos =
     Math.floor(
-      (ahora - fechaMensaje) / 1000
+      (
+        ahora -
+        fechaMensaje
+      ) / 1000
     );
 
   if (segundos < 60) {
@@ -720,24 +1029,42 @@ function tiempoRelativo(fecha) {
   }
 
   const minutos =
-    Math.floor(segundos / 60);
+    Math.floor(
+      segundos / 60
+    );
 
   if (minutos < 60) {
-    return "Hace " + minutos + " min";
+    return (
+      "Hace " +
+      minutos +
+      " min"
+    );
   }
 
   const horas =
-    Math.floor(minutos / 60);
+    Math.floor(
+      minutos / 60
+    );
 
   if (horas < 24) {
-    return "Hace " + horas + " h";
+    return (
+      "Hace " +
+      horas +
+      " h"
+    );
   }
 
   const dias =
-    Math.floor(horas / 24);
+    Math.floor(
+      horas / 24
+    );
 
   if (dias < 7) {
-    return "Hace " + dias + " d";
+    return (
+      "Hace " +
+      dias +
+      " d"
+    );
   }
 
   return fechaMensaje.toLocaleDateString(
@@ -747,7 +1074,6 @@ function tiempoRelativo(fecha) {
       month: "2-digit"
     }
   );
-
 }
 
 
@@ -755,15 +1081,33 @@ function tiempoRelativo(fecha) {
    ESCAPAR HTML
 ========================= */
 
-function escapar(texto) {
+function escapar(
+  texto
+) {
 
-  return String(texto ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-
+  return String(
+    texto ?? ""
+  )
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
 }
 
 
@@ -777,7 +1121,9 @@ function activarRealtime() {
 
   canal =
     supabaseClient
-      .channel("notificaciones-emimatch")
+      .channel(
+        "notificaciones-emimatch"
+      )
 
       .on(
         "postgres_changes",
@@ -807,8 +1153,21 @@ function activarRealtime() {
         }
       )
 
-      .subscribe();
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "messages"
+        },
+        function() {
 
+          cargarNotificaciones();
+
+        }
+      )
+
+      .subscribe();
 }
 
 
@@ -819,8 +1178,9 @@ window.addEventListener(
     if (canal) {
 
       supabaseClient
-        .removeChannel(canal);
-
+        .removeChannel(
+          canal
+        );
     }
 
   }
@@ -839,6 +1199,3 @@ setTimeout(
 );
 
 </script>
-
-</body>
-</html>
