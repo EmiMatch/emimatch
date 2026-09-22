@@ -24,7 +24,6 @@
 
     body {
       min-height: 100vh;
-
       font-family:
         -apple-system,
         BlinkMacSystemFont,
@@ -38,12 +37,12 @@
       background:
         radial-gradient(
           circle at 15% 20%,
-          rgba(124,58,237,.20),
+          rgba(124, 58, 237, .20),
           transparent 32%
         ),
         radial-gradient(
           circle at 85% 80%,
-          rgba(217,173,69,.12),
+          rgba(217, 173, 69, .12),
           transparent 30%
         ),
         linear-gradient(
@@ -58,11 +57,9 @@
 
     .page {
       min-height: 100vh;
-
       display: flex;
       align-items: center;
       justify-content: center;
-
       padding: 20px;
     }
 
@@ -74,15 +71,14 @@
       grid-template-columns: 1.05fr .95fr;
 
       overflow: hidden;
-
       border-radius: 30px;
 
-      background: rgba(10,20,45,.78);
+      background: rgba(10, 20, 45, .78);
 
-      border: 1px solid rgba(255,255,255,.10);
+      border: 1px solid rgba(255, 255, 255, .10);
 
       box-shadow:
-        0 30px 80px rgba(0,0,0,.45);
+        0 30px 80px rgba(0, 0, 0, .45);
 
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
@@ -92,7 +88,6 @@
 
     .hero {
       min-height: 650px;
-
       padding: 55px 48px;
 
       display: flex;
@@ -102,12 +97,12 @@
       background:
         radial-gradient(
           circle at 20% 20%,
-          rgba(124,58,237,.25),
+          rgba(124, 58, 237, .25),
           transparent 35%
         ),
         radial-gradient(
           circle at 85% 85%,
-          rgba(217,173,69,.10),
+          rgba(217, 173, 69, .10),
           transparent 30%
         );
     }
@@ -116,16 +111,14 @@
       width: fit-content;
 
       padding: 8px 13px;
-
       margin-bottom: 22px;
 
       border-radius: 999px;
 
       color: #e9d5ff;
+      background: rgba(255, 255, 255, .06);
 
-      background: rgba(255,255,255,.06);
-
-      border: 1px solid rgba(255,255,255,.10);
+      border: 1px solid rgba(255, 255, 255, .10);
 
       font-size: 13px;
       font-weight: 600;
@@ -134,12 +127,9 @@
     .brand {
       margin-bottom: 20px;
 
-      font-size: clamp(46px,6vw,72px);
-
+      font-size: clamp(46px, 6vw, 72px);
       line-height: 1;
-
       font-weight: 850;
-
       letter-spacing: -3px;
 
       background:
@@ -158,31 +148,26 @@
 
     .hero h2 {
       max-width: 500px;
-
       margin-bottom: 17px;
 
-      font-size: clamp(25px,3vw,38px);
-
+      font-size: clamp(25px, 3vw, 38px);
       line-height: 1.12;
     }
 
     .hero p {
       max-width: 520px;
 
-      color: rgba(255,255,255,.68);
+      color: rgba(255, 255, 255, .68);
 
       font-size: 16px;
-
       line-height: 1.7;
     }
 
     .features {
       display: grid;
-
-      grid-template-columns: repeat(3,1fr);
+      grid-template-columns: repeat(3, 1fr);
 
       gap: 10px;
-
       margin-top: 32px;
     }
 
@@ -191,14 +176,20 @@
 
       border-radius: 16px;
 
-      background: rgba(255,255,255,.045);
+      background: rgba(255, 255, 255, .045);
 
-      border: 1px solid rgba(255,255,255,.07);
+      border: 1px solid rgba(255, 255, 255, .07);
+
+      transition: .2s ease;
+    }
+
+    .feature:hover {
+      transform: translateY(-3px);
+      background: rgba(255, 255, 255, .07);
     }
 
     .feature-icon {
       font-size: 21px;
-
       margin-bottom: 6px;
     }
 
@@ -206,13 +197,11 @@
       display: block;
 
       font-size: 13px;
-
       margin-bottom: 3px;
     }
 
     .feature span {
-      color: rgba(255,255,255,.50);
-
+      color: rgba(255, 255, 255, .50);
       font-size: 11px;
     }
 
@@ -225,7 +214,7 @@
       align-items: center;
       justify-content: center;
 
-      background: rgba(3,9,25,.42);
+      background: rgba(3, 9, 25, .42);
     }
 
     .auth-box {
@@ -239,15 +228,13 @@
 
     .auth-header h3 {
       font-size: 29px;
-
       margin-bottom: 8px;
     }
 
     .auth-header p {
-      color: rgba(255,255,255,.56);
+      color: rgba(255, 255, 255, .56);
 
       font-size: 14px;
-
       line-height: 1.5;
     }
 
@@ -255,18 +242,15 @@
 
     .tabs {
       display: grid;
-
       grid-template-columns: 1fr 1fr;
 
       gap: 4px;
-
       padding: 4px;
-
       margin-bottom: 23px;
 
       border-radius: 14px;
 
-      background: rgba(255,255,255,.05);
+      background: rgba(255, 255, 255, .05);
     }
 
     .tab {
@@ -276,7 +260,7 @@
 
       border-radius: 10px;
 
-      color: rgba(255,255,255,.45);
+      color: rgba(255, 255, 255, .45);
 
       background: transparent;
 
@@ -284,12 +268,17 @@
 
       font-size: 13px;
       font-weight: 700;
+
+      transition: .2s ease;
+    }
+
+    .tab:hover {
+      color: #fff;
     }
 
     .tab.active {
       color: #fff;
-
-      background: rgba(255,255,255,.10);
+      background: rgba(255, 255, 255, .10);
     }
 
     /* FORM */
@@ -311,10 +300,9 @@
 
       margin-bottom: 7px;
 
-      color: rgba(255,255,255,.75);
+      color: rgba(255, 255, 255, .75);
 
       font-size: 13px;
-
       font-weight: 600;
     }
 
@@ -326,26 +314,28 @@
 
       border-radius: 13px;
 
-      border: 1px solid rgba(255,255,255,.10);
+      border: 1px solid rgba(255, 255, 255, .10);
 
       outline: none;
 
       color: #fff;
 
-      background: rgba(255,255,255,.055);
+      background: rgba(255, 255, 255, .055);
 
       font-size: 14px;
+
+      transition: .2s ease;
     }
 
     .field input::placeholder {
-      color: rgba(255,255,255,.30);
+      color: rgba(255, 255, 255, .30);
     }
 
     .field input:focus {
-      border-color: rgba(217,173,69,.70);
+      border-color: rgba(217, 173, 69, .70);
 
       box-shadow:
-        0 0 0 4px rgba(217,173,69,.08);
+        0 0 0 4px rgba(217, 173, 69, .08);
     }
 
     /* BUTTON */
@@ -355,7 +345,6 @@
       height: 52px;
 
       border: 0;
-
       border-radius: 14px;
 
       cursor: pointer;
@@ -370,7 +359,6 @@
         );
 
       font-size: 15px;
-
       font-weight: 800;
 
       transition: .2s ease;
@@ -378,12 +366,15 @@
 
     .main-button:hover {
       transform: translateY(-1px);
+
+      box-shadow:
+        0 10px 25px rgba(217, 173, 69, .18);
     }
 
     .main-button:disabled {
       opacity: .55;
-
       cursor: wait;
+      transform: none;
     }
 
     /* MESSAGE */
@@ -396,7 +387,6 @@
       text-align: center;
 
       font-size: 13px;
-
       line-height: 1.5;
     }
 
@@ -413,16 +403,15 @@
 
       text-align: center;
 
-      color: rgba(255,255,255,.34);
+      color: rgba(255, 255, 255, .34);
 
       font-size: 11px;
-
       line-height: 1.5;
     }
 
     /* MOBILE */
 
-    @media (max-width:850px) {
+    @media (max-width: 850px) {
 
       .container {
         grid-template-columns: 1fr;
@@ -430,7 +419,6 @@
 
       .hero {
         min-height: auto;
-
         padding: 42px 28px 35px;
       }
 
@@ -439,7 +427,7 @@
       }
     }
 
-    @media (max-width:520px) {
+    @media (max-width: 520px) {
 
       .page {
         padding: 12px;
@@ -545,7 +533,7 @@
       </div>
 
 
-      <!-- LOGIN -->
+      <!-- AUTENTICACIÓN -->
 
       <div class="auth">
 
@@ -727,21 +715,43 @@
 
   <script>
 
-    /*
-      ==================================================
-      SUPABASE
-
-      IMPORTANTE:
-      PEGÁ AQUÍ LOS DOS VALORES REALES QUE YA USABAS
-      EN TU INDEX.HTML ANTERIOR.
-      ==================================================
-    */
+    /* ==================================================
+       CONEXIÓN SUPABASE
+    ================================================== */
 
     const SUPABASE_URL =
-      "PEGÁ_ACÁ_TU_SUPABASE_URL";
+      "https://kngiadwaesdbmvwivdev.supabase.co";
 
     const SUPABASE_ANON_KEY =
-      "PEGÁ_ACÁ_TU_SUPABASE_ANON_KEY";
+      "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
+
+
+    /* ==================================================
+       CLIENTE SUPABASE
+    ================================================== */
+
+    let supabaseClient = null;
+
+    function getSupabase() {
+
+      if (!window.supabase) {
+        throw new Error(
+          "No se pudo cargar la conexión con Supabase."
+        );
+      }
+
+      if (!supabaseClient) {
+
+        supabaseClient =
+          window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_ANON_KEY
+          );
+
+      }
+
+      return supabaseClient;
+    }
 
 
     /* ==================================================
@@ -777,7 +787,19 @@
 
 
     /* ==================================================
-       TABS
+       MENSAJES
+    ================================================== */
+
+    function showMessage(text, type = "") {
+
+      message.textContent = text;
+
+      message.className = type;
+    }
+
+
+    /* ==================================================
+       CAMBIAR A LOGIN
     ================================================== */
 
     loginTab.addEventListener("click", function() {
@@ -796,12 +818,14 @@
       authDescription.textContent =
         "Ingresá para continuar con tu experiencia en EmiMatch.";
 
-      message.textContent = "";
-
-      message.className = "";
+      showMessage("");
 
     });
 
+
+    /* ==================================================
+       CAMBIAR A REGISTRO
+    ================================================== */
 
     registerTab.addEventListener("click", function() {
 
@@ -819,9 +843,7 @@
       authDescription.textContent =
         "Comenzá tu experiencia y descubrí nuevas conexiones.";
 
-      message.textContent = "";
-
-      message.className = "";
+      showMessage("");
 
     });
 
@@ -830,197 +852,49 @@
        LOGIN
     ================================================== */
 
-    loginForm.addEventListener("submit", async function(event) {
+    loginForm.addEventListener(
+      "submit",
+      async function(event) {
 
-      event.preventDefault();
+        event.preventDefault();
 
-      message.textContent = "";
+        showMessage("");
 
-      const email =
-        document.getElementById("loginEmail")
-        .value
-        .trim();
+        const email =
+          document
+            .getElementById("loginEmail")
+            .value
+            .trim();
 
-      const password =
-        document.getElementById("loginPassword")
-        .value;
+        const password =
+          document
+            .getElementById("loginPassword")
+            .value;
 
-
-      loginButton.disabled = true;
-
-      loginButton.textContent =
-        "Ingresando...";
-
-
-      try {
-
-        if (
-          !window.supabase ||
-          SUPABASE_URL.includes("PEGÁ_ACÁ") ||
-          SUPABASE_ANON_KEY.includes("PEGÁ_ACÁ")
-        ) {
-
-          throw new Error(
-            "Falta configurar la conexión con Supabase."
-          );
-
-        }
-
-
-        const supabaseClient =
-          window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_ANON_KEY
-          );
-
-
-        const { error } =
-          await supabaseClient.auth.signInWithPassword({
-            email: email,
-            password: password
-          });
-
-
-        if (error) {
-          throw error;
-        }
-
-
-        message.textContent =
-          "¡Bienvenido! Entrando a tu perfil...";
-
-        message.className =
-          "success";
-
-
-        setTimeout(function() {
-
-          window.location.href =
-            "perfil.html";
-
-        }, 500);
-
-
-      } catch (error) {
-
-        console.error(error);
-
-        message.textContent =
-          error.message ||
-          "No pudimos iniciar sesión.";
-
-        message.className =
-          "error";
-
-
-        loginButton.disabled = false;
+        loginButton.disabled = true;
 
         loginButton.textContent =
-          "Iniciar sesión";
+          "Ingresando...";
 
-      }
+        try {
 
-    });
+          const client =
+            getSupabase();
 
+          const { error } =
+            await client.auth.signInWithPassword({
+              email: email,
+              password: password
+            });
 
-    /* ==================================================
-       REGISTRO
-    ================================================== */
+          if (error) {
+            throw error;
+          }
 
-    registerForm.addEventListener("submit", async function(event) {
-
-      event.preventDefault();
-
-      message.textContent = "";
-
-      const email =
-        document.getElementById("registerEmail")
-        .value
-        .trim();
-
-      const password =
-        document.getElementById("registerPassword")
-        .value;
-
-      const password2 =
-        document.getElementById("registerPassword2")
-        .value;
-
-
-      if (password.length < 6) {
-
-        message.textContent =
-          "La contraseña debe tener al menos 6 caracteres.";
-
-        message.className =
-          "error";
-
-        return;
-
-      }
-
-
-      if (password !== password2) {
-
-        message.textContent =
-          "Las contraseñas no coinciden.";
-
-        message.className =
-          "error";
-
-        return;
-
-      }
-
-
-      registerButton.disabled = true;
-
-      registerButton.textContent =
-        "Creando cuenta...";
-
-
-      try {
-
-        if (
-          !window.supabase ||
-          SUPABASE_URL.includes("PEGÁ_ACÁ") ||
-          SUPABASE_ANON_KEY.includes("PEGÁ_ACÁ")
-        ) {
-
-          throw new Error(
-            "Falta configurar la conexión con Supabase."
+          showMessage(
+            "¡Bienvenido! Entrando a tu perfil...",
+            "success"
           );
-
-        }
-
-
-        const supabaseClient =
-          window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_ANON_KEY
-          );
-
-
-        const { data, error } =
-          await supabaseClient.auth.signUp({
-            email: email,
-            password: password
-          });
-
-
-        if (error) {
-          throw error;
-        }
-
-
-        if (data.session) {
-
-          message.textContent =
-            "Cuenta creada. Entrando a tu perfil...";
-
-          message.className =
-            "success";
-
 
           setTimeout(function() {
 
@@ -1029,43 +903,151 @@
 
           }, 500);
 
+        } catch (error) {
 
-        } else {
+          console.error(
+            "Error de inicio de sesión:",
+            error
+          );
 
-          message.textContent =
-            "Cuenta creada. Revisá tu email para confirmar.";
+          showMessage(
+            error.message ||
+            "No pudimos iniciar sesión.",
+            "error"
+          );
 
-          message.className =
-            "success";
+          loginButton.disabled = false;
+
+          loginButton.textContent =
+            "Iniciar sesión";
+        }
+
+      }
+    );
 
 
-          registerForm.reset();
+    /* ==================================================
+       REGISTRO
+    ================================================== */
 
+    registerForm.addEventListener(
+      "submit",
+      async function(event) {
+
+        event.preventDefault();
+
+        showMessage("");
+
+        const email =
+          document
+            .getElementById("registerEmail")
+            .value
+            .trim();
+
+        const password =
+          document
+            .getElementById("registerPassword")
+            .value;
+
+        const password2 =
+          document
+            .getElementById("registerPassword2")
+            .value;
+
+
+        if (password.length < 6) {
+
+          showMessage(
+            "La contraseña debe tener al menos 6 caracteres.",
+            "error"
+          );
+
+          return;
         }
 
 
-      } catch (error) {
+        if (password !== password2) {
 
-        console.error(error);
+          showMessage(
+            "Las contraseñas no coinciden.",
+            "error"
+          );
 
-        message.textContent =
-          error.message ||
-          "No pudimos crear la cuenta.";
+          return;
+        }
 
-        message.className =
-          "error";
+
+        registerButton.disabled = true;
+
+        registerButton.textContent =
+          "Creando cuenta...";
+
+
+        try {
+
+          const client =
+            getSupabase();
+
+          const { data, error } =
+            await client.auth.signUp({
+              email: email,
+              password: password
+            });
+
+          if (error) {
+            throw error;
+          }
+
+
+          if (data.session) {
+
+            showMessage(
+              "Cuenta creada. Entrando a tu perfil...",
+              "success"
+            );
+
+            setTimeout(function() {
+
+              window.location.href =
+                "perfil.html";
+
+            }, 500);
+
+          } else {
+
+            showMessage(
+              "Cuenta creada. Revisá tu email para confirmar.",
+              "success"
+            );
+
+            registerForm.reset();
+          }
+
+        } catch (error) {
+
+          console.error(
+            "Error de registro:",
+            error
+          );
+
+          showMessage(
+            error.message ||
+            "No pudimos crear la cuenta.",
+            "error"
+          );
+
+        } finally {
+
+          registerButton.disabled = false;
+
+          registerButton.textContent =
+            "Crear mi cuenta";
+        }
 
       }
-
-
-      registerButton.disabled = false;
-
-      registerButton.textContent =
-        "Crear mi cuenta";
-
-    });
+    );
 
   </script>
 
 </body>
-            </html>
+</html>
