@@ -2478,44 +2478,184 @@
     }
 
 
-    /* =====================================================
-       DESCUBRIMIENTO
-    ===================================================== */
+/* =====================================================
+   DESCUBRIMIENTO
+===================================================== */
 
-    async function loadDiscoveryProfiles() {
+async function loadDiscoveryProfiles() {
 
-      discoveryContainer.innerHTML = `
-        <div class="card empty-state">
-          <div class="emoji">🔎</div>
-          <h3>Buscando perfiles...</h3>
-          <p>Estamos preparando nuevas conexiones.</p>
-        </div>
-      `;
+  discoveryContainer.innerHTML = `
+    <div class="card empty-state">
+      <div class="emoji">🔎</div>
+      <h3>Buscando perfiles...</h3>
+      <p>Estamos preparando nuevas conexiones.</p>
+    </div>
+  `;
+
+  try {
+
+    /* =================================================
+       1. OBTENER USUARIOS BLOQUEADOS
+    ================================================= */
+
+    const {
+      data: blockedUsers,
+      error: blockedError
+    } =
+      await supabaseClient
+        .from("block")
+        .select("blocked_user_id")
+        .eq(
+          "user_id",
+          currentUser.id
+        );
+
+    if (blockedError) {
+      throw blockedError;
+    }
 
 
-      try {
+    const blockedIds =
+      new Set(
+        (blockedUsers || [])
+          .map(
+            block =>
+              block.blocked_user_id
+          )
+      );
 
-        const {
-          data: profiles,
-        error
-        } =
-          await supabaseClient
-            .from("profiles")
-            .select(`
-              id,
-              nombre,
-              edad,
-              ciudad,
-              descripcion,
-              foto_url,
-              intereses,
-              created_at
-            `)
-            .neq(
-              "id",
-              currentUser.id
-            )
-            .order(
+
+    /* =================================================
+       2. OBTENER PERFILES
+    ================================================= */
+
+    const {
+      data: profiles,
+      error
+    } =
+      await supabaseClient
+        .from("profiles")
+        .select(`
+          id,
+          nombre,
+          edad,
+          ciudad,
+          descripcion,
+          foto_url,
+          intereses,
+          created_at
+        `)
+        .neq(
+          "id",
+          currentUser.id
+        )
+        .order(
+          "created_at",
+          {
+            ascending: false
+          }
+        );
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    /* =================================================
+       3. OBTENER PERFILES YA VISTOS
+    ================================================= */
+
+    const {
+      data: swipes,
+      error: swipesError
+    } =
+      await supabaseClient
+        .from("swipes")
+        .select(
+          "target_user_id"
+        )
+        .eq(
+          "user_id",
+          currentUser.id
+        );
+
+
+    if (swipesError) {
+      throw swipesError;
+    }
+
+
+    const seen =
+      new Set(
+        (swipes || [])
+          .map(
+            swipe =>
+              swipe.target_user_id
+          )
+      );
+
+
+    /* =================================================
+       4. FILTRAR BLOQUEADOS + YA VISTOS
+    ================================================= */
+
+    discoveryProfiles =
+      (profiles || [])
+        .filter(
+          profile => {
+
+            const isBlocked =
+              blockedIds.has(
+                profile.id
+              );
+
+            const alreadySeen =
+              seen.has(
+                profile.id
+              );
+
+            return (
+              !isBlocked &&
+              !alreadySeen
+            );
+
+          }
+        );
+
+
+    /* =================================================
+       5. MOSTRAR RESULTADOS
+    ================================================= */
+
+    currentProfileIndex =
+      0;
+
+    renderDiscovery();
+
+
+  } catch (error) {
+
+    console.error(
+      "Error descubriendo perfiles:",
+      error
+    );
+
+
+    discoveryContainer.innerHTML = `
+      <div class="card empty-state">
+        <div class="emoji">⚠️</div>
+        <h3>No pudimos cargar perfiles</h3>
+        <p>
+          Ocurrió un problema al cargar
+          los perfiles. Intentá nuevamente.
+        </p>
+      </div>
+    `;
+
+  }
+
+}
               "created_at",
               {
                 ascending:
