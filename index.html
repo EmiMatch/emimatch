@@ -19,7 +19,6 @@
 
     html,
     body {
-      width: 100%;
       min-height: 100%;
     }
 
@@ -33,17 +32,17 @@
         Arial,
         sans-serif;
 
+      color: #fff;
       background:
-        radial-gradient(circle at 15% 20%, rgba(124, 58, 237, 0.20), transparent 32%),
-        radial-gradient(circle at 85% 80%, rgba(217, 173, 69, 0.12), transparent 30%),
-        linear-gradient(135deg, #050b1b 0%, #0a1835 50%, #111827 100%);
+        radial-gradient(circle at 15% 20%, rgba(124,58,237,.18), transparent 32%),
+        radial-gradient(circle at 85% 80%, rgba(217,173,69,.10), transparent 30%),
+        linear-gradient(135deg,#050b1b 0%,#0a1835 50%,#111827 100%);
 
-      color: #ffffff;
       overflow-x: hidden;
     }
 
     /* =========================
-       PANTALLA DE CARGA
+       CARGA
     ========================== */
 
     #loadingScreen {
@@ -52,20 +51,15 @@
       z-index: 99999;
 
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      flex-direction: column;
 
       background:
-        radial-gradient(circle at 50% 40%, rgba(124, 58, 237, 0.18), transparent 35%),
-        linear-gradient(135deg, #050b1b, #08152f, #111827);
+        radial-gradient(circle at 50% 40%,rgba(124,58,237,.18),transparent 35%),
+        linear-gradient(135deg,#050b1b,#08152f,#111827);
 
-      opacity: 1;
-      visibility: visible;
-
-      transition:
-        opacity 0.35s ease,
-        visibility 0.35s ease;
+      transition: opacity .35s ease, visibility .35s ease;
     }
 
     #loadingScreen.hidden {
@@ -75,13 +69,13 @@
     }
 
     .loading-logo {
-      font-size: 42px;
+      font-size: 40px;
       font-weight: 800;
       letter-spacing: -1.5px;
 
       background: linear-gradient(
         90deg,
-        #ffffff,
+        #fff,
         #f5df9a,
         #d9ad45
       );
@@ -89,28 +83,27 @@
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-
-      animation: logoPulse 1.8s ease-in-out infinite;
     }
 
     .loading-text {
       margin-top: 10px;
-      color: rgba(255,255,255,0.68);
+      color: rgba(255,255,255,.65);
       font-size: 14px;
-      letter-spacing: 0.4px;
     }
 
     .loader {
-      width: 34px;
-      height: 34px;
-      margin-top: 24px;
+      width: 32px;
+      height: 32px;
 
-      border: 3px solid rgba(255,255,255,0.14);
+      margin-top: 22px;
+
+      border: 3px solid rgba(255,255,255,.12);
       border-top-color: #d9ad45;
       border-right-color: #8b5cf6;
+
       border-radius: 50%;
 
-      animation: spin 0.8s linear infinite;
+      animation: spin .8s linear infinite;
     }
 
     @keyframes spin {
@@ -119,20 +112,8 @@
       }
     }
 
-    @keyframes logoPulse {
-      0%, 100% {
-        opacity: 0.75;
-        transform: scale(0.98);
-      }
-
-      50% {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
     /* =========================
-       CONTENEDOR
+       PÁGINA
     ========================== */
 
     .page {
@@ -142,10 +123,10 @@
       align-items: center;
       justify-content: center;
 
-      padding: 30px 18px;
+      padding: 25px 16px;
 
       opacity: 0;
-      transition: opacity 0.45s ease;
+      transition: opacity .4s ease;
     }
 
     .page.visible {
@@ -157,112 +138,97 @@
       max-width: 1050px;
 
       display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
-
-      background: rgba(10, 20, 45, 0.72);
-
-      border: 1px solid rgba(255,255,255,0.10);
-
-      border-radius: 30px;
+      grid-template-columns: 1.05fr .95fr;
 
       overflow: hidden;
 
+      border-radius: 28px;
+
+      background: rgba(10,20,45,.74);
+
+      border: 1px solid rgba(255,255,255,.09);
+
       box-shadow:
-        0 30px 80px rgba(0,0,0,0.45),
-        inset 0 1px 0 rgba(255,255,255,0.05);
+        0 30px 80px rgba(0,0,0,.45),
+        inset 0 1px 0 rgba(255,255,255,.04);
 
       backdrop-filter: blur(22px);
       -webkit-backdrop-filter: blur(22px);
     }
 
     /* =========================
-       PRESENTACIÓN
+       HERO
     ========================== */
 
     .hero {
-      position: relative;
-
-      padding: 60px 50px;
-
-      display: flex;
-      justify-content: center;
-      flex-direction: column;
-
       min-height: 650px;
 
+      padding: 55px 48px;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
       background:
-        radial-gradient(
-          circle at 20% 20%,
-          rgba(124,58,237,0.28),
-          transparent 34%
-        ),
-        radial-gradient(
-          circle at 85% 85%,
-          rgba(217,173,69,0.12),
-          transparent 30%
-        );
+        radial-gradient(circle at 20% 20%,rgba(124,58,237,.26),transparent 34%),
+        radial-gradient(circle at 85% 85%,rgba(217,173,69,.10),transparent 30%);
     }
 
     .badge {
-      display: inline-flex;
-      align-items: center;
-
       width: fit-content;
 
       padding: 8px 13px;
 
-      border-radius: 999px;
+      margin-bottom: 22px;
 
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 999px;
 
       color: #e9d5ff;
 
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.09);
+
       font-size: 13px;
       font-weight: 600;
-
-      margin-bottom: 24px;
     }
 
     .brand {
-      font-size: clamp(44px, 6vw, 72px);
+      margin-bottom: 20px;
 
-      line-height: 0.98;
+      font-size: clamp(45px,6vw,72px);
+
+      line-height: 1;
 
       font-weight: 850;
 
       letter-spacing: -3px;
 
-      margin-bottom: 22px;
-
-      background:
-        linear-gradient(
-          100deg,
-          #ffffff 5%,
-          #f7e5ad 48%,
-          #d9ad45 100%
-        );
+      background: linear-gradient(
+        100deg,
+        #fff 5%,
+        #f7e5ad 48%,
+        #d9ad45 100%
+      );
 
       -webkit-background-clip: text;
       background-clip: text;
-
       color: transparent;
     }
 
     .hero h2 {
       max-width: 500px;
 
-      font-size: clamp(25px, 3vw, 38px);
+      margin-bottom: 17px;
+
+      font-size: clamp(25px,3vw,38px);
 
       line-height: 1.12;
-
-      margin-bottom: 18px;
     }
 
     .hero p {
       max-width: 520px;
 
-      color: rgba(255,255,255,0.70);
+      color: rgba(255,255,255,.68);
 
       font-size: 16px;
 
@@ -271,45 +237,44 @@
 
     .features {
       display: grid;
+      grid-template-columns: repeat(3,1fr);
 
-      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
 
-      gap: 12px;
-
-      margin-top: 35px;
+      margin-top: 32px;
     }
 
     .feature {
       padding: 15px 12px;
 
-      border-radius: 17px;
+      border-radius: 16px;
 
-      background: rgba(255,255,255,0.045);
+      background: rgba(255,255,255,.045);
 
-      border: 1px solid rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,.07);
     }
 
     .feature-icon {
-      font-size: 22px;
-      margin-bottom: 7px;
+      font-size: 21px;
+      margin-bottom: 6px;
     }
 
     .feature strong {
       display: block;
 
       font-size: 13px;
+
       margin-bottom: 3px;
     }
 
     .feature span {
-      color: rgba(255,255,255,0.52);
+      color: rgba(255,255,255,.50);
 
       font-size: 11px;
-      line-height: 1.4;
     }
 
     /* =========================
-       PANEL DE ACCESO
+       AUTENTICACIÓN
     ========================== */
 
     .auth {
@@ -319,7 +284,7 @@
       align-items: center;
       justify-content: center;
 
-      background: rgba(3, 9, 25, 0.42);
+      background: rgba(3,9,25,.42);
     }
 
     .auth-box {
@@ -328,7 +293,7 @@
     }
 
     .auth-header {
-      margin-bottom: 28px;
+      margin-bottom: 25px;
     }
 
     .auth-header h3 {
@@ -337,7 +302,7 @@
     }
 
     .auth-header p {
-      color: rgba(255,255,255,0.58);
+      color: rgba(255,255,255,.56);
 
       font-size: 14px;
 
@@ -352,43 +317,43 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
 
+      gap: 4px;
+
       padding: 4px;
 
-      background: rgba(255,255,255,0.055);
+      margin-bottom: 23px;
 
       border-radius: 14px;
 
-      margin-bottom: 24px;
+      background: rgba(255,255,255,.05);
     }
 
     .tab {
       border: 0;
-      background: transparent;
-
-      color: rgba(255,255,255,0.48);
 
       padding: 11px;
 
       border-radius: 10px;
 
+      color: rgba(255,255,255,.45);
+
+      background: transparent;
+
       cursor: pointer;
 
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 700;
 
-      transition: 0.25s ease;
+      transition: .25s ease;
     }
 
     .tab.active {
-      background: rgba(255,255,255,0.10);
-      color: #ffffff;
-
-      box-shadow:
-        0 4px 18px rgba(0,0,0,0.16);
+      color: #fff;
+      background: rgba(255,255,255,.10);
     }
 
     /* =========================
-       FORMULARIO
+       FORMULARIOS
     ========================== */
 
     .form {
@@ -397,7 +362,8 @@
 
     .form.active {
       display: block;
-      animation: formIn 0.25s ease;
+
+      animation: formIn .25s ease;
     }
 
     @keyframes formIn {
@@ -413,7 +379,7 @@
     }
 
     .field {
-      margin-bottom: 16px;
+      margin-bottom: 15px;
     }
 
     .field label {
@@ -421,7 +387,7 @@
 
       margin-bottom: 7px;
 
-      color: rgba(255,255,255,0.76);
+      color: rgba(255,255,255,.75);
 
       font-size: 13px;
       font-weight: 600;
@@ -429,37 +395,34 @@
 
     .field input {
       width: 100%;
-
       height: 50px;
 
       padding: 0 15px;
 
       border-radius: 13px;
 
-      border: 1px solid rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,.10);
 
       outline: none;
 
-      background: rgba(255,255,255,0.055);
+      color: #fff;
 
-      color: #ffffff;
+      background: rgba(255,255,255,.055);
 
       font-size: 14px;
 
-      transition: 0.25s ease;
+      transition: .25s ease;
     }
 
     .field input::placeholder {
-      color: rgba(255,255,255,0.32);
+      color: rgba(255,255,255,.30);
     }
 
     .field input:focus {
-      border-color: rgba(217,173,69,0.70);
-
-      background: rgba(255,255,255,0.075);
+      border-color: rgba(217,173,69,.70);
 
       box-shadow:
-        0 0 0 4px rgba(217,173,69,0.08);
+        0 0 0 4px rgba(217,173,69,.08);
     }
 
     /* =========================
@@ -468,50 +431,41 @@
 
     .main-button {
       width: 100%;
-
       height: 52px;
 
-      border: 0;
+      margin-top: 3px;
 
+      border: 0;
       border-radius: 14px;
 
       cursor: pointer;
 
-      background:
-        linear-gradient(
-          135deg,
-          #d9ad45,
-          #f1d17a
-        );
-
       color: #10131d;
 
-      font-size: 15px;
+      background: linear-gradient(
+        135deg,
+        #d9ad45,
+        #f1d17a
+      );
 
+      font-size: 15px;
       font-weight: 800;
 
       box-shadow:
-        0 10px 28px rgba(217,173,69,0.18);
+        0 10px 28px rgba(217,173,69,.17);
 
-      transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        opacity 0.2s ease;
+      transition: .2s ease;
     }
 
     .main-button:hover {
       transform: translateY(-1px);
 
       box-shadow:
-        0 14px 32px rgba(217,173,69,0.25);
-    }
-
-    .main-button:active {
-      transform: translateY(0);
+        0 14px 32px rgba(217,173,69,.25);
     }
 
     .main-button:disabled {
-      opacity: 0.55;
+      opacity: .55;
       cursor: wait;
     }
 
@@ -522,15 +476,15 @@
     #message {
       min-height: 22px;
 
-      margin-top: 15px;
+      margin-top: 14px;
 
       text-align: center;
+
+      color: rgba(255,255,255,.62);
 
       font-size: 13px;
 
       line-height: 1.5;
-
-      color: rgba(255,255,255,0.65);
     }
 
     #message.success {
@@ -542,11 +496,11 @@
     }
 
     .legal {
-      margin-top: 18px;
-
-      color: rgba(255,255,255,0.36);
+      margin-top: 17px;
 
       text-align: center;
+
+      color: rgba(255,255,255,.34);
 
       font-size: 11px;
 
@@ -554,44 +508,41 @@
     }
 
     /* =========================
-       RESPONSIVE
+       MÓVIL
     ========================== */
 
     @media (max-width: 850px) {
+
       .container {
         grid-template-columns: 1fr;
       }
 
       .hero {
         min-height: auto;
-        padding: 42px 28px;
+        padding: 42px 28px 35px;
       }
 
       .auth {
         padding: 35px 25px 40px;
       }
-
-      .features {
-        grid-template-columns: 1fr 1fr 1fr;
-      }
     }
 
     @media (max-width: 520px) {
+
       .page {
-        padding: 14px;
+        padding: 12px;
       }
 
       .container {
-        border-radius: 23px;
+        border-radius: 22px;
       }
 
       .hero {
-        padding: 36px 22px 30px;
+        padding: 35px 21px 28px;
       }
 
       .brand {
-        font-size: 48px;
-        letter-spacing: -2px;
+        font-size: 47px;
       }
 
       .hero h2 {
@@ -603,15 +554,11 @@
       }
 
       .features {
-        gap: 8px;
+        gap: 7px;
       }
 
       .feature {
         padding: 12px 8px;
-      }
-
-      .feature-icon {
-        font-size: 19px;
       }
 
       .feature strong {
@@ -623,7 +570,7 @@
       }
 
       .auth {
-        padding: 30px 20px 35px;
+        padding: 30px 19px 35px;
       }
 
       .auth-header h3 {
@@ -635,15 +582,23 @@
 
 <body>
 
-  <!-- PANTALLA DE CARGA -->
+  <!-- CARGA -->
   <div id="loadingScreen">
-    <div class="loading-logo">💕 EmiMatch</div>
-    <div class="loading-text">Preparando tu espacio...</div>
+
+    <div class="loading-logo">
+      💕 EmiMatch
+    </div>
+
+    <div class="loading-text">
+      Preparando tu espacio...
+    </div>
+
     <div class="loader"></div>
+
   </div>
 
 
-  <!-- CONTENIDO PRINCIPAL -->
+  <!-- PÁGINA -->
   <main class="page" id="mainPage">
 
     <section class="container">
@@ -694,16 +649,21 @@
       </div>
 
 
-      <!-- LOGIN / REGISTRO -->
+      <!-- ACCESO -->
       <div class="auth">
 
         <div class="auth-box">
 
           <div class="auth-header">
-            <h3 id="authTitle">Bienvenido</h3>
+
+            <h3 id="authTitle">
+              Bienvenido
+            </h3>
+
             <p id="authDescription">
               Ingresá para continuar con tu experiencia en EmiMatch.
             </p>
+
           </div>
 
 
@@ -741,8 +701,8 @@
               </label>
 
               <input
-                type="email"
                 id="loginEmail"
+                type="email"
                 placeholder="tuemail@ejemplo.com"
                 autocomplete="email"
                 required
@@ -758,8 +718,8 @@
               </label>
 
               <input
-                type="password"
                 id="loginPassword"
+                type="password"
                 placeholder="Tu contraseña"
                 autocomplete="current-password"
                 required
@@ -792,8 +752,8 @@
               </label>
 
               <input
-                type="email"
                 id="registerEmail"
+                type="email"
                 placeholder="tuemail@ejemplo.com"
                 autocomplete="email"
                 required
@@ -809,8 +769,8 @@
               </label>
 
               <input
-                type="password"
                 id="registerPassword"
+                type="password"
                 placeholder="Mínimo 6 caracteres"
                 minlength="6"
                 autocomplete="new-password"
@@ -827,8 +787,8 @@
               </label>
 
               <input
-                type="password"
                 id="registerPassword2"
+                type="password"
                 placeholder="Repetí tu contraseña"
                 minlength="6"
                 autocomplete="new-password"
@@ -869,13 +829,20 @@
 
     /* ==================================================
        SUPABASE
-       PEGÁ AQUÍ LOS MISMOS DATOS QUE YA TENÍAS
+       IMPORTANTE:
+       REEMPLAZÁ ESTOS DOS VALORES POR LOS QUE YA USABAS
     ================================================== */
 
-    const SUPABASE_URL = "PEGÁ_ACÁ_TU_SUPABASE_URL";
+    const SUPABASE_URL =
+      "PEGÁ_ACÁ_TU_SUPABASE_URL";
 
-    const SUPABASE_ANON_KEY = "PEGÁ_ACÁ_TU_SUPABASE_ANON_KEY";
+    const SUPABASE_ANON_KEY =
+      "PEGÁ_ACÁ_TU_SUPABASE_ANON_KEY";
 
+
+    /* ==================================================
+       CLIENTE SUPABASE
+    ================================================== */
 
     const { createClient } = supabase;
 
@@ -924,19 +891,22 @@
 
 
     /* ==================================================
-       UTILIDADES
+       MENSAJES
     ================================================== */
 
     function showMessage(text, type = "") {
 
       message.textContent = text;
-
       message.className = type;
 
     }
 
 
-    function hideLoading() {
+    /* ==================================================
+       MOSTRAR PÁGINA
+    ================================================== */
+
+    function showPage() {
 
       loadingScreen.classList.add("hidden");
 
@@ -945,31 +915,34 @@
     }
 
 
-    function setLoadingButton(button, loading, normalText) {
+    /* ==================================================
+       BOTONES
+    ================================================== */
+
+    function buttonLoading(button, loading, text) {
 
       button.disabled = loading;
 
       button.textContent =
-        loading ? "Procesando..." : normalText;
+        loading ? "Procesando..." : text;
 
     }
 
 
     /* ==================================================
-       CAMBIO LOGIN / REGISTRO
+       TABS
     ================================================== */
 
     loginTab.addEventListener("click", () => {
 
       loginTab.classList.add("active");
-
       registerTab.classList.remove("active");
 
       loginForm.classList.add("active");
-
       registerForm.classList.remove("active");
 
-      authTitle.textContent = "Bienvenido";
+      authTitle.textContent =
+        "Bienvenido";
 
       authDescription.textContent =
         "Ingresá para continuar con tu experiencia en EmiMatch.";
@@ -982,14 +955,13 @@
     registerTab.addEventListener("click", () => {
 
       registerTab.classList.add("active");
-
       loginTab.classList.remove("active");
 
       registerForm.classList.add("active");
-
       loginForm.classList.remove("active");
 
-      authTitle.textContent = "Crear tu cuenta";
+      authTitle.textContent =
+        "Crear tu cuenta";
 
       authDescription.textContent =
         "Comenzá tu experiencia y descubrí nuevas conexiones.";
@@ -1010,13 +982,15 @@
       showMessage("");
 
       const email =
-        document.getElementById("loginEmail").value.trim();
+        document.getElementById("loginEmail")
+        .value
+        .trim();
 
       const password =
-        document.getElementById("loginPassword").value;
+        document.getElementById("loginPassword")
+        .value;
 
-
-      setLoadingButton(
+      buttonLoading(
         loginButton,
         true,
         "Iniciar sesión"
@@ -1043,11 +1017,7 @@
         );
 
 
-        setTimeout(() => {
-
-          window.location.replace("perfil.html");
-
-        }, 400);
+        window.location.replace("perfil.html");
 
 
       } catch (error) {
@@ -1060,7 +1030,7 @@
           "error"
         );
 
-        setLoadingButton(
+        buttonLoading(
           loginButton,
           false,
           "Iniciar sesión"
@@ -1082,7 +1052,49 @@
       showMessage("");
 
       const email =
-        document.getElementById("registerEmail").value.trim();
+        document.getElementById("registerEmail")
+        .value
+        .trim();
 
       const password =
-        document.getElementById("registerPassw
+        document.getElementById("registerPassword")
+        .value;
+
+      const password2 =
+        document.getElementById("registerPassword2")
+        .value;
+
+
+      if (password.length < 6) {
+
+        showMessage(
+          "La contraseña debe tener al menos 6 caracteres.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      if (password !== password2) {
+
+        showMessage(
+          "Las contraseñas no coinciden.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      buttonLoading(
+        registerButton,
+        true,
+        "Crear mi cuenta"
+      );
+
+
+      try {
+
+        const { data, error } =
+          await cl
