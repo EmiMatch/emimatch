@@ -2495,25 +2495,23 @@ async function loadDiscoveryProfiles() {
   try {
 
     /* =================================================
-       1. OBTENER USUARIOS BLOQUEADOS
+       1. USUARIOS BLOQUEADOS
     ================================================= */
 
     const {
       data: blockedUsers,
       error: blockedError
-    } =
-      await supabaseClient
-        .from("block")
-        .select("blocked_user_id")
-        .eq(
-          "user_id",
-          currentUser.id
-        );
+    } = await supabaseClient
+      .from("block")
+      .select("blocked_user_id")
+      .eq(
+        "user_id",
+        currentUser.id
+      );
 
     if (blockedError) {
       throw blockedError;
     }
-
 
     const blockedIds =
       new Set(
@@ -2532,30 +2530,28 @@ async function loadDiscoveryProfiles() {
     const {
       data: profiles,
       error
-    } =
-      await supabaseClient
-        .from("profiles")
-        .select(`
-          id,
-          nombre,
-          edad,
-          ciudad,
-          descripcion,
-          foto_url,
-          intereses,
-          created_at
-        `)
-        .neq(
-          "id",
-          currentUser.id
-        )
-        .order(
-          "created_at",
-          {
-            ascending: false
-          }
-        );
-
+    } = await supabaseClient
+      .from("profiles")
+      .select(`
+        id,
+        nombre,
+        edad,
+        ciudad,
+        descripcion,
+        foto_url,
+        intereses,
+        created_at
+      `)
+      .neq(
+        "id",
+        currentUser.id
+      )
+      .order(
+        "created_at",
+        {
+          ascending: false
+        }
+      );
 
     if (error) {
       throw error;
@@ -2569,22 +2565,19 @@ async function loadDiscoveryProfiles() {
     const {
       data: swipes,
       error: swipesError
-    } =
-      await supabaseClient
-        .from("swipes")
-        .select(
-          "target_user_id"
-        )
-        .eq(
-          "user_id",
-          currentUser.id
-        );
-
+    } = await supabaseClient
+      .from("swipes")
+      .select(
+        "target_user_id"
+      )
+      .eq(
+        "user_id",
+        currentUser.id
+      );
 
     if (swipesError) {
       throw swipesError;
     }
-
 
     const seen =
       new Set(
@@ -2597,7 +2590,7 @@ async function loadDiscoveryProfiles() {
 
 
     /* =================================================
-       4. FILTRAR BLOQUEADOS + YA VISTOS
+       4. FILTRAR PERFILES
     ================================================= */
 
     discoveryProfiles =
@@ -2625,7 +2618,7 @@ async function loadDiscoveryProfiles() {
 
 
     /* =================================================
-       5. MOSTRAR RESULTADOS
+       5. INICIAR DESCUBRIMIENTO
     ================================================= */
 
     currentProfileIndex =
@@ -2641,7 +2634,6 @@ async function loadDiscoveryProfiles() {
       error
     );
 
-
     discoveryContainer.innerHTML = `
       <div class="card empty-state">
         <div class="emoji">⚠️</div>
@@ -2656,715 +2648,8 @@ async function loadDiscoveryProfiles() {
   }
 
 }
-              "created_at",
-              {
-                ascending:
-                  false
-              }
-            );
 
-
-        if (error) {
-          throw error;
-        }
-
-
-        const {
-          data: swipes
-        } =
-          await supabaseClient
-            .from("swipes")
-            .select(
-              "target_user_id"
-            )
-            .eq(
-              "user_id",
-              currentUser.id
-            );
-
-
-        const seen =
-          new Set(
-            (swipes || [])
-              .map(
-                swipe =>
-                  swipe.target_user_id
-              )
-          );
-
-
-        discoveryProfiles =
-          (profiles || [])
-            .filter(
-              profile =>
-                !seen.has(
-                  profile.id
-                )
-            );
-
-
-        currentProfileIndex =
-          0;
-
-
-        renderDiscovery();
-
-
-      } catch (error) {
-
-        console.error(
-          "Error descubriendo perfiles:",
-          error
-        );
-
-
-        discoveryContainer.innerHTML = `
-          <div class="card empty-state">
-            <div class="emoji">⚠️</div>
-            <h3>No pudimos cargar perfiles</h3>
-            <p>
-              Revisá la configuración de Supabase.
-            </p>
-          </div>
-        `;
-
-      }
-
-    }
-
-
-    /* =====================================================
-       MOSTRAR PERFIL DESCUBRIMIENTO
-    ===================================================== */
-
-    function renderDiscovery() {
-
-      if (
-        currentProfileIndex >=
-        discoveryProfiles.length
-      ) {
-
-        discoveryContainer.innerHTML = `
-          <div class="card empty-state">
-            <div class="emoji">💕</div>
-            <h3>No hay más perfiles por ahora</h3>
-            <p>
-              Volvé más tarde para descubrir nuevas personas.
-            </p>
-          </div>
-        `;
-
-        return;
-      }
-
-
-      const profile =
-        discoveryProfiles[
-          currentProfileIndex
-        ];
-
-
-      const name =
-        escapeHtml(
-          profile.nombre ||
-          "Usuario EmiMatch"
-        );
-
-
-      const city =
-        escapeHtml(
-          profile.ciudad ||
-          "Ciudad no indicada"
-        );
-
-
-      const description =
-        escapeHtml(
-          profile.descripcion ||
-          "Todavía no agregó una descripción."
-        );
-
-
-      const interests =
-        String(
-          profile.intereses ||
-          ""
-        )
-          .split(",")
-          .map(
-            item =>
-              item.trim()
-          )
-          .filter(Boolean);
-
-
-      const interestsHtml =
-        interests.length
-          ? `
-            <div class="interests">
-
-              ${interests
-                .map(
-                  item =>
-                    `<span class="interest">${escapeHtml(item)}</span>`
-                )
-                .join("")}
-
-            </div>
-          `
-          : "";
-
-
-      const photo =
-        profile.foto_url
-          ? `
-            <img
-              src="${escapeAttribute(profile.foto_url)}"
-              alt="Foto de ${name}"
-            >
-          `
-          : `
-            <div class="profile-photo-placeholder">
-              💕
-            </div>
-          `;
-
-
-      discoveryContainer.innerHTML = `
-
-        <article class="profile-card">
-
-          <div class="profile-photo">
-
-            ${photo}
-
-          </div>
-
-
-          <div class="profile-info">
-
-            <div class="profile-name">
-              ${name}
-              ${profile.edad
-                ? `, ${Number(profile.edad)}`
-                : ""}
-            </div>
-
-
-            <div class="profile-city">
-              📍 ${city}
-            </div>
-
-
-            <div class="profile-description">
-              ${description}
-            </div>
-
-
-            ${interestsHtml}
-
-
-            <div class="actions">
-
-              <button
-                type="button"
-                id="passButton"
-                class="action-btn pass-btn"
-              >
-                ✕ Pasar
-              </button>
-
-
-              <button
-                type="button"
-                id="likeButton"
-                class="action-btn like-btn"
-              >
-                💕 Me gusta
-              </button>
-
-            </div>
-
-          </div>
-
-        </article>
-
-      `;
-
-
-      document
-        .getElementById(
-          "passButton"
-        )
-        .addEventListener(
-          "click",
-          () =>
-            handleSwipe("pass")
-        );
-
-
-      document
-        .getElementById(
-          "likeButton"
-        )
-        .addEventListener(
-          "click",
-          () =>
-            handleSwipe("like")
-        );
-
-    }
-
-
-    /*
-    =====================================================
-       LIKE / PASS
-    ===================================================== */
-
-    async function handleSwipe(
-      action
-    ) {
-
-      const profile =
-        discoveryProfiles[
-          currentProfileIndex
-        ];
-
-
-      if (!profile) {
-        return;
-      }
-
-
-      const passButton =
-        document.getElementById(
-          "passButton"
-        );
-
-      const likeButton =
-        document.getElementById(
-          "likeButton"
-        );
-
-
-      if (passButton)
-        passButton.disabled =
-          true;
-
-      if (likeButton)
-        likeButton.disabled =
-          true;
-
-
-      try {
-
-        const {
-          data: existingSwipe
-        } =
-          await supabaseClient
-            .from("swipes")
-            .select("id")
-            .eq(
-              "user_id",
-              currentUser.id
-            )
-            .eq(
-              "target_user_id",
-              profile.id
-            )
-            .maybeSingle();
-
-
-        if (existingSwipe) {
-
-          const {
-            error
-          } =
-            await supabaseClient
-              .from("swipes")
-              .update({
-                action:
-                  action
-              })
-              .eq(
-                "id",
-                existingSwipe.id
-              );
-
-
-          if (error)
-            throw error;
-
-        } else {
-
-          const {
-            error
-          } =
-            await supabaseClient
-              .from("swipes")
-              .insert({
-                user_id:
-                  currentUser.id,
-
-                target_user_id:
-                  profile.id,
-
-                action:
-                  action
-              });
-
-
-          if (error)
-            throw error;
-
-        }
-
-
-        if (
-          action ===
-          "like"
-        ) {
-
-          const {
-            data:
-              reciprocal
-          } =
-            await supabaseClient
-              .from("swipes")
-              .select("id")
-              .eq(
-                "user_id",
-                profile.id
-              )
-              .eq(
-                "target_user_id",
-                currentUser.id
-              )
-              .eq(
-                "action",
-                "like"
-              )
-              .maybeSingle();
-
-
-          if (reciprocal) {
-
-            await createMatch(
-              profile.id
-            );
-
-
-            showStatus(
-              `💕 ¡Es un Match con ${profile.nombre || "esta persona"}!`,
-              "success"
-            );
-
-          }
-
-        }
-
-
-        currentProfileIndex++;
-
-        renderDiscovery();
-
-
-      } catch (error) {
-
-        console.error(
-          "Error en swipe:",
-          error
-        );
-
-
-        showStatus(
-          error.message ||
-          "No pudimos guardar tu decisión.",
-          "error"
-        );
-
-
-        if (passButton)
-          passButton.disabled =
-            false;
-
-        if (likeButton)
-          likeButton.disabled =
-            false;
-
-      }
-
-    }
-
-
-    /* =====================================================
-       CREAR MATCH
-    ===================================================== */
-
-    async function createMatch(
-      otherUserId
-    ) {
-
-      const user1 =
-        currentUser.id <
-        otherUserId
-          ? currentUser.id
-          : otherUserId;
-
-
-      const user2 =
-        currentUser.id <
-        otherUserId
-          ? otherUserId
-          : currentUser.id;
-
-
-      const {
-        data: existing
-      } =
-        await supabaseClient
-          .from("matches")
-          .select(
-            "user1_id,user2_id"
-          )
-          .eq(
-            "user1_id",
-            user1
-          )
-          .eq(
-            "user2_id",
-            user2
-          )
-          .maybeSingle();
-
-
-      if (existing) {
-        return;
-      }
-
-
-      const {
-        error
-      } =
-        await supabaseClient
-          .from("matches")
-          .insert({
-            user1_id:
-              user1,
-
-            user2_id:
-              user2
-          });
-
-
-      if (error) {
-        throw error;
-      }
-
-    }
-
-/* =====================================================
-       ESCAPAR HTML
-    ===================================================== */
-
-    function escapeHtml(
-      value
-    ) {
-
-      return String(value)
-        .replaceAll(
-          "&",
-          "&amp;"
-        )
-        .replaceAll(
-          "<",
-          "&lt;"
-        )
-        .replaceAll(
-          ">",
-          "&gt;"
-        )
-        .replaceAll(
-          '"',
-          "&quot;"
-        )
-        .replaceAll(
-          "'",
-          "&#039;"
-        );
-
-    }
-
-
-    function escapeAttribute(
-      value
-    ) {
-
-      return escapeHtml(
-        value
-      );
-
-    }
-
-
-    /* =====================================================
-       CERRAR SESIÓN
-    ===================================================== */
-
-    logoutButton.addEventListener(
-      "click",
-      async function() {
-
-        logoutButton.disabled =
-          true;
-
-        logoutButton.textContent =
-          "Saliendo...";
-
-
-        try {
-
-          const {
-            error
-          } =
-            await supabaseClient
-              .auth
-              .signOut();
-
-
-          if (error)
-            throw error;
-
-
-          window.location.replace(
-            "index.html"
-          );
-
-
-        } catch (error) {
-
-          console.error(
-            error
-          );
-
-          logoutButton.disabled =
-            false;
-
-          logoutButton.textContent =
-            "Cerrar sesión";
-
-          showStatus(
-            "No pudimos cerrar la sesión.",
-            "error"
-          );
-
-        }
-
-      }
-    );
-
-
-    /* =====================================================
-       INICIAR
-    ===================================================== */
-
-    async function initialize() {
-
-      try {
-
-        const {
-          data,
-          error
-        } =
-          await supabaseClient
-            .auth
-            .getSession();
-
-
-        if (error)
-          throw error;
-
-
-        currentUser =
-          data.session?.user ||
-          null;
-
-
-        if (!currentUser) {
-
-          window.location.replace(
-            "index.html"
-          );
-
-          return;
-        }
-
-
-        await loadProfile();
-
-        await loadAlbum();
-
-        await loadDiscoveryProfiles();
-
-
-      } catch (error) {
-
-        console.error(
-          "Error inicializando:",
-          error
-        );
-
-
-        showStatus(
-          error.message ||
-          "No pudimos cargar tu perfil.",
-          "error"
-        );
-
-      }
-
-    }
-
-
-    initialize();
-
-  </script>
-        await loadDiscoveryProfiles();
-
-
-      } catch (error) {
-
-        console.error(
-          "Error inicializando:",
-          error
-        );
-
-
-        showStatus(
-          error.message ||
-          "No pudimos cargar tu perfil.",
-          "error"
-        );
-
-      }
-
-    }
-
-
-    initialize();
-
-  </script>
-
-  <!-- =====================================================
-       EmiMatch — Sistema central
-  ===================================================== -->
-
-  <script src="assets/js/config.js"></script>
-  <script src="assets/js/app.js"></script>
-  <script src="assets/js/components.js"></script>
-
-
-</body>
-</html>
-    
+  
+          
+        
     
