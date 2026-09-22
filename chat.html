@@ -1,1225 +1,2219 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>EmiMatch - Chat</title>
-
-  <meta
-    name="description"
-    content="Chat privado de EmiMatch."
-  >
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-    :root {
-      --bg: #050816;
-      --bg2: #0b1228;
-      --card: rgba(255,255,255,.065);
-      --card2: rgba(255,255,255,.09);
-      --border: rgba(255,255,255,.11);
-
-      --gold: #d9ad45;
-      --gold-light: #f6dc87;
-
-      --purple: #7c3aed;
-      --purple-light: #a855f7;
-
-      --pink: #ec4899;
-
-      --white: #ffffff;
-      --text: #e8edf7;
-      --muted: #94a3b8;
-
-      --success: #22c55e;
-      --danger: #ef4444;
-
-      --shadow:
-        0 25px 70px rgba(0,0,0,.45);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html,
-    body {
-      width: 100%;
-      height: 100%;
-    }
-
-    body {
-      font-family:
-        Inter,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
-
-      background:
-        radial-gradient(
-          circle at 15% 10%,
-          rgba(124,58,237,.25),
-          transparent 35%
-        ),
-        radial-gradient(
-          circle at 85% 90%,
-          rgba(236,72,153,.14),
-          transparent 35%
-        ),
-        linear-gradient(
-          135deg,
-          var(--bg),
-          var(--bg2)
-        );
-
-      color: var(--text);
-      overflow: hidden;
-    }
-
-    button,
-    input,
-    textarea {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    /* =========================
-       APP
-    ========================= */
-
-    .app {
-      width: 100%;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>EmiMatch - Chat</title>
+
+<meta name="description" content="Chat privado de EmiMatch.">
+
+<link rel="stylesheet" href="assets/css/app.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+:root{
+  --bg:#050816;
+  --bg2:#0b1228;
+  --card:rgba(255,255,255,.065);
+  --border:rgba(255,255,255,.11);
+  --gold:#d9ad45;
+  --gold-light:#f6dc87;
+  --purple:#7c3aed;
+  --pink:#ec4899;
+  --white:#fff;
+  --text:#e8edf7;
+  --muted:#94a3b8;
+  --success:#22c55e;
+  --danger:#ef4444;
+}
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html,
+body{
+  width:100%;
+  height:100%;
+}
+
+body{
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  background:
+    radial-gradient(
+      circle at 15% 10%,
+      rgba(124,58,237,.25),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 85% 90%,
+      rgba(236,72,153,.14),
+      transparent 35%
+    ),
+    linear-gradient(
+      135deg,
+      var(--bg),
+      var(--bg2)
+    );
+
+  color:var(--text);
+  overflow:hidden;
+}
+
+button,
+input,
+textarea{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.app{
+  width:100%;
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+
+.topbar{
+  height:70px;
+  flex-shrink:0;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  padding:0 18px;
+
+  background:rgba(5,8,22,.84);
+
+  backdrop-filter:blur(22px);
+  -webkit-backdrop-filter:blur(22px);
 
-    /* =========================
-       HEADER
-    ========================= */
+  border-bottom:1px solid var(--border);
 
-    .topbar {
-      height: 76px;
-      flex-shrink: 0;
+  position:relative;
+  z-index:10;
+}
 
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
 
-      padding: 0 22px;
+  color:white;
+  text-decoration:none;
 
-      background:
-        rgba(5,8,22,.84);
+  font-weight:900;
+  font-size:20px;
+}
 
-      backdrop-filter: blur(22px);
-      -webkit-backdrop-filter: blur(22px);
+.brand-heart{
+  width:38px;
+  height:38px;
 
-      border-bottom:
-        1px solid var(--border);
+  display:grid;
+  place-items:center;
 
-      box-shadow:
-        0 10px 40px rgba(0,0,0,.25);
+  border-radius:12px;
 
-      position: relative;
-      z-index: 10;
-    }
+  background:
+    linear-gradient(
+      135deg,
+      var(--purple),
+      var(--pink)
+    );
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 11px;
+  box-shadow:
+    0 8px 28px rgba(124,58,237,.35);
+}
 
-      color: var(--white);
-      text-decoration: none;
-      font-weight: 900;
-      font-size: 21px;
-      letter-spacing: -.5px;
-    }
+.top-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
 
-    .brand-heart {
-      width: 40px;
-      height: 40px;
+.icon-btn{
+  width:42px;
+  height:42px;
 
-      display: grid;
-      place-items: center;
+  border:1px solid var(--border);
+  border-radius:13px;
 
-      border-radius: 13px;
+  background:rgba(255,255,255,.055);
 
-      background:
-        linear-gradient(
-          135deg,
-          var(--purple),
-          var(--pink)
-        );
+  color:white;
 
-      box-shadow:
-        0 8px 28px rgba(124,58,237,.35);
+  display:grid;
+  place-items:center;
 
-      font-size: 19px;
-    }
+  transition:.2s ease;
+}
 
-    .top-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+.icon-btn:hover{
+  background:rgba(255,255,255,.1);
+}
 
-    .icon-btn {
-      width: 42px;
-      height: 42px;
+.chat-header{
+  min-height:78px;
+  flex-shrink:0;
 
-      border: 1px solid var(--border);
-      border-radius: 13px;
+  display:flex;
+  align-items:center;
+  gap:12px;
 
-      background: rgba(255,255,255,.055);
+  padding:10px 16px;
 
-      color: var(--white);
+  background:rgba(13,22,48,.72);
 
-      display: grid;
-      place-items: center;
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
 
-      transition: .2s ease;
-    }
+  border-bottom:1px solid var(--border);
 
-    .icon-btn:hover {
-      background: rgba(255,255,255,.1);
-      transform: translateY(-1px);
-    }
+  z-index:5;
+}
 
-    /* =========================
-       CHAT HEADER
-    ========================= */
+.back-btn{
+  width:42px;
+  height:42px;
+  flex-shrink:0;
 
-    .chat-header {
-      height: 82px;
-      flex-shrink: 0;
+  border:1px solid var(--border);
+  border-radius:12px;
 
-      display: flex;
-      align-items: center;
+  background:rgba(255,255,255,.05);
 
-      gap: 13px;
+  color:white;
 
-      padding: 10px 18px;
+  display:grid;
+  place-items:center;
 
-      background:
-        rgba(13,22,48,.72);
+  font-size:20px;
+}
 
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+.profile-avatar{
+  width:52px;
+  height:52px;
+  flex-shrink:0;
 
-      border-bottom:
-        1px solid var(--border);
+  border-radius:50%;
+  object-fit:cover;
 
-      position: relative;
-      z-index: 5;
-    }
+  border:2px solid rgba(217,173,69,.75);
 
-    .back-btn {
-      width: 42px;
-      height: 42px;
+  box-shadow:
+    0 0 0 4px rgba(217,173,69,.08),
+    0 8px 25px rgba(0,0,0,.35);
+}
 
-      border: 1px solid var(--border);
-      border-radius: 12px;
+.user-info{
+  min-width:0;
+  flex:1;
+}
 
-      background: rgba(255,255,255,.05);
+.user-name{
+  color:white;
+  font-size:16px;
+  font-weight:800;
 
-      color: white;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
 
-      display: grid;
-      place-items: center;
+.user-status{
+  margin-top:4px;
 
-      font-size: 20px;
+  display:flex;
+  align-items:center;
+  gap:6px;
 
-      transition: .2s;
-    }
+  color:var(--muted);
+  font-size:12px;
+}
 
-    .back-btn:hover {
-      background: rgba(255,255,255,.1);
-    }
+.status-dot{
+  width:8px;
+  height:8px;
 
-    .profile-avatar {
-      width: 53px;
-      height: 53px;
+  border-radius:50%;
 
-      border-radius: 50%;
+  background:var(--success);
 
-      object-fit: cover;
+  box-shadow:
+    0 0 10px rgba(34,197,94,.75);
+}
 
-      border:
-        2px solid rgba(217,173,69,.75);
+.status-dot.offline{
+  background:#64748b;
+  box-shadow:none;
+}
 
-      box-shadow:
-        0 0 0 4px rgba(217,173,69,.08),
-        0 8px 25px rgba(0,0,0,.35);
+.match-badge{
+  padding:7px 11px;
 
-      background:
-        linear-gradient(
-          135deg,
-          #1e293b,
-          #111827
-        );
-    }
+  border-radius:999px;
 
-    .user-info {
-      min-width: 0;
-      flex: 1;
-    }
+  color:var(--gold-light);
 
-    .user-name {
-      color: white;
-      font-size: 16px;
-      font-weight: 800;
+  background:rgba(217,173,69,.09);
 
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+  border:1px solid rgba(217,173,69,.22);
 
-    .user-status {
-      margin-top: 4px;
+  font-size:11px;
+  font-weight:800;
+}
+.date-divider{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:20px 0;
 
-      display: flex;
-      align-items: center;
-      gap: 6px;
+  color:#718096;
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.7px;
+}
 
-      color: var(--muted);
+.date-divider::before,
+.date-divider::after{
+  content:"";
+  flex:1;
+  height:1px;
 
-      font-size: 12px;
-    }
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,255,255,.1),
+      transparent
+    );
+}
 
-    .status-dot {
-      width: 8px;
-      height: 8px;
+.messages-container{
+  flex:1;
+  min-height:0;
 
-      border-radius: 50%;
+  overflow-y:auto;
 
-      background: var(--success);
+  padding:18px 16px 20px;
 
-      box-shadow:
-        0 0 10px rgba(34,197,94,.75);
-    }
+  scroll-behavior:smooth;
+}
 
-    .status-dot.offline {
-      background: #64748b;
-      box-shadow: none;
-    }
+.messages-inner{
+  width:100%;
+  max-width:900px;
+  margin:0 auto;
+}
 
-    .match-badge {
-      padding: 7px 11px;
+.message-row{
+  display:flex;
+  margin-bottom:8px;
 
-      border-radius: 999px;
+  animation:
+    messageIn .25s ease;
+}
 
-      color: var(--gold-light);
+.message-row.mine{
+  justify-content:flex-end;
+}
 
-      background:
-        rgba(217,173,69,.09);
+.message-row.theirs{
+  justify-content:flex-start;
+}
 
-      border:
-        1px solid rgba(217,173,69,.22);
+.message-bubble{
+  max-width:min(72%,520px);
 
-      font-size: 11px;
-      font-weight: 800;
+  padding:11px 14px 8px;
 
-      white-space: nowrap;
-    }
+  border-radius:18px;
 
-    /* =========================
-       MESSAGES
-    ========================= */
+  position:relative;
 
-    .messages {
-      flex: 1;
+  box-shadow:
+    0 8px 25px rgba(0,0,0,.12);
+}
 
-      overflow-y: auto;
+.mine .message-bubble{
+  color:white;
 
-      padding:
-        25px
-        max(18px, calc((100vw - 900px) / 2))
-        30px;
+  background:
+    linear-gradient(
+      135deg,
+      #7c3aed,
+      #9333ea
+    );
 
-      scroll-behavior: smooth;
+  border-bottom-right-radius:5px;
+}
 
-      background:
-        radial-gradient(
-          circle at 50% 0%,
-          rgba(124,58,237,.07),
-          transparent 40%
-        );
-    }
+.theirs .message-bubble{
+  color:#e5e7eb;
 
-    .messages::-webkit-scrollbar {
-      width: 7px;
-    }
+  background:
+    rgba(255,255,255,.075);
 
-    .messages::-webkit-scrollbar-track {
-      background: transparent;
-    }
+  border:1px solid rgba(255,255,255,.08);
 
-    .messages::-webkit-scrollbar-thumb {
-      background: rgba(255,255,255,.12);
-      border-radius: 20px;
-    }
+  border-bottom-left-radius:5px;
+}
 
-    .welcome {
-      max-width: 430px;
+.message-content{
+  font-size:14px;
+  line-height:1.45;
 
-      margin:
-        25px auto
-        28px;
+  white-space:pre-wrap;
+  word-break:break-word;
+}
 
-      padding: 20px;
+.message-meta{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
 
-      text-align: center;
+  gap:4px;
+  margin-top:4px;
 
-      background:
-        rgba(255,255,255,.045);
+  font-size:9px;
+  opacity:.65;
+}
 
-      border:
-        1px solid var(--border);
+.message-check{
+  font-size:11px;
+}
 
-      border-radius: 22px;
+.chat-state{
+  min-height:260px;
 
-      box-shadow:
-        0 15px 45px rgba(0,0,0,.18);
+  display:grid;
+  place-items:center;
 
-      animation: fadeIn .45s ease;
-    }
+  text-align:center;
 
-    .welcome-icon {
-      width: 48px;
-      height: 48px;
+  padding:30px;
+}
 
-      display: grid;
-      place-items: center;
+.chat-state-card{
+  width:min(100%,430px);
 
-      margin: 0 auto 10px;
+  padding:32px 24px;
 
-      border-radius: 15px;
+  border:1px solid var(--border);
+  border-radius:22px;
 
-      background:
-        linear-gradient(
-          135deg,
-          rgba(124,58,237,.25),
-          rgba(236,72,153,.18)
-        );
+  background:
+    rgba(255,255,255,.055);
 
-      font-size: 23px;
-    }
+  backdrop-filter:blur(18px);
+}
 
-    .welcome h2 {
-      color: white;
-      font-size: 17px;
-      margin-bottom: 6px;
-    }
+.state-icon{
+  font-size:38px;
+  margin-bottom:12px;
+}
 
-    .welcome p {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.55;
-    }
+.chat-state h3{
+  color:white;
+  margin-bottom:8px;
+}
 
-    .date-divider {
-      display: flex;
-      align-items: center;
-      gap: 12px;
+.chat-state p{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.5;
+}
 
-      margin: 20px 0;
+.composer{
+  flex-shrink:0;
 
-      color: #718096;
+  padding:
+    10px 14px
+    calc(10px + env(safe-area-inset-bottom));
 
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .7px;
-    }
+  background:
+    rgba(5,8,22,.88);
 
-    .date-divider::before,
-    .date-divider::after {
-      content: "";
-      flex: 1;
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
 
-      height: 1px;
+  border-top:1px solid var(--border);
+}
 
-      background:
-        linear-gradient(
-          90deg,
-          transparent,
-          rgba(255,255,255,.1),
-          transparent
-        );
-    }
+.composer-inner{
+  width:min(100%,900px);
+  margin:0 auto;
 
-    .message-row {
-      display: flex;
+  display:flex;
+  align-items:flex-end;
+  gap:8px;
+}
 
-      margin-bottom: 8px;
+#messageInput{
+  flex:1;
+  min-width:0;
 
-      animation: messageIn .25s ease;
-    }
+  min-height:44px;
+  max-height:130px;
 
-    .message-row.mine {
-      justify-content: flex-end;
-    }
+  resize:none;
 
-    .message-row.theirs {
-      justify-content: flex-start;
-    }
+  padding:12px 14px;
 
-    .message-bubble {
-      max-width: min(72%, 520px);
+  border:1px solid var(--border);
+  border-radius:15px;
 
-      padding:
-        11px
-        14px
-        8px;
+  outline:none;
 
-      border-radius: 18px;
+  background:
+    rgba(255,255,255,.065);
 
-      position: relative;
+  color:white;
 
-      box-shadow:
-        0 8px 25px rgba(0,0,0,.12);
-    }
+  line-height:1.35;
+}
 
-    .mine .message-bubble {
-      color: white;
+#messageInput::placeholder{
+  color:#718096;
+}
 
-      background:
-        linear-gradient(
-          135deg,
-          #7c3aed,
-          #9333ea
-        );
+#messageInput:focus{
+  border-color:
+    rgba(168,85,247,.65);
 
-      border-bottom-right-radius: 5px;
-    }
+  box-shadow:
+    0 0 0 3px
+    rgba(124,58,237,.12);
+}
 
-    .theirs .message-bubble {
-      color: #e5e7eb;
+#sendButton{
+  width:46px;
+  height:46px;
+  flex-shrink:0;
 
-      background:
-        rgba(255,255,255,.075);
+  border:none;
+  border-radius:14px;
 
-      border:
-        1px solid rgba(255,255,255,.08);
+  color:white;
 
-      border-bottom-left-radius: 5px;
-    }
+  background:
+    linear-gradient(
+      135deg,
+      var(--purple),
+      var(--pink)
+    );
 
-    .message-content {
-      font-size: 14px;
-      line-height: 1.45;
+  box-shadow:
+    0 8px 24px
+    rgba(124,58,237,.28);
 
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
+  font-size:18px;
+}
 
-    .message-meta {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
+#sendButton:disabled{
+  cursor:not-allowed;
+  opacity:.55;
+}
 
-      gap: 4px;
+.composer-hint{
+  width:min(100%,900px);
 
-      margin-top: 4px;
+  margin:6px auto 0;
 
-      font-size: 9px;
+  color:#64748b;
+  font-size:10px;
+}
 
-      opacity: .65;
-    }
+.toast{
+  position:fixed;
 
-    .message-check {
-      font-size: 11px;
-    }
+  left:50%;
+  bottom:90px;
 
-    /* =========================
-       TYPING
-    ========================= */
+  z-index:100;
 
-    .typing {
-      min-height: 28px;
+  max-width:
+    calc(100% - 30px);
 
-      padding: 0
-        max(18px, calc((100vw - 900px) / 2));
+  padding:11px 15px;
 
-      color: var(--muted);
+  border-radius:13px;
 
-      font-size: 11px;
-    }
+  background:
+    rgba(15,23,42,.96);
 
-    .typing.hidden {
-      visibility: hidden;
-    }
+  border:1px solid var(--border);
 
-    /* =========================
-       COMPOSER
-    ========================= */
+  color:white;
 
-    .composer-area {
-      flex-shrink: 0;
+  font-size:12px;
 
-      padding:
-        12px
-        max(18px, calc((100vw - 900px) / 2))
-        16px;
+  box-shadow:
+    0 15px 45px rgba(0,0,0,.35);
 
-      background:
-        rgba(5,8,22,.9);
+  opacity:0;
+  pointer-events:none;
 
-      border-top:
-        1px solid var(--border);
+  transform:
+    translate(-50%,12px);
 
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-    }
+  transition:.25s ease;
+}
 
-    .composer {
-      display: flex;
-      align-items: flex-end;
+.toast.show{
+  opacity:1;
 
-      gap: 9px;
+  transform:
+    translate(-50%,0);
+}
 
-      padding: 7px;
+.toast.error{
+  border-color:
+    rgba(239,68,68,.35);
+}
 
-      background:
-        rgba(255,255,255,.06);
+.toast.success{
+  border-color:
+    rgba(34,197,94,.35);
+}
 
-      border:
-        1px solid rgba(255,255,255,.1);
+@keyframes messageIn{
+  from{
+    opacity:0;
+    transform:translateY(5px);
+  }
 
-      border-radius: 19px;
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
 
-      box-shadow:
-        0 15px 40px rgba(0,0,0,.25);
-    }
+@media(max-width:600px){
 
-    .composer textarea {
-      flex: 1;
+  .topbar{
+    height:62px;
+    padding:0 12px;
+  }
 
-      min-height: 42px;
-      max-height: 120px;
+  .brand{
+    font-size:18px;
+  }
 
-      resize: none;
+  .brand-heart{
+    width:35px;
+    height:35px;
+  }
 
-      border: none;
-      outline: none;
+  .icon-btn{
+    width:38px;
+    height:38px;
+  }
 
-      background: transparent;
+  .chat-header{
+    min-height:72px;
+    padding:8px 10px;
+  }
 
-      color: white;
+  .profile-avatar{
+    width:46px;
+    height:46px;
+  }
 
-      padding:
-        11px
-        10px;
+  .match-badge{
+    display:none;
+  }
 
-      line-height: 1.4;
+  .messages-container{
+    padding:12px 10px 16px;
+  }
 
-      font-size: 14px;
-    }
+  .message-bubble{
+    max-width:82%;
+  }
 
-    .composer textarea::placeholder {
-      color: #718096;
-    }
+  .composer{
+    padding:
+      8px 9px
+      calc(8px + env(safe-area-inset-bottom));
+  }
 
-    .send-btn {
-      width: 45px;
-      height: 45px;
+  .composer-hint{
+    display:none;
+  }
+}
 
-      flex-shrink: 0;
+@media(prefers-reduced-motion:reduce){
 
-      border: none;
+  *,
+  *::before,
+  *::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    scroll-behavior:auto !important;
+    transition-duration:.01ms !important;
+  }
+}
 
-      border-radius: 15px;
+</style>
 
-      background:
-        linear-gradient(
-          135deg,
-          var(--purple),
-          var(--pink)
-        );
-
-      color: white;
-
-      font-size: 18px;
-
-      display: grid;
-      place-items: center;
-
-      box-shadow:
-        0 8px 25px rgba(124,58,237,.3);
-
-      transition:
-        transform .2s,
-        opacity .2s;
-    }
-
-    .send-btn:hover {
-      transform: translateY(-2px);
-    }
-
-    .send-btn:disabled {
-      opacity: .45;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .composer-hint {
-      text-align: center;
-
-      color: #64748b;
-
-      font-size: 9px;
-
-      margin-top: 7px;
-    }
-
-    /* =========================
-       LOADING
-    ========================= */
-
-    .loading-screen {
-      position: fixed;
-      inset: 0;
-
-      z-index: 100;
-
-      display: grid;
-      place-items: center;
-
-      background:
-        linear-gradient(
-          135deg,
-          #050816,
-          #0b1228
-        );
-
-      transition: opacity .3s;
-    }
-
-    .loading-screen.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .loader {
-      width: 52px;
-      height: 52px;
-
-      border-radius: 50%;
-
-      border:
-        3px solid rgba(255,255,255,.08);
-
-      border-top-color: var(--gold);
-
-      animation:
-        spin .8s linear infinite;
-    }
-
-    /* =========================
-       TOAST
-    ========================= */
-
-    .toast {
-      position: fixed;
-
-      left: 50%;
-      bottom: 95px;
-
-      transform:
-        translate(-50%, 20px);
-
-      opacity: 0;
-
-      pointer-events: none;
-
-      z-index: 200;
-
-      max-width:
-        calc(100% - 30px);
-
-      padding:
-        11px
-        15px;
-
-      border-radius: 13px;
-
-      background:
-        rgba(15,23,42,.94);
-
-      border:
-        1px solid var(--border);
-
-      color: white;
-
-      font-size: 12px;
-
-      box-shadow:
-        0 15px 45px rgba(0,0,0,.35);
-
-      transition: .25s;
-    }
-
-    .toast.show {
-      opacity: 1;
-      transform:
-        translate(-50%, 0);
-    }
-
-    .toast.error {
-      border-color:
-        rgba(239,68,68,.3);
-    }
-
-    /* =========================
-       ANIMATIONS
-    ========================= */
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(8px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes messageIn {
-      from {
-        opacity: 0;
-        transform: translateY(7px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* =========================
-       MOBILE
-    ========================= */
-
-    @media (max-width: 650px) {
-
-      body {
-        background:
-          linear-gradient(
-            135deg,
-            var(--bg),
-            var(--bg2)
-          );
-      }
-
-      .topbar {
-        height: 62px;
-        padding: 0 13px;
-      }
-
-      .brand {
-        font-size: 18px;
-      }
-
-      .brand-heart {
-        width: 36px;
-        height: 36px;
-      }
-
-      .chat-header {
-        height: 70px;
-        padding: 8px 10px;
-      }
-
-      .back-btn {
-        width: 38px;
-        height: 38px;
-      }
-
-      .profile-avatar {
-        width: 45px;
-        height: 45px;
-      }
-
-      .match-badge {
-        display: none;
-      }
-
-      .messages {
-        padding:
-          16px
-          12px
-          18px;
-      }
-
-      .message-bubble {
-        max-width: 82%;
-      }
-
-      .composer-area {
-        padding:
-          9px
-          10px
-          11px;
-      }
-
-      .composer-hint {
-        display: none;
-      }
-
-      .toast {
-        bottom: 82px;
-      }
-    }
-  </style>
 </head>
 
 <body>
 
-  <!-- =========================
-       LOADING
-  ========================= -->
+<div class="app">
 
-  <div
-    id="loadingScreen"
-    class="loading-screen"
-  >
-    <div class="loader"></div>
-  </div>
+<header class="topbar">
+
+<a
+  href="perfil.html"
+  class="brand"
+  aria-label="Volver a mi perfil"
+>
+  <span class="brand-heart">💕</span>
+  <span>EmiMatch</span>
+</a>
+
+<div class="top-actions">
+
+<button
+  id="logoutButton"
+  class="icon-btn"
+  type="button"
+  aria-label="Cerrar sesión"
+  title="Cerrar sesión"
+>
+  🚪
+</button>
+
+</div>
+
+</header>
+
+<section class="chat-header">
+
+<button
+  id="backButton"
+  class="back-btn"
+  type="button"
+  aria-label="Volver"
+>
+  ←
+</button>
+
+<img
+  id="profileAvatar"
+  class="profile-avatar"
+  src="https://placehold.co/120x120?text=💕"
+  alt="Foto de perfil"
+>
+
+<div class="user-info">
+
+<div
+  id="userName"
+  class="user-name"
+>
+  Cargando...
+</div>
+
+<div class="user-status">
+
+<span
+  id="statusDot"
+  class="status-dot offline"
+></span>
+
+<span id="userStatus">
+  Conectando...
+</span>
+
+</div>
+
+</div>
+
+<div class="match-badge">
+  ❤️ Match
+</div>
+
+</section>
+
+<main
+  id="messagesContainer"
+  class="messages-container"
+  aria-live="polite"
+>
+
+<div
+  id="messagesInner"
+  class="messages-inner"
+>
+
+<div
+  id="chatState"
+  class="chat-state"
+>
+
+<div class="chat-state-card">
+
+<div class="state-icon">
+  💬
+</div>
+
+<h3>
+  Cargando conversación...
+</h3>
+
+<p>
+  Estamos preparando tu conversación.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</main>
+
+<footer class="composer">
+
+<div class="composer-inner">
+
+<textarea
+  id="messageInput"
+  rows="1"
+  maxlength="2000"
+  placeholder="Escribí un mensaje..."
+  aria-label="Mensaje"
+></textarea>
+
+<button
+  id="sendButton"
+  type="button"
+  aria-label="Enviar mensaje"
+  title="Enviar mensaje"
+>
+  ➤
+</button>
+
+</div>
+
+<div class="composer-hint">
+  Enter para enviar · Shift + Enter para nueva línea
+</div>
+
+</footer>
+
+</div>
+
+<div
+  id="toast"
+  class="toast"
+  role="status"
+  aria-live="polite"
+></div>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/components.js"></script>
+
+<script>
+
+"use strict";
+
+/* =====================================================
+   EmiMatch — Chat
+   Update #07
+   Parte 3/5
+===================================================== */
+
+const config = window.EMIMATCH_CONFIG;
+
+if (!config) {
+  console.error(
+    "EmiMatch: no se encontró config.js"
+  );
+}
+
+const supabaseClient =
+  window.supabase.createClient(
+    config.supabaseUrl,
+    config.supabaseKey
+  );
 
 
-  <div class="app">
+/* =====================================================
+   ELEMENTOS
+===================================================== */
 
-    <!-- =========================
-         TOP BAR
-    ========================= -->
+const messagesContainer =
+  document.getElementById(
+    "messagesContainer"
+  );
 
-    <header class="topbar">
+const messagesInner =
+  document.getElementById(
+    "messagesInner"
+  );
 
-      <a
-        href="matches.html"
-        class="brand"
-      >
-        <span class="brand-heart">💕</span>
-        <span>EmiMatch</span>
-      </a>
+const chatState =
+  document.getElementById(
+    "chatState"
+  );
 
-      <div class="top-actions">
+const messageInput =
+  document.getElementById(
+    "messageInput"
+  );
 
-        <button
-          id="logoutBtn"
-          class="icon-btn"
-          title="Cerrar sesión"
-          aria-label="Cerrar sesión"
-        >
-          🚪
-        </button>
+const sendButton =
+  document.getElementById(
+    "sendButton"
+  );
 
+const backButton =
+  document.getElementById(
+    "backButton"
+  );
+
+const logoutButton =
+  document.getElementById(
+    "logoutButton"
+  );
+
+const profileAvatar =
+  document.getElementById(
+    "profileAvatar"
+  );
+
+const userName =
+  document.getElementById(
+    "userName"
+  );
+
+const userStatus =
+  document.getElementById(
+    "userStatus"
+  );
+
+const statusDot =
+  document.getElementById(
+    "statusDot"
+  );
+
+const toast =
+  document.getElementById(
+    "toast"
+  );
+
+
+/* =====================================================
+   ESTADO
+===================================================== */
+
+let currentUser = null;
+
+let otherUser = null;
+
+let realtimeChannel = null;
+
+let loadedMessageIds =
+  new Set();
+
+let sendingMessage = false;
+
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+function showToast(
+  message,
+  type = "info"
+) {
+
+  if (!toast) {
+    return;
+  }
+
+  toast.textContent =
+    message;
+
+  toast.className =
+    "toast show " +
+    type;
+
+  clearTimeout(
+    showToast.timer
+  );
+
+  showToast.timer =
+    setTimeout(() => {
+
+      toast.className =
+        "toast";
+
+    }, 3200);
+
+}
+
+
+/* =====================================================
+   SEGURIDAD
+===================================================== */
+
+function escapeHtml(
+  value
+) {
+
+  const div =
+    document.createElement(
+      "div"
+    );
+
+  div.textContent =
+    value ?? "";
+
+  return div.innerHTML;
+
+}
+
+
+/* =====================================================
+   FORMATO
+===================================================== */
+
+function formatTime(
+  dateString
+) {
+
+  const date =
+    new Date(
+      dateString
+    );
+
+  return date.toLocaleTimeString(
+    "es-AR",
+    {
+      hour: "2-digit",
+      minute: "2-digit"
+    }
+  );
+
+}
+
+
+function formatDate(
+  dateString
+) {
+
+  const date =
+    new Date(
+      dateString
+    );
+
+  const today =
+    new Date();
+
+  const yesterday =
+    new Date();
+
+  yesterday.setDate(
+    yesterday.getDate() - 1
+  );
+
+  const sameDay =
+    (
+      date.getDate() ===
+      today.getDate()
+    ) &&
+    (
+      date.getMonth() ===
+      today.getMonth()
+    ) &&
+    (
+      date.getFullYear() ===
+      today.getFullYear()
+    );
+
+  const sameYesterday =
+    (
+      date.getDate() ===
+      yesterday.getDate()
+    ) &&
+    (
+      date.getMonth() ===
+      yesterday.getMonth()
+    ) &&
+    (
+      date.getFullYear() ===
+      yesterday.getFullYear()
+    );
+
+  if (sameDay) {
+    return "Hoy";
+  }
+
+  if (sameYesterday) {
+    return "Ayer";
+  }
+
+  return date.toLocaleDateString(
+    "es-AR",
+    {
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    }
+  );
+
+}
+
+
+function getDateKey(
+  dateString
+) {
+
+  const date =
+    new Date(
+      dateString
+    );
+
+  return [
+    date.getFullYear(),
+    String(
+      date.getMonth() + 1
+    ).padStart(2, "0"),
+    String(
+      date.getDate()
+    ).padStart(2, "0")
+  ].join("-");
+
+}
+
+
+/* =====================================================
+   SESIÓN
+===================================================== */
+
+async function loadSession() {
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .auth
+      .getSession();
+
+  if (error) {
+    throw error;
+  }
+
+  currentUser =
+    data?.session?.user || null;
+
+  if (!currentUser) {
+
+    window.location.href =
+      "index.html";
+
+    return false;
+
+  }
+
+  return true;
+
+}
+
+
+supabaseClient
+  .auth
+  .onAuthStateChange(
+    (
+      event
+    ) => {
+
+      if (
+        event ===
+        "SIGNED_OUT"
+      ) {
+
+        window.location.href =
+          "index.html";
+
+      }
+
+    }
+  );
+
+
+/* =====================================================
+   USUARIO DEL CHAT
+===================================================== */
+
+function getOtherUserId() {
+
+  const params =
+    new URLSearchParams(
+      window.location.search
+    );
+
+  return params.get(
+    "user"
+  );
+
+}
+
+
+async function loadOtherUser(
+  userId
+) {
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("profiles")
+      .select(`
+        id,
+        nombre,
+        edad,
+        ciudad,
+        descripcion,
+        foto_url,
+        intereses
+      `)
+      .eq(
+        "id",
+        userId
+      )
+      .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  if (!data) {
+
+    throw new Error(
+      "No encontramos este perfil."
+    );
+
+  }
+
+  otherUser =
+    data;
+
+  userName.textContent =
+    otherUser.nombre ||
+    "Usuario";
+
+  profileAvatar.src =
+    otherUser.foto_url ||
+    "https://placehold.co/120x120?text=💕";
+
+  profileAvatar.alt =
+    `Foto de ${otherUser.nombre || "usuario"}`;
+
+  userStatus.textContent =
+    "Conectado al chat";
+
+  statusDot.classList.remove(
+    "offline"
+  );
+
+}
+
+
+/* =====================================================
+   VERIFICAR MATCH
+===================================================== */
+
+async function verifyMatch(
+  otherUserId
+) {
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("matches")
+      .select(
+        "user1_id,user2_id"
+      )
+      .or(
+        `user1_id.eq.${currentUser.id},user2_id.eq.${currentUser.id}`
+      );
+
+  if (error) {
+    throw error;
+  }
+
+  const isMatch =
+    (data || []).some(
+      match => {
+
+        return (
+          (
+            match.user1_id ===
+            currentUser.id &&
+            match.user2_id ===
+            otherUserId
+          ) ||
+          (
+            match.user2_id ===
+            currentUser.id &&
+            match.user1_id ===
+            otherUserId
+          )
+        );
+
+      }
+    );
+
+  if (!isMatch) {
+
+    throw new Error(
+      "Este chat solo está disponible entre Matches."
+    );
+
+  }
+
+  return true;
+
+}
+
+
+/* =====================================================
+   ESTADOS DEL CHAT
+===================================================== */
+
+function showState(
+  icon,
+  title,
+  message
+) {
+
+  chatState.innerHTML = `
+
+    <div class="chat-state-card">
+
+      <div class="state-icon">
+        ${icon}
       </div>
 
-    </header>
+      <h3>
+        ${escapeHtml(title)}
+      </h3>
 
+      <p>
+        ${escapeHtml(message)}
+      </p>
 
-    <!-- =========================
-         CHAT HEADER
-    ========================= -->
-
-    <section class="chat-header">
-
-      <button
-        id="backBtn"
-        class="back-btn"
-        aria-label="Volver"
-      >
-        ←
-      </button>
-
-      <img
-        id="profileAvatar"
-        class="profile-avatar"
-        src="https://placehold.co/200x200/111827/ffffff?text=💕"
-        alt="Foto de perfil"
-      >
-
-      <div class="user-info">
-
-        <div
-          id="userName"
-          class="user-name"
-        >
-          Cargando...
-        </div>
-
-        <div class="user-status">
-
-          <span
-            id="statusDot"
-            class="status-dot"
-          ></span>
-
-          <span id="statusText">
-            Conexión segura
-          </span>
-
-        </div>
-
-      </div>
-
-      <div class="match-badge">
-        ❤️ MATCH
-      </div>
-
-    </section>
-
-
-    <!-- =========================
-         MESSAGES
-    ========================= -->
-
-    <main
-      id="messages"
-      class="messages"
-    >
-
-      <div
-        id="welcome"
-        class="welcome"
-      >
-
-        <div class="welcome-icon">
-          💕
-        </div>
-
-        <h2>
-          ¡Hicieron Match!
-        </h2>
-
-        <p>
-          Este es el comienzo de una nueva conexión.
-          Enviá un mensaje y empezá la conversación.
-        </p>
-
-      </div>
-
-    </main>
-
-
-    <!-- =========================
-         TYPING
-    ========================= -->
-
-    <div
-      id="typing"
-      class="typing hidden"
-    >
-      Escribiendo...
     </div>
 
+  `;
 
-    <!-- =========================
-         COMPOSER
-    ========================= -->
+  chatState.style.display =
+    "grid";
 
-    <footer class="composer-area">
-
-      <div class="composer">
-
-        <textarea
-          id="messageInput"
-          rows="1"
-          maxlength="1000"
-          placeholder="Escribí un mensaje..."
-          autocomplete="off"
-        ></textarea>
-
-        <button
-          id="sendBtn"
-          class="send-btn"
-          disabled
-          aria-label="Enviar mensaje"
-          title="Enviar mensaje"
-        >
-          ➤
-        </button>
-
-      </div>
-
-      <div class="composer-hint">
-        Enter para enviar · Shift + Enter para nueva línea
-      </div>
-
-    </footer>
-
-  </div>
+}
 
 
-  <!-- =========================
-       TOAST
-  ========================= -->
+function hideState() {
 
-  <div
-    id="toast"
-    class="toast"
-  ></div>
+  chatState.style.display =
+    "none";
+
+}
 
 
+function scrollToBottom(
+  smooth = true
+) {
+
+  messagesContainer.scrollTo({
+    top:
+      messagesContainer.scrollHeight,
+    behavior:
+      smooth
+        ? "smooth"
+        : "auto"
+  });
+
+}
   <script>
 
-    /* =====================================================
-       SUPABASE
-    ===================================================== */
-
-    const SUPABASE_URL =
-      "https://kngiadwaesdbmvwivdev.supabase.co";
-
-    const SUPABASE_KEY =
-      "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
-
-    const supabaseClient =
-      window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-      );
+/* =====================================================
+   EmiMatch — Chat
+   Update #07
+   Parte 4/5
+===================================================== */
 
 
-    /* =====================================================
-       ELEMENTS
-    ===================================================== */
+/* =====================================================
+   DIVISOR DE FECHA
+===================================================== */
 
-    const loadingScreen =
-      document.getElementById("loadingScreen");
+function createDateDivider(
+  dateString
+) {
 
-    const messagesContainer =
-      document.getElementById("messages");
+  const divider =
+    document.createElement(
+      "div"
+    );
 
-    const welcome =
-      document.getElementById("welcome");
+  divider.className =
+    "date-divider";
 
-    const profileAvatar =
-      document.getElementById("profileAvatar");
+  divider.dataset.dateKey =
+    getDateKey(
+      dateString
+    );
 
-    const userName =
-      document.getElementById("userName");
+  divider.textContent =
+    formatDate(
+      dateString
+    );
 
-    const statusDot =
-      document.getElementById("statusDot");
+  return divider;
 
-    const statusText =
-      document.getElementById("statusText");
-
-    const messageInput =
-      document.getElementById("messageInput");
-
-    const sendBtn =
-      document.getElementById("sendBtn");
-
-    const logoutBtn =
-      document.getElementById("logoutBtn");
-
-    const backBtn =
-      document.getElementById("backBtn");
-
-    const toast =
-      document.getElementById("toast");
+}
 
 
-    /* =====================================================
-       STATE
-    ===================================================== */
+/* =====================================================
+   MENSAJE
+===================================================== */
 
-    let currentUser = null;
-    let otherUser = null;
+function createMessageElement(
+  message
+) {
 
-    let realtimeChannel = null;
+  const isMine =
+    message.sender_id ===
+    currentUser.id;
 
-    let loadedMessageIds = new Set();
+  const row =
+    document.createElement(
+      "div"
+    );
 
-    let sendingMessage = false;
+  row.className =
+    "message-row " +
+    (
+      isMine
+        ? "mine"
+        : "theirs"
+    );
 
+  row.dataset.messageId =
+    message.id;
 
-    /* =====================================================
-       HELPERS
-    ===================================================== */
+  row.dataset.dateKey =
+    getDateKey(
+      message.created_at
+    );
 
-    function showToast(
-      message,
-      isError = false
-    ) {
+  const bubble =
+    document.createElement(
+      "div"
+    );
 
-      toast.textContent = message;
+  bubble.className =
+    "message-bubble";
 
-      toast.classList.toggle(
-        "error",
-        isError
-      );
+  const content =
+    document.createElement(
+      "div"
+    );
 
-      toast.classList.add("show");
+  content.className =
+    "message-content";
 
-      clearTimeout(
-        showToast.timeout
-      );
+  content.textContent =
+    message.content || "";
 
-      showToast.timeout =
-        setTimeout(() => {
+  const meta =
+    document.createElement(
+      "div"
+    );
 
-          toast.classList.remove(
-            "show"
-          );
+  meta.className =
+    "message-meta";
 
-        }, 2800);
+  meta.innerHTML = `
+    <span>
+      ${escapeHtml(
+        formatTime(
+          message.created_at
+        )
+      )}
+    </span>
+
+    ${
+      isMine
+        ? `<span class="message-check">✓✓</span>`
+        : ""
     }
+  `;
+
+  bubble.appendChild(
+    content
+  );
+
+  bubble.appendChild(
+    meta
+  );
+
+  row.appendChild(
+    bubble
+  );
+
+  return row;
+
+}
 
 
-    function escapeHtml(value) {
+/* =====================================================
+   RENDERIZAR MENSAJES
+===================================================== */
 
-      const div =
-        document.createElement("div");
+function renderMessages(
+  messages
+) {
 
-      div.textContent =
-        value ?? "";
+  messagesInner.innerHTML =
+    "";
 
-      return div.innerHTML;
+  loadedMessageIds =
+    new Set();
+
+  if (
+    !messages ||
+    messages.length === 0
+  ) {
+
+    showState(
+      "💬",
+      "Todavía no hay mensajes",
+      "Sé el primero en romper el hielo."
+    );
+
+    return;
+
+  }
+
+  hideState();
+
+  let lastDateKey =
+    null;
+
+  messages.forEach(
+    message => {
+
+      if (!message.id) {
+        return;
+      }
+
+      loadedMessageIds.add(
+        message.id
+      );
+
+      const dateKey =
+        getDateKey(
+          message.created_at
+        );
+
+      if (
+        dateKey !==
+        lastDateKey
+      ) {
+
+        messagesInner.appendChild(
+          createDateDivider(
+            message.created_at
+          )
+        );
+
+        lastDateKey =
+          dateKey;
+
+      }
+
+      messagesInner.appendChild(
+        createMessageElement(
+          message
+        )
+      );
+
     }
+  );
+
+  requestAnimationFrame(
+    () => {
+
+      scrollToBottom(
+        false
+      );
+
+    }
+  );
+
+}
 
 
-    function formatTime(dateString) {
+/* =====================================================
+   CARGAR MENSAJES
+===================================================== */
 
-      const date =
-        new Date(dateString);
+async function loadMessages() {
 
-      return date.toLocaleTimeString(
-        "es-AR",
+  showState(
+    "💬",
+    "Cargando conversación...",
+    "Un momento."
+  );
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("messages")
+      .select(`
+        id,
+        sender_id,
+        receiver_id,
+        content,
+        created_at
+      `)
+      .or(
+        `and(sender_id.eq.${currentUser.id},receiver_id.eq.${otherUser.id}),and(sender_id.eq.${otherUser.id},receiver_id.eq.${currentUser.id})`
+      )
+      .order(
+        "created_at",
         {
-          hour: "2-digit",
-          minute: "2-digit"
+          ascending: true
         }
       );
+
+  if (error) {
+    throw error;
+  }
+
+  renderMessages(
+    data || []
+  );
+
+}
+
+
+/* =====================================================
+   AGREGAR MENSAJE EN TIEMPO REAL
+===================================================== */
+
+function appendRealtimeMessage(
+  message
+) {
+
+  if (!message?.id) {
+    return;
+  }
+
+  if (
+    loadedMessageIds.has(
+      message.id
+    )
+  ) {
+    return;
+  }
+
+  const belongsToChat =
+    (
+      message.sender_id ===
+      currentUser.id &&
+      message.receiver_id ===
+      otherUser.id
+    ) ||
+    (
+      message.sender_id ===
+      otherUser.id &&
+      message.receiver_id ===
+      currentUser.id
+    );
+
+  if (!belongsToChat) {
+    return;
+  }
+
+  loadedMessageIds.add(
+    message.id
+  );
+
+  hideState();
+
+  const dateKey =
+    getDateKey(
+      message.created_at
+    );
+
+  const lastElement =
+    messagesInner.lastElementChild;
+
+  const lastDateKey =
+    lastElement?.dataset?.dateKey ||
+    null;
+
+  if (
+    dateKey !==
+    lastDateKey
+  ) {
+
+    messagesInner.appendChild(
+      createDateDivider(
+        message.created_at
+      )
+    );
+
+  }
+
+  messagesInner.appendChild(
+    createMessageElement(
+      message
+    )
+  );
+
+  scrollToBottom(
+    true
+  );
+
+}
+
+
+/* =====================================================
+   REALTIME
+===================================================== */
+
+function subscribeToMessages() {
+
+  if (realtimeChannel) {
+
+    supabaseClient
+      .removeChannel(
+        realtimeChannel
+      );
+
+  }
+
+  realtimeChannel =
+    supabaseClient
+      .channel(
+        `chat-${currentUser.id}-${otherUser.id}`
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "messages"
+        },
+        payload => {
+
+          appendRealtimeMessage(
+            payload.new
+          );
+
+        }
+      )
+      .subscribe(
+        status => {
+
+          if (
+            status ===
+            "SUBSCRIBED"
+          ) {
+
+            userStatus.textContent =
+              "Chat conectado";
+
+            statusDot.classList.remove(
+              "offline"
+            );
+
+          }
+
+        }
+      );
+
+}
+
+
+/* =====================================================
+   ENVIAR MENSAJE
+===================================================== */
+
+async function sendMessage() {
+
+  if (
+    sendingMessage ||
+    !currentUser ||
+    !otherUser
+  ) {
+    return;
+  }
+
+  const content =
+    messageInput.value
+      .trim();
+
+  if (!content) {
+    return;
+  }
+
+  sendingMessage =
+    true;
+
+  sendButton.disabled =
+    true;
+
+  const originalText =
+    sendButton.textContent;
+
+  sendButton.textContent =
+    "…";
+
+  try {
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+        .from("messages")
+        .insert({
+          sender_id:
+            currentUser.id,
+
+          receiver_id:
+            otherUser.id,
+
+          content:
+            content
+        })
+        .select(`
+          id,
+          sender_id,
+          receiver_id,
+          content,
+          created_at
+        `)
+        .single();
+
+    if (error) {
+      throw error;
+    }
+
+    messageInput.value =
+      "";
+
+    autoResizeTextarea();
+
+    if (data) {
+
+      appendRealtimeMessage(
+        data
+      );
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Error enviando mensaje:",
+      error
+    );
+
+    showToast(
+      error.message ||
+      "No pudimos enviar el mensaje.",
+      "error"
+    );
+
+  } finally {
+
+    sendingMessage =
+      false;
+
+    sendButton.disabled =
+      false;
+
+    sendButton.textContent =
+      originalText;
+
+    messageInput.focus();
+
+  }
+
+}
+
+
+/* =====================================================
+   AUTOAJUSTE DEL TEXTAREA
+===================================================== */
+
+function autoResizeTextarea() {
+
+  messageInput.style.height =
+    "auto";
+
+  const height =
+    Math.min(
+      messageInput.scrollHeight,
+      130
+    );
+
+  messageInput.style.height =
+    height + "px";
+
+}
+
+</script>
+
+<script>
+
+/* =====================================================
+   EmiMatch — Chat
+   Update #07
+   Parte 5/5
+===================================================== */
+
+
+/* =====================================================
+   EVENTO: ENVIAR
+===================================================== */
+
+sendButton.addEventListener(
+  "click",
+  () => {
+
+    sendMessage();
+
+  }
+);
+
+
+/* =====================================================
+   EVENTO: ESCRITURA
+===================================================== */
+
+messageInput.addEventListener(
+  "input",
+  () => {
+
+    autoResizeTextarea();
+
+  }
+);
+
+
+/* =====================================================
+   ENTER = ENVIAR
+   SHIFT + ENTER = NUEVA LÍNEA
+===================================================== */
+
+messageInput.addEventListener(
+  "keydown",
+  event => {
+
+    if (
+      event.key === "Enter" &&
+      !event.shiftKey
+    ) {
+
+      event.preventDefault();
+
+      sendMessage();
+
+    }
+
+  }
+);
+
+
+/* =====================================================
+   VOLVER A MATCHES
+===================================================== */
+
+backButton.addEventListener(
+  "click",
+  () => {
+
+    window.location.href =
+      "matches.html";
+
+  }
+);
+
+
+/* =====================================================
+   CERRAR SESIÓN
+===================================================== */
+
+logoutButton.addEventListener(
+  "click",
+  async () => {
+
+    if (
+      !confirm(
+        "¿Querés cerrar sesión?"
+      )
+    ) {
+      return;
+    }
+
+    try {
+
+      if (realtimeChannel) {
+
+        await supabaseClient
+          .removeChannel(
+            realtimeChannel
+          );
+
+        realtimeChannel =
+          null;
+
+      }
+
+      const {
+        error
+      } =
+        await supabaseClient
+          .auth
+          .signOut();
+
+      if (error) {
+        throw error;
+      }
+
+      window.location.href =
+        "index.html";
+
+    } catch (error) {
+
+      console.error(
+        "Error cerrando sesión:",
+        error
+      );
+
+      showToast(
+        "No pudimos cerrar sesión.",
+        "error"
+      );
+
+    }
+
+  }
+);
+
+
+/* =====================================================
+   LIMPIAR REALTIME AL SALIR
+===================================================== */
+
+window.addEventListener(
+  "beforeunload",
+  () => {
+
+    if (
+      realtimeChannel
+    ) {
+
+      supabaseClient
+        .removeChannel(
+          realtimeChannel
+        );
+
+    }
+
+  }
+);
+
+
+/* =====================================================
+   INICIALIZACIÓN
+===================================================== */
+
+async function initialize() {
+
+  try {
+
+    showState(
+      "💬",
+      "Preparando chat...",
+      "Estamos conectando todo."
+    );
+
+
+    /* ---------------------------------------------
+       VERIFICAR SESIÓN
+    --------------------------------------------- */
+
+    const sessionReady =
+      await loadSession();
+
+    if (!sessionReady) {
+      return;
     }
 
 
-    function formatDate(dateString) {
+    /* ---------------------------------------------
+       OBTENER USUARIO DESTINO
+    --------------------------------------------- */
 
-      const date =
-        new Date(dateString);
+    const otherUserId =
+      getOtherUserId();
 
-      const today =
-        new Date();
+    if (!otherUserId) {
 
-    
+      throw new Error(
+        "No se indicó el usuario de esta conversación."
+      );
+
+    }
+
+
+    /* ---------------------------------------------
+       EVITAR CHAT CONSIGO MISMO
+    --------------------------------------------- */
+
+    if (
+      otherUserId ===
+      currentUser.id
+    ) {
+
+      throw new Error(
+        "No podés iniciar un chat con tu propio perfil."
+      );
+
+    }
+
+
+    /* ---------------------------------------------
+       CARGAR PERFIL
+    --------------------------------------------- */
+
+    await loadOtherUser(
+      otherUserId
+    );
+
+
+    /* ---------------------------------------------
+       VERIFICAR MATCH
+    --------------------------------------------- */
+
+    await verifyMatch(
+      otherUserId
+    );
+
+
+    /* ---------------------------------------------
+       CARGAR MENSAJES
+    --------------------------------------------- */
+
+    await loadMessages();
+
+
+    /* ---------------------------------------------
+       ACTIVAR REALTIME
+    --------------------------------------------- */
+
+    subscribeToMessages();
+
+
+    /* ---------------------------------------------
+       PREPARAR COMPOSITOR
+    --------------------------------------------- */
+
+    autoResizeTextarea();
+
+    messageInput.focus();
+
+
+    /* ---------------------------------------------
+       REGISTRO CENTRAL
+    --------------------------------------------- */
+
+    if (
+      window.EmiMatchApp &&
+      typeof
+      window.EmiMatchApp.logUpdate ===
+      "function"
+    ) {
+
+      window.EmiMatchApp.logUpdate(
+        "Update #07 — Chat reconstruido y conectado correctamente."
+      );
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Error inicializando chat:",
+      error
+    );
+
+    showState(
+      "⚠️",
+      "No pudimos abrir el chat",
+      error.message ||
+      "Ocurrió un problema inesperado."
+    );
+
+    showToast(
+      error.message ||
+      "No pudimos abrir el chat.",
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   INICIAR
+===================================================== */
+
+initialize();
+
+</script>
+
+</body>
+</html>
+  
+  
+  
