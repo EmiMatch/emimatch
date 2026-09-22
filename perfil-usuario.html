@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>EmiMatch - Perfil</title>
+
+  <meta
+    name="description"
+    content="Conocé el perfil de una persona en EmiMatch."
+  >
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --bg: #050816;
+      --bg2: #0b1228;
+      --card: rgba(255,255,255,.065);
+      --border: rgba(255,255,255,.11);
+
+      --gold: #d9ad45;
+      --gold-light: #f6dc87;
+
+      --purple: #7c3aed;
+      --purple-light: #a855f7;
+
+      --pink: #ec4899;
+
+      --white: #fff;
+      --text: #e8edf7;
+      --muted: #94a3b8;
+
+      --danger: #ef4444;
+      --success: #22c55e;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+
+      font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+      color: var(--text);
+
+      background:
+        radial-gradient(
+          circle at 15% 10%,
+          rgba(124,58,237,.25),
+          transparent 35%
+        ),
+        radial-gradient(
+          circle at 85% 90%,
+          rgba(236,72,153,.15),
+          transparent 35%
+        ),
+        linear-gradient(
+          135deg,
+          var(--bg),
+          var(--bg2)
+        );
+    }
+
+    button {
+      font: inherit;
+      cursor: pointer;
+    }
+
+    /* =========================
+       HEADER
+    ========================= */
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+
+      height: 70px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      padding: 0 20px;
+
+      background:
+        rgba(5,8,22,.82);
+
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+
+      border-bottom:
+        1px solid var(--border);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      color: white;
+      text-decoration: none;
+
+      font-weight: 900;
+      font-size: 20px;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 13px;
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--purple),
+          var(--pink)
+        );
+
+      box-shadow:
+        0 8px 25px rgba(124,58,237,.3);
+    }
+
+    .back-btn {
+      border: 1px solid var(--border);
+
+      background:
+        rgba(255,255,255,.05);
+
+      color: white;
+
+      padding: 10px 15px;
+
+      border-radius: 12px;
+
+      transition: .2s;
+    }
+
+    .back-btn:hover {
+      background:
+        rgba(255,255,255,.1);
+    }
+
+    /* =========================
+       CONTAINER
+    ========================= */
+
+    .container {
+      width: min(100%, 900px);
+
+      margin: auto;
+
+      padding:
+        28px 18px
+        50px;
+    }
+
+    /* =========================
+       PROFILE CARD
+    ========================= */
+
+    .profile-card {
+      overflow: hidden;
+
+      background:
+        rgba(255,255,255,.055);
+
+      border:
+        1px solid var(--border);
+
+      border-radius: 28px;
+
+      box-shadow:
+        0 30px 80px rgba(0,0,0,.35);
+    }
+
+    /* =========================
+       HERO
+    ========================= */
+
+    .hero {
+      position: relative;
+
+      min-height: 430px;
+
+      display: flex;
+      align-items: flex-end;
+
+      overflow: hidden;
+
+      background:
+        linear-gradient(
+          180deg,
+          rgba(0,0,0,0) 25%,
+          rgba(0,0,0,.85) 100%
+        );
+    }
+
+    .hero-photo {
+      position: absolute;
+      inset: 0;
+
+      width: 100%;
+      height: 100%;
+
+      object-fit: cover;
+
+      z-index: 0;
+
+      background:
+        linear-gradient(
+          135deg,
+          #111827,
+          #1e293b
+        );
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+
+      z-index: 1;
+
+      background:
+        linear-gradient(
+          180deg,
+          rgba(5,8,22,.05) 15%,
+          rgba(5,8,22,.2) 40%,
+          rgba(5,8,22,.95) 100%
+        );
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+
+      width: 100%;
+
+      padding: 30px;
+    }
+
+    .match-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+
+      padding: 8px 13px;
+
+      margin-bottom: 10px;
+
+      border-radius: 999px;
+
+      background:
+        rgba(217,173,69,.13);
+
+      border:
+        1px solid rgba(217,173,69,.35);
+
+      color:
+        var(--gold-light);
+
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .profile-name {
+      color: white;
+
+      font-size:
+        clamp(30px, 7vw, 48px);
+
+      line-height: 1;
+
+      font-weight: 900;
+
+      text-shadow:
+        0 5px 25px rgba(0,0,0,.5);
+    }
+
+    .profile-location {
+      margin-top: 10px;
+
+      color:
+        #dbe4f0;
+
+      font-size: 14px;
+    }
+
+    /* =========================
+       INFO
+    ========================= */
+
+    .info {
+      padding: 28px;
+    }
+
+    .section {
+      margin-bottom: 28px;
+    }
+
+    .section:last-child {
+      margin-bottom: 0;
+    }
+
+    .section-title {
+      margin-bottom: 12px;
+
+      color: white;
+
+      font-size: 17px;
+      font-weight: 800;
+    }
+
+    .description {
+      color: #cbd5e1;
+
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .interests {
+      display: flex;
+      flex-wrap: wrap;
+
+      gap: 8px;
+    }
+
+    .interest {
+      padding: 8px 12px;
+
+      border-radius: 999px;
+
+      color:
+        #e9d5ff;
+
+      background:
+        rgba(124,58,237,.12);
+
+      border:
+        1px solid rgba(168,85,247,.22);
+
+      font-size: 12px;
+    }
+
+    /* =========================
+       ACTIONS
+    ========================= */
+
+    .actions {
+      display: grid;
+
+      grid-template-columns:
+        1fr 1fr;
+
+      gap: 10px;
+
+      margin-top: 25px;
+    }
+
+    .action-btn {
+      min-height: 50px;
+
+      border-radius: 15px;
+
+      border:
+        1px solid var(--border);
+
+      color: white;
+
+      background:
+        rgba(255,255,255,.06);
+
+      font-weight: 800;
+
+      transition: .2s;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+
+      background:
+        rgba(255,255,255,.1);
+    }
+
+    .chat-btn {
+      background:
+        linear-gradient(
+          135deg,
+          var(--purple),
+          var(--pink)
+        );
+
+      border: none;
+
+      box-shadow:
+        0 10px 30px rgba(124,58,237,.25);
+    }
+
+    .danger-btn {
+      grid-column: 1 / -1;
+
+      color:
+        #fca5a5;
+
+      border-color:
+        rgba(239,68,68,.2);
+
+      background:
+        rgba(239,68,68,.06);
+    }
+
+    .danger-btn:hover {
+      background:
+        rgba(239,68,68,.12);
+    }
+
+    /* =========================
+       PHOTO ALBUM
+    ========================= */
+
+    .gallery {
+      display: grid;
+
+      grid-template-columns:
+        repeat(3, 1fr);
+
+      gap: 8px;
+    }
+
+    .gallery img {
+      width: 100%;
+      height: 150px;
+
+      object-fit: cover;
+
+      border-radius: 14px;
+
+      border:
+        1px solid var(--border);
+
+      background:
+        #111827;
+    }
+
+    .gallery-empty {
+      padding: 25px;
+
+      text-align: center;
+
+      border-radius: 16px;
+
+      background:
+        rgba(255,255,255,.035);
+
+      border:
+        1px solid var(--border);
+
+      color: var(--muted);
+
+      font-size: 13px;
+    }
+
+    /* =========================
+       LOADING
+    ========================= */
+
+    .loading {
+      min-height: 70vh;
+
+      display: grid;
+      place-items: center;
+    }
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+
+      border:
+        3px solid rgba(255,255,255,.1);
+
+      border-top-color:
+        var(--gold);
+
+      border-radius: 50%;
+
+      animation:
+        spin .8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* =========================
+       TOAST
+    ========================= */
+
+    .toast {
+      position: fixed;
+
+      left: 50%;
+      bottom: 25px;
+
+      z-index: 100;
+
+      transform:
+        translate(-50%, 20px);
+
+      opacity: 0;
+
+      pointer-events: none;
+
+      width:
+        min(90%, 420px);
+
+      padding: 13px 16px;
+
+      border-radius: 14px;
+
+      background:
+        rgba(15,23,42,.95);
+
+      border:
+        1px solid var(--border);
+
+      color: white;
+
+      text-align: center;
+
+      font-size: 13px;
+
+      box-shadow:
+        0 20px 50px rgba(0,0,0,.35);
+
+      transition: .25s;
+    }
+
+    .toast.show {
+      opacity: 1;
+
+      transform:
+        translate(-50%, 0);
+    }
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width: 600px) {
+
+      .topbar {
+        padding: 0 12px;
+      }
+
+      .brand {
+        font-size: 18px;
+      }
+
+      .container {
+        padding:
+          12px
+          10px
+          30px;
+      }
+
+      .profile-card {
+        border-radius: 22px;
+      }
+
+      .hero {
+        min-height: 420px;
+      }
+
+      .hero-content {
+        padding: 22px;
+      }
+
+      .info {
+        padding: 22px;
+      }
+
+      .gallery {
+        grid-template-columns:
+          repeat(2, 1fr);
+      }
+
+      .gallery img {
+        height: 130px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="topbar">
+
+    <a
+      href="matches.html"
+      class="brand"
+    >
+      <span class="brand-icon">💕</span>
+      <span>EmiMatch</span>
+    </a>
+
+    <button
+      id="backBtn"
+      class="back-btn"
+    >
+      ← Volver
+    </button>
+
+  </header>
+
+
+  <main class="container">
+
+    <div
+      id="loading"
+      class="loading"
+    >
+      <div class="spinner"></div>
+    </div>
+
+
+    <article
+      id="profileCard"
+      class="profile-card"
+      style="display:none;"
+    >
+
+      <!-- HERO -->
+
+      <section class="hero">
+
+        <img
+          id="heroPhoto"
+          class="hero-photo"
+          src="https://placehold.co/900x900/111827/ffffff?text=💕"
+          alt="Foto de perfil"
+        >
+
+        <div class="hero-overlay"></div>
+
+        <div class="hero-content">
+
+          <div class="match-pill">
+            ❤️ HICIERON MATCH
+          </div>
+
+          <h1
+            id="profileName"
+            class="profile-name"
+          >
+            Usuario
+          </h1>
+
+          <div
+            id="profileLocation"
+            class="profile-location"
+          >
+            📍 Argentina
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- INFO -->
+
+      <section class="info">
+
+        <div class="section">
+
+          <h2 class="section-title">
+            ✨ Sobre esta persona
+          </h2>
+
+          <p
+            id="description"
+            class="description"
+          >
+            Sin descripción.
+          </p>
+
+        </div>
+
+
+        <div class="section">
+
+          <h2 class="section-title">
+            🎯 Intereses
+          </h2>
+
+          <div
+            id="interests"
+            class="interests"
+          >
+          </div>
+
+        </div>
+
+
+        <div class="section">
+
+          <h2 class="section-title">
+            📸 Fotos
+          </h2>
+
+          <div
+            id="gallery"
+            class="gallery"
+          >
+          </div>
+
+        </div>
+
+
+        <!-- ACTIONS -->
+
+        <div class="actions">
+
+          <button
+            id="chatBtn"
+            class="action-btn chat-btn"
+          >
+            💬 Enviar mensaje
+          </button>
+
+          <button
+            id="backMatchesBtn"
+            class="action-btn"
+          >
+            ❤️ Mis Matches
+          </button>
+
+          <button
+            id="blockBtn"
+            class="action-btn danger-btn"
+          >
+            🚫 Bloquear usuario
+          </button>
+
+        </div>
+
+      </section>
+
+    </article>
+
+  </main>
+
+
+  <div
+    id="toast"
+    class="toast"
+  ></div>
+
+
+  <script>
+
+    /* =====================================================
+       SUPABASE
+    ===================================================== */
+
+    const SUPABASE_URL =
+      "https://kngiadwaesdbmvwivdev.supabase.co";
+
+    const SUPABASE_KEY =
+      "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
+
+    const supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+
+    /* =====================================================
+       ELEMENTS
+    ===================================================== */
+
+    const loading =
+      document.getElementById(
+        "loading"
+      );
+
+    const profileCard =
+      document.getElementById(
+        "profileCard"
+      );
+
+    const heroPhoto =
+      document.getElementById(
+        "heroPhoto"
+      );
+
+    const profileName =
+      document.getElementById(
+        "profileName"
+      );
+
+    const profileLocation =
+      document.getElementById(
+        "profileLocation"
+      );
+
+    const description =
+      document.getElementById(
+        "description"
+      );
+
+    const interests =
+      document.getElementById(
+        "interests"
+      );
+
+    const gallery =
+      document.getElementById(
+        "gallery"
+      );
+
+    const chatBtn =
+      document.getElementById(
+        "chatBtn"
+      );
+
+    const blockBtn =
+      document.getElementById(
+        "blockBtn"
+      );
+
+    const backBtn =
+      document.getElementById(
+        "backBtn"
+      );
+
+    const backMatchesBtn =
+      document.getElementById(
+        "backMatchesBtn"
+      );
+
+    const toast =
+      document.getElementById(
+        "toast"
+      );
+
+
+    /* =====================================================
+       STATE
+    ===================================================== */
+
+    let currentUser = null;
+    let viewedUser = null;
+
+
+    /* =====================================================
+       TOAST
+    ===================================================== */
+
+    function showToast(
+      message
+    ) {
+
+      toast.textContent =
+        message;
+
+      toast.classList.add(
+        "show"
+      );
+
+      clearTimeout(
+        showToast.timer
+      );
+
+      showToast.timer =
+        setTimeout(
+          () => {
+
+            toast.classList.remove(
+              "show"
+            );
+
+          },
+          2800
+        );
+    }
+
+
+    /* =====================================================
+       SESSION
+    ===================================================== */
+
+    async function loadSession() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient.auth
+          .getSession();
+
+      if (
+        error ||
+        !data.session
+      ) {
+
+        window.location.href =
+          "index.html";
+
+        return false;
+      }
+
+      currentUser =
+        data.session.user;
+
+      return true;
+    }
+
+
+    /* =====================================================
+       LOAD PROFILE
+    ===================================================== */
+
+    async function loadProfile() {
+
+      const params =
+        new URLSearchParams(
+          window.location.search
+        );
+
+      const userId =
+        params.get("user");
+
+      if (!userId) {
+
+        showToast(
+          "No se encontró el perfil."
+        );
+
+        setTimeout(
+          () => {
+            window.location.href =
+              "matches.html";
+          },
+          1200
+        );
+
+        return false;
+      }
+
+      if (
+        userId ===
+        currentUser.id
+      ) {
+
+        window.location.href =
+          "perfil.html";
+
+        return false;
+      }
+
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from("profiles")
+          .select(
+            "id,nombre,edad,ciudad,descripcion,foto_url,intereses"
+          )
+          .eq(
+            "id",
+            userId
+          )
+          .maybeSingle();
+
+
+      if (
+        error ||
+        !data
+      ) {
+
+        console.error(
+          error
+        );
+
+        showToast(
+          "No se pudo cargar este perfil."
+        );
+
+        return false;
+      }
+
+      viewedUser =
+        data;
+
+      renderProfile();
+
+      return true;
+    }
+
+
+    /* =====================================================
+       RENDER PROFILE
+    ===================================================== */
+
+    function renderProfile() {
+
+      const name =
+        viewedUser.nombre ||
+        "Usuario EmiMatch";
+
+      profileName.textContent =
+        viewedUser.edad
+          ? `${name}, ${viewedUser.edad}`
+          : name;
+
+
+      profileLocation.textContent =
+        viewedUser.ciudad
+          ? `📍 ${viewedUser.ciudad}`
+          : "📍 Argentina";
+
+
+      description.textContent =
+        viewedUser.descripcion ||
+        "Esta persona todavía no agregó una descripción.";
+
+
+      if (
+        viewedUser.foto_url
+      ) {
+
+        heroPhoto.src =
+          viewedUser.foto_url;
+      }
+
+
+      heroPhoto.onerror =
+        function () {
+
+          this.src =
+            "https://placehold.co/900x900/111827/ffffff?text=💕";
+
+        };
+
+
+      renderInterests();
+
+      loadGallery();
+
+      loading.style.display =
+        "none";
+
+      profileCard.style.display =
+        "block";
+    }
+
+
+    /* =====================================================
+       INTERESTS
+    ===================================================== */
+
+    function renderInterests() {
+
+      interests.innerHTML =
+        "";
+
+      if (
+        !viewedUser.intereses
+      ) {
+
+        interests.innerHTML = `
+          <span class="interest">
+            ✨ Sin intereses cargados
+          </span>
+        `;
+
+        return;
+      }
+
+      const values =
+        viewedUser.intereses
+          .split(",")
+          .map(
+            item => item.trim()
+          )
+          .filter(Boolean);
+
+      if (
+        values.length === 0
+      ) {
+
+        interests.innerHTML = `
+          <span class="interest">
+            ✨ Sin intereses cargados
+          </span>
+        `;
+
+        return;
+      }
+
+      values.forEach(
+        interest => {
+
+          const tag =
+            document.createElement(
+              "span"
+            );
+
+          tag.className =
+            "interest";
+
+          tag.textContent =
+            interest;
+
+          interests.appendChild(
+            tag
+          );
+
+        }
+      );
+    }
+
+
+    /* =====================================================
+       LOAD GALLERY
+    ===================================================== */
+
+    async function loadGallery() {
+
+      gallery.innerHTML =
+        "";
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .storage
+          .from("profile-photos")
+          .list(
+            viewedUser.id,
+            {
+              limit: 6,
+              sortBy: {
+                column: "created_at",
+                order: "asc"
+              }
+            }
+          );
+
+
+      if (
+        error ||
+        !data ||
+        data.length === 0
+      ) {
+
+        gallery.innerHTML = `
+          <div
+            class="gallery-empty"
+            style="grid-column:1/-1;"
+          >
+            📷 No hay fotos adicionales.
+          </div>
+        `;
+
+        return;
+      }
+
+
+      const files =
+        data.filter(
+          file =>
+            file.name &&
+            !file.name.startsWith(".")
+        );
+
+
+      if (
+        files.length === 0
+      ) {
+
+        gallery.innerHTML = `
+          <div
+            class="gallery-empty"
+            style="grid-column:1/-1;"
+          >
+            📷 No hay fotos adicionales.
+          </div>
+        `;
+
+        return;
+      }
+
+
+      files.forEach(
+        file => {
+
+          const {
+            data: publicData
+          } =
+            supabaseClient
+              .storage
+              .from("profile-photos")
+              .getPublicUrl(
+                `${viewedUser.id}/${file.name}`
+              );
+
+
+          const img =
+            document.createElement(
+              "img"
+            );
+
+          img.src =
+            publicData.publicUrl;
+
+          img.alt =
+    
