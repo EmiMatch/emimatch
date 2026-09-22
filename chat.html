@@ -4,129 +4,278 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Chat | EmiMatch</title>
-  <meta name="description" content="Chat privado de EmiMatch.">
-  <meta name="theme-color" content="#111827">
+  <title>EmiMatch - Chat</title>
+
+  <meta
+    name="description"
+    content="Chat privado de EmiMatch."
+  >
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
+    :root {
+      --bg: #050816;
+      --bg2: #0b1228;
+      --card: rgba(255,255,255,.065);
+      --card2: rgba(255,255,255,.09);
+      --border: rgba(255,255,255,.11);
+
+      --gold: #d9ad45;
+      --gold-light: #f6dc87;
+
+      --purple: #7c3aed;
+      --purple-light: #a855f7;
+
+      --pink: #ec4899;
+
+      --white: #ffffff;
+      --text: #e8edf7;
+      --muted: #94a3b8;
+
+      --success: #22c55e;
+      --danger: #ef4444;
+
+      --shadow:
+        0 25px 70px rgba(0,0,0,.45);
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
 
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+    }
+
     body {
       font-family:
+        Inter,
+        system-ui,
         -apple-system,
         BlinkMacSystemFont,
         "Segoe UI",
-        Roboto,
-        Arial,
         sans-serif;
-
-      min-height: 100vh;
-      color: #fff;
 
       background:
         radial-gradient(
-          circle at top left,
-          rgba(124, 58, 237, 0.20),
+          circle at 15% 10%,
+          rgba(124,58,237,.25),
+          transparent 35%
+        ),
+        radial-gradient(
+          circle at 85% 90%,
+          rgba(236,72,153,.14),
           transparent 35%
         ),
         linear-gradient(
           135deg,
-          #07152f 0%,
-          #111827 50%,
-          #241044 100%
+          var(--bg),
+          var(--bg2)
         );
+
+      color: var(--text);
+      overflow: hidden;
     }
 
     button,
-    input {
+    input,
+    textarea {
       font: inherit;
     }
 
-    a {
-      color: inherit;
-      text-decoration: none;
+    button {
+      cursor: pointer;
     }
 
-    /* HEADER */
+    /* =========================
+       APP
+    ========================= */
 
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
+    .app {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
 
-      background: rgba(17, 24, 39, 0.92);
-      backdrop-filter: blur(14px);
+    /* =========================
+       HEADER
+    ========================= */
+
+    .topbar {
+      height: 76px;
+      flex-shrink: 0;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      padding: 0 22px;
+
+      background:
+        rgba(5,8,22,.84);
+
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
 
       border-bottom:
-        1px solid rgba(255,255,255,0.08);
+        1px solid var(--border);
+
+      box-shadow:
+        0 10px 40px rgba(0,0,0,.25);
+
+      position: relative;
+      z-index: 10;
     }
 
-    .header-content {
-      max-width: 900px;
-      margin: auto;
-      padding: 13px 18px;
-
+    .brand {
       display: flex;
       align-items: center;
-      gap: 13px;
+      gap: 11px;
+
+      color: var(--white);
+      text-decoration: none;
+      font-weight: 900;
+      font-size: 21px;
+      letter-spacing: -.5px;
     }
 
-    .back {
-      width: 38px;
-      height: 38px;
+    .brand-heart {
+      width: 40px;
+      height: 40px;
 
-      border-radius: 50%;
+      display: grid;
+      place-items: center;
 
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.10);
-
-      font-size: 20px;
-    }
-
-    .user-photo {
-      width: 42px;
-      height: 42px;
-
-      border-radius: 50%;
-      overflow: hidden;
+      border-radius: 13px;
 
       background:
         linear-gradient(
           135deg,
-          #312e81,
-          #7c3aed
+          var(--purple),
+          var(--pink)
         );
+
+      box-shadow:
+        0 8px 28px rgba(124,58,237,.35);
+
+      font-size: 19px;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      width: 42px;
+      height: 42px;
+
+      border: 1px solid var(--border);
+      border-radius: 13px;
+
+      background: rgba(255,255,255,.055);
+
+      color: var(--white);
+
+      display: grid;
+      place-items: center;
+
+      transition: .2s ease;
+    }
+
+    .icon-btn:hover {
+      background: rgba(255,255,255,.1);
+      transform: translateY(-1px);
+    }
+
+    /* =========================
+       CHAT HEADER
+    ========================= */
+
+    .chat-header {
+      height: 82px;
+      flex-shrink: 0;
 
       display: flex;
       align-items: center;
-      justify-content: center;
+
+      gap: 13px;
+
+      padding: 10px 18px;
+
+      background:
+        rgba(13,22,48,.72);
+
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+
+      border-bottom:
+        1px solid var(--border);
+
+      position: relative;
+      z-index: 5;
+    }
+
+    .back-btn {
+      width: 42px;
+      height: 42px;
+
+      border: 1px solid var(--border);
+      border-radius: 12px;
+
+      background: rgba(255,255,255,.05);
+
+      color: white;
+
+      display: grid;
+      place-items: center;
 
       font-size: 20px;
 
-      flex-shrink: 0;
+      transition: .2s;
     }
 
-    .user-photo img {
-      width: 100%;
-      height: 100%;
+    .back-btn:hover {
+      background: rgba(255,255,255,.1);
+    }
+
+    .profile-avatar {
+      width: 53px;
+      height: 53px;
+
+      border-radius: 50%;
+
       object-fit: cover;
+
+      border:
+        2px solid rgba(217,173,69,.75);
+
+      box-shadow:
+        0 0 0 4px rgba(217,173,69,.08),
+        0 8px 25px rgba(0,0,0,.35);
+
+      background:
+        linear-gradient(
+          135deg,
+          #1e293b,
+          #111827
+        );
     }
 
     .user-info {
       min-width: 0;
+      flex: 1;
     }
 
     .user-name {
+      color: white;
       font-size: 16px;
       font-weight: 800;
 
@@ -136,107 +285,185 @@
     }
 
     .user-status {
-      color: #94a3b8;
-      font-size: 11px;
-      margin-top: 2px;
-    }
-
-    /* CHAT */
-
-    main {
-      max-width: 900px;
-      margin: auto;
-
-      height:
-        calc(100vh - 68px);
-
-      padding: 14px;
-    }
-
-    .chat-container {
-      height: 100%;
+      margin-top: 4px;
 
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      gap: 6px;
 
-      overflow: hidden;
+      color: var(--muted);
 
-      background:
-        rgba(255,255,255,0.055);
-
-      border:
-        1px solid rgba(255,255,255,0.09);
-
-      border-radius: 22px;
-
-      box-shadow:
-        0 20px 60px rgba(0,0,0,0.25);
-
-      backdrop-filter: blur(14px);
+      font-size: 12px;
     }
 
-    /* MESSAGES */
+    .status-dot {
+      width: 8px;
+      height: 8px;
 
-    #messagesContainer {
+      border-radius: 50%;
+
+      background: var(--success);
+
+      box-shadow:
+        0 0 10px rgba(34,197,94,.75);
+    }
+
+    .status-dot.offline {
+      background: #64748b;
+      box-shadow: none;
+    }
+
+    .match-badge {
+      padding: 7px 11px;
+
+      border-radius: 999px;
+
+      color: var(--gold-light);
+
+      background:
+        rgba(217,173,69,.09);
+
+      border:
+        1px solid rgba(217,173,69,.22);
+
+      font-size: 11px;
+      font-weight: 800;
+
+      white-space: nowrap;
+    }
+
+    /* =========================
+       MESSAGES
+    ========================= */
+
+    .messages {
       flex: 1;
 
       overflow-y: auto;
 
-      padding: 22px 18px;
-
-      display: flex;
-      flex-direction: column;
-      gap: 9px;
+      padding:
+        25px
+        max(18px, calc((100vw - 900px) / 2))
+        30px;
 
       scroll-behavior: smooth;
+
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(124,58,237,.07),
+          transparent 40%
+        );
     }
 
-    .loading {
-      margin: auto;
+    .messages::-webkit-scrollbar {
+      width: 7px;
+    }
+
+    .messages::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .messages::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,.12);
+      border-radius: 20px;
+    }
+
+    .welcome {
+      max-width: 430px;
+
+      margin:
+        25px auto
+        28px;
+
+      padding: 20px;
 
       text-align: center;
 
-      color: #94a3b8;
+      background:
+        rgba(255,255,255,.045);
+
+      border:
+        1px solid var(--border);
+
+      border-radius: 22px;
+
+      box-shadow:
+        0 15px 45px rgba(0,0,0,.18);
+
+      animation: fadeIn .45s ease;
     }
 
-    .loading-heart {
-      font-size: 40px;
-      margin-bottom: 10px;
+    .welcome-icon {
+      width: 48px;
+      height: 48px;
 
-      animation: pulse 1.2s infinite;
+      display: grid;
+      place-items: center;
+
+      margin: 0 auto 10px;
+
+      border-radius: 15px;
+
+      background:
+        linear-gradient(
+          135deg,
+          rgba(124,58,237,.25),
+          rgba(236,72,153,.18)
+        );
+
+      font-size: 23px;
     }
 
-    @keyframes pulse {
-      0%, 100% {
-        transform: scale(1);
-      }
-
-      50% {
-        transform: scale(1.12);
-      }
+    .welcome h2 {
+      color: white;
+      font-size: 17px;
+      margin-bottom: 6px;
     }
 
-    .empty-chat {
-      margin: auto;
-
-      max-width: 330px;
-
-      text-align: center;
-
-      color: #94a3b8;
-
-      line-height: 1.6;
+    .welcome p {
+      color: var(--muted);
       font-size: 13px;
+      line-height: 1.55;
     }
 
-    .empty-chat-icon {
-      font-size: 48px;
-      margin-bottom: 12px;
+    .date-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      margin: 20px 0;
+
+      color: #718096;
+
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .7px;
+    }
+
+    .date-divider::before,
+    .date-divider::after {
+      content: "";
+      flex: 1;
+
+      height: 1px;
+
+      background:
+        linear-gradient(
+          90deg,
+          transparent,
+          rgba(255,255,255,.1),
+          transparent
+        );
     }
 
     .message-row {
       display: flex;
-      width: 100%;
+
+      margin-bottom: 8px;
+
+      animation: messageIn .25s ease;
     }
 
     .message-row.mine {
@@ -247,184 +474,418 @@
       justify-content: flex-start;
     }
 
-    .message {
-      max-width: min(75%, 520px);
+    .message-bubble {
+      max-width: min(72%, 520px);
 
-      padding: 10px 13px;
+      padding:
+        11px
+        14px
+        8px;
 
-      border-radius: 17px;
+      border-radius: 18px;
 
-      font-size: 14px;
-      line-height: 1.45;
+      position: relative;
 
-      word-break: break-word;
+      box-shadow:
+        0 8px 25px rgba(0,0,0,.12);
     }
 
-    .mine .message {
+    .mine .message-bubble {
+      color: white;
+
       background:
         linear-gradient(
           135deg,
           #7c3aed,
-          #a855f7
+          #9333ea
         );
 
       border-bottom-right-radius: 5px;
     }
 
-    .theirs .message {
+    .theirs .message-bubble {
+      color: #e5e7eb;
+
       background:
-        rgba(255,255,255,0.09);
+        rgba(255,255,255,.075);
 
       border:
-        1px solid rgba(255,255,255,0.08);
+        1px solid rgba(255,255,255,.08);
 
       border-bottom-left-radius: 5px;
     }
 
-    .message-time {
-      display: block;
+    .message-content {
+      font-size: 14px;
+      line-height: 1.45;
+
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .message-meta {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+
+      gap: 4px;
 
       margin-top: 4px;
 
       font-size: 9px;
 
-      opacity: 0.65;
-
-      text-align: right;
+      opacity: .65;
     }
 
-    /* INPUT */
+    .message-check {
+      font-size: 11px;
+    }
 
-    .composer {
-      padding: 12px;
+    /* =========================
+       TYPING
+    ========================= */
+
+    .typing {
+      min-height: 28px;
+
+      padding: 0
+        max(18px, calc((100vw - 900px) / 2));
+
+      color: var(--muted);
+
+      font-size: 11px;
+    }
+
+    .typing.hidden {
+      visibility: hidden;
+    }
+
+    /* =========================
+       COMPOSER
+    ========================= */
+
+    .composer-area {
+      flex-shrink: 0;
+
+      padding:
+        12px
+        max(18px, calc((100vw - 900px) / 2))
+        16px;
+
+      background:
+        rgba(5,8,22,.9);
 
       border-top:
-        1px solid rgba(255,255,255,0.08);
+        1px solid var(--border);
+
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    .composer {
+      display: flex;
+      align-items: flex-end;
+
+      gap: 9px;
+
+      padding: 7px;
 
       background:
-        rgba(15,23,42,0.45);
-    }
-
-    .composer-form {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-    }
-
-    #messageInput {
-      flex: 1;
-
-      min-width: 0;
+        rgba(255,255,255,.06);
 
       border:
-        1px solid rgba(255,255,255,0.10);
+        1px solid rgba(255,255,255,.1);
 
-      background:
-        rgba(15,23,42,0.85);
+      border-radius: 19px;
 
-      color: #fff;
+      box-shadow:
+        0 15px 40px rgba(0,0,0,.25);
+    }
 
+    .composer textarea {
+      flex: 1;
+
+      min-height: 42px;
+      max-height: 120px;
+
+      resize: none;
+
+      border: none;
       outline: none;
 
-      border-radius: 999px;
+      background: transparent;
 
-      padding: 12px 16px;
+      color: white;
+
+      padding:
+        11px
+        10px;
+
+      line-height: 1.4;
 
       font-size: 14px;
     }
 
-    #messageInput::placeholder {
-      color: #64748b;
+    .composer textarea::placeholder {
+      color: #718096;
     }
 
-    #messageInput:focus {
-      border-color:
-        rgba(217,173,69,0.65);
-
-      box-shadow:
-        0 0 0 3px rgba(217,173,69,0.08);
-    }
-
-    #sendButton {
-      width: 46px;
-      height: 46px;
+    .send-btn {
+      width: 45px;
+      height: 45px;
 
       flex-shrink: 0;
 
-      border: 0;
-      border-radius: 50%;
+      border: none;
+
+      border-radius: 15px;
 
       background:
         linear-gradient(
           135deg,
-          #d9ad45,
-          #f1cf78
+          var(--purple),
+          var(--pink)
         );
 
-      color: #111827;
-
-      cursor: pointer;
+      color: white;
 
       font-size: 18px;
-      font-weight: 900;
 
-      transition: 0.2s ease;
+      display: grid;
+      place-items: center;
+
+      box-shadow:
+        0 8px 25px rgba(124,58,237,.3);
+
+      transition:
+        transform .2s,
+        opacity .2s;
     }
 
-    #sendButton:hover {
+    .send-btn:hover {
       transform: translateY(-2px);
     }
 
-    #sendButton:disabled {
-      opacity: 0.5;
-      cursor: wait;
+    .send-btn:disabled {
+      opacity: .45;
+      cursor: not-allowed;
       transform: none;
     }
 
-    /* ERROR */
+    .composer-hint {
+      text-align: center;
 
-    .error-box {
-      margin: 12px;
+      color: #64748b;
 
-      padding: 12px 14px;
+      font-size: 9px;
 
-      border-radius: 12px;
+      margin-top: 7px;
+    }
+
+    /* =========================
+       LOADING
+    ========================= */
+
+    .loading-screen {
+      position: fixed;
+      inset: 0;
+
+      z-index: 100;
+
+      display: grid;
+      place-items: center;
 
       background:
-        rgba(239,68,68,0.12);
+        linear-gradient(
+          135deg,
+          #050816,
+          #0b1228
+        );
+
+      transition: opacity .3s;
+    }
+
+    .loading-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loader {
+      width: 52px;
+      height: 52px;
+
+      border-radius: 50%;
 
       border:
-        1px solid rgba(239,68,68,0.25);
+        3px solid rgba(255,255,255,.08);
 
-      color: #fecaca;
+      border-top-color: var(--gold);
+
+      animation:
+        spin .8s linear infinite;
+    }
+
+    /* =========================
+       TOAST
+    ========================= */
+
+    .toast {
+      position: fixed;
+
+      left: 50%;
+      bottom: 95px;
+
+      transform:
+        translate(-50%, 20px);
+
+      opacity: 0;
+
+      pointer-events: none;
+
+      z-index: 200;
+
+      max-width:
+        calc(100% - 30px);
+
+      padding:
+        11px
+        15px;
+
+      border-radius: 13px;
+
+      background:
+        rgba(15,23,42,.94);
+
+      border:
+        1px solid var(--border);
+
+      color: white;
 
       font-size: 12px;
 
-      line-height: 1.5;
+      box-shadow:
+        0 15px 45px rgba(0,0,0,.35);
+
+      transition: .25s;
     }
 
-    @media (max-width: 600px) {
-      main {
-        height:
-          calc(100vh - 68px);
+    .toast.show {
+      opacity: 1;
+      transform:
+        translate(-50%, 0);
+    }
 
-        padding: 7px;
+    .toast.error {
+      border-color:
+        rgba(239,68,68,.3);
+    }
+
+    /* =========================
+       ANIMATIONS
+    ========================= */
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
       }
 
-      .chat-container {
-        border-radius: 16px;
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes messageIn {
+      from {
+        opacity: 0;
+        transform: translateY(7px);
       }
 
-      #messagesContainer {
-        padding: 16px 12px;
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width: 650px) {
+
+      body {
+        background:
+          linear-gradient(
+            135deg,
+            var(--bg),
+            var(--bg2)
+          );
       }
 
-      .message {
-        max-width: 84%;
+      .topbar {
+        height: 62px;
+        padding: 0 13px;
       }
 
-      .user-name {
-        font-size: 15px;
+      .brand {
+        font-size: 18px;
+      }
+
+      .brand-heart {
+        width: 36px;
+        height: 36px;
+      }
+
+      .chat-header {
+        height: 70px;
+        padding: 8px 10px;
+      }
+
+      .back-btn {
+        width: 38px;
+        height: 38px;
+      }
+
+      .profile-avatar {
+        width: 45px;
+        height: 45px;
+      }
+
+      .match-badge {
+        display: none;
+      }
+
+      .messages {
+        padding:
+          16px
+          12px
+          18px;
+      }
+
+      .message-bubble {
+        max-width: 82%;
+      }
+
+      .composer-area {
+        padding:
+          9px
+          10px
+          11px;
+      }
+
+      .composer-hint {
+        display: none;
+      }
+
+      .toast {
+        bottom: 82px;
       }
     }
   </style>
@@ -432,24 +893,70 @@
 
 <body>
 
-  <header>
+  <!-- =========================
+       LOADING
+  ========================= -->
 
-    <div class="header-content">
+  <div
+    id="loadingScreen"
+    class="loading-screen"
+  >
+    <div class="loader"></div>
+  </div>
+
+
+  <div class="app">
+
+    <!-- =========================
+         TOP BAR
+    ========================= -->
+
+    <header class="topbar">
 
       <a
         href="matches.html"
-        class="back"
+        class="brand"
+      >
+        <span class="brand-heart">💕</span>
+        <span>EmiMatch</span>
+      </a>
+
+      <div class="top-actions">
+
+        <button
+          id="logoutBtn"
+          class="icon-btn"
+          title="Cerrar sesión"
+          aria-label="Cerrar sesión"
+        >
+          🚪
+        </button>
+
+      </div>
+
+    </header>
+
+
+    <!-- =========================
+         CHAT HEADER
+    ========================= -->
+
+    <section class="chat-header">
+
+      <button
+        id="backBtn"
+        class="back-btn"
         aria-label="Volver"
       >
         ←
-      </a>
+      </button>
 
-      <div
-        id="userPhoto"
-        class="user-photo"
+      <img
+        id="profileAvatar"
+        class="profile-avatar"
+        src="https://placehold.co/200x200/111827/ffffff?text=💕"
+        alt="Foto de perfil"
       >
-        💕
-      </div>
 
       <div class="user-info">
 
@@ -460,196 +967,242 @@
           Cargando...
         </div>
 
-        <div
-          id="userStatus"
-          class="user-status"
-        >
-          Conectando...
+        <div class="user-status">
+
+          <span
+            id="statusDot"
+            class="status-dot"
+          ></span>
+
+          <span id="statusText">
+            Conexión segura
+          </span>
+
         </div>
 
       </div>
 
-    </div>
+      <div class="match-badge">
+        ❤️ MATCH
+      </div>
 
-  </header>
+    </section>
 
 
-  <main>
+    <!-- =========================
+         MESSAGES
+    ========================= -->
 
-    <div class="chat-container">
+    <main
+      id="messages"
+      class="messages"
+    >
 
       <div
-        id="messagesContainer"
+        id="welcome"
+        class="welcome"
       >
 
-        <div class="loading">
-
-          <div class="loading-heart">
-            💕
-          </div>
-
-          <p>
-            Cargando conversación...
-          </p>
-
+        <div class="welcome-icon">
+          💕
         </div>
+
+        <h2>
+          ¡Hicieron Match!
+        </h2>
+
+        <p>
+          Este es el comienzo de una nueva conexión.
+          Enviá un mensaje y empezá la conversación.
+        </p>
 
       </div>
 
+    </main>
 
-      <div
-        id="errorContainer"
-      ></div>
 
+    <!-- =========================
+         TYPING
+    ========================= -->
+
+    <div
+      id="typing"
+      class="typing hidden"
+    >
+      Escribiendo...
+    </div>
+
+
+    <!-- =========================
+         COMPOSER
+    ========================= -->
+
+    <footer class="composer-area">
 
       <div class="composer">
 
-        <form
-          id="messageForm"
-          class="composer-form"
+        <textarea
+          id="messageInput"
+          rows="1"
+          maxlength="1000"
+          placeholder="Escribí un mensaje..."
+          autocomplete="off"
+        ></textarea>
+
+        <button
+          id="sendBtn"
+          class="send-btn"
+          disabled
+          aria-label="Enviar mensaje"
+          title="Enviar mensaje"
         >
-
-          <input
-            type="text"
-            id="messageInput"
-            maxlength="1000"
-            autocomplete="off"
-            placeholder="Escribí un mensaje..."
-          >
-
-          <button
-            type="submit"
-            id="sendButton"
-            aria-label="Enviar mensaje"
-          >
-            ➤
-          </button>
-
-        </form>
+          ➤
+        </button>
 
       </div>
 
-    </div>
+      <div class="composer-hint">
+        Enter para enviar · Shift + Enter para nueva línea
+      </div>
 
-  </main>
+    </footer>
+
+  </div>
+
+
+  <!-- =========================
+       TOAST
+  ========================= -->
+
+  <div
+    id="toast"
+    class="toast"
+  ></div>
 
 
   <script>
 
-    /* ==========================================
+    /* =====================================================
        SUPABASE
-       ========================================== */
+    ===================================================== */
 
     const SUPABASE_URL =
-      "https://kng...supabase.co";
+      "https://kngiadwaesdbmvwivdev.supabase.co";
 
-    const SUPABASE_ANON_KEY =
-      "PEGÁ_ACÁ_TU_ANON_KEY";
-
+    const SUPABASE_KEY =
+      "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
 
     const supabaseClient =
       window.supabase.createClient(
         SUPABASE_URL,
-        SUPABASE_ANON_KEY
+        SUPABASE_KEY
       );
 
 
-    /* ==========================================
-       ELEMENTOS
-       ========================================== */
+    /* =====================================================
+       ELEMENTS
+    ===================================================== */
+
+    const loadingScreen =
+      document.getElementById("loadingScreen");
 
     const messagesContainer =
-      document.getElementById(
-        "messagesContainer"
-      );
+      document.getElementById("messages");
 
-    const messageInput =
-      document.getElementById(
-        "messageInput"
-      );
+    const welcome =
+      document.getElementById("welcome");
 
-    const messageForm =
-      document.getElementById(
-        "messageForm"
-      );
-
-    const sendButton =
-      document.getElementById(
-        "sendButton"
-      );
+    const profileAvatar =
+      document.getElementById("profileAvatar");
 
     const userName =
-      document.getElementById(
-        "userName"
-      );
+      document.getElementById("userName");
 
-    const userPhoto =
-      document.getElementById(
-        "userPhoto"
-      );
+    const statusDot =
+      document.getElementById("statusDot");
 
-    const userStatus =
-      document.getElementById(
-        "userStatus"
-      );
+    const statusText =
+      document.getElementById("statusText");
 
-    const errorContainer =
-      document.getElementById(
-        "errorContainer"
-      );
+    const messageInput =
+      document.getElementById("messageInput");
+
+    const sendBtn =
+      document.getElementById("sendBtn");
+
+    const logoutBtn =
+      document.getElementById("logoutBtn");
+
+    const backBtn =
+      document.getElementById("backBtn");
+
+    const toast =
+      document.getElementById("toast");
 
 
-    /* ==========================================
-       ESTADO
-       ========================================== */
+    /* =====================================================
+       STATE
+    ===================================================== */
 
     let currentUser = null;
-    let otherUserId = null;
-    let channel = null;
+    let otherUser = null;
+
+    let realtimeChannel = null;
+
+    let loadedMessageIds = new Set();
+
+    let sendingMessage = false;
 
 
-    /* ==========================================
-       UTILIDADES
-       ========================================== */
+    /* =====================================================
+       HELPERS
+    ===================================================== */
+
+    function showToast(
+      message,
+      isError = false
+    ) {
+
+      toast.textContent = message;
+
+      toast.classList.toggle(
+        "error",
+        isError
+      );
+
+      toast.classList.add("show");
+
+      clearTimeout(
+        showToast.timeout
+      );
+
+      showToast.timeout =
+        setTimeout(() => {
+
+          toast.classList.remove(
+            "show"
+          );
+
+        }, 2800);
+    }
+
 
     function escapeHtml(value) {
 
-      return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+      const div =
+        document.createElement("div");
 
+      div.textContent =
+        value ?? "";
+
+      return div.innerHTML;
     }
 
 
-    function showError(message) {
-
-      errorContainer.innerHTML = `
-        <div class="error-box">
-          ⚠️ ${escapeHtml(message)}
-        </div>
-      `;
-
-    }
-
-
-    function clearError() {
-
-      errorContainer.innerHTML = "";
-
-    }
-
-
-    function formatTime(dateValue) {
-
-      if (!dateValue) {
-        return "";
-      }
+    function formatTime(dateString) {
 
       const date =
-        new Date(dateValue);
+        new Date(dateString);
 
       return date.toLocaleTimeString(
         "es-AR",
@@ -658,563 +1211,15 @@
           minute: "2-digit"
         }
       );
-
     }
 
 
-    /* ==========================================
-       OBTENER ID DESDE LA URL
-       ========================================== */
+    function formatDate(dateString) {
 
-    function getOtherUserId() {
+      const date =
+        new Date(dateString);
 
-      const params =
-        new URLSearchParams(
-          window.location.search
-        );
+      const today =
+        new Date();
 
-      return params.get("user");
-
-    }
-
-
-    /* ==========================================
-       INICIAR
-       ========================================== */
-
-    async function init() {
-
-      otherUserId =
-        getOtherUserId();
-
-
-      if (!otherUserId) {
-
-        showError(
-          "No se encontró el usuario de esta conversación."
-        );
-
-        userName.textContent =
-          "Conversación";
-
-        userStatus.textContent =
-          "Falta seleccionar un match";
-
-        return;
-
-      }
-
-
-      const {
-        data,
-        error
-      } =
-        await supabaseClient
-          .auth
-          .getSession();
-
-
-      if (error || !data.session) {
-
-        window.location.href =
-          "index.html";
-
-        return;
-
-      }
-
-
-      currentUser =
-        data.session.user;
-
-
-      if (
-        currentUser.id ===
-        otherUserId
-      ) {
-
-        showError(
-          "No podés iniciar un chat con tu propio perfil."
-        );
-
-        return;
-
-      }
-
-
-      await loadOtherProfile();
-
-      await loadMessages();
-
-      subscribeToMessages();
-
-      messageInput.focus();
-
-    }
-
-
-    /* ==========================================
-       PERFIL DEL MATCH
-       ========================================== */
-
-    async function loadOtherProfile() {
-
-      const {
-        data,
-        error
-      } =
-        await supabaseClient
-          .from("profiles")
-          .select(`
-            id,
-            nombre,
-            foto_url
-          `)
-          .eq(
-            "id",
-            otherUserId
-          )
-          .maybeSingle();
-
-
-      if (error) {
-
-        console.error(
-          "Error perfil:",
-          error
-        );
-
-        showError(
-          "No pudimos cargar el perfil."
-        );
-
-        return;
-
-      }
-
-
-      if (!data) {
-
-        userName.textContent =
-          "Usuario EmiMatch";
-
-        userStatus.textContent =
-          "Match";
-
-        return;
-
-      }
-
-
-      userName.textContent =
-        data.nombre ||
-        "Usuario EmiMatch";
-
-
-      userStatus.textContent =
-        "💕 Match";
-
-
-      if (data.foto_url) {
-
-        userPhoto.innerHTML = `
-          <img
-            src="${escapeHtml(
-              data.foto_url
-            )}"
-            alt="Foto"
-            onerror="
-              this.style.display='none';
-            "
-          >
-        `;
-
-      }
-
-    }
-
-
-    /* ==========================================
-       CARGAR MENSAJES
-       ========================================== */
-
-    async function loadMessages() {
-
-      const {
-        data,
-        error
-      } =
-        await supabaseClient
-          .from("messages")
-          .select("*")
-          .or(
-            `and(sender_id.eq.${currentUser.id},receiver_id.eq.${otherUserId}),and(sender_id.eq.${otherUserId},receiver_id.eq.${currentUser.id})`
-          )
-          .order(
-            "created_at",
-            {
-              ascending: true
-            }
-          );
-
-
-      if (error) {
-
-        console.error(
-          "Error cargando mensajes:",
-          error
-        );
-
-        messagesContainer.innerHTML = "";
-
-        showError(
-          "No pudimos cargar los mensajes: " +
-          error.message
-        );
-
-        return;
-
-      }
-
-
-      renderMessages(
-        data || []
-      );
-
-    }
-
-
-    /* ==========================================
-       MOSTRAR MENSAJES
-       ========================================== */
-
-    function renderMessages(
-      messages
-    ) {
-
-      if (
-        !messages ||
-        messages.length === 0
-      ) {
-
-        messagesContainer.innerHTML = `
-
-          <div class="empty-chat">
-
-            <div class="empty-chat-icon">
-              💕
-            </div>
-
-            <p>
-              Todavía no hay mensajes.
-              <br>
-              ¡Animate a dar el primer paso!
-            </p>
-
-          </div>
-
-        `;
-
-        return;
-
-      }
-
-
-      messagesContainer.innerHTML =
-        messages
-          .map(message => {
-
-            const mine =
-              message.sender_id ===
-              currentUser.id;
-
-
-            return `
-
-              <div
-                class="message-row ${
-                  mine
-                    ? "mine"
-                    : "theirs"
-                }"
-              >
-
-                <div class="message">
-
-                  ${escapeHtml(
-                    message.content ||
-                    ""
-                  )}
-
-                  <span class="message-time">
-                    ${formatTime(
-                      message.created_at
-                    )}
-                  </span>
-
-                </div>
-
-              </div>
-
-            `;
-
-          })
-          .join("");
-
-
-      scrollToBottom();
-
-    }
-
-
-    /* ==========================================
-       ENVIAR MENSAJE
-       ========================================== */
-
-    messageForm.addEventListener(
-      "submit",
-      async event => {
-
-        event.preventDefault();
-
-        const content =
-          messageInput.value.trim();
-
-
-        if (!content) {
-          return;
-        }
-
-
-        if (
-          !currentUser ||
-          !otherUserId
-        ) {
-          return;
-        }
-
-
-        sendButton.disabled = true;
-
-        clearError();
-
-
-        const {
-          error
-        } =
-          await supabaseClient
-            .from("messages")
-            .insert({
-
-              sender_id:
-                currentUser.id,
-
-              receiver_id:
-                otherUserId,
-
-              content:
-                content
-
-            });
-
-
-        if (error) {
-
-          console.error(
-            "Error enviando mensaje:",
-            error
-          );
-
-          showError(
-            "No pudimos enviar el mensaje: " +
-            error.message
-          );
-
-          sendButton.disabled =
-            false;
-
-          return;
-
-        }
-
-
-        messageInput.value = "";
-
-        sendButton.disabled =
-          false;
-
-        messageInput.focus();
-
-      }
-    );
-
-
-    /* ==========================================
-       ACTUALIZACIÓN EN TIEMPO REAL
-       ========================================== */
-
-    function subscribeToMessages() {
-
-      channel =
-        supabaseClient
-          .channel(
-            "emimatch-chat-" +
-            currentUser.id +
-            "-" +
-            otherUserId
-          )
-          .on(
-            "postgres_changes",
-            {
-              event: "INSERT",
-              schema: "public",
-              table: "messages"
-            },
-            payload => {
-
-              const message =
-                payload.new;
-
-
-              const belongsToChat =
-                (
-                  message.sender_id ===
-                    currentUser.id &&
-                  message.receiver_id ===
-                    otherUserId
-                ) ||
-                (
-                  message.sender_id ===
-                    otherUserId &&
-                  message.receiver_id ===
-                    currentUser.id
-                );
-
-
-              if (!belongsToChat) {
-                return;
-              }
-
-
-              addMessage(
-                message
-              );
-
-            }
-          )
-          .subscribe();
-
-    }
-
-
-    /* ==========================================
-       AGREGAR MENSAJE NUEVO
-       ========================================== */
-
-    function addMessage(
-      message
-    ) {
-
-      const empty =
-        messagesContainer.querySelector(
-          ".empty-chat"
-        );
-
-
-      if (empty) {
-        empty.remove();
-      }
-
-
-      const mine =
-        message.sender_id ===
-        currentUser.id;
-
-
-      const row =
-        document.createElement(
-          "div"
-        );
-
-
-      row.className =
-        "message-row " +
-        (
-          mine
-            ? "mine"
-            : "theirs"
-        );
-
-
-      row.innerHTML = `
-
-        <div class="message">
-
-          ${escapeHtml(
-            message.content || ""
-          )}
-
-          <span class="message-time">
-            ${formatTime(
-              message.created_at
-            )}
-          </span>
-
-        </div>
-
-      `;
-
-
-      messagesContainer.appendChild(
-        row
-      );
-
-
-      scrollToBottom();
-
-    }
-
-
-    /* ==========================================
-       SCROLL
-       ========================================== */
-
-    function scrollToBottom() {
-
-      messagesContainer.scrollTop =
-        messagesContainer.scrollHeight;
-
-    }
-
-
-    /* ==========================================
-       LIMPIAR CANAL
-       ========================================== */
-
-    window.addEventListener(
-      "beforeunload",
-      () => {
-
-        if (channel) {
-
-          supabaseClient
-            .removeChannel(
-              channel
-            );
-
-        }
-
-      }
-    );
-
-
-    /* ==========================================
-       START
-       ========================================== */
-
-    init();
-
-  </script>
-
-</body>
-  </html>
+    
