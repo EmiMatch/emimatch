@@ -7,6 +7,9 @@
   "use strict";
 
   const config = window.EMIMATCH_CONFIG;
+     
+   const analytics =
+    window.EmiMatchAnalytics || null;
 
   if (!config) {
     console.error(
@@ -15,7 +18,7 @@
     return;
   }
 
-  window.EmiMatchApp = {
+  window.EmiMatchApp.analytics
 
     config,
 
