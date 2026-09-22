@@ -1,894 +1,1220 @@
-<!DOCTYPE html><html lang="es">
+<!DOCTYPE html>
+<html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>EmiMatch - Mis Matches</title>  <meta name="description" content="Tus Matches de EmiMatch.">
-  <meta name="theme-color" content="#07152f">  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>  <style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Chat | EmiMatch</title>
+  <meta name="description" content="Chat privado de EmiMatch.">
+  <meta name="theme-color" content="#111827">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
     * {
       box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      margin: 0;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
       min-height: 100vh;
-      padding-bottom: 105px;
-      font-family: Arial, Helvetica, sans-serif;
-      color: white;
+      color: #fff;
+
       background:
-        radial-gradient(circle at top right, rgba(124,58,237,.28), transparent 35%),
-        radial-gradient(circle at top left, rgba(212,175,55,.12), transparent 30%),
-        linear-gradient(145deg, #050d20, #0b1c3d 55%, #102b5c);
+        radial-gradient(
+          circle at top left,
+          rgba(124, 58, 237, 0.20),
+          transparent 35%
+        ),
+        linear-gradient(
+          135deg,
+          #07152f 0%,
+          #111827 50%,
+          #241044 100%
+        );
     }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* HEADER */
 
     header {
-      padding: 32px 18px 22px;
-      text-align: center;
-    }
-
-    .logo {
-      width: 64px;
-      height: 64px;
-      margin: 0 auto 14px;
-      border-radius: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 32px;
-      background: linear-gradient(135deg, #d4af37, #f4d77b);
-      color: #07152f;
-      box-shadow: 0 12px 35px rgba(0,0,0,.3);
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 29px;
-      font-weight: 800;
-      letter-spacing: -.5px;
-    }
-
-    header p {
-      margin: 8px 0 0;
-      color: #b8c4d9;
-      font-size: 14px;
-    }
-
-    .contenedor {
-      width: calc(100% - 28px);
-      max-width: 600px;
-      margin: auto;
-    }
-
-    .acciones {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    button {
-      border: 0;
-      border-radius: 14px;
-      padding: 14px 16px;
-      font-weight: 700;
-      font-size: 14px;
-      cursor: pointer;
-      transition:
-        transform .18s ease,
-        opacity .18s ease,
-        box-shadow .18s ease;
-    }
-
-    button:active {
-      transform: scale(.97);
-    }
-
-    .btn {
-      flex: 1;
-      background: linear-gradient(135deg, #d4af37, #f1d36a);
-      color: #07152f;
-      box-shadow: 0 8px 22px rgba(212,175,55,.18);
-    }
-
-    .btn-secundario {
-      background: rgba(255,255,255,.10);
-      color: white;
-      border: 1px solid rgba(255,255,255,.10);
-      box-shadow: none;
-    }
-
-    .estado {
-      padding: 34px 22px;
-      border-radius: 24px;
-      text-align: center;
-      background: rgba(255,255,255,.07);
-      border: 1px solid rgba(255,255,255,.09);
-      box-shadow: 0 15px 40px rgba(0,0,0,.20);
-      backdrop-filter: blur(12px);
-    }
-
-    .estado h2,
-    .estado h3 {
-      margin: 14px 0 8px;
-    }
-
-    .estado p {
-      color: #c4cedf;
-      line-height: 1.5;
-    }
-
-    .estado small {
-      color: #aebbd0;
-      word-break: break-word;
-    }
-
-    .match {
-      position: relative;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      width: 100%;
-      padding: 15px;
-      margin-bottom: 14px;
-      background: rgba(255,255,255,.97);
-      color: #111827;
-      border-radius: 22px;
-      cursor: pointer;
-      border: 1px solid rgba(255,255,255,.5);
-      box-shadow: 0 12px 30px rgba(0,0,0,.25);
-      transition:
-        transform .18s ease,
-        box-shadow .18s ease;
-      overflow: hidden;
-    }
-
-    .match::before {
-      content: "";
-      position: absolute;
-      left: 0;
+      position: sticky;
       top: 0;
-      bottom: 0;
-      width: 4px;
-      background: linear-gradient(#d4af37, #7c3aed);
+      z-index: 100;
+
+      background: rgba(17, 24, 39, 0.92);
+      backdrop-filter: blur(14px);
+
+      border-bottom:
+        1px solid rgba(255,255,255,0.08);
     }
 
-    .match:active {
-      transform: scale(.985);
+    .header-content {
+      max-width: 900px;
+      margin: auto;
+      padding: 13px 18px;
+
+      display: flex;
+      align-items: center;
+      gap: 13px;
     }
 
-    .avatar,
-    .avatar-vacio {
-      width: 70px;
-      height: 70px;
-      min-width: 70px;
+    .back {
+      width: 38px;
+      height: 38px;
+
       border-radius: 50%;
-      object-fit: cover;
-      flex-shrink: 0;
-      border: 3px solid white;
-      box-shadow: 0 5px 15px rgba(0,0,0,.18);
-    }
 
-    .avatar-vacio {
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, #d4af37, #f4d77b);
-      color: #07152f;
-      font-size: 32px;
+
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.10);
+
+      font-size: 20px;
     }
 
-    .datos {
-      flex: 1;
+    .user-photo {
+      width: 42px;
+      height: 42px;
+
+      border-radius: 50%;
+      overflow: hidden;
+
+      background:
+        linear-gradient(
+          135deg,
+          #312e81,
+          #7c3aed
+        );
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: 20px;
+
+      flex-shrink: 0;
+    }
+
+    .user-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .user-info {
       min-width: 0;
     }
 
-    .nombre {
-      font-size: 18px;
+    .user-name {
+      font-size: 16px;
       font-weight: 800;
-      line-height: 1.25;
-      word-break: break-word;
-    }
 
-    .ciudad {
-      color: #64748b;
-      margin-top: 6px;
-      font-size: 13px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    .online {
-      display: inline-flex;
-      align-items: center;
-      margin-top: 7px;
-      padding: 4px 8px;
-      border-radius: 20px;
-      background: #dcfce7;
-      color: #15803d;
+    .user-status {
+      color: #94a3b8;
       font-size: 11px;
-      font-weight: 700;
+      margin-top: 2px;
     }
 
-    .flecha {
-      width: 34px;
-      height: 34px;
-      min-width: 34px;
-      border-radius: 50%;
+    /* CHAT */
+
+    main {
+      max-width: 900px;
+      margin: auto;
+
+      height:
+        calc(100vh - 68px);
+
+      padding: 14px;
+    }
+
+    .chat-container {
+      height: 100%;
+
       display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #f1f5f9;
-      color: #64748b;
-      font-size: 25px;
-      line-height: 1;
-    }
+      flex-direction: column;
 
-    .nav {
-      position: fixed;
-      left: 10px;
-      right: 10px;
-      bottom: 10px;
-      height: 68px;
-      padding: 5px;
+      overflow: hidden;
+
+      background:
+        rgba(255,255,255,0.055);
+
+      border:
+        1px solid rgba(255,255,255,0.09);
+
       border-radius: 22px;
-      background: rgba(5,13,32,.96);
-      border: 1px solid rgba(255,255,255,.08);
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      z-index: 100;
-      box-shadow: 0 12px 35px rgba(0,0,0,.45);
+
+      box-shadow:
+        0 20px 60px rgba(0,0,0,0.25);
+
       backdrop-filter: blur(14px);
     }
 
-    .nav a {
-      position: relative;
+    /* MESSAGES */
+
+    #messagesContainer {
       flex: 1;
-      color: #9aa8be;
-      text-decoration: none;
+
+      overflow-y: auto;
+
+      padding: 22px 18px;
+
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+
+      scroll-behavior: smooth;
+    }
+
+    .loading {
+      margin: auto;
+
       text-align: center;
-      font-size: 9px;
-      font-weight: 600;
-      padding: 5px 2px;
-      border-radius: 15px;
-      transition: .18s ease;
+
+      color: #94a3b8;
     }
 
-    .nav a span {
+    .loading-heart {
+      font-size: 40px;
+      margin-bottom: 10px;
+
+      animation: pulse 1.2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.12);
+      }
+    }
+
+    .empty-chat {
+      margin: auto;
+
+      max-width: 330px;
+
+      text-align: center;
+
+      color: #94a3b8;
+
+      line-height: 1.6;
+      font-size: 13px;
+    }
+
+    .empty-chat-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    .message-row {
+      display: flex;
+      width: 100%;
+    }
+
+    .message-row.mine {
+      justify-content: flex-end;
+    }
+
+    .message-row.theirs {
+      justify-content: flex-start;
+    }
+
+    .message {
+      max-width: min(75%, 520px);
+
+      padding: 10px 13px;
+
+      border-radius: 17px;
+
+      font-size: 14px;
+      line-height: 1.45;
+
+      word-break: break-word;
+    }
+
+    .mine .message {
+      background:
+        linear-gradient(
+          135deg,
+          #7c3aed,
+          #a855f7
+        );
+
+      border-bottom-right-radius: 5px;
+    }
+
+    .theirs .message {
+      background:
+        rgba(255,255,255,0.09);
+
+      border:
+        1px solid rgba(255,255,255,0.08);
+
+      border-bottom-left-radius: 5px;
+    }
+
+    .message-time {
       display: block;
-      font-size: 20px;
-      margin-bottom: 2px;
+
+      margin-top: 4px;
+
+      font-size: 9px;
+
+      opacity: 0.65;
+
+      text-align: right;
     }
 
-    .nav .activo {
-      color: #f1d36a;
-      background: rgba(212,175,55,.10);
+    /* INPUT */
+
+    .composer {
+      padding: 12px;
+
+      border-top:
+        1px solid rgba(255,255,255,0.08);
+
+      background:
+        rgba(15,23,42,0.45);
     }
 
-    @media (min-width: 601px) {
-      .match:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 16px 35px rgba(0,0,0,.30);
-      }
-
-      .nav {
-        max-width: 600px;
-        left: 50%;
-        right: auto;
-        width: calc(100% - 20px);
-        transform: translateX(-50%);
-      }
+    .composer-form {
+      display: flex;
+      align-items: center;
+      gap: 9px;
     }
 
-    @media (max-width: 380px) {
-      header {
-        padding-top: 25px;
-      }
+    #messageInput {
+      flex: 1;
 
-      header h1 {
-        font-size: 25px;
-      }
+      min-width: 0;
 
-      .logo {
-        width: 56px;
-        height: 56px;
-        font-size: 28px;
-      }
+      border:
+        1px solid rgba(255,255,255,0.10);
 
-      .acciones {
-        gap: 7px;
-      }
+      background:
+        rgba(15,23,42,0.85);
 
-      button {
-        padding: 13px 10px;
-        font-size: 13px;
-      }
+      color: #fff;
 
-      .match {
-        gap: 11px;
-        padding: 13px;
-      }
+      outline: none;
 
-      .avatar,
-      .avatar-vacio {
-        width: 62px;
-        height: 62px;
-        min-width: 62px;
-      }
+      border-radius: 999px;
 
-      .nombre {
-        font-size: 16px;
-      }
+      padding: 12px 16px;
 
-      .flecha {
-        width: 30px;
-        height: 30px;
-        min-width: 30px;
-        font-size: 22px;
-      }
-
-      .nav a {
-        font-size: 8px;
-      }
-
-      .nav a span {
-        font-size: 18px;
-      }
-    }
-  </style></head><body><header>  <div class="logo">💕</div>  <h1>Mis Matches</h1>  <p>
-    Tus conexiones en EmiMatch
-  </p></header><div class="contenedor">  <div class="acciones"><button
-  class="btn"
-  onclick="location.href='descubrir.html'"
->
-  🔎 Descubrir
-</button>
-
-<button
-  class="btn btn-secundario"
-  onclick="cargarMatches()"
->
-  🔄 Actualizar
-</button>
-
-  </div>  <div id="contenido"><div class="estado">
-  🚀 EMI-2026 · Iniciando Matches...
-</div>
-
-  </div></div><nav class="nav">  <a href="perfil.html">
-    <span>👤</span>
-    Perfil
-  </a>  <a href="descubrir.html">
-    <span>🔎</span>
-    Descubrir
-  </a>  <a href="likes.html">
-    <span>❤️</span>
-    Me gustas
-  </a><a
-href="chat.html"
-class="activo"
-
-«»
-
-<span>💕</span>
-Matches
-
-  </a>  <a href="notificaciones.html">
-    <span>🔔</span>
-    Notificaciones
-  </a></nav><script>
-
-const SUPABASE_URL =
-  "https://kngiadwaesdbmvwivdev.supabase.co";
-
-const SUPABASE_KEY =
-  "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
-
-
-const supabaseClient =
-  window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
-
-
-let usuarioActual = null;
-
-
-const contenido =
-  document.getElementById(
-    "contenido"
-  );
-
-
-// ==========================================
-// INICIAR
-// ==========================================
-
-document.addEventListener(
-  "DOMContentLoaded",
-  iniciar
-);
-
-
-async function iniciar() {
-
-  contenido.innerHTML = `
-    <div class="estado">
-      🔐 Verificando sesión...
-    </div>
-  `;
-
-
-  try {
-
-    const {
-      data,
-      error
-    } =
-      await supabaseClient.auth.getSession();
-
-
-    if (error) {
-      throw error;
+      font-size: 14px;
     }
 
-
-    if (!data.session) {
-
-      contenido.innerHTML = `
-        <div class="estado">
-          ⚠️ No hay una sesión activa.
-          <br><br>
-          <button
-            class="btn"
-            onclick="location.href='index.html'"
-          >
-            🔐 Iniciar sesión
-          </button>
-        </div>
-      `;
-
-      return;
-
+    #messageInput::placeholder {
+      color: #64748b;
     }
 
+    #messageInput:focus {
+      border-color:
+        rgba(217,173,69,0.65);
 
-    usuarioActual =
-      data.session.user;
+      box-shadow:
+        0 0 0 3px rgba(217,173,69,0.08);
+    }
 
+    #sendButton {
+      width: 46px;
+      height: 46px;
 
-    await cargarMatches();
+      flex-shrink: 0;
 
-  } catch (error) {
+      border: 0;
+      border-radius: 50%;
 
-    console.error(
-      error
-    );
+      background:
+        linear-gradient(
+          135deg,
+          #d9ad45,
+          #f1cf78
+        );
 
-    contenido.innerHTML = `
+      color: #111827;
 
-      <div class="estado">
+      cursor: pointer;
 
-        ⚠️ Error al iniciar Matches.
+      font-size: 18px;
+      font-weight: 900;
 
-        <br><br>
+      transition: 0.2s ease;
+    }
 
-        <small>
-          ${escapar(
-            error.message ||
-            "Error desconocido"
-          )}
-        </small>
+    #sendButton:hover {
+      transform: translateY(-2px);
+    }
 
-        <br><br>
+    #sendButton:disabled {
+      opacity: 0.5;
+      cursor: wait;
+      transform: none;
+    }
 
-        <button
-          class="btn"
-          onclick="location.reload()"
+    /* ERROR */
+
+    .error-box {
+      margin: 12px;
+
+      padding: 12px 14px;
+
+      border-radius: 12px;
+
+      background:
+        rgba(239,68,68,0.12);
+
+      border:
+        1px solid rgba(239,68,68,0.25);
+
+      color: #fecaca;
+
+      font-size: 12px;
+
+      line-height: 1.5;
+    }
+
+    @media (max-width: 600px) {
+      main {
+        height:
+          calc(100vh - 68px);
+
+        padding: 7px;
+      }
+
+      .chat-container {
+        border-radius: 16px;
+      }
+
+      #messagesContainer {
+        padding: 16px 12px;
+      }
+
+      .message {
+        max-width: 84%;
+      }
+
+      .user-name {
+        font-size: 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+
+    <div class="header-content">
+
+      <a
+        href="matches.html"
+        class="back"
+        aria-label="Volver"
+      >
+        ←
+      </a>
+
+      <div
+        id="userPhoto"
+        class="user-photo"
+      >
+        💕
+      </div>
+
+      <div class="user-info">
+
+        <div
+          id="userName"
+          class="user-name"
         >
-          🔄 Reintentar
-        </button>
+          Cargando...
+        </div>
+
+        <div
+          id="userStatus"
+          class="user-status"
+        >
+          Conectando...
+        </div>
 
       </div>
 
-    `;
-
-  }
-
-}
-
-
-// ==========================================
-// CARGAR MATCHES
-// ==========================================
-
-async function cargarMatches() {
-
-  if (!usuarioActual) {
-
-    const {
-      data
-    } =
-      await supabaseClient.auth.getSession();
-
-    if (
-      !data.session
-    ) {
-
-      location.href =
-        "index.html";
-
-      return;
-
-    }
-
-    usuarioActual =
-      data.session.user;
-
-  }
-
-
-  contenido.innerHTML = `
-
-    <div class="estado">
-      🔎 Buscando tus Matches...
     </div>
 
-  `;
+  </header>
 
 
-  try {
+  <main>
 
-    const {
-      data,
-      error
-    } =
-      await supabaseClient
-        .from("matches")
-        .select(
-          "id,user1_id,user2_id,created_at"
-        )
-        .or(
-          `user1_id.eq.${usuarioActual.id},user2_id.eq.${usuarioActual.id}`
-        );
+    <div class="chat-container">
 
+      <div
+        id="messagesContainer"
+      >
 
-    if (error) {
-      throw error;
-    }
+        <div class="loading">
 
-
-    const lista =
-      data || [];
-
-
-    if (
-      lista.length === 0
-    ) {
-
-      contenido.innerHTML = `
-
-        <div class="estado">
-
-          <div style="font-size:60px;">
+          <div class="loading-heart">
             💕
           </div>
 
-          <h2>
-            Todavía no tenés Matches
-          </h2>
-
           <p>
-            Andá a Descubrir y
-            enviá algunos ❤️
+            Cargando conversación...
           </p>
-
-          <button
-            class="btn"
-            onclick="location.href='descubrir.html'"
-          >
-            🔎 Descubrir personas
-          </button>
 
         </div>
 
-      `;
+      </div>
 
-      return;
+
+      <div
+        id="errorContainer"
+      ></div>
+
+
+      <div class="composer">
+
+        <form
+          id="messageForm"
+          class="composer-form"
+        >
+
+          <input
+            type="text"
+            id="messageInput"
+            maxlength="1000"
+            autocomplete="off"
+            placeholder="Escribí un mensaje..."
+          >
+
+          <button
+            type="submit"
+            id="sendButton"
+            aria-label="Enviar mensaje"
+          >
+            ➤
+          </button>
+
+        </form>
+
+      </div>
+
+    </div>
+
+  </main>
+
+
+  <script>
+
+    /* ==========================================
+       SUPABASE
+       ========================================== */
+
+    const SUPABASE_URL =
+      "https://kng...supabase.co";
+
+    const SUPABASE_ANON_KEY =
+      "PEGÁ_ACÁ_TU_ANON_KEY";
+
+
+    const supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+      );
+
+
+    /* ==========================================
+       ELEMENTOS
+       ========================================== */
+
+    const messagesContainer =
+      document.getElementById(
+        "messagesContainer"
+      );
+
+    const messageInput =
+      document.getElementById(
+        "messageInput"
+      );
+
+    const messageForm =
+      document.getElementById(
+        "messageForm"
+      );
+
+    const sendButton =
+      document.getElementById(
+        "sendButton"
+      );
+
+    const userName =
+      document.getElementById(
+        "userName"
+      );
+
+    const userPhoto =
+      document.getElementById(
+        "userPhoto"
+      );
+
+    const userStatus =
+      document.getElementById(
+        "userStatus"
+      );
+
+    const errorContainer =
+      document.getElementById(
+        "errorContainer"
+      );
+
+
+    /* ==========================================
+       ESTADO
+       ========================================== */
+
+    let currentUser = null;
+    let otherUserId = null;
+    let channel = null;
+
+
+    /* ==========================================
+       UTILIDADES
+       ========================================== */
+
+    function escapeHtml(value) {
+
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 
     }
 
 
-    contenido.innerHTML = "";
+    function showError(message) {
+
+      errorContainer.innerHTML = `
+        <div class="error-box">
+          ⚠️ ${escapeHtml(message)}
+        </div>
+      `;
+
+    }
 
 
-    for (
-      const match
-      of lista
-    ) {
+    function clearError() {
 
-      const otroId =
-        match.user1_id ===
-        usuarioActual.id
-          ? match.user2_id
-          : match.user1_id;
+      errorContainer.innerHTML = "";
+
+    }
 
 
-      const {
-        data: perfil,
-        error:
-          errorPerfil
-      } =
-        await supabaseClient
-          .from("profiles")
-          .select(
-            "id,nombre,edad,ciudad,foto_url,online"
-          )
-          .eq(
-            "id",
-            otroId
-          )
-          .maybeSingle();
+    function formatTime(dateValue) {
 
-
-      if (errorPerfil) {
-
-        console.warn(
-          errorPerfil
-        );
-
-        continue;
-
+      if (!dateValue) {
+        return "";
       }
 
+      const date =
+        new Date(dateValue);
 
-      if (!perfil) {
-        continue;
-      }
-
-
-      crearTarjeta(
-        match,
-        perfil
+      return date.toLocaleTimeString(
+        "es-AR",
+        {
+          hour: "2-digit",
+          minute: "2-digit"
+        }
       );
 
     }
 
 
-    if (
-      contenido.children.length === 0
+    /* ==========================================
+       OBTENER ID DESDE LA URL
+       ========================================== */
+
+    function getOtherUserId() {
+
+      const params =
+        new URLSearchParams(
+          window.location.search
+        );
+
+      return params.get("user");
+
+    }
+
+
+    /* ==========================================
+       INICIAR
+       ========================================== */
+
+    async function init() {
+
+      otherUserId =
+        getOtherUserId();
+
+
+      if (!otherUserId) {
+
+        showError(
+          "No se encontró el usuario de esta conversación."
+        );
+
+        userName.textContent =
+          "Conversación";
+
+        userStatus.textContent =
+          "Falta seleccionar un match";
+
+        return;
+
+      }
+
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .auth
+          .getSession();
+
+
+      if (error || !data.session) {
+
+        window.location.href =
+          "index.html";
+
+        return;
+
+      }
+
+
+      currentUser =
+        data.session.user;
+
+
+      if (
+        currentUser.id ===
+        otherUserId
+      ) {
+
+        showError(
+          "No podés iniciar un chat con tu propio perfil."
+        );
+
+        return;
+
+      }
+
+
+      await loadOtherProfile();
+
+      await loadMessages();
+
+      subscribeToMessages();
+
+      messageInput.focus();
+
+    }
+
+
+    /* ==========================================
+       PERFIL DEL MATCH
+       ========================================== */
+
+    async function loadOtherProfile() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from("profiles")
+          .select(`
+            id,
+            nombre,
+            foto_url
+          `)
+          .eq(
+            "id",
+            otherUserId
+          )
+          .maybeSingle();
+
+
+      if (error) {
+
+        console.error(
+          "Error perfil:",
+          error
+        );
+
+        showError(
+          "No pudimos cargar el perfil."
+        );
+
+        return;
+
+      }
+
+
+      if (!data) {
+
+        userName.textContent =
+          "Usuario EmiMatch";
+
+        userStatus.textContent =
+          "Match";
+
+        return;
+
+      }
+
+
+      userName.textContent =
+        data.nombre ||
+        "Usuario EmiMatch";
+
+
+      userStatus.textContent =
+        "💕 Match";
+
+
+      if (data.foto_url) {
+
+        userPhoto.innerHTML = `
+          <img
+            src="${escapeHtml(
+              data.foto_url
+            )}"
+            alt="Foto"
+            onerror="
+              this.style.display='none';
+            "
+          >
+        `;
+
+      }
+
+    }
+
+
+    /* ==========================================
+       CARGAR MENSAJES
+       ========================================== */
+
+    async function loadMessages() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from("messages")
+          .select("*")
+          .or(
+            `and(sender_id.eq.${currentUser.id},receiver_id.eq.${otherUserId}),and(sender_id.eq.${otherUserId},receiver_id.eq.${currentUser.id})`
+          )
+          .order(
+            "created_at",
+            {
+              ascending: true
+            }
+          );
+
+
+      if (error) {
+
+        console.error(
+          "Error cargando mensajes:",
+          error
+        );
+
+        messagesContainer.innerHTML = "";
+
+        showError(
+          "No pudimos cargar los mensajes: " +
+          error.message
+        );
+
+        return;
+
+      }
+
+
+      renderMessages(
+        data || []
+      );
+
+    }
+
+
+    /* ==========================================
+       MOSTRAR MENSAJES
+       ========================================== */
+
+    function renderMessages(
+      messages
     ) {
 
-      contenido.innerHTML = `
+      if (
+        !messages ||
+        messages.length === 0
+      ) {
 
-        <div class="estado">
+        messagesContainer.innerHTML = `
 
-          ⚠️
+          <div class="empty-chat">
 
-          <h3>
-            Encontramos el Match,
-            pero no pudimos cargar
-            el perfil.
-          </h3>
+            <div class="empty-chat-icon">
+              💕
+            </div>
+
+            <p>
+              Todavía no hay mensajes.
+              <br>
+              ¡Animate a dar el primer paso!
+            </p>
+
+          </div>
+
+        `;
+
+        return;
+
+      }
+
+
+      messagesContainer.innerHTML =
+        messages
+          .map(message => {
+
+            const mine =
+              message.sender_id ===
+              currentUser.id;
+
+
+            return `
+
+              <div
+                class="message-row ${
+                  mine
+                    ? "mine"
+                    : "theirs"
+                }"
+              >
+
+                <div class="message">
+
+                  ${escapeHtml(
+                    message.content ||
+                    ""
+                  )}
+
+                  <span class="message-time">
+                    ${formatTime(
+                      message.created_at
+                    )}
+                  </span>
+
+                </div>
+
+              </div>
+
+            `;
+
+          })
+          .join("");
+
+
+      scrollToBottom();
+
+    }
+
+
+    /* ==========================================
+       ENVIAR MENSAJE
+       ========================================== */
+
+    messageForm.addEventListener(
+      "submit",
+      async event => {
+
+        event.preventDefault();
+
+        const content =
+          messageInput.value.trim();
+
+
+        if (!content) {
+          return;
+        }
+
+
+        if (
+          !currentUser ||
+          !otherUserId
+        ) {
+          return;
+        }
+
+
+        sendButton.disabled = true;
+
+        clearError();
+
+
+        const {
+          error
+        } =
+          await supabaseClient
+            .from("messages")
+            .insert({
+
+              sender_id:
+                currentUser.id,
+
+              receiver_id:
+                otherUserId,
+
+              content:
+                content
+
+            });
+
+
+        if (error) {
+
+          console.error(
+            "Error enviando mensaje:",
+            error
+          );
+
+          showError(
+            "No pudimos enviar el mensaje: " +
+            error.message
+          );
+
+          sendButton.disabled =
+            false;
+
+          return;
+
+        }
+
+
+        messageInput.value = "";
+
+        sendButton.disabled =
+          false;
+
+        messageInput.focus();
+
+      }
+    );
+
+
+    /* ==========================================
+       ACTUALIZACIÓN EN TIEMPO REAL
+       ========================================== */
+
+    function subscribeToMessages() {
+
+      channel =
+        supabaseClient
+          .channel(
+            "emimatch-chat-" +
+            currentUser.id +
+            "-" +
+            otherUserId
+          )
+          .on(
+            "postgres_changes",
+            {
+              event: "INSERT",
+              schema: "public",
+              table: "messages"
+            },
+            payload => {
+
+              const message =
+                payload.new;
+
+
+              const belongsToChat =
+                (
+                  message.sender_id ===
+                    currentUser.id &&
+                  message.receiver_id ===
+                    otherUserId
+                ) ||
+                (
+                  message.sender_id ===
+                    otherUserId &&
+                  message.receiver_id ===
+                    currentUser.id
+                );
+
+
+              if (!belongsToChat) {
+                return;
+              }
+
+
+              addMessage(
+                message
+              );
+
+            }
+          )
+          .subscribe();
+
+    }
+
+
+    /* ==========================================
+       AGREGAR MENSAJE NUEVO
+       ========================================== */
+
+    function addMessage(
+      message
+    ) {
+
+      const empty =
+        messagesContainer.querySelector(
+          ".empty-chat"
+        );
+
+
+      if (empty) {
+        empty.remove();
+      }
+
+
+      const mine =
+        message.sender_id ===
+        currentUser.id;
+
+
+      const row =
+        document.createElement(
+          "div"
+        );
+
+
+      row.className =
+        "message-row " +
+        (
+          mine
+            ? "mine"
+            : "theirs"
+        );
+
+
+      row.innerHTML = `
+
+        <div class="message">
+
+          ${escapeHtml(
+            message.content || ""
+          )}
+
+          <span class="message-time">
+            ${formatTime(
+              message.created_at
+            )}
+          </span>
 
         </div>
 
       `;
 
+
+      messagesContainer.appendChild(
+        row
+      );
+
+
+      scrollToBottom();
+
     }
 
-  } catch (error) {
 
-    console.error(
-      "Error Matches:",
-      error
-    );
+    /* ==========================================
+       SCROLL
+       ========================================== */
 
+    function scrollToBottom() {
 
-    contenido.innerHTML = `
+      messagesContainer.scrollTop =
+        messagesContainer.scrollHeight;
 
-      <div class="estado">
-
-        <div style="font-size:50px;">
-          ⚠️
-        </div>
-
-        <h2>
-          Error cargando Matches
-        </h2>
-
-        <p>
-          ${escapar(
-            error.message ||
-            "Error desconocido"
-          )}
-        </p>
-
-        <button
-          class="btn"
-          onclick="cargarMatches()"
-        >
-          🔄 Reintentar
-        </button>
-
-      </div>
-
-    `;
-
-  }
-
-}
+    }
 
 
-// ==========================================
-// TARJETA
-// ==========================================
+    /* ==========================================
+       LIMPIAR CANAL
+       ========================================== */
 
-function crearTarjeta(
-  match,
-  perfil
-) {
+    window.addEventListener(
+      "beforeunload",
+      () => {
 
-  const tarjeta =
-    document.createElement(
-      "div"
-    );
+        if (channel) {
 
+          supabaseClient
+            .removeChannel(
+              channel
+            );
 
-  tarjeta.className =
-    "match";
-
-
-  let avatar;
-
-
-  if (
-    perfil.foto_url
-  ) {
-
-    avatar = `
-
-      <img
-        class="avatar"
-        src="${escapar(
-          perfil.foto_url
-        )}"
-        alt="Foto"
-        onerror="
-          this.outerHTML =
-          '<div class=&quot;avatar-vacio&quot;>👤</div>'
-        "
-      >
-
-    `;
-
-  } else {
-
-    avatar = `
-
-      <div class="avatar-vacio">
-        👤
-      </div>
-
-    `;
-
-  }
-
-
-  tarjeta.innerHTML = `
-
-    ${avatar}
-
-    <div class="datos">
-
-      <div class="nombre">
-
-        ${escapar(
-          perfil.nombre ||
-          "Usuario"
-        )}
-
-        ${
-          perfil.edad
-            ? ", " +
-              escapar(
-                perfil.edad
-              )
-            : ""
         }
 
-      </div>
-
-
-      ${
-        perfil.ciudad
-          ? `
-            <div class="ciudad">
-              📍 ${escapar(
-                perfil.ciudad
-              )}
-            </div>
-          `
-          : ""
       }
-
-
-      ${
-        perfil.online
-          ? `
-            <div class="online">
-              🟢 En línea
-            </div>
-          `
-          : ""
-      }
-
-    </div>
-
-
-    <div class="flecha">
-      ›
-    </div>
-
-  `;
-
-
-  tarjeta.addEventListener(
-    "click",
-    () => {
-
-      location.href =
-        `conversacion.html?user=${encodeURIComponent(
-          perfil.id
-        )}`;
-
-    }
-  );
-
-
-  contenido.appendChild(
-    tarjeta
-  );
-
-}
-
-
-// ==========================================
-// ESCAPAR
-// ==========================================
-
-function escapar(
-  valor
-) {
-
-  return String(
-    valor ?? ""
-  )
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
     );
 
-}
 
-</script></body>
-</html>
+    /* ==========================================
+       START
+       ========================================== */
+
+    init();
+
+  </script>
+
+</body>
+  </html>
