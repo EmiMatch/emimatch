@@ -5,7 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>EmiMatch 💕</title>
-  <meta name="description" content="EmiMatch — Conocé personas, conectá y encontrá nuevas historias.">
+
+  <meta
+    name="description"
+    content="EmiMatch — Conocé personas, conectá y encontrá nuevas historias."
+  >
+
   <meta name="theme-color" content="#08152f">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -17,14 +22,10 @@
       padding: 0;
     }
 
-    html,
     body {
-      min-height: 100%;
-    }
+      min-height: 100vh;
 
-    body {
       font-family:
-        Inter,
         -apple-system,
         BlinkMacSystemFont,
         "Segoe UI",
@@ -33,88 +34,27 @@
         sans-serif;
 
       color: #fff;
+
       background:
-        radial-gradient(circle at 15% 20%, rgba(124,58,237,.18), transparent 32%),
-        radial-gradient(circle at 85% 80%, rgba(217,173,69,.10), transparent 30%),
-        linear-gradient(135deg,#050b1b 0%,#0a1835 50%,#111827 100%);
+        radial-gradient(
+          circle at 15% 20%,
+          rgba(124,58,237,.20),
+          transparent 32%
+        ),
+        radial-gradient(
+          circle at 85% 80%,
+          rgba(217,173,69,.12),
+          transparent 30%
+        ),
+        linear-gradient(
+          135deg,
+          #050b1b 0%,
+          #0a1835 50%,
+          #111827 100%
+        );
 
       overflow-x: hidden;
     }
-
-    /* =========================
-       CARGA
-    ========================== */
-
-    #loadingScreen {
-      position: fixed;
-      inset: 0;
-      z-index: 99999;
-
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-
-      background:
-        radial-gradient(circle at 50% 40%,rgba(124,58,237,.18),transparent 35%),
-        linear-gradient(135deg,#050b1b,#08152f,#111827);
-
-      transition: opacity .35s ease, visibility .35s ease;
-    }
-
-    #loadingScreen.hidden {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-    }
-
-    .loading-logo {
-      font-size: 40px;
-      font-weight: 800;
-      letter-spacing: -1.5px;
-
-      background: linear-gradient(
-        90deg,
-        #fff,
-        #f5df9a,
-        #d9ad45
-      );
-
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    .loading-text {
-      margin-top: 10px;
-      color: rgba(255,255,255,.65);
-      font-size: 14px;
-    }
-
-    .loader {
-      width: 32px;
-      height: 32px;
-
-      margin-top: 22px;
-
-      border: 3px solid rgba(255,255,255,.12);
-      border-top-color: #d9ad45;
-      border-right-color: #8b5cf6;
-
-      border-radius: 50%;
-
-      animation: spin .8s linear infinite;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    /* =========================
-       PÁGINA
-    ========================== */
 
     .page {
       min-height: 100vh;
@@ -123,14 +63,7 @@
       align-items: center;
       justify-content: center;
 
-      padding: 25px 16px;
-
-      opacity: 0;
-      transition: opacity .4s ease;
-    }
-
-    .page.visible {
-      opacity: 1;
+      padding: 20px;
     }
 
     .container {
@@ -142,23 +75,20 @@
 
       overflow: hidden;
 
-      border-radius: 28px;
+      border-radius: 30px;
 
-      background: rgba(10,20,45,.74);
+      background: rgba(10,20,45,.78);
 
-      border: 1px solid rgba(255,255,255,.09);
+      border: 1px solid rgba(255,255,255,.10);
 
       box-shadow:
-        0 30px 80px rgba(0,0,0,.45),
-        inset 0 1px 0 rgba(255,255,255,.04);
+        0 30px 80px rgba(0,0,0,.45);
 
-      backdrop-filter: blur(22px);
-      -webkit-backdrop-filter: blur(22px);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
     }
 
-    /* =========================
-       HERO
-    ========================== */
+    /* HERO */
 
     .hero {
       min-height: 650px;
@@ -170,8 +100,16 @@
       justify-content: center;
 
       background:
-        radial-gradient(circle at 20% 20%,rgba(124,58,237,.26),transparent 34%),
-        radial-gradient(circle at 85% 85%,rgba(217,173,69,.10),transparent 30%);
+        radial-gradient(
+          circle at 20% 20%,
+          rgba(124,58,237,.25),
+          transparent 35%
+        ),
+        radial-gradient(
+          circle at 85% 85%,
+          rgba(217,173,69,.10),
+          transparent 30%
+        );
     }
 
     .badge {
@@ -185,8 +123,9 @@
 
       color: #e9d5ff;
 
-      background: rgba(255,255,255,.05);
-      border: 1px solid rgba(255,255,255,.09);
+      background: rgba(255,255,255,.06);
+
+      border: 1px solid rgba(255,255,255,.10);
 
       font-size: 13px;
       font-weight: 600;
@@ -195,7 +134,7 @@
     .brand {
       margin-bottom: 20px;
 
-      font-size: clamp(45px,6vw,72px);
+      font-size: clamp(46px,6vw,72px);
 
       line-height: 1;
 
@@ -203,15 +142,17 @@
 
       letter-spacing: -3px;
 
-      background: linear-gradient(
-        100deg,
-        #fff 5%,
-        #f7e5ad 48%,
-        #d9ad45 100%
-      );
+      background:
+        linear-gradient(
+          100deg,
+          #fff,
+          #f7e5ad,
+          #d9ad45
+        );
 
       -webkit-background-clip: text;
       background-clip: text;
+
       color: transparent;
     }
 
@@ -237,6 +178,7 @@
 
     .features {
       display: grid;
+
       grid-template-columns: repeat(3,1fr);
 
       gap: 10px;
@@ -256,6 +198,7 @@
 
     .feature-icon {
       font-size: 21px;
+
       margin-bottom: 6px;
     }
 
@@ -273,9 +216,7 @@
       font-size: 11px;
     }
 
-    /* =========================
-       AUTENTICACIÓN
-    ========================== */
+    /* AUTH */
 
     .auth {
       padding: 45px 38px;
@@ -298,6 +239,7 @@
 
     .auth-header h3 {
       font-size: 29px;
+
       margin-bottom: 8px;
     }
 
@@ -309,12 +251,11 @@
       line-height: 1.5;
     }
 
-    /* =========================
-       TABS
-    ========================== */
+    /* TABS */
 
     .tabs {
       display: grid;
+
       grid-template-columns: 1fr 1fr;
 
       gap: 4px;
@@ -343,18 +284,15 @@
 
       font-size: 13px;
       font-weight: 700;
-
-      transition: .25s ease;
     }
 
     .tab.active {
       color: #fff;
+
       background: rgba(255,255,255,.10);
     }
 
-    /* =========================
-       FORMULARIOS
-    ========================== */
+    /* FORM */
 
     .form {
       display: none;
@@ -362,20 +300,6 @@
 
     .form.active {
       display: block;
-
-      animation: formIn .25s ease;
-    }
-
-    @keyframes formIn {
-      from {
-        opacity: 0;
-        transform: translateY(5px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
     }
 
     .field {
@@ -390,6 +314,7 @@
       color: rgba(255,255,255,.75);
 
       font-size: 13px;
+
       font-weight: 600;
     }
 
@@ -410,8 +335,6 @@
       background: rgba(255,255,255,.055);
 
       font-size: 14px;
-
-      transition: .25s ease;
     }
 
     .field input::placeholder {
@@ -425,53 +348,45 @@
         0 0 0 4px rgba(217,173,69,.08);
     }
 
-    /* =========================
-       BOTÓN
-    ========================== */
+    /* BUTTON */
 
     .main-button {
       width: 100%;
       height: 52px;
 
-      margin-top: 3px;
-
       border: 0;
+
       border-radius: 14px;
 
       cursor: pointer;
 
       color: #10131d;
 
-      background: linear-gradient(
-        135deg,
-        #d9ad45,
-        #f1d17a
-      );
+      background:
+        linear-gradient(
+          135deg,
+          #d9ad45,
+          #f1d17a
+        );
 
       font-size: 15px;
-      font-weight: 800;
 
-      box-shadow:
-        0 10px 28px rgba(217,173,69,.17);
+      font-weight: 800;
 
       transition: .2s ease;
     }
 
     .main-button:hover {
       transform: translateY(-1px);
-
-      box-shadow:
-        0 14px 32px rgba(217,173,69,.25);
     }
 
     .main-button:disabled {
       opacity: .55;
+
       cursor: wait;
     }
 
-    /* =========================
-       MENSAJES
-    ========================== */
+    /* MESSAGE */
 
     #message {
       min-height: 22px;
@@ -479,8 +394,6 @@
       margin-top: 14px;
 
       text-align: center;
-
-      color: rgba(255,255,255,.62);
 
       font-size: 13px;
 
@@ -507,11 +420,9 @@
       line-height: 1.5;
     }
 
-    /* =========================
-       MÓVIL
-    ========================== */
+    /* MOBILE */
 
-    @media (max-width: 850px) {
+    @media (max-width:850px) {
 
       .container {
         grid-template-columns: 1fr;
@@ -519,6 +430,7 @@
 
       .hero {
         min-height: auto;
+
         padding: 42px 28px 35px;
       }
 
@@ -527,7 +439,7 @@
       }
     }
 
-    @media (max-width: 520px) {
+    @media (max-width:520px) {
 
       .page {
         padding: 12px;
@@ -582,28 +494,12 @@
 
 <body>
 
-  <!-- CARGA -->
-  <div id="loadingScreen">
-
-    <div class="loading-logo">
-      💕 EmiMatch
-    </div>
-
-    <div class="loading-text">
-      Preparando tu espacio...
-    </div>
-
-    <div class="loader"></div>
-
-  </div>
-
-
-  <!-- PÁGINA -->
-  <main class="page" id="mainPage">
+  <main class="page">
 
     <section class="container">
 
       <!-- PRESENTACIÓN -->
+
       <div class="hero">
 
         <div class="badge">
@@ -649,7 +545,8 @@
       </div>
 
 
-      <!-- ACCESO -->
+      <!-- LOGIN -->
+
       <div class="auth">
 
         <div class="auth-box">
@@ -689,6 +586,7 @@
 
 
           <!-- LOGIN -->
+
           <form
             class="form active"
             id="loginForm"
@@ -740,6 +638,7 @@
 
 
           <!-- REGISTRO -->
+
           <form
             class="form"
             id="registerForm"
@@ -811,6 +710,7 @@
 
           <div id="message"></div>
 
+
           <div class="legal">
             Al continuar aceptás utilizar EmiMatch de forma responsable
             y respetuosa.
@@ -827,11 +727,15 @@
 
   <script>
 
-    /* ==================================================
-       SUPABASE
-       IMPORTANTE:
-       REEMPLAZÁ ESTOS DOS VALORES POR LOS QUE YA USABAS
-    ================================================== */
+    /*
+      ==================================================
+      SUPABASE
+
+      IMPORTANTE:
+      PEGÁ AQUÍ LOS DOS VALORES REALES QUE YA USABAS
+      EN TU INDEX.HTML ANTERIOR.
+      ==================================================
+    */
 
     const SUPABASE_URL =
       "PEGÁ_ACÁ_TU_SUPABASE_URL";
@@ -841,26 +745,8 @@
 
 
     /* ==================================================
-       CLIENTE SUPABASE
-    ================================================== */
-
-    const { createClient } = supabase;
-
-    const client = createClient(
-      SUPABASE_URL,
-      SUPABASE_ANON_KEY
-    );
-
-
-    /* ==================================================
        ELEMENTOS
     ================================================== */
-
-    const loadingScreen =
-      document.getElementById("loadingScreen");
-
-    const mainPage =
-      document.getElementById("mainPage");
 
     const loginTab =
       document.getElementById("loginTab");
@@ -891,54 +777,17 @@
 
 
     /* ==================================================
-       MENSAJES
-    ================================================== */
-
-    function showMessage(text, type = "") {
-
-      message.textContent = text;
-      message.className = type;
-
-    }
-
-
-    /* ==================================================
-       MOSTRAR PÁGINA
-    ================================================== */
-
-    function showPage() {
-
-      loadingScreen.classList.add("hidden");
-
-      mainPage.classList.add("visible");
-
-    }
-
-
-    /* ==================================================
-       BOTONES
-    ================================================== */
-
-    function buttonLoading(button, loading, text) {
-
-      button.disabled = loading;
-
-      button.textContent =
-        loading ? "Procesando..." : text;
-
-    }
-
-
-    /* ==================================================
        TABS
     ================================================== */
 
-    loginTab.addEventListener("click", () => {
+    loginTab.addEventListener("click", function() {
 
       loginTab.classList.add("active");
+
       registerTab.classList.remove("active");
 
       loginForm.classList.add("active");
+
       registerForm.classList.remove("active");
 
       authTitle.textContent =
@@ -947,17 +796,21 @@
       authDescription.textContent =
         "Ingresá para continuar con tu experiencia en EmiMatch.";
 
-      showMessage("");
+      message.textContent = "";
+
+      message.className = "";
 
     });
 
 
-    registerTab.addEventListener("click", () => {
+    registerTab.addEventListener("click", function() {
 
       registerTab.classList.add("active");
+
       loginTab.classList.remove("active");
 
       registerForm.classList.add("active");
+
       loginForm.classList.remove("active");
 
       authTitle.textContent =
@@ -966,7 +819,9 @@
       authDescription.textContent =
         "Comenzá tu experiencia y descubrí nuevas conexiones.";
 
-      showMessage("");
+      message.textContent = "";
+
+      message.className = "";
 
     });
 
@@ -975,11 +830,11 @@
        LOGIN
     ================================================== */
 
-    loginForm.addEventListener("submit", async (event) => {
+    loginForm.addEventListener("submit", async function(event) {
 
       event.preventDefault();
 
-      showMessage("");
+      message.textContent = "";
 
       const email =
         document.getElementById("loginEmail")
@@ -990,19 +845,39 @@
         document.getElementById("loginPassword")
         .value;
 
-      buttonLoading(
-        loginButton,
-        true,
-        "Iniciar sesión"
-      );
+
+      loginButton.disabled = true;
+
+      loginButton.textContent =
+        "Ingresando...";
 
 
       try {
 
+        if (
+          !window.supabase ||
+          SUPABASE_URL.includes("PEGÁ_ACÁ") ||
+          SUPABASE_ANON_KEY.includes("PEGÁ_ACÁ")
+        ) {
+
+          throw new Error(
+            "Falta configurar la conexión con Supabase."
+          );
+
+        }
+
+
+        const supabaseClient =
+          window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_ANON_KEY
+          );
+
+
         const { error } =
-          await client.auth.signInWithPassword({
-            email,
-            password
+          await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
           });
 
 
@@ -1011,30 +886,37 @@
         }
 
 
-        showMessage(
-          "¡Bienvenido! Entrando a tu perfil...",
-          "success"
-        );
+        message.textContent =
+          "¡Bienvenido! Entrando a tu perfil...";
+
+        message.className =
+          "success";
 
 
-        window.location.replace("perfil.html");
+        setTimeout(function() {
+
+          window.location.href =
+            "perfil.html";
+
+        }, 500);
 
 
       } catch (error) {
 
         console.error(error);
 
-        showMessage(
+        message.textContent =
           error.message ||
-          "No pudimos iniciar sesión.",
-          "error"
-        );
+          "No pudimos iniciar sesión.";
 
-        buttonLoading(
-          loginButton,
-          false,
-          "Iniciar sesión"
-        );
+        message.className =
+          "error";
+
+
+        loginButton.disabled = false;
+
+        loginButton.textContent =
+          "Iniciar sesión";
 
       }
 
@@ -1045,11 +927,11 @@
        REGISTRO
     ================================================== */
 
-    registerForm.addEventListener("submit", async (event) => {
+    registerForm.addEventListener("submit", async function(event) {
 
       event.preventDefault();
 
-      showMessage("");
+      message.textContent = "";
 
       const email =
         document.getElementById("registerEmail")
@@ -1067,34 +949,123 @@
 
       if (password.length < 6) {
 
-        showMessage(
-          "La contraseña debe tener al menos 6 caracteres.",
-          "error"
-        );
+        message.textContent =
+          "La contraseña debe tener al menos 6 caracteres.";
+
+        message.className =
+          "error";
 
         return;
+
       }
 
 
       if (password !== password2) {
 
-        showMessage(
-          "Las contraseñas no coinciden.",
-          "error"
-        );
+        message.textContent =
+          "Las contraseñas no coinciden.";
+
+        message.className =
+          "error";
 
         return;
+
       }
 
 
-      buttonLoading(
-        registerButton,
-        true,
-        "Crear mi cuenta"
-      );
+      registerButton.disabled = true;
+
+      registerButton.textContent =
+        "Creando cuenta...";
 
 
       try {
 
+        if (
+          !window.supabase ||
+          SUPABASE_URL.includes("PEGÁ_ACÁ") ||
+          SUPABASE_ANON_KEY.includes("PEGÁ_ACÁ")
+        ) {
+
+          throw new Error(
+            "Falta configurar la conexión con Supabase."
+          );
+
+        }
+
+
+        const supabaseClient =
+          window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_ANON_KEY
+          );
+
+
         const { data, error } =
-          await cl
+          await supabaseClient.auth.signUp({
+            email: email,
+            password: password
+          });
+
+
+        if (error) {
+          throw error;
+        }
+
+
+        if (data.session) {
+
+          message.textContent =
+            "Cuenta creada. Entrando a tu perfil...";
+
+          message.className =
+            "success";
+
+
+          setTimeout(function() {
+
+            window.location.href =
+              "perfil.html";
+
+          }, 500);
+
+
+        } else {
+
+          message.textContent =
+            "Cuenta creada. Revisá tu email para confirmar.";
+
+          message.className =
+            "success";
+
+
+          registerForm.reset();
+
+        }
+
+
+      } catch (error) {
+
+        console.error(error);
+
+        message.textContent =
+          error.message ||
+          "No pudimos crear la cuenta.";
+
+        message.className =
+          "error";
+
+      }
+
+
+      registerButton.disabled = false;
+
+      registerButton.textContent =
+        "Crear mi cuenta";
+
+    });
+
+  </script>
+
+</body>
+            </html>
