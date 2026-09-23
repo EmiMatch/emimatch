@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
   <meta charset="UTF-8">
 
   <meta
@@ -10,226 +9,295 @@
   >
 
   <meta
-    name="description"
-    content="Tu perfil en EmiMatch. Personalizá tu perfil, descubrí personas y encontrá nuevas conexiones."
+    name="theme-color"
+    content="#111827"
   >
 
   <meta
-    name="theme-color"
-    content="#0b1020"
+    name="description"
+    content="Completá tu perfil en EmiMatch y descubrí nuevas conexiones."
   >
 
-  <title>EmiMatch - Mi perfil</title>
+  <title>EmiMatch — Mi perfil</title>
 
   <link
     rel="stylesheet"
     href="assets/css/app.css"
   >
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+  ></script>
 
   <style>
-
     /* =====================================================
        EmiMatch — Perfil Premium
     ===================================================== */
 
     .profile-page {
-      width: 100%;
-      max-width: 1180px;
+      min-height: 100vh;
+      padding-bottom: 50px;
+    }
+
+    .profile-container {
+      width: min(100% - 24px, 900px);
       margin: 0 auto;
-      padding: 24px 16px 60px;
     }
 
     .profile-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 14px 16px;
+      backdrop-filter: blur(18px);
+      background: rgba(10, 15, 35, .82);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+
+    .profile-header-inner {
+      width: min(100%, 900px);
+      margin: 0 auto;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 30px;
+      gap: 12px;
     }
 
     .brand {
-      color: #ffffff;
-      text-decoration: none;
-      font-size: 1.5rem;
+      color: #f8d477;
+      font-size: 1.25rem;
       font-weight: 800;
-      letter-spacing: -.02em;
+      letter-spacing: .2px;
     }
 
     .logout-button {
-      min-height: 44px;
-      padding: 10px 16px;
-      border: 1px solid rgba(255,255,255,.14);
+      min-height: 42px;
+      border: 1px solid rgba(255,255,255,.12);
       border-radius: 12px;
+      padding: 9px 14px;
+      color: #fff;
       background: rgba(255,255,255,.07);
-      color: #ffffff;
       cursor: pointer;
-      font-weight: 700;
-    }
-
-    .logout-button:hover {
-      background: rgba(255,255,255,.12);
     }
 
     .profile-hero {
-      margin-bottom: 24px;
+      text-align: center;
+      padding: 34px 8px 24px;
     }
 
     .profile-hero h1 {
-      margin: 0 0 8px;
-      color: #ffffff;
-      font-size: clamp(1.8rem, 5vw, 2.6rem);
-      line-height: 1.15;
+      margin: 0 0 10px;
+      color: #fff;
+      font-size: clamp(1.8rem, 6vw, 2.7rem);
     }
 
     .profile-hero p {
-      max-width: 700px;
-      margin: 0;
-      color: rgba(255,255,255,.68);
+      max-width: 650px;
+      margin: 0 auto;
+      color: rgba(255,255,255,.72);
       line-height: 1.6;
     }
 
     .status-message {
-      margin-bottom: 20px;
-      padding: 13px 16px;
+      margin: 0 auto 18px;
+      padding: 13px 15px;
       border-radius: 14px;
-      color: #ffffff;
-      background: rgba(255,255,255,.07);
-      border: 1px solid rgba(255,255,255,.12);
+      font-weight: 600;
+      text-align: center;
     }
 
     .status-message.success {
-      border-color: rgba(34,197,94,.45);
-      background: rgba(34,197,94,.08);
+      background: rgba(34,197,94,.12);
+      border: 1px solid rgba(34,197,94,.25);
+      color: #86efac;
     }
 
     .status-message.error {
-      border-color: rgba(239,68,68,.45);
-      background: rgba(239,68,68,.08);
+      background: rgba(239,68,68,.12);
+      border: 1px solid rgba(239,68,68,.25);
+      color: #fca5a5;
     }
 
     .status-message.info {
-      border-color: rgba(59,130,246,.4);
-      background: rgba(59,130,246,.08);
+      background: rgba(59,130,246,.12);
+      border: 1px solid rgba(59,130,246,.25);
+      color: #93c5fd;
     }
 
-    .profile-layout {
-      display: grid;
-      grid-template-columns:
-        minmax(0, 1fr)
-        minmax(0, 1fr);
-      gap: 24px;
-      align-items: start;
-    }
-
-    .profile-card,
-    .discovery-card-wrapper {
-      padding: 24px;
+    .profile-card {
+      margin-bottom: 20px;
+      padding: 20px;
+      border: 1px solid rgba(255,255,255,.09);
       border-radius: 24px;
-      background: rgba(15,23,42,.76);
-      border: 1px solid rgba(255,255,255,.10);
-      box-shadow:
-        0 18px 50px rgba(0,0,0,.20);
+      background: rgba(17,24,39,.72);
+      box-shadow: 0 18px 55px rgba(0,0,0,.22);
       backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
     }
 
     .section-title {
-      margin: 0 0 7px;
-      color: #ffffff;
-      font-size: 1.3rem;
-      line-height: 1.25;
+      margin: 0 0 6px;
+      color: #fff;
+      font-size: 1.35rem;
     }
 
-    .section-subtitle {
-      margin: 0 0 22px;
+    .section-description {
+      margin: 0 0 20px;
       color: rgba(255,255,255,.62);
-      line-height: 1.55;
+      line-height: 1.5;
     }
 
-    /* =====================================================
-       FOTO PRINCIPAL
-    ===================================================== */
-
-    .profile-photo-box {
+    .main-photo-area {
+      text-align: center;
       margin-bottom: 24px;
     }
 
-    .profile-photo-frame {
+    .main-photo-wrapper {
       position: relative;
-      width: 100%;
-      max-width: 320px;
-      aspect-ratio: 1 / 1;
-      margin: 0 auto 16px;
+      width: min(100%, 300px);
+      aspect-ratio: 1;
+      margin: 0 auto 14px;
       overflow: hidden;
       border-radius: 24px;
-      background: #111827;
-      border: 1px solid rgba(255,255,255,.12);
+      border: 2px solid rgba(248,212,119,.35);
+      background: rgba(255,255,255,.04);
     }
 
-    .profile-photo-frame img {
+    .main-profile-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .photo-label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 10px 18px;
+      border-radius: 12px;
+      background: linear-gradient(135deg,#8b5cf6,#6d28d9);
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .photo-label input {
+      display: none;
+    }
+
+    .album-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .album-count {
+      color: #f8d477;
+      font-size: .9rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .album-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .album-item {
+      position: relative;
+      min-width: 0;
+      aspect-ratio: 1;
+      overflow: hidden;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+    }
+
+    .album-image {
       width: 100%;
       height: 100%;
       display: block;
       object-fit: cover;
     }
 
-    .photo-badge {
+    .album-overlay {
       position: absolute;
-      left: 12px;
-      bottom: 12px;
-      padding: 7px 10px;
-      border-radius: 999px;
-      background: rgba(0,0,0,.70);
-      color: #ffffff;
-      font-size: .78rem;
-      font-weight: 800;
+      inset: auto 0 0;
+      padding: 8px;
+      background: linear-gradient(
+        transparent,
+        rgba(0,0,0,.85)
+      );
     }
 
-    /* =====================================================
-       ARCHIVOS
-    ===================================================== */
-
-    .file-field {
-      display: block;
-      margin-bottom: 20px;
+    .album-actions {
+      display: flex;
+      gap: 6px;
     }
 
-    .file-field span {
-      display: block;
-      margin-bottom: 8px;
-      color: rgba(255,255,255,.84);
+    .album-action {
+      flex: 1;
+      min-height: 34px;
+      border: 0;
+      border-radius: 9px;
+      padding: 6px;
+      color: #fff;
+      background: rgba(17,24,39,.85);
+      cursor: pointer;
+      font-size: .72rem;
       font-weight: 700;
     }
 
-    .file-field input {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 10px;
-      border-radius: 12px;
-      color: #ffffff;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.12);
+    .album-action.delete {
+      color: #fecaca;
     }
 
-    .file-field input:disabled {
-      opacity: .55;
-      cursor: not-allowed;
+    .primary-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: rgba(248,212,119,.95);
+      color: #111827;
+      font-size: .7rem;
+      font-weight: 800;
     }
 
-    /* =====================================================
-       FORMULARIO
-    ===================================================== */
+    .album-empty,
+    .album-loading,
+    .album-error {
+      grid-column: 1 / -1;
+      padding: 28px 15px;
+      border-radius: 16px;
+      text-align: center;
+      color: rgba(255,255,255,.65);
+      background: rgba(255,255,255,.035);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
 
     .form-group {
-      margin-bottom: 18px;
+      min-width: 0;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
     }
 
     .form-group label {
       display: block;
       margin-bottom: 7px;
       color: rgba(255,255,255,.86);
+      font-size: .92rem;
       font-weight: 700;
     }
 
@@ -237,25 +305,19 @@
     .form-group textarea {
       width: 100%;
       box-sizing: border-box;
-      padding: 13px 14px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      color: #ffffff;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 13px;
+      padding: 12px 13px;
+      color: #fff;
+      background: rgba(255,255,255,.055);
       outline: none;
       font: inherit;
     }
 
-    .form-group input::placeholder,
-    .form-group textarea::placeholder {
-      color: rgba(255,255,255,.38);
-    }
-
     .form-group input:focus,
     .form-group textarea:focus {
-      border-color: rgba(212,175,55,.75);
-      box-shadow:
-        0 0 0 3px rgba(212,175,55,.08);
+      border-color: rgba(248,212,119,.65);
+      box-shadow: 0 0 0 3px rgba(248,212,119,.08);
     }
 
     .form-group textarea {
@@ -265,250 +327,77 @@
 
     .counter {
       display: block;
-      margin-top: 6px;
-      color: rgba(255,255,255,.42);
-      font-size: .78rem;
+      margin-top: 5px;
       text-align: right;
+      color: rgba(255,255,255,.45);
+      font-size: .78rem;
     }
 
-    .save-button,
-    .primary-button {
+    .save-profile-button {
       width: 100%;
-      min-height: 48px;
-      padding: 12px 18px;
+      min-height: 50px;
+      margin-top: 20px;
       border: 0;
       border-radius: 14px;
-      background:
-        linear-gradient(
-          135deg,
-          #d4af37,
-          #f0d675
-        );
+      background: linear-gradient(
+        135deg,
+        #f8d477,
+        #d9a82e
+      );
       color: #111827;
+      font-weight: 900;
+      font-size: 1rem;
       cursor: pointer;
-      font-weight: 800;
-      font-size: .98rem;
     }
 
-    .save-button:hover,
-    .primary-button:hover {
-      filter: brightness(1.05);
-    }
-
-    .save-button:disabled,
-    .primary-button:disabled {
+    .save-profile-button:disabled {
       opacity: .55;
-      cursor: not-allowed;
-      filter: none;
+      cursor: wait;
     }
 
-    /* =====================================================
-       MATCHES
-    ===================================================== */
+    .quick-links {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
 
-    .matches-link-card {
-      margin-bottom: 22px;
-      padding: 18px;
+    .quick-link {
+      display: block;
+      padding: 20px;
       border-radius: 18px;
-      background: rgba(255,255,255,.045);
-      border: 1px solid rgba(255,255,255,.09);
-    }
-
-    .matches-link-card h3 {
-      margin: 0 0 6px;
-      color: #ffffff;
-    }
-
-    .matches-link-card p {
-      margin: 0 0 14px;
-      color: rgba(255,255,255,.60);
-      line-height: 1.5;
-    }
-
-    .matches-link {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      min-height: 44px;
-      box-sizing: border-box;
-      padding: 10px 14px;
-      border-radius: 12px;
       text-decoration: none;
-      background: rgba(212,175,55,.14);
-      border: 1px solid rgba(212,175,55,.32);
-      color: #f0d675;
-      font-weight: 800;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.045);
+      transition: transform .2s ease, background .2s ease;
     }
 
-    .matches-link:hover {
-      background: rgba(212,175,55,.20);
+    .quick-link:hover {
+      transform: translateY(-2px);
+      background: rgba(255,255,255,.07);
     }
 
-    /* =====================================================
-       ÁLBUM
-    ===================================================== */
-
-    .album-section {
-      margin-top: 26px;
+    .quick-link h3 {
+      margin: 0 0 7px;
+      color: #fff;
     }
 
-    .album-title {
-      margin: 0 0 6px;
-      color: #ffffff;
-      font-size: 1.05rem;
-    }
-
-    .album-description {
-      margin: 0 0 14px;
+    .quick-link p {
+      margin: 0;
       color: rgba(255,255,255,.58);
-      font-size: .9rem;
-      line-height: 1.5;
-    }
-
-    .album-grid {
-      display: grid;
-      grid-template-columns:
-        repeat(3, minmax(0, 1fr));
-      gap: 10px;
-    }
-
-    .album-item {
-      position: relative;
-      min-width: 0;
-      overflow: hidden;
-      aspect-ratio: 1 / 1;
-      border-radius: 14px;
-      background: #111827;
-      border: 1px solid rgba(255,255,255,.10);
-    }
-
-    .album-item img {
-      width: 100%;
-      height: 100%;
-      display: block;
-      object-fit: cover;
-    }
-
-    .album-main {
-      position: absolute;
-      top: 7px;
-      left: 7px;
-      padding: 5px 7px;
-      border-radius: 999px;
-      background: rgba(0,0,0,.72);
-      color: #ffffff;
-      font-size: .68rem;
-      font-weight: 800;
-    }
-
-    .album-actions {
-      position: absolute;
-      left: 6px;
-      right: 6px;
-      bottom: 6px;
-      display: grid;
-      gap: 5px;
-    }
-
-    .album-actions button {
-      min-height: 34px;
-      padding: 6px 8px;
-      border: 0;
-      border-radius: 9px;
-      cursor: pointer;
-      font-size: .70rem;
-      font-weight: 800;
-    }
-
-    .album-select {
-      background: rgba(212,175,55,.94);
-      color: #111827;
-    }
-
-    .album-delete {
-      background: rgba(0,0,0,.74);
-      color: #ffffff;
-    }
-
-    .album-loading,
-    .album-empty {
-      grid-column: 1 / -1;
-      padding: 26px 12px;
-      text-align: center;
-      color: rgba(255,255,255,.62);
-    }
-
-    .album-empty span {
-      display: block;
-      margin-bottom: 8px;
-      font-size: 2rem;
-    }
-
-    .album-empty strong,
-    .album-empty small {
-      display: block;
-    }
-
-    .album-empty strong {
-      margin-bottom: 4px;
-      color: #ffffff;
-    }
-
-    /* =====================================================
-       DESCUBRIR
-    ===================================================== */
-
-    .discovery-loading,
-    .discovery-empty {
-      padding: 40px 16px;
-      text-align: center;
-      color: rgba(255,255,255,.64);
-    }
-
-    .discovery-loading h3,
-    .discovery-empty h3 {
-      margin: 12px 0 7px;
-      color: #ffffff;
-    }
-
-    .discovery-loading p,
-    .discovery-empty p {
-      margin: 0 0 20px;
-      line-height: 1.5;
-    }
-
-    .loading-spinner {
-      width: 34px;
-      height: 34px;
-      margin: 0 auto;
-      border: 3px solid rgba(255,255,255,.14);
-      border-top-color: #d4af37;
-      border-radius: 50%;
-      animation:
-        profileSpin .8s linear infinite;
-    }
-
-    @keyframes profileSpin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .empty-icon {
-      font-size: 2.5rem;
+      line-height: 1.45;
     }
 
     .discovery-card {
       overflow: hidden;
-      border-radius: 20px;
-      background: rgba(255,255,255,.045);
-      border: 1px solid rgba(255,255,255,.09);
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.035);
     }
 
     .discovery-photo-wrapper {
       position: relative;
-      aspect-ratio: 4 / 4.8;
+      aspect-ratio: 1 / 1.08;
+      overflow: hidden;
       background: #111827;
     }
 
@@ -522,12 +411,10 @@
     .discovery-photo-overlay {
       position: absolute;
       inset: 0;
-      background:
-        linear-gradient(
-          to top,
-          rgba(0,0,0,.84),
-          transparent 52%
-        );
+      background: linear-gradient(
+        transparent 48%,
+        rgba(0,0,0,.82)
+      );
       pointer-events: none;
     }
 
@@ -535,244 +422,275 @@
       position: absolute;
       left: 18px;
       right: 18px;
-      bottom: 16px;
+      bottom: 17px;
+      color: #fff;
     }
 
     .discovery-profile-info h3 {
       margin: 0 0 5px;
-      color: #ffffff;
-      font-size: 1.45rem;
+      font-size: 1.7rem;
     }
 
     .discovery-profile-info p {
       margin: 0;
-      color: rgba(255,255,255,.80);
+      color: rgba(255,255,255,.82);
     }
 
     .discovery-content {
-      padding: 18px;
+      padding: 20px;
     }
 
     .discovery-section {
-      margin-bottom: 17px;
+      margin-bottom: 16px;
     }
 
     .discovery-label {
       display: block;
-      margin-bottom: 6px;
-      color: #f0d675;
-      font-size: .76rem;
+      margin-bottom: 5px;
+      color: #f8d477;
+      font-size: .8rem;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: .04em;
+      letter-spacing: .06em;
     }
 
     .discovery-description,
     .discovery-interests {
       margin: 0;
-      color: rgba(255,255,255,.72);
+      color: rgba(255,255,255,.7);
       line-height: 1.55;
-      word-break: break-word;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
     }
 
     .discovery-actions {
-      display: flex;
-      justify-content: center;
-      gap: 18px;
-      padding-top: 8px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 22px;
     }
 
     .discovery-button {
-      width: 58px;
-      height: 58px;
-      border: 0;
-      border-radius: 50%;
+      min-height: 58px;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 16px;
+      color: #fff;
+      font-size: 1.5rem;
       cursor: pointer;
-      font-size: 1.45rem;
+      background: rgba(255,255,255,.06);
     }
 
     .pass-button {
-      background: rgba(239,68,68,.15);
-      border: 1px solid rgba(239,68,68,.35);
+      background: rgba(239,68,68,.1);
     }
 
     .like-button {
-      background: rgba(236,72,153,.15);
-      border: 1px solid rgba(236,72,153,.35);
+      background: rgba(236,72,153,.12);
     }
 
     .discovery-button:disabled {
-      opacity: .5;
-      cursor: not-allowed;
+      opacity: .45;
+      cursor: wait;
     }
 
-    /* =====================================================
-       MATCH
-    ===================================================== */
-
     .match-success-box {
-      margin: 18px 0;
-      padding: 22px 16px;
+      padding: 22px;
+      margin-top: 16px;
       border-radius: 18px;
       text-align: center;
-      background: rgba(212,175,55,.09);
-      border: 1px solid rgba(212,175,55,.28);
+      background: linear-gradient(
+        135deg,
+        rgba(236,72,153,.14),
+        rgba(139,92,246,.14)
+      );
+      border: 1px solid rgba(236,72,153,.2);
     }
 
     .match-success-icon {
-      margin-bottom: 8px;
       font-size: 2.5rem;
+      margin-bottom: 8px;
     }
 
     .match-success-box h3 {
       margin: 0 0 6px;
-      color: #ffffff;
+      color: #fff;
     }
 
     .match-success-box p {
       margin: 0 0 16px;
-      color: rgba(255,255,255,.64);
+      color: rgba(255,255,255,.65);
     }
 
-    .match-link {
-      display: flex;
+    .match-link,
+    .primary-button {
+      display: inline-flex;
       align-items: center;
       justify-content: center;
+      min-height: 44px;
+      padding: 10px 16px;
+      border-radius: 12px;
       text-decoration: none;
+      border: 0;
+      background: linear-gradient(
+        135deg,
+        #8b5cf6,
+        #6d28d9
+      );
+      color: #fff;
+      font-weight: 800;
+      cursor: pointer;
     }
 
-    /* =====================================================
-       RESPONSIVE
-    ===================================================== */
+    .discovery-empty,
+    .discovery-loading {
+      padding: 45px 20px;
+      text-align: center;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,.07);
+      background: rgba(255,255,255,.035);
+    }
 
-    @media (max-width: 800px) {
+    .discovery-empty h3,
+    .discovery-loading h3 {
+      margin: 12px 0 8px;
+      color: #fff;
+    }
 
-      .profile-layout {
+    .discovery-empty p,
+    .discovery-loading p {
+      margin: 0 0 18px;
+      color: rgba(255,255,255,.58);
+      line-height: 1.5;
+    }
+
+    .empty-icon {
+      font-size: 2.8rem;
+    }
+
+    .loading-spinner {
+      width: 34px;
+      height: 34px;
+      margin: 0 auto 14px;
+      border: 3px solid rgba(255,255,255,.15);
+      border-top-color: #f8d477;
+      border-radius: 50%;
+      animation: emimatch-spin .8s linear infinite;
+    }
+
+    @keyframes emimatch-spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @media (max-width: 650px) {
+      .profile-container {
+        width: min(100% - 16px, 900px);
+      }
+
+      .profile-card {
+        padding: 16px;
+        border-radius: 20px;
+      }
+
+      .form-grid,
+      .quick-links {
         grid-template-columns: 1fr;
       }
 
-    }
-
-    @media (max-width: 520px) {
-
-      .profile-page {
-        padding:
-          18px
-          12px
-          40px;
-      }
-
-      .profile-header {
-        align-items: flex-start;
-      }
-
-      .brand {
-        font-size: 1.25rem;
-      }
-
-      .logout-button {
-        padding: 9px 12px;
-        font-size: .84rem;
-      }
-
-      .profile-card,
-      .discovery-card-wrapper {
-        padding: 16px;
-        border-radius: 18px;
+      .form-group.full {
+        grid-column: auto;
       }
 
       .album-grid {
-        grid-template-columns:
-          repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
-      .discovery-actions {
-        gap: 14px;
+      .profile-hero {
+        padding-top: 26px;
       }
 
+      .discovery-profile-info h3 {
+        font-size: 1.45rem;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
-
       .loading-spinner {
         animation: none;
       }
 
+      .quick-link {
+        transition: none;
+      }
     }
-
   </style>
-
 </head>
 
 <body>
 
   <div class="profile-page">
 
-    <!-- =============================================
+    <!-- =================================================
          HEADER
-    ============================================== -->
+    ================================================== -->
 
     <header class="profile-header">
 
-      <a
-        href="index.html"
-        class="brand"
-      >
-        💕 EmiMatch
-      </a>
+      <div class="profile-header-inner">
 
-      <button
-        type="button"
-        id="logoutButton"
-        class="logout-button"
-      >
-        Cerrar sesión
-      </button>
+        <div class="brand">
+          💕 EmiMatch
+        </div>
+
+        <button
+          type="button"
+          id="logoutButton"
+          class="logout-button"
+        >
+          Cerrar sesión
+        </button>
+
+      </div>
 
     </header>
 
 
-    <!-- =============================================
-         PRESENTACIÓN
-    ============================================== -->
+    <main class="profile-container">
 
-    <section class="profile-hero">
+      <!-- =================================================
+           HERO
+      ================================================== -->
 
-      <h1>
-        Tu perfil en EmiMatch
-      </h1>
+      <section class="profile-hero">
 
-      <p>
-        Mostrá quién sos, elegí tu mejor foto
-        y compartí tus intereses para conectar
-        con nuevas personas.
-      </p>
+        <h1>
+          Tu perfil en EmiMatch
+        </h1>
 
-    </section>
+        <p>
+          Mostrá quién sos, elegí tu mejor foto
+          y compartí algunos momentos de tu vida.
+        </p>
 
-
-    <!-- =============================================
-         ESTADO
-    ============================================== -->
-
-    <div
-      id="statusMessage"
-      class="status-message"
-      hidden
-      aria-live="polite"
-    ></div>
+      </section>
 
 
-    <!-- =============================================
-         CONTENIDO PRINCIPAL
-    ============================================== -->
+      <!-- =================================================
+           STATUS
+      ================================================== -->
 
-    <main class="profile-layout">
+      <div
+        id="statusMessage"
+        class="status-message"
+        hidden
+        aria-live="polite"
+      ></div>
 
 
-      <!-- ===========================================
+      <!-- =================================================
            PERFIL
-      ============================================ -->
+      ================================================== -->
 
       <section class="profile-card">
 
@@ -780,40 +698,34 @@
           ✨ Mi perfil
         </h2>
 
-        <p class="section-subtitle">
-          Personalizá tu perfil para que otras
-          personas puedan conocerte mejor.
+        <p class="section-description">
+          Personalizá tu perfil para que otras personas
+          puedan conocerte mejor.
         </p>
 
 
         <!-- FOTO PRINCIPAL -->
 
-        <div class="profile-photo-box">
+        <div class="main-photo-area">
 
-          <div class="profile-photo-frame">
+          <div class="main-photo-wrapper">
 
             <img
               id="profilePhoto"
+              class="main-profile-photo"
               src="https://placehold.co/600x600/111827/FFFFFF?text=EmiMatch"
               alt="Foto principal de tu perfil"
             >
 
-            <span class="photo-badge">
-              Principal
-            </span>
-
           </div>
 
+          <label class="photo-label">
 
-          <label class="file-field">
-
-            <span>
-              📸 Foto de perfil
-            </span>
+            📸 Foto de perfil
 
             <input
-              type="file"
               id="profilePhotoInput"
+              type="file"
               accept="image/jpeg,image/png,image/webp"
             >
 
@@ -824,141 +736,157 @@
 
         <!-- ÁLBUM -->
 
-        <div class="album-section">
+        <div class="album-header">
 
-          <h3 class="album-title">
-            🖼️ Mi álbum
-          </h3>
+          <div>
+            <h3 class="section-title">
+              🖼️ Mi álbum
+            </h3>
 
-          <p class="album-description">
-            Agregá hasta 6 fotos para mostrar
-            diferentes momentos de tu vida.
-          </p>
+            <p class="section-description">
+              Agregá hasta 6 fotos para mostrar
+              diferentes momentos de tu vida.
+            </p>
+          </div>
 
-          <label class="file-field">
+          <span
+            id="albumCount"
+            class="album-count"
+          >
+            0/6
+          </span>
 
-            <span>
-              Seleccionar fotos
-            </span>
-
-            <input
-              type="file"
-              id="albumInput"
-              accept="image/jpeg,image/png,image/webp"
-              multiple
-            >
-
-          </label>
+        </div>
 
 
-          <div
-            id="albumGrid"
-            class="album-grid"
+        <label class="photo-label">
+
+          Seleccionar fotos
+
+          <input
+            id="albumInput"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            multiple
           >
 
-            <div class="album-loading">
-              Cargando fotos...
-            </div>
+        </label>
 
+
+        <div
+          id="albumGrid"
+          class="album-grid"
+          aria-live="polite"
+        >
+
+          <div class="album-loading">
+            Cargando fotos...
           </div>
 
         </div>
 
 
-        <!-- DATOS PERSONALES -->
+        <!-- DATOS -->
 
-        <div class="form-group">
+        <div
+          class="form-grid"
+          style="margin-top:24px;"
+        >
 
-          <label for="nombre">
-            Nombre
-          </label>
+          <div class="form-group">
 
-          <input
-            id="nombre"
-            type="text"
-            maxlength="80"
-            autocomplete="name"
-            placeholder="Tu nombre"
-          >
+            <label for="nombre">
+              Nombre
+            </label>
 
-        </div>
+            <input
+              id="nombre"
+              type="text"
+              maxlength="100"
+              autocomplete="name"
+              placeholder="Tu nombre"
+            >
 
-
-        <div class="form-group">
-
-          <label for="edad">
-            Edad
-          </label>
-
-          <input
-            id="edad"
-            type="number"
-            min="18"
-            max="100"
-            inputmode="numeric"
-            placeholder="18"
-          >
-
-        </div>
+          </div>
 
 
-        <div class="form-group">
+          <div class="form-group">
 
-          <label for="ciudad">
-            Ciudad
-          </label>
+            <label for="edad">
+              Edad
+            </label>
 
-          <input
-            id="ciudad"
-            type="text"
-            maxlength="100"
-            autocomplete="address-level2"
-            placeholder="Tu ciudad"
-          >
+            <input
+              id="edad"
+              type="number"
+              min="18"
+              max="100"
+              inputmode="numeric"
+              placeholder="18"
+            >
 
-        </div>
-
-
-        <div class="form-group">
-
-          <label for="descripcion">
-            Sobre mí
-          </label>
-
-          <textarea
-            id="descripcion"
-            maxlength="500"
-            placeholder="Contá un poco sobre vos..."
-          ></textarea>
-
-          <span
-            id="descripcionCounter"
-            class="counter"
-          >
-            0/500
-          </span>
-
-        </div>
+          </div>
 
 
-        <div class="form-group">
+          <div class="form-group full">
 
-          <label for="intereses">
-            Intereses
-          </label>
+            <label for="ciudad">
+              Ciudad
+            </label>
 
-          <textarea
-            id="intereses"
-            maxlength="300"
-            placeholder="Música, deportes, viajes..."
-          ></textarea>
+            <input
+              id="ciudad"
+              type="text"
+              maxlength="100"
+              autocomplete="address-level2"
+              placeholder="Tu ciudad"
+            >
 
-          <span
-            id="interesesCounter"
-            class="counter"
-          >
-            0/300
-          </span>
+          </div>
+
+
+          <div class="form-group full">
+
+            <label for="descripcion">
+              Sobre mí
+            </label>
+
+            <textarea
+              id="descripcion"
+              maxlength="500"
+              placeholder="Contá un poco sobre vos..."
+            ></textarea>
+
+            <span
+              id="descripcionCounter"
+              class="counter"
+            >
+              0/500
+            </span>
+
+          </div>
+
+
+          <div class="form-group full">
+
+            <label for="intereses">
+              Intereses
+            </label>
+
+            <textarea
+              id="intereses"
+              maxlength="300"
+              placeholder="Música, deportes, viajes..."
+            ></textarea>
+
+            <span
+              id="interesesCounter"
+              class="counter"
+            >
+              0/300
+            </span>
+
+          </div>
 
         </div>
 
@@ -966,7 +894,7 @@
         <button
           type="button"
           id="saveProfileButton"
-          class="save-button"
+          class="save-profile-button"
         >
           💾 Guardar perfil
         </button>
@@ -974,57 +902,123 @@
       </section>
 
 
-      <!-- ===========================================
-           MATCHES + DESCUBRIR
-      ============================================ -->
+      <!-- =================================================
+           ACCESOS
+      ================================================== -->
 
-      <section class="discovery-card-wrapper">
+      <section class="profile-card">
 
-        <div class="matches-link-card">
-
-          <h3>
-            💕 Mis Matches
-          </h3>
-
-          <p>
-            Mirá las personas con las que
-            hiciste Match.
-          </p>
+        <div class="quick-links">
 
           <a
             href="matches.html"
-            class="matches-link"
+            class="quick-link"
           >
-            Ver mis Matches
+
+            <h3>
+              💕 Mis Matches
+            </h3>
+
+            <p>
+              Mirá las personas con las que
+              hiciste Match.
+            </p>
+
+          </a>
+
+
+          <a
+            href="#discovery"
+            class="quick-link"
+          >
+
+            <h3>
+              🔎 Descubrir
+            </h3>
+
+            <p>
+              Conocé nuevos perfiles y descubrí
+              nuevas conexiones.
+            </p>
+
           </a>
 
         </div>
 
+      </section>
+
+
+      <!-- =================================================
+           DESCUBRIR
+      ================================================== -->
+
+      <section
+        id="discovery"
+        class="profile-card"
+      >
 
         <h2 class="section-title">
           🔎 Descubrir
         </h2>
 
-        <p class="section-subtitle">
+        <p class="section-description">
           Conocé nuevos perfiles y descubrí
           nuevas conexiones.
         </p>
 
 
-        <div id="discoveryContainer">
+        <div
+          id="discoveryContainer"
+        >
 
-          <div class<script>
-(() => {
-  "use strict";
+          <div class="discovery-loading">
+
+            <div class="loading-spinner"></div>
+
+            <h3>
+              Buscando perfiles...
+            </h3>
+
+            <p>
+              Estamos preparando nuevas conexiones.
+            </p>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+
+  <!-- =====================================================
+       SISTEMA CENTRAL
+  ===================================================== -->
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/analytics.js"></script>
+
+
+  <!-- =====================================================
+       JAVASCRIPT DEL PERFIL
+  ===================================================== -->
+
+  <script>
+    (() => {
+
+      "use strict";
+
 
   /* =====================================================
-     EmiMatch — Perfil Premium
-     Parte 2/5
-     Núcleo + sesión + perfil
+     CONFIGURACIÓN
   ===================================================== */
 
-  const config =
-    window.EMIMATCH_CONFIG;
+  const config = window.EMIMATCH_CONFIG;
 
   if (!config) {
     console.error(
@@ -1033,11 +1027,9 @@
     return;
   }
 
-
   if (
     !window.supabase ||
-    typeof window.supabase.createClient !==
-      "function"
+    typeof window.supabase.createClient !== "function"
   ) {
     console.error(
       "EmiMatch: Supabase no está disponible."
@@ -1045,17 +1037,11 @@
     return;
   }
 
-
   const supabaseClient =
     window.supabase.createClient(
       config.supabaseUrl,
       config.supabaseKey
     );
-
-
-  const analytics =
-    window.EmiMatchAnalytics || null;
-
 
   const components =
     window.EmiMatchComponents || null;
@@ -1066,12 +1052,12 @@
   ===================================================== */
 
   let currentUser = null;
-
   let currentProfile = null;
 
   let discoveryProfiles = [];
-
   let currentProfileIndex = 0;
+
+  let albumFiles = [];
 
 
   /* =====================================================
@@ -1079,43 +1065,85 @@
   ===================================================== */
 
   const logoutButton =
-    document.getElementById(
-      "logoutButton"
-    );
+    document.getElementById("logoutButton");
 
   const statusMessage =
-    document.getElementById(
-      "statusMessage"
-    );
+    document.getElementById("statusMessage");
 
   const profilePhoto =
-    document.getElementById(
-      "profilePhoto"
-    );
+    document.getElementById("profilePhoto");
 
   const profilePhotoInput =
-    document.getElementById(
-      "profilePhotoInput"
-    );
+    document.getElementById("profilePhotoInput");
 
   const albumInput =
-    document.getElementById(
-      "albumInput"
-    );
+    document.getElementById("albumInput");
 
   const albumGrid =
-    document.getElementById(
-      "albumGrid"
-    );
+    document.getElementById("albumGrid");
+
+  const albumCount =
+    document.getElementById("albumCount");
 
   const nombreInput =
-    document.getElementById(
-      "nombre"
-    );
+    document.getElementById("nombre");
 
   const edadInput =
-    document.getElement  /* =====================================================
-     FOTOS — CONFIGURACIÓN
+    document.getElementById("edad");
+
+  const ciudadInput =
+    document.getElementById("ciudad");
+
+  const descripcionInput =
+    document.getElementById("descripcion");
+
+  const interesesInput =
+    document.getElementById("intereses");
+
+  const descripcionCounter =
+    document.getElementById("descripcionCounter");
+
+  const interesesCounter =
+    document.getElementById("interesesCounter");
+
+  const saveProfileButton =
+    document.getElementById("saveProfileButton");
+
+  const discoveryContainer =
+    document.getElementById(
+      "discoveryContainer"
+    );
+
+
+  /* =====================================================
+     ANALYTICS
+  ===================================================== */
+
+  function analyticsTrack(method) {
+    try {
+
+      const analytics =
+        window.EmiMatchAnalytics;
+
+      if (
+        analytics &&
+        typeof analytics[method] === "function"
+      ) {
+        analytics[method]();
+      }
+
+    } catch (error) {
+
+      console.error(
+        "EmiMatch Analytics:",
+        error
+      );
+    }
+  }
+
+
+  /* =====================================================
+     STORAGE
   ===================================================== */
 
   const PHOTO_BUCKET =
@@ -1135,12 +1163,620 @@
 
 
   /* =====================================================
+     ESCAPE HTML
+  ===================================================== */
+
+  function escapeHTML(value) {
+
+    if (
+      components &&
+      typeof components.escapeHTML ===
+        "function"
+    ) {
+      return components.escapeHTML(
+        String(value ?? "")
+      );
+    }
+
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+
+  /* =====================================================
+     URL DE IMAGEN SEGURA
+  ===================================================== */
+
+  function safeImageUrl(value) {
+
+    const fallback =
+      "https://placehold.co/600x600/111827/FFFFFF?text=EmiMatch";
+
+    if (!value) {
+      return fallback;
+    }
+
+    try {
+
+      const url =
+        new URL(
+          String(value),
+          window.location.origin
+        );
+
+      if (
+        url.protocol === "https:" ||
+        url.protocol === "http:"
+      ) {
+        return url.href;
+      }
+
+    } catch (error) {
+
+      console.warn(
+        "URL de imagen inválida."
+      );
+    }
+
+    return fallback;
+  }
+
+
+  /* =====================================================
+     MENSAJES
+  ===================================================== */
+
+  function showStatus(
+    message,
+    type = "info"
+  ) {
+
+    if (!statusMessage) {
+      return;
+    }
+
+    statusMessage.textContent =
+      message;
+
+    statusMessage.className =
+      `status-message ${type}`;
+
+    statusMessage.hidden =
+      false;
+
+    clearTimeout(
+      showStatus.timer
+    );
+
+    showStatus.timer =
+      setTimeout(
+        () => {
+
+          if (statusMessage) {
+            statusMessage.hidden =
+              true;
+          }
+
+        },
+        5000
+      );
+  }
+
+
+  /* =====================================================
+     LOADING BOTONES
+  ===================================================== */
+
+  function setButtonLoading(
+    button,
+    loading,
+    loadingText
+  ) {
+
+    if (!button) {
+      return;
+    }
+
+    if (loading) {
+
+      if (
+        !button.dataset.originalText
+      ) {
+        button.dataset.originalText =
+          button.textContent;
+      }
+
+      button.disabled =
+        true;
+
+      button.textContent =
+        loadingText ||
+        "Procesando...";
+
+    } else {
+
+      button.disabled =
+        false;
+
+      if (
+        button.dataset.originalText
+      ) {
+        button.textContent =
+          button.dataset.originalText;
+      }
+    }
+  }
+
+
+  /* =====================================================
+     CONTADORES
+  ===================================================== */
+
+  function updateCounters() {
+
+    if (
+      descripcionInput &&
+      descripcionCounter
+    ) {
+
+      descripcionCounter.textContent =
+        `${descripcionInput.value.length}/500`;
+    }
+
+    if (
+      interesesInput &&
+      interesesCounter
+    ) {
+
+      interesesCounter.textContent =
+        `${interesesInput.value.length}/300`;
+    }
+  }
+
+
+  /* =====================================================
+     FOTO PRINCIPAL
+  ===================================================== */
+
+  function setProfilePhoto(url) {
+
+    if (!profilePhoto) {
+      return;
+    }
+
+    profilePhoto.src =
+      safeImageUrl(url);
+
+    profilePhoto.onerror =
+      () => {
+
+        profilePhoto.onerror =
+          null;
+
+        profilePhoto.src =
+          "https://placehold.co/600x600/111827/FFFFFF?text=EmiMatch";
+      };
+  }
+
+
+  /* =====================================================
+     VALIDACIÓN DEL PERFIL
+  ===================================================== */
+
+  function validateProfile() {
+
+    const nombre =
+      nombreInput?.value.trim() ||
+      "";
+
+    const edad =
+      Number(
+        edadInput?.value
+      );
+
+    const ciudad =
+      ciudadInput?.value.trim() ||
+      "";
+
+    const descripcion =
+      descripcionInput?.value.trim() ||
+      "";
+
+    const intereses =
+      interesesInput?.value.trim() ||
+      "";
+
+
+    if (nombre.length < 2) {
+
+      return {
+        valid: false,
+        message:
+          "Ingresá tu nombre."
+      };
+    }
+
+
+    if (
+      !Number.isInteger(edad) ||
+      edad < 18 ||
+      edad > 100
+    ) {
+
+      return {
+        valid: false,
+        message:
+          "La edad debe estar entre 18 y 100 años."
+      };
+    }
+
+
+    if (ciudad.length < 2) {
+
+      return {
+        valid: false,
+        message:
+          "Ingresá tu ciudad."
+      };
+    }
+
+
+    if (descripcion.length > 500) {
+
+      return {
+        valid: false,
+        message:
+          "La descripción no puede superar los 500 caracteres."
+      };
+    }
+
+
+    if (intereses.length > 300) {
+
+      return {
+        valid: false,
+        message:
+          "Los intereses no pueden superar los 300 caracteres."
+      };
+    }
+
+
+    return {
+      valid: true,
+
+      data: {
+        nombre,
+        edad,
+        ciudad,
+        descripcion,
+        intereses
+      }
+    };
+  }
+
+
+  /* =====================================================
+     SESIÓN
+  ===================================================== */
+
+  async function initializeSession() {
+
+    try {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .auth
+          .getSession();
+
+
+      if (error) {
+        throw error;
+      }
+
+
+      const session =
+        data?.session;
+
+
+      if (!session?.user) {
+
+        window.location.href =
+          "index.html";
+
+        return false;
+      }
+
+
+      currentUser =
+        session.user;
+
+
+      return true;
+
+    } catch (error) {
+
+      console.error(
+        "Error verificando sesión:",
+        error
+      );
+
+      window.location.href =
+        "index.html";
+
+      return false;
+    }
+  }
+
+
+  /* =====================================================
+     CARGAR PERFIL
+  ===================================================== */
+
+  async function loadProfile() {
+
+    try {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from("profiles")
+          .select(`
+            id,
+            nombre,
+            edad,
+            ciudad,
+            descripcion,
+            foto_url,
+            intereses,
+            created_at
+          `)
+          .eq(
+            "id",
+            currentUser.id
+          )
+          .maybeSingle();
+
+
+      if (error) {
+        throw error;
+      }
+
+
+      currentProfile =
+        data || null;
+
+
+      if (!currentProfile) {
+
+        showStatus(
+          "Completá tu perfil para comenzar.",
+          "info"
+        );
+
+        updateCounters();
+
+        return;
+      }
+
+
+      nombreInput.value =
+        currentProfile.nombre ||
+        "";
+
+      edadInput.value =
+        currentProfile.edad ||
+        "";
+
+      ciudadInput.value =
+        currentProfile.ciudad ||
+        "";
+
+      descripcionInput.value =
+        currentProfile.descripcion ||
+        "";
+
+      interesesInput.value =
+        currentProfile.intereses ||
+        "";
+
+
+      setProfilePhoto(
+        currentProfile.foto_url
+      );
+
+
+      updateCounters();
+
+    } catch (error) {
+
+      console.error(
+        "Error cargando perfil:",
+        error
+      );
+
+      showStatus(
+        "No pudimos cargar tu perfil.",
+        "error"
+      );
+    }
+  }
+
+
+  /* =====================================================
+     GUARDAR PERFIL
+  ===================================================== */
+
+  async function saveProfile() {
+
+    const validation =
+      validateProfile();
+
+
+    if (!validation.valid) {
+
+      showStatus(
+        validation.message,
+        "error"
+      );
+
+      return;
+    }
+
+
+    setButtonLoading(
+      saveProfileButton,
+      true,
+      "Guardando..."
+    );
+
+
+    try {
+
+      const {
+        nombre,
+        edad,
+        ciudad,
+        descripcion,
+        intereses
+      } =
+        validation.data;
+
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from("profiles")
+          .upsert(
+            {
+              id:
+                currentUser.id,
+
+              nombre,
+              edad,
+              ciudad,
+              descripcion,
+              intereses
+            },
+            {
+              onConflict:
+                "id"
+            }
+          )
+          .select()
+          .single();
+
+
+      if (error) {
+        throw error;
+      }
+
+
+      currentProfile =
+        data;
+
+
+      showStatus(
+        "Perfil guardado correctamente.",
+        "success"
+      );
+
+
+      analyticsTrack(
+        "trackProfileCompleted"
+      );
+
+    } catch (error) {
+
+      console.error(
+        "Error guardando perfil:",
+        error
+      );
+
+      showStatus(
+        "No pudimos guardar tu perfil. Intentá nuevamente.",
+        "error"
+      );
+
+    } finally {
+
+      setButtonLoading(
+        saveProfileButton,
+        false
+      );
+    }
+  }
+
+
+  /* =====================================================
+     CERRAR SESIÓN
+  ===================================================== */
+
+  async function logout() {
+
+    try {
+
+      if (logoutButton) {
+        logoutButton.disabled =
+          true;
+      }
+
+
+      const {
+        error
+      } =
+        await supabaseClient
+          .auth
+          .signOut();
+
+
+      if (error) {
+        throw error;
+      }
+
+
+      window.location.href =
+        "index.html";
+
+    } catch (error) {
+
+      console.error(
+        "Error cerrando sesión:",
+        error
+      );
+
+      showStatus(
+        "No pudimos cerrar la sesión.",
+        "error"
+      );
+
+
+      if (logoutButton) {
+        logoutButton.disabled =
+          false;
+      }
+    }
+  }
+
+
+  /* =====================================================
      VALIDAR IMAGEN
   ===================================================== */
 
   function validateImageFile(file) {
 
     if (!file) {
+
       return {
         valid: false,
         message:
@@ -1148,11 +1784,13 @@
       };
     }
 
+
     if (
       !ALLOWED_IMAGE_TYPES.includes(
         file.type
       )
     ) {
+
       return {
         valid: false,
         message:
@@ -1160,16 +1798,19 @@
       };
     }
 
+
     if (
       file.size >
       MAX_PHOTO_SIZE
     ) {
+
       return {
         valid: false,
         message:
           "Cada imagen puede pesar como máximo 5 MB."
       };
     }
+
 
     return {
       valid: true
@@ -1178,7 +1819,7 @@
 
 
   /* =====================================================
-     EXTENSIÓN DE ARCHIVO
+     EXTENSIÓN
   ===================================================== */
 
   function getFileExtension(file) {
@@ -1188,6 +1829,7 @@
       "image/png": "png",
       "image/webp": "webp"
     };
+
 
     return (
       extensions[file.type] ||
@@ -1205,16 +1847,26 @@
     const extension =
       getFileExtension(file);
 
+
+    const uniqueId =
+      typeof crypto !== "undefined" &&
+      typeof crypto.randomUUID === "function"
+        ? crypto.randomUUID()
+        : `${Date.now()}-${Math.random()
+            .toString(36)
+            .slice(2)}`;
+
+
     return (
       `${currentUser.id}/` +
-      `${crypto.randomUUID()}.` +
+      `${uniqueId}.` +
       extension
     );
   }
 
 
   /* =====================================================
-     OBTENER URL PÚBLICA
+     URL PÚBLICA
   ===================================================== */
 
   function getPublicPhotoUrl(
@@ -1226,10 +1878,13 @@
     } =
       supabaseClient
         .storage
-        .from(PHOTO_BUCKET)
+        .from(
+          PHOTO_BUCKET
+        )
         .getPublicUrl(
           storagePath
         );
+
 
     return (
       data?.publicUrl ||
@@ -1248,6 +1903,7 @@
 
     const validation =
       validateImageFile(file);
+
 
     if (!validation.valid) {
 
@@ -1294,7 +1950,9 @@
       } =
         await supabaseClient
           .storage
-          .from(PHOTO_BUCKET)
+          .from(
+            PHOTO_BUCKET
+          )
           .upload(
             storagePath,
             file,
@@ -1325,7 +1983,7 @@
       if (!photoUrl) {
 
         throw new Error(
-          "No se pudo obtener la URL pública."
+          "No se pudo obtener la URL pública de la imagen."
         );
       }
 
@@ -1364,16 +2022,9 @@
       );
 
 
-      if (
-        window.EmiMatchAnalytics &&
-        typeof window.EmiMatchAnalytics
-          .trackPhotoUploaded ===
-          "function"
-      ) {
-
-        window.EmiMatchAnalytics
-          .trackPhotoUploaded();
-      }
+      analyticsTrack(
+        "trackPhotoUploaded"
+      );
 
 
       showStatus(
@@ -1384,20 +2035,17 @@
 
       await loadAlbum();
 
-
     } catch (error) {
 
       console.error(
-        "Error subiendo foto:",
+        "Error subiendo foto de perfil:",
         error
       );
-
 
       showStatus(
         "No pudimos subir la foto. Intentá nuevamente.",
         "error"
       );
-
 
     } finally {
 
@@ -1442,7 +2090,9 @@
       } =
         await supabaseClient
           .storage
-          .from(PHOTO_BUCKET)
+          .from(
+            PHOTO_BUCKET
+          )
           .list(
             currentUser.id,
             {
@@ -1464,7 +2114,7 @@
       }
 
 
-      const imageFiles =
+      albumFiles =
         (files || [])
           .filter(
             file => {
@@ -1490,352 +2140,1536 @@
                 extension
               );
             }
-          )
-          .  /* =====================================================
-     DESCUBRIR — CARGAR PERFILES
-  ===================================================== */
-
-  async function loadDiscoveryProfiles() {
-
-    if (
-      !discoveryContainer ||
-      !currentUser
-    ) {
-      return;
-    }
-
-
-    discoveryContainer.innerHTML = `
-      <div class="discovery-loading">
-
-        <div class="loading-spinner"></div>
-
-        <h3>
-          Buscando perfiles...
-        </h3>
-
-        <p>
-          Estamos preparando nuevas conexiones.
-        </p>
-
-      </div>
-    `;
-
-
-    try {
-
-      /* =================================================
-         1. USUARIOS BLOQUEADOS
-      ================================================= */
-
-      const {
-        data: blockedUsers,
-        error: blockedError
-      } =
-        await supabaseClient
-          .from("block")
-          .select(
-            "blocked_user_id"
-          )
-          .eq(
-            "user_id",
-            currentUser.id
           );
 
 
-      if (blockedError) {
-        throw blockedError;
-      }
-
-
-      const blockedIds =
-        new Set(
-          (blockedUsers || [])
-            .map(
-              item =>
-                item.blocked_user_id
-            )
-        );
-
-
-      /* =================================================
-         2. TODOS LOS PERFILES
-      ================================================= */
-
-      const {
-        data: profiles,
-        error: profilesError
-      } =
-        await supabaseClient
-          .from("profiles")
-          .select(`
-            id,
-            nombre,
-            edad,
-            ciudad,
-            descripcion,
-            foto_url,
-            intereses,
-            created_at
-          `)
-          .neq(
-            "id",
-            currentUser.id
-          )
-          .order(
-            "created_at",
-            {
-              ascending: false
-            }
-          );
-
-
-      if (profilesError) {
-        throw profilesError;
-      }
-
-
-      /* =================================================
-         3. SWIPES DEL USUARIO
-      ================================================= */
-
-      const {
-        data: swipes,
-        error: swipesError
-      } =
-        await supabaseClient
-          .from("swipes")
-          .select(
-            "target_user_id"
-          )
-          .eq(
-            "user_id",
-            currentUser.id
-          );
-
-
-      if (swipesError) {
-        throw swipesError;
-      }
-
-
-      const seenIds =
-        new Set(
-          (swipes || [])
-            .map(
-              item =>
-                item.target_user_id
-            )
-        );
-
-
-      /* =================================================
-         4. FILTRO FINAL
-      ================================================= */
-
-      discoveryProfiles =
-        (profiles || [])
-          .filter(
-            profile => {
-
-              if (
-                blockedIds.has(
-                  profile.id
-                )
-              ) {
-                return false;
-              }
-
-
-              if (
-                seenIds.has(
-                  profile.id
-                )
-              ) {
-                return false;
-              }
-
-
-              return true;
-            }
-          );
-
-
-      currentProfileIndex =
-        0;
-
-
-      /* =================================================
-         ANALYTICS
-      ================================================= */
-
-      if (
-        window.EmiMatchAnalytics &&
-        typeof window.EmiMatchAnalytics
-          .trackDiscovery ===
-          "function"
-      ) {
-
-        window.EmiMatchAnalytics
-          .trackDiscovery();
-      }
-
-
-      renderDiscovery();
-
+      renderAlbum();
 
     } catch (error) {
 
       console.error(
-        "Error cargando Discovery:",
+        "Error cargando álbum:",
         error
       );
 
 
-      discoveryContainer.innerHTML = `
-        <div class="discovery-empty">
+      albumFiles = [];
 
-          <div class="empty-icon">
-            ⚠️
-          </div>
 
-          <h3>
-            No pudimos cargar perfiles
-          </h3>
-
-          <p>
-            Ocurrió un problema al cargar
-            los perfiles.
-          </p>
-
-          <button
-            type="button"
-            id="retryDiscoveryButton"
-            class="primary-button"
-          >
-            Intentar nuevamente
-          </button>
-
+      albumGrid.innerHTML = `
+        <div class="album-error">
+          ⚠️<br><br>
+          No pudimos cargar el álbum.
         </div>
       `;
 
 
-      const retryButton =
-        document.getElementById(
-          "retryDiscoveryButton"  /* =====================================================
-     INICIALIZACIÓN DEL ÁLBUM
-  ===================================================== */
-
-  async function initializeAlbum() {
-
-    await loadAlbum();
-  }
-
-
-  /* =====================================================
-     INICIALIZACIÓN DE DESCUBRIR
-  ===================================================== */
-
-  async function initializeDiscovery() {
-
-    await loadDiscoveryProfiles();
-  }
-
-
-  /* =====================================================
-     INICIALIZACIÓN GENERAL
-  ===================================================== */
-
-  async function initializeProfilePage() {
-
-    try {
-
-      /* -----------------------------------------------
-         1. VERIFICAR SESIÓN
-      ----------------------------------------------- */
-
-      const authenticated =
-        await initializeSession();
-
-
-      if (!authenticated) {
-        return;
-      }
-
-
-      /* -----------------------------------------------
-         2. ANALYTICS — PAGEVIEW
-      ----------------------------------------------- */
-
-      if (
-        window.EmiMatchAnalytics &&
-        typeof window.EmiMatchAnalytics
-          .trackPage ===
-          "function"
-      ) {
-
-        window.EmiMatchAnalytics
-          .trackPage();
-      }
-
-
-      /* -----------------------------------------------
-         3. CARGAR PERFIL
-      ----------------------------------------------- */
-
-      await loadProfile();
-
-
-      /* -----------------------------------------------
-         4. ACTUALIZAR CONTADORES
-      ----------------------------------------------- */
-
-      updateCounters();
-
-
-      /* -----------------------------------------------
-         5. CARGAR ÁLBUM
-      ----------------------------------------------- */
-
-      await initializeAlbum();
-
-
-      /* -----------------------------------------------
-         6. CARGAR DESCUBRIR
-      ----------------------------------------------- */
-
-      await initializeDiscovery();
-
-
-      console.info(
-        "EmiMatch: perfil inicializado correctamente."
-      );
-
-
-    } catch (error) {
-
-      console.error(
-        "EmiMatch: error inicializando perfil:",
-        error
-      );
-
-
-      showStatus(
-        "Ocurrió un problema al iniciar tu perfil.",
-        "error"
-      );
+      updateAlbumCount();
     }
   }
 
 
   /* =====================================================
-     INICIAR APLICACIÓN
+     CONTADOR DEL ÁLBUM
   ===================================================== */
 
-  initializeProfilePage();
+  function updateAlbumCount() {
+
+    if (!albumCount) {
+      return;
+    }
+
+
+    const count =
+      Math.min(
+        albumFiles.length,
+        MAX_ALBUM_PHOTOS
+      );
+
+
+    albumCount.textContent =
+      `${count}/${MAX_ALBUM_PHOTOS}`;
+  }
+
+
+  /* =====================================================
+   RENDER DEL ÁLBUM
+===================================================== */
+
+function renderAlbum(files) {
+
+  if (!albumGrid) return;
+
+  albumGrid.innerHTML = "";
+
+  if (!files || files.length === 0) {
+
+    albumGrid.innerHTML = `
+      <div class="album-empty">
+        <div class="album-empty-icon">📷</div>
+        <p>Todavía no tenés fotos en tu álbum.</p>
+        <small>
+          Podés agregar hasta ${MAX_ALBUM_PHOTOS} fotos.
+        </small>
+      </div>
+    `;
+
+    updateAlbumCount(0);
+
+    return;
+  }
+
+  const fragment =
+    document.createDocumentFragment();
+
+  files.forEach(file => {
+
+    if (!file || !file.name) return;
+
+    const filePath =
+      `${currentUser.id}/${file.name}`;
+
+    const imageUrl =
+      getPublicPhotoUrl(filePath);
+
+    const card =
+      document.createElement("div");
+
+    card.className =
+      "album-item";
+
+    const image =
+      document.createElement("img");
+
+    image.src =
+      safeImageUrl(imageUrl);
+
+    image.alt =
+      "Foto de mi álbum";
+
+    image.loading =
+      "lazy";
+
+    image.className =
+      "album-image";
+
+    image.addEventListener(
+      "error",
+      () => {
+        image.src =
+          "https://placehold.co/600x600/111827/FFFFFF?text=EmiMatch";
+      }
+    );
+
+    const actions =
+      document.createElement("div");
+
+    actions.className =
+      "album-actions";
+
+    const primaryButton =
+      document.createElement("button");
+
+    primaryButton.type =
+      "button";
+
+    primaryButton.className =
+      "btn btn-secondary";
+
+    primaryButton.textContent =
+      "⭐ Principal";
+
+    primaryButton.addEventListener(
+      "click",
+      () => setPrimaryPhoto(imageUrl)
+    );
+
+    const deleteButton =
+      document.createElement("button");
+
+    deleteButton.type =
+      "button";
+
+    deleteButton.className =
+      "btn btn-danger";
+
+    deleteButton.textContent =
+      "🗑️ Eliminar";
+
+    deleteButton.addEventListener(
+      "click",
+      () => deleteAlbumPhoto(file.name)
+    );
+
+    actions.appendChild(
+      primaryButton
+    );
+
+    actions.appendChild(
+      deleteButton
+    );
+
+    card.appendChild(
+      image
+    );
+
+    card.appendChild(
+      actions
+    );
+
+    fragment.appendChild(
+      card
+    );
+  });
+
+  albumGrid.appendChild(
+    fragment
+  );
+
+  updateAlbumCount(
+    files.length
+  );
+}
+
+
+/* =====================================================
+   CONTADOR DEL ÁLBUM
+===================================================== */
+
+function updateAlbumCount(count) {
+
+  if (!albumCount) return;
+
+  albumCount.textContent =
+    `${count}/${MAX_ALBUM_PHOTOS}`;
+}
+
+
+/* =====================================================
+   FOTO PRINCIPAL
+===================================================== */
+
+async function setPrimaryPhoto(photoUrl) {
+
+  if (!currentUser || !photoUrl) {
+    return;
+  }
+
+  try {
+
+    const {
+      error
+    } = await supabaseClient
+      .from("profiles")
+      .update({
+        foto_url: photoUrl
+      })
+      .eq(
+        "id",
+        currentUser.id
+      );
+
+    if (error) {
+      throw error;
+    }
+
+    if (currentProfile) {
+      currentProfile.foto_url =
+        photoUrl;
+    }
+
+    setProfilePhoto(
+      photoUrl
+    );
+
+    showStatus(
+      "Foto principal actualizada correctamente.",
+      "success"
+    );
+
+    await loadAlbum();
+
+  } catch (error) {
+
+    console.error(
+      "Error actualizando foto principal:",
+      error
+    );
+
+    showStatus(
+      "No pudimos actualizar la foto principal.",
+      "error"
+    );
+  }
+}
+
+
+/* =====================================================
+   ELIMINAR FOTO DEL ÁLBUM
+===================================================== */
+
+async function deleteAlbumPhoto(
+  fileName
+) {
+
+  if (!currentUser || !fileName) {
+    return;
+  }
+
+  const confirmed =
+    window.confirm(
+      "¿Querés eliminar esta foto del álbum?"
+    );
+
+  if (!confirmed) {
+    return;
+  }
+
+  try {
+
+    const filePath =
+      `${currentUser.id}/${fileName}`;
+
+    const {
+      error
+    } = await supabaseClient
+      .storage
+      .from(PHOTO_BUCKET)
+      .remove([
+        filePath
+      ]);
+
+    if (error) {
+      throw error;
+    }
+
+    const deletedUrl =
+      getPublicPhotoUrl(
+        filePath
+      );
+
+    const currentPhoto =
+      currentProfile?.foto_url ||
+      "";
+
+    if (
+      currentPhoto ===
+      deletedUrl
+    ) {
+
+      const {
+        error: profileError
+      } = await supabaseClient
+        .from("profiles")
+        .update({
+          foto_url: ""
+        })
+        .eq(
+          "id",
+          currentUser.id
+        );
+
+      if (profileError) {
+        throw profileError;
+      }
+
+      if (currentProfile) {
+        currentProfile.foto_url =
+          "";
+      }
+
+      setProfilePhoto("");
+    }
+
+    showStatus(
+      "Foto eliminada correctamente.",
+      "success"
+    );
+
+    await loadAlbum();
+
+  } catch (error) {
+
+    console.error(
+      "Error eliminando foto:",
+      error
+    );
+
+    showStatus(
+      "No pudimos eliminar la foto.",
+      "error"
+    );
+  }
+}
+
+
+/* =====================================================
+   SUBIR FOTOS AL ÁLBUM
+===================================================== */
+
+async function uploadAlbumPhotos(
+  files
+) {
+
+  if (
+    !currentUser ||
+    !files ||
+    files.length === 0
+  ) {
+    return;
+  }
+
+  try {
+
+    const {
+      data: existingFiles,
+      error: listError
+    } = await supabaseClient
+      .storage
+      .from(PHOTO_BUCKET)
+      .list(
+        currentUser.id,
+        {
+          limit: 100,
+          sortBy: {
+            column: "created_at",
+            order: "desc"
+          }
+        }
+      );
+
+    if (listError) {
+      throw listError;
+    }
+
+    const existingPhotos =
+      (existingFiles || [])
+        .filter(file => {
+
+          if (!file?.name) {
+            return false;
+          }
+
+          const mime =
+            file.metadata?.mimetype;
+
+          return ALLOWED_IMAGE_TYPES
+            .includes(mime);
+        });
+
+    const availableSlots =
+      MAX_ALBUM_PHOTOS -
+      existingPhotos.length;
+
+    if (availableSlots <= 0) {
+
+      showStatus(
+        `El álbum ya tiene el máximo de ${MAX_ALBUM_PHOTOS} fotos.`,
+        "warning"
+      );
+
+      return;
+    }
+
+    const selectedFiles =
+      Array.from(files)
+        .slice(
+          0,
+          availableSlots
+        );
+
+    let uploadedCount =
+      0;
+
+    for (
+      const file of selectedFiles
+    ) {
+
+      const validation =
+        validateImageFile(
+          file
+        );
+
+      if (!validation.valid) {
+
+        showStatus(
+          validation.message,
+          "warning"
+        );
+
+        continue;
+      }
+
+      const extension =
+        getFileExtension(
+          file
+        );
+
+      const filePath =
+        createStoragePath(
+          extension
+        );
+
+      const {
+        error: uploadError
+      } =
+        await supabaseClient
+          .storage
+          .from(PHOTO_BUCKET)
+          .upload(
+            filePath,
+            file,
+            {
+              cacheControl:
+                "3600",
+              upsert:
+                false,
+              contentType:
+                file.type
+            }
+          );
+
+      if (uploadError) {
+
+        console.error(
+          "Error subiendo foto:",
+          uploadError
+        );
+
+        continue;
+      }
+
+      uploadedCount++;
+
+      if (
+        analytics &&
+        typeof analytics.trackPhotoUploaded ===
+          "function"
+      ) {
+        analytics.trackPhotoUploaded();
+      }
+    }
+
+    if (
+      uploadedCount > 0
+    ) {
+
+      showStatus(
+        `${uploadedCount} foto(s) agregada(s) correctamente.`,
+        "success"
+      );
+
+      await loadAlbum();
+
+    } else {
+
+      showStatus(
+        "No se pudo subir ninguna foto.",
+        "error"
+      );
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Error subiendo fotos del álbum:",
+      error
+    );
+
+    showStatus(
+      "No pudimos completar la carga del álbum.",
+      "error"
+    );
+  }
+}
+
+
+/* =====================================================
+   EVENTO — FOTO PRINCIPAL
+===================================================== */
+
+if (
+  profilePhotoInput
+) {
+
+  profilePhotoInput.addEventListener(
+    "change",
+    async event => {
+
+      const file =
+        event.target.files?.[0];
+
+      if (!file) {
+        return;
+      }
+
+      await uploadProfilePhoto(
+        file
+      );
+
+      event.target.value =
+        "";
+    }
+  );
+}
+
+
+/* =====================================================
+   EVENTO — ÁLBUM
+===================================================== */
+
+if (
+  albumInput
+) {
+
+  albumInput.addEventListener(
+    "change",
+    async event => {
+
+      const files =
+        event.target.files;
+
+      if (
+        !files ||
+        files.length === 0
+      ) {
+        return;
+      }
+
+      await uploadAlbumPhotos(
+        files
+      );
+
+      event.target.value =
+        "";
+    }
+  );
+}
+
+
+/* =====================================================
+   DESCUBRIR PERFILES
+===================================================== */
+
+async function loadDiscoveryProfiles() {
+
+  if (!currentUser) {
+    return;
+  }
+
+  discoveryContainer.innerHTML = `
+    <div class="card empty-state">
+      <div class="emoji">🔎</div>
+      <h3>Buscando perfiles...</h3>
+      <p>
+        Estamos preparando nuevas conexiones.
+      </p>
+    </div>
+  `;
+
+  try {
+
+    /* ---------------------------------------------
+       BLOQUEADOS
+    --------------------------------------------- */
+
+    const {
+      data: blockedUsers,
+      error: blockedError
+    } =
+      await supabaseClient
+        .from("block")
+        .select(
+          "blocked_user_id"
+        )
+        .eq(
+          "user_id",
+          currentUser.id
+        );
+
+    if (blockedError) {
+      throw blockedError;
+    }
+
+    const blockedIds =
+      new Set(
+        (blockedUsers || [])
+          .map(
+            block =>
+              block.blocked_user_id
+          )
+      );
+
+
+    /* ---------------------------------------------
+       PERFILES
+    --------------------------------------------- */
+
+    const {
+      data: profiles,
+      error: profilesError
+    } =
+      await supabaseClient
+        .from("profiles")
+        .select(`
+          id,
+          nombre,
+          edad,
+          ciudad,
+          descripcion,
+          foto_url,
+          intereses,
+          created_at
+        `)
+        .neq(
+          "id",
+          currentUser.id
+        )
+        .order(
+          "created_at",
+          {
+            ascending: false
+          }
+        );
+
+    if (profilesError) {
+      throw profilesError;
+    }
+
+
+    /* ---------------------------------------------
+       SWIPES YA VISTOS
+    --------------------------------------------- */
+
+    const {
+      data: swipes,
+      error: swipesError
+    } =
+      await supabaseClient
+        .from("swipes")
+        .select(
+          "target_user_id"
+        )
+        .eq(
+          "user_id",
+          currentUser.id
+        );
+
+    if (swipesError) {
+      throw swipesError;
+    }
+
+    const seen =
+      new Set(
+        (swipes || [])
+          .map(
+            swipe =>
+              swipe.target_user_id
+          )
+      );
+
+
+    /* ---------------------------------------------
+       FILTRO
+    --------------------------------------------- */
+
+    discoveryProfiles =
+      (profiles || [])
+        .filter(profile => {
+
+          const isBlocked =
+            blockedIds.has(
+              profile.id
+            );
+
+          const alreadySeen =
+            seen.has(
+              profile.id
+            );
+
+          return (
+            !isBlocked &&
+            !alreadySeen
+          );
+        });
+
+
+    currentProfileIndex =
+      0;
+
+    renderDiscovery();
+
+
+    if (
+      analytics &&
+      typeof analytics.trackDiscovery ===
+        "function"
+    ) {
+      analytics.trackDiscovery();
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Error descubriendo perfiles:",
+      error
+    );
+
+    discoveryContainer.innerHTML = `
+      <div class="card empty-state">
+        <div class="emoji">⚠️</div>
+        <h3>No pudimos cargar perfiles</h3>
+        <p>
+          Ocurrió un problema al cargar
+          los perfiles. Intentá nuevamente.
+        </p>
+      </div>
+    `;
+  }
+}
+
+
+/* =====================================================
+   RENDER DESCUBRIMIENTO
+===================================================== */
+
+function renderDiscovery() {
+
+  if (!discoveryContainer) {
+    return;
+  }
+
+  if (
+    currentProfileIndex >=
+    discoveryProfiles.length
+  ) {
+
+    discoveryContainer.innerHTML = `
+      <div class="card empty-state">
+        <div class="emoji">💫</div>
+        <h3>No hay más perfiles por ahora</h3>
+        <p>
+          Ya viste todos los perfiles disponibles.
+          Volvé más tarde para descubrir nuevas personas.
+        </p>
+
+        <button
+          type="button"
+          class="btn btn-secondary"
+          id="reloadDiscoveryButton"
+        >
+          🔄 Buscar nuevamente
+        </button>
+      </div>
+    `;
+
+    const reloadButton =
+      document.getElementById(
+        "reloadDiscoveryButton"
+      );
+
+    if (reloadButton) {
+
+      reloadButton.addEventListener(
+        "click",
+        loadDiscoveryProfiles
+      );
+    }
+
+    return;
+  }
+
+  const profile =
+    discoveryProfiles[
+      currentProfileIndex
+    ];
+
+  if (!profile) {
+    return;
+  }
+
+  const escape =
+    value => {
+
+      if (
+        components &&
+        typeof components.escapeHTML ===
+          "function"
+      ) {
+        return components.escapeHTML(
+          value
+        );
+      }
+
+      return String(
+        value ?? ""
+      )
+        .replace(
+          /&/g,
+          "&amp;"
+        )
+        .replace(
+          /</g,
+          "&lt;"
+        )
+        .replace(
+          />/g,
+          "&gt;"
+        )
+        .replace(
+          /"/g,
+          "&quot;"
+        )
+        .replace(
+          /'/g,
+          "&#039;"
+        );
+    };
+
+
+  const imageUrl =
+    safeImageUrl(
+      profile.foto_url
+    );
+
+  const nombre =
+    escape(
+      profile.nombre ||
+      "Usuario EmiMatch"
+    );
+
+  const edad =
+    profile.edad
+      ? escape(
+          profile.edad
+        )
+      : "";
+
+  const ciudad =
+    escape(
+      profile.ciudad ||
+      ""
+    );
+
+  const descripcion =
+    escape(
+      profile.descripcion ||
+      ""
+    );
+
+  const intereses =
+    escape(
+      profile.intereses ||
+      ""
+    );
+
+
+  discoveryContainer.innerHTML = `
+    <div class="discovery-profile">
+
+      <div class="discovery-photo-wrap">
+
+        <img
+          class="discovery-photo"
+          src="${escape(imageUrl)}"
+          alt="Foto de ${nombre}"
+          loading="lazy"
+        >
+
+      </div>
+
+      <div class="discovery-content">
+
+        <div class="discovery-heading">
+
+          <h3>
+            ${nombre}${edad ? `, ${edad}` : ""}
+          </h3>
+
+          ${
+            ciudad
+              ? `
+                <span class="badge">
+                  📍 ${ciudad}
+                </span>
+              `
+              : ""
+          }
+
+        </div>
+
+        ${
+          descripcion
+            ? `
+              <p class="discovery-description">
+                ${descripcion}
+              </p>
+            `
+            : `
+              <p class="discovery-description muted">
+                Este perfil todavía no tiene descripción.
+              </p>
+            `
+        }
+
+        ${
+          intereses
+            ? `
+              <div class="discovery-interests">
+                <strong>Intereses</strong>
+                <p>${intereses}</p>
+              </div>
+            `
+            : ""
+        }
+
+        <div class="discovery-actions">
+
+          <button
+            type="button"
+            class="btn btn-secondary"
+            id="passProfileButton"
+          >
+            ❌ Pasar
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-primary"
+            id="likeProfileButton"
+          >
+            ❤️ Me gusta
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+  `;
+
+
+  const passButton =
+    document.getElementById(
+      "passProfileButton"
+    );
+
+  const likeButton =
+    document.getElementById(
+      "likeProfileButton"
+    );
+
+
+  if (passButton) {
+
+    passButton.addEventListener(
+      "click",
+      () => {
+
+        handleSwipe(
+          "pass",
+          profile.id
+        );
+
+      }
+    );
+  }
+
+
+  if (likeButton) {
+
+    likeButton.addEventListener(
+      "click",
+      () => {
+
+        handleSwipe(
+          "like",
+          profile.id
+        );
+
+      }
+    );
+  }
+}
+
+
+/* =====================================================
+   LIKE / PASS / MATCH
+===================================================== */
+
+async function handleSwipe(
+  action,
+  targetId
+) {
+
+  if (
+    !currentUser ||
+    !targetId ||
+    ![
+      "like",
+      "pass"
+    ].includes(action)
+  ) {
+    return;
+  }
+
+
+  const passButton =
+    document.getElementById(
+      "passProfileButton"
+    );
+
+  const likeButton =
+    document.getElementById(
+      "likeProfileButton"
+    );
+
+
+  if (passButton) {
+    passButton.disabled =
+      true;
+  }
+
+  if (likeButton) {
+    likeButton.disabled =
+      true;
+  }
+
+
+  try {
+
+    const {
+      error: swipeError
+    } =
+      await supabaseClient
+        .from("swipes")
+        .insert({
+          user_id:
+            currentUser.id,
+
+          target_user_id:
+            targetId,
+
+          action:
+            action
+        });
+
+    if (swipeError) {
+      throw swipeError;
+    }
+
+
+    if (
+      action === "like" &&
+      analytics &&
+      typeof analytics.trackLike ===
+        "function"
+    ) {
+      analytics.trackLike();
+    }
+
+
+    /* ---------------------------------------------
+       COMPROBAR LIKE INVERSO
+    --------------------------------------------- */
+
+    if (
+      action === "like"
+    ) {
+
+      const {
+        data: reverseLike,
+        error: reverseError
+      } =
+        await supabaseClient
+          .from("swipes")
+          .select("id")
+          .eq(
+            "user_id",
+            targetId
+          )
+          .eq(
+            "target_user_id",
+            currentUser.id
+          )
+          .eq(
+            "action",
+            "like"
+          )
+          .maybeSingle();
+
+
+      if (reverseError) {
+        throw reverseError;
+      }
+
+
+      if (reverseLike) {
+
+        const [
+          user1_id,
+          user2_id
+        ] =
+          [
+            currentUser.id,
+            targetId
+          ].sort();
+
+
+        const {
+          error: matchError
+        } =
+          await supabaseClient
+            .from("matches")
+            .upsert(
+              {
+                user1_id,
+                user2_id
+              },
+              {
+                onConflict:
+                  "user1_id,user2_id"
+              }
+            );
+
+
+        if (matchError) {
+          throw matchError;
+        }
+
+
+        if (
+          analytics &&
+          typeof analytics.trackMatch ===
+            "function"
+        ) {
+          analytics.trackMatch();
+        }
+
+
+        showMatchSuccess();
+
+        return;
+      }
+    }
+
+
+    currentProfileIndex++;
+
+    renderDiscovery();
+
+  } catch (error) {
+
+    console.error(
+      "Error procesando swipe:",
+      error
+    );
+
+    showStatus(
+      "No pudimos registrar esta acción. Intentá nuevamente.",
+      "error"
+    );
+
+
+    if (passButton) {
+      passButton.disabled =
+        false;
+    }
+
+    if (likeButton) {
+      likeButton.disabled =
+        false;
+    }
+  }
+}
+
+
+/* =====================================================
+   MATCH ENCONTRADO
+===================================================== */
+
+function showMatchSuccess() {
+
+  if (!discoveryContainer) {
+    return;
+  }
+
+  discoveryContainer.innerHTML = `
+    <div class="card match-success">
+
+      <div class="match-success-icon">
+        💕
+      </div>
+
+      <h3>
+        ¡Hicieron Match!
+      </h3>
+
+      <p>
+        Los dos se dieron Me gusta.
+        Ahora pueden comenzar a conocerse.
+      </p>
+
+      <div class="match-success-actions">
+
+        <a
+          href="matches.html"
+          class="btn btn-primary"
+        >
+          💕 Ver mis Matches
+        </a>
+
+        <button
+          type="button"
+          class="btn btn-secondary"
+          id="continueDiscoveryButton"
+        >
+          🔎 Seguir descubriendo
+        </button>
+
+      </div>
+
+    </div>
+  `;
+
+  const continueButton =
+    document.getElementById(
+      "continueDiscoveryButton"
+    );
+
+  if (continueButton) {
+
+    continueButton.addEventListener(
+      "click",
+      () => {
+
+        currentProfileIndex++;
+
+        renderDiscovery();
+
+      }
+    );
+  }
+}
+
+
+/* =====================================================
+   EVENTO — GUARDAR PERFIL
+===================================================== */
+
+if (saveProfileButton) {
+
+  saveProfileButton.addEventListener(
+    "click",
+    saveProfile
+  );
+}
+
+
+/* =====================================================
+   EVENTOS — CONTADORES
+===================================================== */
+
+if (descripcionInput) {
+
+  descripcionInput.addEventListener(
+    "input",
+    updateCounters
+  );
+}
+
+if (interesesInput) {
+
+  interesesInput.addEventListener(
+    "input",
+    updateCounters
+  );
+}
+
+
+/* =====================================================
+   EVENTO — CERRAR SESIÓN
+===================================================== */
+
+if (logoutButton) {
+
+  logoutButton.addEventListener(
+    "click",
+    logout
+  );
+}
+
+
+/* =====================================================
+   CAMBIO DE SESIÓN
+===================================================== */
+
+supabaseClient.auth.onAuthStateChange(
+  async (_event, session) => {
+
+    if (!session) {
+
+      window.location.href =
+        "index.html";
+
+      return;
+    }
+
+    currentUser =
+      session.user;
+  }
+);
+
+
+/* =====================================================
+   INICIALIZAR PÁGINA DE PERFIL
+===================================================== */
+
+async function initializeProfilePage() {
+
+  try {
+
+    showStatus(
+      "Cargando tu perfil...",
+      "loading"
+    );
+
+
+    /* ---------------------------------------------
+       OBTENER SESIÓN
+    --------------------------------------------- */
+
+    const {
+      data: {
+        session
+      },
+      error
+    } =
+      await supabaseClient
+        .auth
+        .getSession();
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    /* ---------------------------------------------
+       SIN SESIÓN
+    --------------------------------------------- */
+
+    if (!session) {
+
+      window.location.href =
+        "index.html";
+
+      return;
+    }
+
+
+    currentUser =
+      session.user;
+
+
+    /* ---------------------------------------------
+       CARGAR PERFIL
+    --------------------------------------------- */
+
+    await loadProfile();
+
+
+    /* ---------------------------------------------
+       CARGAR ÁLBUM
+    --------------------------------------------- */
+
+    await loadAlbum();
+
+
+    /* ---------------------------------------------
+       CARGAR DESCUBRIMIENTO
+    --------------------------------------------- */
+
+    await loadDiscoveryProfiles();
+
+
+    /* ---------------------------------------------
+       ACTUALIZAR CONTADORES
+    --------------------------------------------- */
+
+    updateCounters();
+
+
+    /* ---------------------------------------------
+       OCULTAR ESTADO DE CARGA
+    --------------------------------------------- */
+
+    showStatus(
+      "",
+      "clear"
+    );
+
+
+    /* ---------------------------------------------
+       ANALYTICS — PAGEVIEW
+    --------------------------------------------- */
+
+    if (
+      analytics &&
+      typeof analytics.trackPage ===
+        "function"
+    ) {
+
+      analytics.trackPage();
+
+    }
+
+
+    /* ---------------------------------------------
+       REGISTRO DEL NÚCLEO
+    --------------------------------------------- */
+
+    if (
+      window.EmiMatchApp &&
+      typeof window.EmiMatchApp.logUpdate ===
+        "function"
+    ) {
+
+      window.EmiMatchApp.logUpdate(
+        "Perfil cargado correctamente."
+      );
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Error inicializando perfil:",
+      error
+    );
+
+    showStatus(
+      "No pudimos cargar tu perfil. Intentá nuevamente.",
+      "error"
+    );
+  }
+}
+
+
+/* =====================================================
+   INICIO DE EMIMATCH
+===================================================== */
+
+initializeProfilePage();
+
+
+/* =====================================================
+   CIERRE FINAL
+===================================================== */
 
 })();
 </script>
 
 </body>
-          </html>
+</html>
+  
