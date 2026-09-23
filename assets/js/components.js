@@ -1,6 +1,6 @@
 /* =====================================================
    EmiMatch — Componentes compartidos
-   v1.0.0
+   v1.1.0
 ===================================================== */
 
 (() => {
@@ -370,141 +370,740 @@
 
 
     /* =================================================
-       INYECTAR ESTILOS BÁSICOS
+       CENTRO DE ACTIVIDAD
     ================================================= */
 
-    injectBaseStyles() {
+    initActivityCenter() {
 
       if (
         document.getElementById(
-          "emimatch-component-styles"
+          "emimatch-activity-center"
         )
       ) {
         return;
       }
 
-      const style =
-        document.createElement("style");
+      const host =
+        document.querySelector("main") ||
+        document.querySelector(".container") ||
+        document.body;
 
-      style.id =
-        "emimatch-component-styles";
+      if (!host) {
+        return;
+      }
 
-      style.textContent = `
+      const center =
+        document.createElement("section");
 
-        @keyframes emimatchNotificationIn {
-          from {
-            opacity: 0;
-            transform:
-              translate(-50%, 20px);
-          }
+      center.id =
+        "emimatch-activity-center";
 
-          to {
-            opacity: 1;
-            transform:
-              translate(-50%, 0);
-          }
-        }
+      center.className =
+        "emimatch-activity-center";
 
-        @keyframes emimatchNotificationOut {
-          from {
-            opacity: 1;
-            transform:
-              translate(-50%, 0);
-          }
+      center.innerHTML = `
+        <div class="emimatch-activity-head">
 
-          to {
-            opacity: 0;
-            transform:
-              translate(-50%, 20px);
-          }
-        }
+          <div>
 
-        .emimatch-notification-content {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
+            <span
+              class="emimatch-activity-kicker"
+            >
+              Tu actividad
+            </span>
 
-        .emimatch-notification-icon {
-          font-size: 20px;
-          flex-shrink: 0;
-        }
+            <h2>
+              Centro de actividad
+            </h2>
 
-        .emimatch-notification-message {
-          line-height: 1.4;
-          font-size: 14px;
-        }
+            <p>
+              Mensajes, notificaciones y solicitudes
+              en un solo lugar.
+            </p>
 
-        .emimatch-empty-state,
-        .emimatch-error-state {
-          text-align: center;
-          padding: 40px 20px;
-          border-radius: 20px;
-          background:
-            rgba(15, 23, 42, 0.65);
-          border:
-            1px solid rgba(255,255,255,0.10);
-        }
+          </div>
 
-        .emimatch-empty-icon,
-        .emimatch-error-icon {
-          font-size: 42px;
-          margin-bottom: 12px;
-        }
+          <button
+            type="button"
+            class="emimatch-activity-refresh"
+            id="emimatch-activity-refresh"
+            aria-label="Actualizar actividad"
+            title="Actualizar"
+          >
+            ↻
+          </button>
 
-        .emimatch-empty-state h3,
-        .emimatch-error-state h3 {
-          margin: 0 0 8px;
-          color: #ffffff;
-        }
+        </div>
 
-        .emimatch-empty-state p,
-        .emimatch-error-state p {
-          margin: 0;
-          color: rgba(255,255,255,0.72);
-          line-height: 1.5;
-        }
 
-        @media (max-width: 600px) {
+        <div
+          class="emimatch-activity-grid"
+        >
 
-          #emimatch-notification {
-            bottom: 16px;
-            width: calc(100% - 24px);
-            padding: 13px 15px;
-          }
+          <a
+            class="emimatch-activity-card"
+            href="matches.html"
+          >
 
-          .emimatch-notification-message {
-            font-size: 13px;
-          }
+            <span
+              class="emimatch-activity-icon"
+            >
+              💬
+            </span>
 
-        }
+            <span
+              class="emimatch-activity-copy"
+            >
 
+              <strong>
+                Mensajes
+              </strong>
+
+              <small>
+                Conversaciones y matches
+              </small>
+
+            </span>
+
+            <span
+              class="emimatch-activity-count"
+              id="emimatch-messages-count"
+            >
+              0
+            </span>
+
+          </a>
+
+
+          <button
+            type="button"
+            class="emimatch-activity-card"
+            id="emimatch-notifications-button"
+          >
+
+            <span
+              class="emimatch-activity-icon"
+            >
+              🔔
+            </span>
+
+            <span
+              class="emimatch-activity-copy"
+            >
+
+              <strong>
+                Notificaciones
+              </strong>
+
+              <small>
+                Nuevos matches y actividad
+              </small>
+
+            </span>
+
+            <span
+              class="emimatch-activity-count"
+              id="emimatch-notifications-count"
+            >
+              0
+            </span>
+
+          </button>
+
+
+          <button
+            type="button"
+            class="emimatch-activity-card"
+            id="emimatch-requests-button"
+          >
+
+            <span
+              class="emimatch-activity-icon"
+            >
+              👥
+            </span>
+
+            <span
+              class="emimatch-activity-copy"
+            >
+
+              <strong>
+                Solicitudes
+              </strong>
+
+              <small>
+                Personas que indicaron interés
+              </small>
+
+            </span>
+
+            <span
+              class="emimatch-activity-count"
+              id="emimatch-requests-count"
+            >
+              0
+            </span>
+
+          </button>
+
+        </div>
+
+
+        <div
+          class="emimatch-activity-panel"
+          id="emimatch-notifications-panel"
+          hidden
+        >
+
+          <div
+            class="emimatch-activity-panel-title"
+          >
+            🔔 Notificaciones
+          </div>
+
+          <div
+            id="emimatch-notifications-list"
+          ></div>
+
+        </div>
+
+
+        <div
+          class="emimatch-activity-panel"
+          id="emimatch-requests-panel"
+          hidden
+        >
+
+          <div
+            class="emimatch-activity-panel-title"
+          >
+            👥 Solicitudes recibidas
+          </div>
+
+          <div
+            id="emimatch-requests-list"
+          ></div>
+
+        </div>
+
+
+        <div
+          class="emimatch-activity-status"
+          id="emimatch-activity-status"
+          aria-live="polite"
+        ></div>
       `;
 
-      document.head.appendChild(
-        style
-      );
-    }
-
-  };
+      host.prepend(center);
 
 
-  /* =====================================================
-     REGISTRAR COMPONENTES
-  ===================================================== */
+      const togglePanel =
+        (panelId) => {
 
-  window.EmiMatchComponents =
-    Components;
+          const panel =
+            document.getElementById(
+              panelId
+            );
+
+          if (!panel) {
+            return;
+          }
+
+          const shouldOpen =
+            panel.hidden;
+
+          document
+            .querySelectorAll(
+              ".emimatch-activity-panel"
+            )
+            .forEach(
+              (item) => {
+                item.hidden = true;
+              }
+            );
+
+          panel.hidden =
+            !shouldOpen;
+        };
 
 
-  /* =====================================================
-     INICIALIZACIÓN
-  ===================================================== */
+      const notificationsButton =
+        document.getElementById(
+          "emimatch-notifications-button"
+        );
 
-  Components.injectBaseStyles();
+      if (notificationsButton) {
 
-  app.logUpdate(
-    "Componentes compartidos cargados correctamente."
-  );
+        notificationsButton.addEventListener(
+          "click",
+          () => {
 
-})();
+            togglePanel(
+              "emimatch-notifications-panel"
+            );
+
+          }
+        );
+
+      }
+
+
+      const requestsButton =
+        document.getElementById(
+          "emimatch-requests-button"
+        );
+
+      if (requestsButton) {
+
+        requestsButton.addEventListener(
+          "click",
+          () => {
+
+            togglePanel(
+              "emimatch-requests-panel"
+            );
+
+          }
+        );
+
+      }
+
+
+      const refreshButton =
+        document.getElementById(
+          "emimatch-activity-refresh"
+        );
+
+      if (refreshButton) {
+
+        refreshButton.addEventListener(
+          "click",
+          () => {
+
+            this.loadActivity();
+
+          }
+        );
+
+      }
+
+
+      this.loadActivity();
+    },
+
+
+    /* =================================================
+       CARGAR ACTIVIDAD
+    ================================================= */
+
+    async loadActivity() {
+
+      const config =
+        window.EMIMATCH_CONFIG;
+
+      if (
+        !config ||
+        !window.supabase ||
+        !config.supabaseUrl ||
+        !config.supabaseKey
+      ) {
+        return;
+      }
+
+      const status =
+        document.getElementById(
+          "emimatch-activity-status"
+        );
+
+      try {
+
+        const client =
+          window.EmiMatchActivitySupabase ||
+          (
+            window.EmiMatchActivitySupabase =
+              window.supabase.createClient(
+                config.supabaseUrl,
+                config.supabaseKey
+              )
+          );
+
+
+        const {
+          data: {
+            user
+          } = {}
+        } =
+          await client.auth.getUser();
+
+
+        if (!user) {
+          return;
+        }
+
+
+        if (status) {
+
+          status.textContent =
+            "Actualizando actividad...";
+
+        }
+
+
+        const [
+          messagesResult,
+          matchesResult,
+          requestsResult
+        ] =
+          await Promise.all([
+
+            client
+              .from("messages")
+              .select(
+                "id",
+                {
+                  count: "exact",
+                  head: true
+                }
+              )
+              .eq(
+                "receiver_id",
+                user.id
+              ),
+
+
+            client
+              .from("matches")
+              .select(
+                "user1_id,user2_id"
+              )
+              .or(
+                `user1_id.eq.${user.id},user2_id.eq.${user.id}`
+              ),
+
+
+            client
+              .from("swipes")
+              .select(
+                "id,user_id,target_user_id,created_at"
+              )
+              .eq(
+                "target_user_id",
+                user.id
+              )
+              .eq(
+                "action",
+                "like"
+              )
+              .order(
+                "created_at",
+                {
+                  ascending: false
+                }
+              )
+              .limit(20)
+
+          ]);
+
+
+        if (messagesResult.error) {
+          throw messagesResult.error;
+        }
+
+        if (matchesResult.error) {
+          throw matchesResult.error;
+        }
+
+        if (requestsResult.error) {
+          throw requestsResult.error;
+        }
+
+
+        const messagesCount =
+          Number(
+            messagesResult.count || 0
+          );
+
+
+        const matches =
+          Array.isArray(
+            matchesResult.data
+          )
+            ? matchesResult.data
+            : [];
+
+
+        const receivedLikes =
+          Array.isArray(
+            requestsResult.data
+          )
+            ? requestsResult.data
+            : [];
+
+
+        /*
+          Evitamos mostrar como solicitud
+          a una persona con la que ya existe match.
+        */
+
+        const matchUserIds =
+          new Set(
+            matches.map(
+              (match) => {
+
+                return (
+                  match.user1_id === user.id
+                    ? match.user2_id
+                    : match.user1_id
+                );
+
+              }
+            )
+          );
+
+
+        const requests =
+          receivedLikes.filter(
+            (item) => {
+
+              return (
+                item.user_id !== user.id &&
+                !matchUserIds.has(
+                  item.user_id
+                )
+              );
+
+            }
+          );
+
+
+        const messagesElement =
+          document.getElementById(
+            "emimatch-messages-count"
+          );
+
+        const notificationsElement =
+          document.getElementById(
+            "emimatch-notifications-count"
+          );
+
+        const requestsElement =
+          document.getElementById(
+            "emimatch-requests-count"
+          );
+
+
+        if (messagesElement) {
+
+          messagesElement.textContent =
+            String(
+              messagesCount
+            );
+
+        }
+
+
+        if (notificationsElement) {
+
+          notificationsElement.textContent =
+            String(
+              matches.length
+            );
+
+        }
+
+
+        if (requestsElement) {
+
+          requestsElement.textContent =
+            String(
+              requests.length
+            );
+
+        }
+
+
+        await this.renderActivityNotifications(
+          client,
+          user.id,
+          matches
+        );
+
+
+        await this.renderActivityRequests(
+          client,
+          user.id,
+          requests
+        );
+
+
+        if (status) {
+
+          status.textContent =
+            "Actividad actualizada.";
+
+          setTimeout(
+            () => {
+
+              if (status) {
+                status.textContent =
+                  "";
+              }
+
+            },
+            1800
+          );
+
+        }
+
+      } catch (error) {
+
+        console.error(
+          "EmiMatch Activity:",
+          error
+        );
+
+        if (status) {
+
+          status.textContent =
+            "No pudimos actualizar la actividad.";
+
+        }
+
+      }
+
+    },
+
+
+    /* =================================================
+       NOTIFICACIONES DE MATCH
+    ================================================= */
+
+    async renderActivityNotifications(
+      client,
+      currentUserId,
+      matches
+    ) {
+
+      const list =
+        document.getElementById(
+          "emimatch-notifications-list"
+        );
+
+      if (!list) {
+        return;
+      }
+
+
+      if (!matches.length) {
+
+        list.innerHTML = `
+
+          <div
+            class="emimatch-activity-empty"
+          >
+
+            <span>
+              ✨
+            </span>
+
+            <strong>
+              No hay notificaciones nuevas
+            </strong>
+
+            <small>
+              Cuando tengas un match aparecerá aquí.
+            </small>
+
+          </div>
+
+        `;
+
+        return;
+      }
+
+
+      const ids =
+        [
+          ...new Set(
+            matches
+              .map(
+                (match) => {
+
+                  return (
+                    match.user1_id ===
+                    currentUserId
+                      ? match.user2_id
+                      : match.user1_id
+                  );
+
+                }
+              )
+              .filter(Boolean)
+          )
+        ];
+
+
+      const {
+        data: profiles,
+        error
+      } =
+        await client
+          .from("profiles")
+          .select(
+            "id,nombre,foto_url"
+          )
+          .in(
+            "id",
+            ids
+          );
+
+
+      if (error) {
+        throw error;
+      }
+
+
+      const profileMap =
+        new Map(
+          (
+            profiles || []
+          ).map(
+            (profile) => {
+
+              return [
+                profile.id,
+                profile
+              ];
+
+            }
+          )
+        );
+
+
+      list.innerHTML =
+        ids
+          .map(
+            (id) => {
+
+              const profile =
+                profileMap.get(id);
+
+
+              const name =
+                this.escapeHTML(
+                  profile?.nombre ||
+                  "Nuevo match"
+                );
+
+
+              const photo =
+                profile?.foto_url
+                  ? this.escapeHTML(
+                      profile.foto_url
+                    )
+                  : "";
+
+
+              return `
+
+             
