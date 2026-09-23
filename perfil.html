@@ -11,7 +11,7 @@
 
   <meta
     name="description"
-    content="Tu perfil en EmiMatch. Conocé personas, descubrí nuevas conexiones y compartí tus intereses."
+    content="Tu perfil en EmiMatch. Personalizá tu perfil, descubrí personas y encontrá nuevas conexiones."
   >
 
   <meta
@@ -30,9 +30,9 @@
 
   <style>
 
-    /* =================================================
+    /* =====================================================
        EmiMatch — Perfil Premium
-    ================================================= */
+    ===================================================== */
 
     .profile-page {
       width: 100%;
@@ -46,20 +46,21 @@
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      margin-bottom: 28px;
+      margin-bottom: 30px;
     }
 
     .brand {
       color: #ffffff;
+      text-decoration: none;
       font-size: 1.5rem;
       font-weight: 800;
-      text-decoration: none;
+      letter-spacing: -.02em;
     }
 
     .logout-button {
       min-height: 44px;
       padding: 10px 16px;
-      border: 1px solid rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.14);
       border-radius: 12px;
       background: rgba(255,255,255,.07);
       color: #ffffff;
@@ -78,12 +79,14 @@
     .profile-hero h1 {
       margin: 0 0 8px;
       color: #ffffff;
-      font-size: clamp(1.8rem, 5vw, 2.5rem);
+      font-size: clamp(1.8rem, 5vw, 2.6rem);
+      line-height: 1.15;
     }
 
     .profile-hero p {
+      max-width: 700px;
       margin: 0;
-      color: rgba(255,255,255,.72);
+      color: rgba(255,255,255,.68);
       line-height: 1.6;
     }
 
@@ -92,52 +95,65 @@
       padding: 13px 16px;
       border-radius: 14px;
       color: #ffffff;
-      background: rgba(255,255,255,.08);
+      background: rgba(255,255,255,.07);
       border: 1px solid rgba(255,255,255,.12);
     }
 
     .status-message.success {
-      border-color: rgba(34,197,94,.4);
+      border-color: rgba(34,197,94,.45);
+      background: rgba(34,197,94,.08);
     }
 
     .status-message.error {
-      border-color: rgba(239,68,68,.5);
+      border-color: rgba(239,68,68,.45);
+      background: rgba(239,68,68,.08);
     }
 
     .status-message.info {
       border-color: rgba(59,130,246,.4);
+      background: rgba(59,130,246,.08);
     }
 
     .profile-layout {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 1fr);
       gap: 24px;
+      align-items: start;
     }
 
     .profile-card,
     .discovery-card-wrapper {
-      padding: 22px;
-      border-radius: 22px;
-      background: rgba(15,23,42,.72);
+      padding: 24px;
+      border-radius: 24px;
+      background: rgba(15,23,42,.76);
       border: 1px solid rgba(255,255,255,.10);
+      box-shadow:
+        0 18px 50px rgba(0,0,0,.20);
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
     }
 
     .section-title {
-      margin: 0 0 6px;
+      margin: 0 0 7px;
       color: #ffffff;
-      font-size: 1.25rem;
+      font-size: 1.3rem;
+      line-height: 1.25;
     }
 
     .section-subtitle {
-      margin: 0 0 20px;
+      margin: 0 0 22px;
       color: rgba(255,255,255,.62);
-      line-height: 1.5;
+      line-height: 1.55;
     }
 
+    /* =====================================================
+       FOTO PRINCIPAL
+    ===================================================== */
+
     .profile-photo-box {
-      margin-bottom: 22px;
+      margin-bottom: 24px;
     }
 
     .profile-photo-frame {
@@ -155,8 +171,8 @@
     .profile-photo-frame img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
       display: block;
+      object-fit: cover;
     }
 
     .photo-badge {
@@ -165,11 +181,15 @@
       bottom: 12px;
       padding: 7px 10px;
       border-radius: 999px;
-      background: rgba(0,0,0,.68);
+      background: rgba(0,0,0,.70);
       color: #ffffff;
-      font-size: .8rem;
-      font-weight: 700;
+      font-size: .78rem;
+      font-weight: 800;
     }
+
+    /* =====================================================
+       ARCHIVOS
+    ===================================================== */
 
     .file-field {
       display: block;
@@ -179,18 +199,28 @@
     .file-field span {
       display: block;
       margin-bottom: 8px;
-      color: rgba(255,255,255,.8);
+      color: rgba(255,255,255,.84);
       font-weight: 700;
     }
 
     .file-field input {
       width: 100%;
+      box-sizing: border-box;
       padding: 10px;
       border-radius: 12px;
       color: #ffffff;
       background: rgba(255,255,255,.06);
       border: 1px solid rgba(255,255,255,.12);
     }
+
+    .file-field input:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
+    /* =====================================================
+       FORMULARIO
+    ===================================================== */
 
     .form-group {
       margin-bottom: 18px;
@@ -199,7 +229,7 @@
     .form-group label {
       display: block;
       margin-bottom: 7px;
-      color: rgba(255,255,255,.85);
+      color: rgba(255,255,255,.86);
       font-weight: 700;
     }
 
@@ -216,9 +246,16 @@
       font: inherit;
     }
 
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+      color: rgba(255,255,255,.38);
+    }
+
     .form-group input:focus,
     .form-group textarea:focus {
       border-color: rgba(212,175,55,.75);
+      box-shadow:
+        0 0 0 3px rgba(212,175,55,.08);
     }
 
     .form-group textarea {
@@ -229,7 +266,7 @@
     .counter {
       display: block;
       margin-top: 6px;
-      color: rgba(255,255,255,.45);
+      color: rgba(255,255,255,.42);
       font-size: .78rem;
       text-align: right;
     }
@@ -241,28 +278,39 @@
       padding: 12px 18px;
       border: 0;
       border-radius: 14px;
-      background: linear-gradient(
-        135deg,
-        #d4af37,
-        #f0d675
-      );
+      background:
+        linear-gradient(
+          135deg,
+          #d4af37,
+          #f0d675
+        );
       color: #111827;
       cursor: pointer;
       font-weight: 800;
       font-size: .98rem;
     }
 
-    .save-button:disabled,
-    .primary-button:disabled {
-      opacity: .6;
-      cursor: not-allowed;
+    .save-button:hover,
+    .primary-button:hover {
+      filter: brightness(1.05);
     }
 
+    .save-button:disabled,
+    .primary-button:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+      filter: none;
+    }
+
+    /* =====================================================
+       MATCHES
+    ===================================================== */
+
     .matches-link-card {
-      margin-bottom: 20px;
+      margin-bottom: 22px;
       padding: 18px;
       border-radius: 18px;
-      background: rgba(255,255,255,.05);
+      background: rgba(255,255,255,.045);
       border: 1px solid rgba(255,255,255,.09);
     }
 
@@ -273,27 +321,36 @@
 
     .matches-link-card p {
       margin: 0 0 14px;
-      color: rgba(255,255,255,.62);
+      color: rgba(255,255,255,.60);
+      line-height: 1.5;
     }
 
     .matches-link {
-      display: inline-flex;
+      display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 44px;
       width: 100%;
+      min-height: 44px;
       box-sizing: border-box;
       padding: 10px 14px;
       border-radius: 12px;
       text-decoration: none;
-      background: rgba(212,175,55,.15);
-      border: 1px solid rgba(212,175,55,.35);
+      background: rgba(212,175,55,.14);
+      border: 1px solid rgba(212,175,55,.32);
       color: #f0d675;
       font-weight: 800;
     }
 
+    .matches-link:hover {
+      background: rgba(212,175,55,.20);
+    }
+
+    /* =====================================================
+       ÁLBUM
+    ===================================================== */
+
     .album-section {
-      margin-top: 24px;
+      margin-top: 26px;
     }
 
     .album-title {
@@ -311,14 +368,15 @@
 
     .album-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0,1fr));
+      grid-template-columns:
+        repeat(3, minmax(0, 1fr));
       gap: 10px;
     }
 
     .album-item {
       position: relative;
-      overflow: hidden;
       min-width: 0;
+      overflow: hidden;
       aspect-ratio: 1 / 1;
       border-radius: 14px;
       background: #111827;
@@ -359,24 +417,24 @@
       border: 0;
       border-radius: 9px;
       cursor: pointer;
-      font-size: .7rem;
+      font-size: .70rem;
       font-weight: 800;
     }
 
     .album-select {
-      background: rgba(212,175,55,.92);
+      background: rgba(212,175,55,.94);
       color: #111827;
     }
 
     .album-delete {
-      background: rgba(0,0,0,.72);
+      background: rgba(0,0,0,.74);
       color: #ffffff;
     }
 
     .album-loading,
     .album-empty {
       grid-column: 1 / -1;
-      padding: 24px 12px;
+      padding: 26px 12px;
       text-align: center;
       color: rgba(255,255,255,.62);
     }
@@ -397,11 +455,15 @@
       color: #ffffff;
     }
 
+    /* =====================================================
+       DESCUBRIR
+    ===================================================== */
+
     .discovery-loading,
     .discovery-empty {
       padding: 40px 16px;
       text-align: center;
-      color: rgba(255,255,255,.65);
+      color: rgba(255,255,255,.64);
     }
 
     .discovery-loading h3,
@@ -420,13 +482,14 @@
       width: 34px;
       height: 34px;
       margin: 0 auto;
-      border: 3px solid rgba(255,255,255,.15);
+      border: 3px solid rgba(255,255,255,.14);
       border-top-color: #d4af37;
       border-radius: 50%;
-      animation: spin .8s linear infinite;
+      animation:
+        profileSpin .8s linear infinite;
     }
 
-    @keyframes spin {
+    @keyframes profileSpin {
       to {
         transform: rotate(360deg);
       }
@@ -459,11 +522,12 @@
     .discovery-photo-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(
-        to top,
-        rgba(0,0,0,.82),
-        transparent 48%
-      );
+      background:
+        linear-gradient(
+          to top,
+          rgba(0,0,0,.84),
+          transparent 52%
+        );
       pointer-events: none;
     }
 
@@ -482,7 +546,7 @@
 
     .discovery-profile-info p {
       margin: 0;
-      color: rgba(255,255,255,.8);
+      color: rgba(255,255,255,.80);
     }
 
     .discovery-content {
@@ -490,14 +554,14 @@
     }
 
     .discovery-section {
-      margin-bottom: 16px;
+      margin-bottom: 17px;
     }
 
     .discovery-label {
       display: block;
       margin-bottom: 6px;
       color: #f0d675;
-      font-size: .78rem;
+      font-size: .76rem;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: .04em;
@@ -542,6 +606,10 @@
       cursor: not-allowed;
     }
 
+    /* =====================================================
+       MATCH
+    ===================================================== */
+
     .match-success-box {
       margin: 18px 0;
       padding: 22px 16px;
@@ -552,8 +620,8 @@
     }
 
     .match-success-icon {
-      font-size: 2.5rem;
       margin-bottom: 8px;
+      font-size: 2.5rem;
     }
 
     .match-success-box h3 {
@@ -563,16 +631,19 @@
 
     .match-success-box p {
       margin: 0 0 16px;
-      color: rgba(255,255,255,.65);
+      color: rgba(255,255,255,.64);
     }
 
     .match-link {
-      display: inline-flex;
+      display: flex;
       align-items: center;
       justify-content: center;
       text-decoration: none;
-      width: auto;
     }
+
+    /* =====================================================
+       RESPONSIVE
+    ===================================================== */
 
     @media (max-width: 800px) {
 
@@ -585,13 +656,10 @@
     @media (max-width: 520px) {
 
       .profile-page {
-        padding: 18px 12px 40px;
-      }
-
-      .profile-card,
-      .discovery-card-wrapper {
-        padding: 16px;
-        border-radius: 18px;
+        padding:
+          18px
+          12px
+          40px;
       }
 
       .profile-header {
@@ -604,11 +672,22 @@
 
       .logout-button {
         padding: 9px 12px;
-        font-size: .85rem;
+        font-size: .84rem;
+      }
+
+      .profile-card,
+      .discovery-card-wrapper {
+        padding: 16px;
+        border-radius: 18px;
       }
 
       .album-grid {
-        grid-template-columns: repeat(2, minmax(0,1fr));
+        grid-template-columns:
+          repeat(2, minmax(0, 1fr));
+      }
+
+      .discovery-actions {
+        gap: 14px;
       }
 
     }
@@ -628,6 +707,10 @@
 <body>
 
   <div class="profile-page">
+
+    <!-- =============================================
+         HEADER
+    ============================================== -->
 
     <header class="profile-header">
 
@@ -649,6 +732,10 @@
     </header>
 
 
+    <!-- =============================================
+         PRESENTACIÓN
+    ============================================== -->
+
     <section class="profile-hero">
 
       <h1>
@@ -657,11 +744,16 @@
 
       <p>
         Mostrá quién sos, elegí tu mejor foto
-        y compartí algunos momentos de tu vida.
+        y compartí tus intereses para conectar
+        con nuevas personas.
       </p>
 
     </section>
 
+
+    <!-- =============================================
+         ESTADO
+    ============================================== -->
 
     <div
       id="statusMessage"
@@ -671,12 +763,16 @@
     ></div>
 
 
+    <!-- =============================================
+         CONTENIDO PRINCIPAL
+    ============================================== -->
+
     <main class="profile-layout">
 
 
-      <!-- =========================================
+      <!-- ===========================================
            PERFIL
-      ========================================== -->
+      ============================================ -->
 
       <section class="profile-card">
 
@@ -759,15 +855,17 @@
             id="albumGrid"
             class="album-grid"
           >
+
             <div class="album-loading">
               Cargando fotos...
             </div>
+
           </div>
 
         </div>
 
 
-        <!-- DATOS -->
+        <!-- DATOS PERSONALES -->
 
         <div class="form-group">
 
@@ -876,9 +974,9 @@
       </section>
 
 
-      <!-- =========================================
+      <!-- ===========================================
            MATCHES + DESCUBRIR
-      ========================================== -->
+      ============================================ -->
 
       <section class="discovery-card-wrapper">
 
@@ -913,57 +1011,20 @@
         </p>
 
 
-        <div
-          id="discoveryContainer"
-        >
+        <div id="discoveryContainer">
 
-          <div class="discovery-loading">
-
-            <div class="loading-spinner"></div>
-
-            <h3>
-              Buscando perfiles...
-            </h3>
-
-            <p>
-              Estamos preparando nuevas conexiones.
-            </p>
-
-          </div>
-
-        </div>
-
-      </section>
-
-    </main>
-
-  </div>
-
-
-  <!-- =============================================
-       SISTEMA CENTRAL
-  ============================================== -->
-
-  <script src="assets/js/config.js"></script>
-  <script src="assets/js/app.js"></script>
-  <script src="assets/js/components.js"></script>
-  <script src="assets/js/analytics.js"></script>
-
-
-  <!-- =============================================
-       JAVASCRIPT DEL PERFIL
-       CONTINÚA EN PARTE 2
-  ============================================== -->
-  (() => {
+          <div class<script>
+(() => {
   "use strict";
 
   /* =====================================================
-     EmiMatch — Perfil
+     EmiMatch — Perfil Premium
      Parte 2/5
      Núcleo + sesión + perfil
   ===================================================== */
 
-  const config = window.EMIMATCH_CONFIG;
+  const config =
+    window.EMIMATCH_CONFIG;
 
   if (!config) {
     console.error(
@@ -972,14 +1033,29 @@
     return;
   }
 
+
+  if (
+    !window.supabase ||
+    typeof window.supabase.createClient !==
+      "function"
+  ) {
+    console.error(
+      "EmiMatch: Supabase no está disponible."
+    );
+    return;
+  }
+
+
   const supabaseClient =
     window.supabase.createClient(
       config.supabaseUrl,
       config.supabaseKey
     );
 
+
   const analytics =
     window.EmiMatchAnalytics || null;
+
 
   const components =
     window.EmiMatchComponents || null;
@@ -990,9 +1066,11 @@
   ===================================================== */
 
   let currentUser = null;
+
   let currentProfile = null;
 
   let discoveryProfiles = [];
+
   let currentProfileIndex = 0;
 
 
@@ -1001,520 +1079,42 @@
   ===================================================== */
 
   const logoutButton =
-    document.getElementById("logoutButton");
+    document.getElementById(
+      "logoutButton"
+    );
 
   const statusMessage =
-    document.getElementById("statusMessage");
+    document.getElementById(
+      "statusMessage"
+    );
 
   const profilePhoto =
-    document.getElementById("profilePhoto");
+    document.getElementById(
+      "profilePhoto"
+    );
 
   const profilePhotoInput =
-    document.getElementById("profilePhotoInput");
+    document.getElementById(
+      "profilePhotoInput"
+    );
 
   const albumInput =
-    document.getElementById("albumInput");
+    document.getElementById(
+      "albumInput"
+    );
 
   const albumGrid =
-    document.getElementById("albumGrid");
+    document.getElementById(
+      "albumGrid"
+    );
 
   const nombreInput =
-    document.getElementById("nombre");
+    document.getElementById(
+      "nombre"
+    );
 
   const edadInput =
-    document.getElementById("edad");
-
-  const ciudadInput =
-    document.getElementById("ciudad");
-
-  const descripcionInput =
-    document.getElementById("descripcion");
-
-  const interesesInput =
-    document.getElementById("intereses");
-
-  const descripcionCounter =
-    document.getElementById("descripcionCounter");
-
-  const interesesCounter =
-    document.getElementById("interesesCounter");
-
-  const saveProfileButton =
-    document.getElementById("saveProfileButton");
-
-  const discoveryContainer =
-    document.getElementById("discoveryContainer");
-
-
-  /* =====================================================
-     ESCAPE HTML
-  ===================================================== */
-
-  function escapeHTML(value) {
-
-    if (
-      components &&
-      typeof components.escapeHTML ===
-        "function"
-    ) {
-      return components.escapeHTML(
-        String(value ?? "")
-      );
-    }
-
-    return String(value ?? "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
-  }
-
-
-  /* =====================================================
-     MENSAJES
-  ===================================================== */
-
-  function showStatus(
-    message,
-    type = "info"
-  ) {
-
-    if (!statusMessage) {
-      return;
-    }
-
-    statusMessage.textContent =
-      message;
-
-    statusMessage.className =
-      `status-message ${type}`;
-
-    statusMessage.hidden =
-      false;
-
-    clearTimeout(
-      showStatus.timer
-    );
-
-    showStatus.timer =
-      setTimeout(() => {
-
-        if (statusMessage) {
-          statusMessage.hidden =
-            true;
-        }
-
-      }, 5000);
-  }
-
-
-  /* =====================================================
-     LOADING DE BOTONES
-  ===================================================== */
-
-  function setButtonLoading(
-    button,
-    loading,
-    loadingText
-  ) {
-
-    if (!button) {
-      return;
-    }
-
-    if (loading) {
-
-      button.dataset.originalText =
-        button.textContent;
-
-      button.disabled =
-        true;
-
-      button.textContent =
-        loadingText ||
-        "Procesando...";
-
-    } else {
-
-      button.disabled =
-        false;
-
-      if (
-        button.dataset.originalText
-      ) {
-
-        button.textContent =
-          button.dataset.originalText;
-      }
-    }
-  }
-
-
-  /* =====================================================
-     CONTADORES
-  ===================================================== */
-
-  function updateCounters() {
-
-    if (
-      descripcionInput &&
-      descripcionCounter
-    ) {
-
-      descripcionCounter.textContent =
-        `${descripcionInput.value.length}/500`;
-    }
-
-    if (
-      interesesInput &&
-      interesesCounter
-    ) {
-
-      interesesCounter.textContent =
-        `${interesesInput.value.length}/300`;
-    }
-  }
-
-
-  /* =====================================================
-     FOTO POR DEFECTO
-  ===================================================== */
-
-  function setProfilePhoto(url) {
-
-    if (!profilePhoto) {
-      return;
-    }
-
-    const fallback =
-      "https://placehold.co/600x600/111827/FFFFFF?text=EmiMatch";
-
-
-    profilePhoto.src =
-      url || fallback;
-
-
-    profilePhoto.onerror =
-      () => {
-
-        profilePhoto.onerror =
-          null;
-
-        profilePhoto.src =
-          fallback;
-      };
-  }
-
-
-  /* =====================================================
-     VALIDACIÓN
-  ===================================================== */
-
-  function validateProfile() {
-
-    const nombre =
-      nombreInput?.value.trim() || "";
-
-    const edad =
-      Number(
-        edadInput?.value
-      );
-
-    const ciudad =
-      ciudadInput?.value.trim() || "";
-
-    const descripcion =
-      descripcionInput?.value.trim() || "";
-
-    const intereses =
-      interesesInput?.value.trim() || "";
-
-
-    if (
-      nombre.length < 2
-    ) {
-
-      return {
-        valid: false,
-        message:
-          "Ingresá tu nombre."
-      };
-    }
-
-
-    if (
-      !Number.isInteger(edad) ||
-      edad < 18 ||
-      edad > 100
-    ) {
-
-      return {
-        valid: false,
-        message:
-          "La edad debe estar entre 18 y 100 años."
-      };
-    }
-
-
-    if (
-      ciudad.length < 2
-    ) {
-
-      return {
-        valid: false,
-        message:
-          "Ingresá tu ciudad."
-      };
-    }
-
-
-    if (
-      descripcion.length > 500
-    ) {
-
-      return {
-        valid: false,
-        message:
-          "La descripción no puede superar los 500 caracteres."
-      };
-    }
-
-
-    if (
-      intereses.length > 300
-    ) {
-
-      return {
-        valid: false,
-        message:
-          "Los intereses no pueden superar los 300 caracteres."
-      };
-    }
-
-
-    return {
-      valid: true,
-
-      data: {
-        nombre,
-        edad,
-        ciudad,
-        descripcion,
-        intereses
-      }
-    };
-  }
-
-
-  /* =====================================================
-     CARGAR PERFIL
-  ===================================================== */
-
-  async function loadProfile() {
-
-    try {
-
-      const {
-        data,
-        error
-      } = await supabaseClient
-        .from("profiles")
-        .select(`
-          id,
-          nombre,
-          edad,
-          ciudad,
-          descripcion,
-          foto_url,
-          intereses,
-          created_at
-        `)
-        .eq(
-          "id",
-          currentUser.id
-        )
-        .maybeSingle();
-
-
-      if (error) {
-        throw error;
-      }
-
-
-      currentProfile =
-        data || null;
-
-
-      if (!currentProfile) {
-
-        showStatus(
-          "Completá tu perfil para comenzar.",
-          "info"
-        );
-
-        updateCounters();
-
-        return;
-      }
-
-
-      nombreInput.value =
-        currentProfile.nombre || "";
-
-      edadInput.value =
-        currentProfile.edad || "";
-
-      ciudadInput.value =
-        currentProfile.ciudad || "";
-
-      descripcionInput.value =
-        currentProfile.descripcion || "";
-
-      interesesInput.value =
-        currentProfile.intereses || "";
-
-
-      setProfilePhoto(
-        currentProfile.foto_url
-      );
-
-      updateCounters();
-
-
-    } catch (error) {
-
-      console.error(
-        "Error cargando perfil:",
-        error
-      );
-
-      showStatus(
-        "No pudimos cargar tu perfil.",
-        "error"
-      );
-    }
-  }
-
-
-  /* =====================================================
-     GUARDAR PERFIL
-  ===================================================== */
-
-  async function saveProfile() {
-
-    const validation =
-      validateProfile();
-
-
-    if (!validation.valid) {
-
-      showStatus(
-        validation.message,
-        "error"
-      );
-
-      return;
-    }
-
-
-    setButtonLoading(
-      saveProfileButton,
-      true,
-      "Guardando..."
-    );
-
-
-    try {
-
-      const {
-        nombre,
-        edad,
-        ciudad,
-        descripcion,
-        intereses
-      } = validation.data;
-
-
-      const {
-        data,
-        error
-      } = await supabaseClient
-        .from("profiles")
-        .upsert(
-          {
-            id:
-              currentUser.id,
-
-            nombre,
-            edad,
-            ciudad,
-            descripcion,
-            intereses
-          },
-          {
-            onConflict:
-              "id"
-          }
-        )
-        .select()
-        .single();
-
-
-      if (error) {
-        throw error;
-      }
-
-
-      currentProfile =
-        data;
-
-
-      showStatus(
-        "Perfil guardado correctamente.",
-        "success"
-      );
-
-
-      if (
-        analytics &&
-        typeof analytics.trackProfileCompleted ===
-          "function"
-      ) {
-
-        analytics.trackProfileCompleted();
-      }
-
-
-    } catch (error) {
-
-      console.error(
-        "Error guardando perfil:",
-        error
-      );
-
-      showStatus(
-        "No pudimos guardar tu perfil. Intentá nuevamente.",
-        "error"
-      );
-
-
-    } finally {
-
-      setButtonLoading(
-        saveProfileButton,
-        false
-      );
-    }
-  }
-
-
-  /* =====================================================
-     CERRAR SESIÓN
-  ===================================================== */
-
-  async
-          /* =====================================================
+    document.getElement  /* =====================================================
      FOTOS — CONFIGURACIÓN
   ===================================================== */
 
@@ -1541,7 +1141,6 @@
   function validateImageFile(file) {
 
     if (!file) {
-
       return {
         valid: false,
         message:
@@ -1549,13 +1148,11 @@
       };
     }
 
-
     if (
       !ALLOWED_IMAGE_TYPES.includes(
         file.type
       )
     ) {
-
       return {
         valid: false,
         message:
@@ -1563,19 +1160,16 @@
       };
     }
 
-
     if (
       file.size >
       MAX_PHOTO_SIZE
     ) {
-
       return {
         valid: false,
         message:
           "Cada imagen puede pesar como máximo 5 MB."
       };
     }
-
 
     return {
       valid: true
@@ -1584,23 +1178,16 @@
 
 
   /* =====================================================
-     EXTENSIÓN
+     EXTENSIÓN DE ARCHIVO
   ===================================================== */
 
   function getFileExtension(file) {
 
     const extensions = {
-
-      "image/jpeg":
-        "jpg",
-
-      "image/png":
-        "png",
-
-      "image/webp":
-        "webp"
+      "image/jpeg": "jpg",
+      "image/png": "png",
+      "image/webp": "webp"
     };
-
 
     return (
       extensions[file.type] ||
@@ -1618,7 +1205,6 @@
     const extension =
       getFileExtension(file);
 
-
     return (
       `${currentUser.id}/` +
       `${crypto.randomUUID()}.` +
@@ -1628,7 +1214,7 @@
 
 
   /* =====================================================
-     URL PÚBLICA
+     OBTENER URL PÚBLICA
   ===================================================== */
 
   function getPublicPhotoUrl(
@@ -1637,13 +1223,13 @@
 
     const {
       data
-    } = supabaseClient
-      .storage
-      .from(PHOTO_BUCKET)
-      .getPublicUrl(
-        storagePath
-      );
-
+    } =
+      supabaseClient
+        .storage
+        .from(PHOTO_BUCKET)
+        .getPublicUrl(
+          storagePath
+        );
 
     return (
       data?.publicUrl ||
@@ -1661,10 +1247,7 @@
   ) {
 
     const validation =
-      validateImageFile(
-        file
-      );
-
+      validateImageFile(file);
 
     if (!validation.valid) {
 
@@ -1689,7 +1272,6 @@
 
 
     if (profilePhotoInput) {
-
       profilePhotoInput.disabled =
         true;
     }
@@ -1704,30 +1286,29 @@
 
 
       const storagePath =
-        createStoragePath(
-          file
-        );
+        createStoragePath(file);
 
 
       const {
         error: uploadError
-      } = await supabaseClient
-        .storage
-        .from(PHOTO_BUCKET)
-        .upload(
-          storagePath,
-          file,
-          {
-            cacheControl:
-              "3600",
+      } =
+        await supabaseClient
+          .storage
+          .from(PHOTO_BUCKET)
+          .upload(
+            storagePath,
+            file,
+            {
+              cacheControl:
+                "3600",
 
-            upsert:
-              false,
+              upsert:
+                false,
 
-            contentType:
-              file.type
-          }
-        );
+              contentType:
+                file.type
+            }
+          );
 
 
       if (uploadError) {
@@ -1744,23 +1325,24 @@
       if (!photoUrl) {
 
         throw new Error(
-          "No se pudo obtener la URL pública de la imagen."
+          "No se pudo obtener la URL pública."
         );
       }
 
 
       const {
         error: profileError
-      } = await supabaseClient
-        .from("profiles")
-        .update({
-          foto_url:
-            photoUrl
-        })
-        .eq(
-          "id",
-          currentUser.id
-        );
+      } =
+        await supabaseClient
+          .from("profiles")
+          .update({
+            foto_url:
+              photoUrl
+          })
+          .eq(
+            "id",
+            currentUser.id
+          );
 
 
       if (profileError) {
@@ -1783,12 +1365,14 @@
 
 
       if (
-        analytics &&
-        typeof analytics.trackPhotoUploaded ===
+        window.EmiMatchAnalytics &&
+        typeof window.EmiMatchAnalytics
+          .trackPhotoUploaded ===
           "function"
       ) {
 
-        analytics.trackPhotoUploaded();
+        window.EmiMatchAnalytics
+          .trackPhotoUploaded();
       }
 
 
@@ -1804,7 +1388,7 @@
     } catch (error) {
 
       console.error(
-        "Error subiendo foto de perfil:",
+        "Error subiendo foto:",
         error
       );
 
@@ -1855,23 +1439,24 @@
       const {
         data: files,
         error
-      } = await supabaseClient
-        .storage
-        .from(PHOTO_BUCKET)
-        .list(
-          currentUser.id,
-          {
-            limit: 100,
+      } =
+        await supabaseClient
+          .storage
+          .from(PHOTO_BUCKET)
+          .list(
+            currentUser.id,
+            {
+              limit: 100,
 
-            sortBy: {
-              column:
-                "created_at",
+              sortBy: {
+                column:
+                  "created_at",
 
-              order:
-                "desc"
+                order:
+                  "desc"
+              }
             }
-          }
-        );
+          );
 
 
       if (error) {
@@ -1881,336 +1466,33 @@
 
       const imageFiles =
         (files || [])
-          .filter(file => {
+          .filter(
+            file => {
 
-            if (!file?.name) {
-              return false;
+              if (!file?.name) {
+                return false;
+              }
+
+
+              const extension =
+                file.name
+                  .split(".")
+                  .pop()
+                  ?.toLowerCase();
+
+
+              return [
+                "jpg",
+                "jpeg",
+                "png",
+                "webp"
+              ].includes(
+                extension
+              );
             }
-
-
-            const extension =
-              file.name
-                .split(".")
-                .pop()
-                ?.toLowerCase();
-
-
-            return [
-              "jpg",
-              "jpeg",
-              "png",
-              "webp"
-            ].includes(
-              extension
-            );
-          })
-          .slice(
-            0,
-            MAX_ALBUM_PHOTOS
-          );
-
-
-      if (
-        !imageFiles.length
-      ) {
-
-        albumGrid.innerHTML = `
-          <div class="album-empty">
-            <span>📷</span>
-            <strong>
-              Tu álbum está vacío
-            </strong>
-            <small>
-              Podés agregar hasta 6 fotos.
-            </small>
-          </div>
-        `;
-
-        return;
-      }
-
-
-      albumGrid.innerHTML =
-        "";
-
-
-      imageFiles.forEach(
-        file => {
-
-          const storagePath =
-            `${currentUser.id}/${file.name}`;
-
-
-          const photoUrl =
-            getPublicPhotoUrl(
-              storagePath
-            );
-
-
-          if (!photoUrl) {
-            return;
-          }
-
-
-          const isPrimary =
-            currentProfile?.foto_url ===
-            photoUrl;
-
-
-          const item =
-            document.createElement(
-              "div"
-            );
-
-
-          item.className =
-            "album-item";
-
-
-          item.innerHTML = `
-
-            <img
-              src="${escapeHTML(photoUrl)}"
-              alt="Foto de perfil"
-              loading="lazy"
-            >
-
-            ${
-              isPrimary
-                ? `
-                  <span class="album-main">
-                    Principal
-                  </span>
-                `
-                : ""
-            }
-
-            <div class="album-actions">
-
-              <button
-                type="button"
-                class="album-select"
-                data-photo-url="${escapeHTML(photoUrl)}"
-              >
-                ${
-                  isPrimary
-                    ? "✓ Principal"
-                    : "Usar principal"
-                }
-              </button>
-
-              <button
-                type="button"
-                class="album-delete"
-                data-storage-path="${escapeHTML(storagePath)}"
-              >
-                Eliminar
-              </button>
-
-            </div>
-          `;
-
-
-          albumGrid.appendChild(
-            item
-          );
-        }
-      );
-
-
-      bindAlbumActions();
-
-
-    } catch (error) {
-
-      console.error(
-        "Error cargando álbum:",
-        error
-      );
-
-
-      albumGrid.innerHTML = `
-        <div class="album-empty">
-          <span>⚠️</span>
-
-          <strong>
-            No pudimos cargar el álbum
-          </strong>
-
-          <small>
-            Intentá nuevamente.
-          </small>
-        </div>
-      `;
-    }
-  }
-
-
-  /* =====================================================
-     BOTONES DEL ÁLBUM
-  ===================================================== */
-
-  function bindAlbumActions() {
-
-    if (!albumGrid) {
-      return;
-    }
-
-
-    const selectButtons =
-      albumGrid.querySelectorAll(
-        ".album-select"
-      );
-
-
-    selectButtons.forEach(
-      button => {
-
-        button.addEventListener(
-          "click",
-          async () => {
-
-            const photoUrl =
-              button.dataset.photoUrl;
-
-
-            await setPrimaryPhoto(
-              photoUrl
-            );
-          }
-        );
-      }
-    );
-
-
-    const deleteButtons =
-      albumGrid.querySelectorAll(
-        ".album-delete"
-      );
-
-
-    deleteButtons.forEach(
-      button => {
-
-        button.addEventListener(
-          "click",
-          async () => {
-
-            const storagePath =
-              button.dataset.storagePath;
-
-
-            await deleteAlbumPhoto(
-              storagePath
-            );
-          }
-        );
-      }
-    );
-  }
-
-
-  /* =====================================================
-     ESTABLECER FOTO PRINCIPAL
-  ===================================================== */
-
-  async function setPrimaryPhoto(
-    photoUrl
-  ) {
-
-    if (
-      !photoUrl ||
-      !currentUser
-    ) {
-      return;
-    }
-
-
-    try {
-
-      showStatus(
-        "Actualizando foto principal...",
-        "info"
-      );
-
-
-      const {
-        error
-      } = await supabaseClient
-        .from("profiles")
-        .update({
-          foto_url:
-            photoUrl
-        })
-        .eq(
-          "id",
-          currentUser.id
-        );
-
-
-      if (error) {
-        throw error;
-      }
-
-
-      if (!currentProfile) {
-        currentProfile = {};
-      }
-
-
-      currentProfile.foto_url =
-        photoUrl;
-
-
-      setProfilePhoto(
-        photoUrl
-      );
-
-
-      showStatus(
-        "Foto principal actualizada.",
-        "success"
-      );
-
-
-      await loadAlbum();
-
-
-    } catch (error) {
-
-      console.error(
-        "Error actualizando foto principal:",
-        error
-      );
-
-
-      showStatus(
-        "No pudimos actualizar la foto principal.",
-        "error"
-      );
-    }
-  }
-
-
-  /* =====================================================
-     ELIMINAR FOTO
-  ===================================================== */
-
-  async function deleteAlbumPhoto(
-    storagePath
-  ) {
-
-    if (
-      !storagePath ||
-      !currentUser
-    ) {
-      return;
-    }
-
-
-    const ownPrefix =
-          /* =====================================================
-     DESCUBRIR PERFILES
+          )
+          .  /* =====================================================
+     DESCUBRIR — CARGAR PERFILES
   ===================================================== */
 
   async function loadDiscoveryProfiles() {
@@ -2242,22 +1524,23 @@
 
     try {
 
-      /* -----------------------------------------------
-         USUARIOS BLOQUEADOS
-      ----------------------------------------------- */
+      /* =================================================
+         1. USUARIOS BLOQUEADOS
+      ================================================= */
 
       const {
         data: blockedUsers,
         error: blockedError
-      } = await supabaseClient
-        .from("block")
-        .select(
-          "blocked_user_id"
-        )
-        .eq(
-          "user_id",
-          currentUser.id
-        );
+      } =
+        await supabaseClient
+          .from("block")
+          .select(
+            "blocked_user_id"
+          )
+          .eq(
+            "user_id",
+            currentUser.id
+          );
 
 
       if (blockedError) {
@@ -2269,41 +1552,42 @@
         new Set(
           (blockedUsers || [])
             .map(
-              block =>
-                block.blocked_user_id
+              item =>
+                item.blocked_user_id
             )
         );
 
 
-      /* -----------------------------------------------
-         PERFILES DISPONIBLES
-      ----------------------------------------------- */
+      /* =================================================
+         2. TODOS LOS PERFILES
+      ================================================= */
 
       const {
         data: profiles,
         error: profilesError
-      } = await supabaseClient
-        .from("profiles")
-        .select(`
-          id,
-          nombre,
-          edad,
-          ciudad,
-          descripcion,
-          foto_url,
-          intereses,
-          created_at
-        `)
-        .neq(
-          "id",
-          currentUser.id
-        )
-        .order(
-          "created_at",
-          {
-            ascending: false
-          }
-        );
+      } =
+        await supabaseClient
+          .from("profiles")
+          .select(`
+            id,
+            nombre,
+            edad,
+            ciudad,
+            descripcion,
+            foto_url,
+            intereses,
+            created_at
+          `)
+          .neq(
+            "id",
+            currentUser.id
+          )
+          .order(
+            "created_at",
+            {
+              ascending: false
+            }
+          );
 
 
       if (profilesError) {
@@ -2311,22 +1595,23 @@
       }
 
 
-      /* -----------------------------------------------
-         PERFILES YA EVALUADOS
-      ----------------------------------------------- */
+      /* =================================================
+         3. SWIPES DEL USUARIO
+      ================================================= */
 
       const {
         data: swipes,
         error: swipesError
-      } = await supabaseClient
-        .from("swipes")
-        .select(
-          "target_user_id"
-        )
-        .eq(
-          "user_id",
-          currentUser.id
-        );
+      } =
+        await supabaseClient
+          .from("swipes")
+          .select(
+            "target_user_id"
+          )
+          .eq(
+            "user_id",
+            currentUser.id
+          );
 
 
       if (swipesError) {
@@ -2338,37 +1623,40 @@
         new Set(
           (swipes || [])
             .map(
-              swipe =>
-                swipe.target_user_id
+              item =>
+                item.target_user_id
             )
         );
 
 
-      /* -----------------------------------------------
-         FILTRO FINAL
-      ----------------------------------------------- */
+      /* =================================================
+         4. FILTRO FINAL
+      ================================================= */
 
       discoveryProfiles =
         (profiles || [])
           .filter(
             profile => {
 
-              const isBlocked =
+              if (
                 blockedIds.has(
                   profile.id
-                );
+                )
+              ) {
+                return false;
+              }
 
 
-              const alreadySeen =
+              if (
                 seenIds.has(
                   profile.id
-                );
+                )
+              ) {
+                return false;
+              }
 
 
-              return (
-                !isBlocked &&
-                !alreadySeen
-              );
+              return true;
             }
           );
 
@@ -2377,13 +1665,19 @@
         0;
 
 
+      /* =================================================
+         ANALYTICS
+      ================================================= */
+
       if (
-        analytics &&
-        typeof analytics.trackDiscovery ===
+        window.EmiMatchAnalytics &&
+        typeof window.EmiMatchAnalytics
+          .trackDiscovery ===
           "function"
       ) {
 
-        analytics.trackDiscovery();
+        window.EmiMatchAnalytics
+          .trackDiscovery();
       }
 
 
@@ -2393,7 +1687,7 @@
     } catch (error) {
 
       console.error(
-        "Error descubriendo perfiles:",
+        "Error cargando Discovery:",
         error
       );
 
@@ -2428,152 +1722,8 @@
 
       const retryButton =
         document.getElementById(
-          "retryDiscoveryButton"
-        );
-
-
-      if (retryButton) {
-
-        retryButton.addEventListener(
-          "click",
-          loadDiscoveryProfiles
-        );
-      }
-    }
-  }
-
-
-  /* =====================================================
-     MOSTRAR PERFIL DE DESCUBRIR
-  ===================================================== */
-
-  function renderDiscovery() {
-
-    if (!discoveryContainer) {
-      return;
-    }
-
-
-    if (
-      currentProfileIndex >=
-      discoveryProfiles.length
-    ) {
-
-      discoveryContainer.innerHTML = `
-        <div class="discovery-empty">
-
-          <div class="empty-icon">
-            💫
-          </div>
-
-          <h3>
-            No hay más perfiles por ahora
-          </h3>
-
-          <p>
-            Volvé más tarde para descubrir
-            nuevas personas.
-          </p>
-
-          <button
-            type="button"
-            id="reloadDiscoveryButton"
-            class="primary-button"
-          >
-            Buscar nuevamente
-          </button>
-
-        </div>
-      `;
-
-
-      const reloadButton =
-        document.getElementById(
-          "reloadDiscoveryButton"
-        );
-
-
-      if (reloadButton) {
-
-        reloadButton.addEventListener(
-          "click",
-          loadDiscoveryProfiles
-        );
-      }
-
-
-      return;
-    }
-
-
-    const profile =
-      discoveryProfiles[
-        currentProfileIndex
-      ];
-
-
-    if (!profile) {
-
-      currentProfileIndex +=
-        1;
-
-      renderDiscovery();
-
-      return;
-    }
-
-
-    const safeName =
-      escapeHTML(
-        profile.nombre ||
-        "Usuario"
-      );
-
-
-    const safeAge =
-      profile.edad
-        ? escapeHTML(
-            profile.edad
-          )
-        : "";
-
-
-    const safeCity =
-      escapeHTML(
-        profile.ciudad ||
-        "Ciudad no indicada"
-      );
-
-
-    const safeDescription =
-      escapeHTML(
-        profile.descripcion ||
-        "Sin descripción."
-      );
-
-
-    const safeInterests =
-      escapeHTML(
-        profile.intereses ||
-        "Todavía no agregó intereses."
-      );
-
-
-    const photoUrl =
-      profile.foto_url ||
-      "https://placehold.co/600x600/111827/FFFFFF?text=EmiMatch";
-
-
-    discoveryContainer.innerHTML = `
-
-      <article
-        class="discovery-card"
-        data-profile-id="${escapeHTML(profile.id)}"
-      >
-
-        <div class="discovery-photo
-            /* =====================================================
-     INICIALIZAR ÁLBUM
+          "retryDiscoveryButton"  /* =====================================================
+     INICIALIZACIÓN DEL ÁLBUM
   ===================================================== */
 
   async function initializeAlbum() {
@@ -2583,7 +1733,7 @@
 
 
   /* =====================================================
-     INICIALIZAR DESCUBRIR
+     INICIALIZACIÓN DE DESCUBRIR
   ===================================================== */
 
   async function initializeDiscovery() {
@@ -2593,7 +1743,7 @@
 
 
   /* =====================================================
-     INICIALIZACIÓN COMPLETA
+     INICIALIZACIÓN GENERAL
   ===================================================== */
 
   async function initializeProfilePage() {
@@ -2601,7 +1751,7 @@
     try {
 
       /* -----------------------------------------------
-         SESIÓN
+         1. VERIFICAR SESIÓN
       ----------------------------------------------- */
 
       const authenticated =
@@ -2614,42 +1764,44 @@
 
 
       /* -----------------------------------------------
-         ANALYTICS — PAGEVIEW
+         2. ANALYTICS — PAGEVIEW
       ----------------------------------------------- */
 
       if (
         window.EmiMatchAnalytics &&
-        typeof window.EmiMatchAnalytics.trackPage ===
+        typeof window.EmiMatchAnalytics
+          .trackPage ===
           "function"
       ) {
 
-        window.EmiMatchAnalytics.trackPage();
+        window.EmiMatchAnalytics
+          .trackPage();
       }
 
 
       /* -----------------------------------------------
-         CARGAR PERFIL
+         3. CARGAR PERFIL
       ----------------------------------------------- */
 
       await loadProfile();
 
 
       /* -----------------------------------------------
-         CONTADORES
+         4. ACTUALIZAR CONTADORES
       ----------------------------------------------- */
 
       updateCounters();
 
 
       /* -----------------------------------------------
-         ÁLBUM
+         5. CARGAR ÁLBUM
       ----------------------------------------------- */
 
       await initializeAlbum();
 
 
       /* -----------------------------------------------
-         DESCUBRIR
+         6. CARGAR DESCUBRIR
       ----------------------------------------------- */
 
       await initializeDiscovery();
@@ -2663,7 +1815,7 @@
     } catch (error) {
 
       console.error(
-        "Error inicializando perfil:",
+        "EmiMatch: error inicializando perfil:",
         error
       );
 
@@ -2686,4 +1838,4 @@
 </script>
 
 </body>
-        </html>
+          </html>
