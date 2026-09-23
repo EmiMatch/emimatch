@@ -20,18 +20,10 @@
 
   <title>EmiMatch — Mi perfil</title>
 
-  <!-- =====================================================
-       ESTILOS CENTRALES
-  ====================================================== -->
-
   <link
     rel="stylesheet"
     href="assets/css/app.css"
   >
-
-  <!-- =====================================================
-       ESTILOS ESPECÍFICOS DEL PERFIL
-  ====================================================== -->
 
   <style>
     :root {
@@ -76,6 +68,24 @@
           var(--profile-bg),
           var(--profile-bg-2)
         );
+      font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible {
+      outline: 2px solid var(--profile-gold);
+      outline-offset: 2px;
     }
 
     .profile-page {
@@ -101,7 +111,6 @@
       text-decoration: none;
       font-size: 1.25rem;
       font-weight: 700;
-      letter-spacing: .2px;
     }
 
     .brand-heart {
@@ -109,12 +118,12 @@
     }
 
     .logout-button {
+      min-height: 44px;
       border: 1px solid var(--profile-border);
       background: rgba(255,255,255,.06);
       color: #fff;
       border-radius: 12px;
       padding: 10px 15px;
-      min-height: 44px;
       cursor: pointer;
       transition: .2s ease;
     }
@@ -132,14 +141,43 @@
       margin: 0 0 8px;
       font-size: clamp(1.8rem, 5vw, 2.5rem);
       line-height: 1.15;
-      letter-spacing: -.4px;
     }
 
     .profile-hero p {
       margin: 0;
+      max-width: 700px;
       color: var(--profile-muted);
-      max-width: 650px;
       line-height: 1.6;
+    }
+
+    .status {
+      margin-bottom: 20px;
+      min-height: 0;
+    }
+
+    .status-message {
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: .88rem;
+      line-height: 1.45;
+    }
+
+    .status-loading {
+      background: rgba(143,120,216,.10);
+      border: 1px solid rgba(143,120,216,.22);
+      color: #ddd5fa;
+    }
+
+    .status-success {
+      background: rgba(143,213,177,.10);
+      border: 1px solid rgba(143,213,177,.25);
+      color: #c7f0dc;
+    }
+
+    .status-error {
+      background: rgba(233,139,154,.10);
+      border: 1px solid rgba(233,139,154,.25);
+      color: #ffd0d7;
     }
 
     .profile-layout {
@@ -147,21 +185,27 @@
       gap: 20px;
     }
 
+    .profile-main,
+    .profile-side {
+      display: grid;
+      gap: 20px;
+    }
+
     .profile-card {
+      padding: 22px;
       border: 1px solid var(--profile-border);
       border-radius: 22px;
       background: var(--profile-card);
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
-      padding: 22px;
       box-shadow:
         0 18px 50px rgba(0,0,0,.20);
     }
 
     .section-title {
       margin: 0 0 6px;
-      font-size: 1.15rem;
       color: #fff;
+      font-size: 1.15rem;
     }
 
     .section-description {
@@ -186,6 +230,7 @@
     .main-photo {
       width: 130px;
       height: 130px;
+      display: block;
       border-radius: 50%;
       object-fit: cover;
       border: 2px solid rgba(217,184,108,.45);
@@ -195,21 +240,20 @@
           rgba(143,120,216,.25),
           rgba(217,184,108,.18)
         );
-      display: block;
     }
 
     .photo-placeholder {
       width: 130px;
       height: 130px;
-      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      text-align: center;
       padding: 18px;
-      color: var(--profile-muted);
+      border-radius: 50%;
       border: 1px dashed rgba(255,255,255,.20);
       background: rgba(255,255,255,.04);
+      color: var(--profile-muted);
+      text-align: center;
       font-size: .84rem;
     }
 
@@ -224,8 +268,8 @@
       justify-content: center;
       min-height: 44px;
       padding: 10px 16px;
-      border-radius: 12px;
       border: 1px solid rgba(217,184,108,.35);
+      border-radius: 12px;
       background: rgba(217,184,108,.10);
       color: var(--profile-gold-soft);
       cursor: pointer;
@@ -263,24 +307,26 @@
 
     .album-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns:
+        repeat(3, minmax(0,1fr));
       gap: 10px;
+      margin-top: 15px;
     }
 
     .album-item {
       position: relative;
       aspect-ratio: 1;
       overflow: hidden;
-      border-radius: 15px;
       border: 1px solid var(--profile-border);
+      border-radius: 15px;
       background: rgba(255,255,255,.04);
     }
 
     .album-item img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
       display: block;
+      object-fit: cover;
     }
 
     .album-actions {
@@ -295,13 +341,13 @@
     .album-action {
       flex: 1;
       min-height: 36px;
+      padding: 5px;
       border: 1px solid rgba(255,255,255,.15);
       border-radius: 9px;
       background: rgba(7,10,25,.78);
       color: #fff;
       cursor: pointer;
       font-size: .72rem;
-      padding: 5px;
     }
 
     .album-action:hover {
@@ -323,10 +369,10 @@
     .empty-album {
       grid-column: 1 / -1;
       padding: 24px;
-      text-align: center;
       border: 1px dashed rgba(255,255,255,.15);
       border-radius: 14px;
       color: var(--profile-muted);
+      text-align: center;
       font-size: .9rem;
     }
 
@@ -355,13 +401,12 @@
     .form-group input,
     .form-group textarea {
       width: 100%;
+      padding: 12px 13px;
       border: 1px solid rgba(255,255,255,.13);
       border-radius: 12px;
+      outline: none;
       background: rgba(0,0,0,.16);
       color: #fff;
-      padding: 12px 13px;
-      outline: none;
-      font: inherit;
       transition: .2s ease;
     }
 
@@ -377,7 +422,8 @@
     .form-group input:focus,
     .form-group textarea:focus {
       border-color: rgba(217,184,108,.60);
-      box-shadow: 0 0 0 3px rgba(217,184,108,.08);
+      box-shadow:
+        0 0 0 3px rgba(217,184,108,.08);
     }
 
     .field-help {
@@ -424,7 +470,7 @@
 
     .quick-links {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(2,1fr);
       gap: 12px;
     }
 
@@ -434,8 +480,8 @@
       gap: 10px;
       min-height: 54px;
       padding: 12px 14px;
-      border-radius: 14px;
       border: 1px solid var(--profile-border);
+      border-radius: 14px;
       background: rgba(255,255,255,.045);
       color: #fff;
       text-decoration: none;
@@ -454,39 +500,9 @@
 
     .quick-link span {
       display: block;
+      margin-top: 2px;
       color: var(--profile-muted);
       font-size: .74rem;
-      margin-top: 2px;
-    }
-
-    .status {
-      margin-bottom: 20px;
-      min-height: 0;
-    }
-
-    .status-message {
-      padding: 12px 14px;
-      border-radius: 12px;
-      font-size: .88rem;
-      line-height: 1.45;
-    }
-
-    .status-loading {
-      background: rgba(143,120,216,.10);
-      border: 1px solid rgba(143,120,216,.22);
-      color: #ddd5fa;
-    }
-
-    .status-success {
-      background: rgba(143,213,177,.10);
-      border: 1px solid rgba(143,213,177,.25);
-      color: #c7f0dc;
-    }
-
-    .status-error {
-      background: rgba(233,139,154,.10);
-      border: 1px solid rgba(233,139,154,.25);
-      color: #ffd0d7;
     }
 
     .discovery-profile {
@@ -496,27 +512,29 @@
       align-items: center;
     }
 
-    .discovery-photo {
+    .discovery-photo,
+    .discovery-photo-placeholder {
       width: 130px;
       height: 130px;
       border-radius: 20px;
+    }
+
+    .discovery-photo {
+      display: block;
       object-fit: cover;
       border: 1px solid var(--profile-border);
       background: rgba(255,255,255,.05);
     }
 
     .discovery-photo-placeholder {
-      width: 130px;
-      height: 130px;
-      border-radius: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(255,255,255,.05);
+      padding: 12px;
       border: 1px dashed rgba(255,255,255,.15);
+      background: rgba(255,255,255,.05);
       color: var(--profile-muted);
       text-align: center;
-      padding: 12px;
       font-size: .78rem;
     }
 
@@ -547,9 +565,9 @@
 
     .interest {
       padding: 5px 9px;
+      border: 1px solid rgba(143,120,216,.20);
       border-radius: 999px;
       background: rgba(143,120,216,.12);
-      border: 1px solid rgba(143,120,216,.20);
       color: #ddd5fa;
       font-size: .72rem;
     }
@@ -563,13 +581,13 @@
     .discovery-button {
       flex: 1;
       min-height: 45px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-weight: 700;
       padding: 10px 14px;
       border: 1px solid var(--profile-border);
-      color: #fff;
+      border-radius: 12px;
       background: rgba(255,255,255,.06);
+      color: #fff;
+      cursor: pointer;
+      font-weight: 700;
     }
 
     .discovery-button.pass:hover {
@@ -588,13 +606,13 @@
     }
 
     .match-success {
-      text-align: center;
       padding: 10px 4px;
+      text-align: center;
     }
 
     .match-success-icon {
-      font-size: 3rem;
       margin-bottom: 8px;
+      font-size: 3rem;
     }
 
     .match-success h3 {
@@ -604,8 +622,8 @@
     }
 
     .match-success p {
-      margin: 0 auto 20px;
       max-width: 500px;
+      margin: 0 auto 20px;
       color: var(--profile-muted);
       line-height: 1.55;
     }
@@ -627,26 +645,26 @@
     }
 
     .match-primary {
+      border: 0;
       background: var(--profile-gold);
       color: #17120a;
-      border: 0;
       font-weight: 700;
     }
 
     .match-secondary {
-      background: rgba(255,255,255,.06);
       border: 1px solid var(--profile-border);
+      background: rgba(255,255,255,.06);
       color: #fff;
     }
 
     .empty-discovery {
-      text-align: center;
       padding: 25px 10px;
+      text-align: center;
     }
 
     .empty-discovery-icon {
-      font-size: 2.2rem;
       margin-bottom: 8px;
+      font-size: 2.2rem;
     }
 
     .empty-discovery h3 {
@@ -667,31 +685,23 @@
     }
 
     @media (min-width: 820px) {
+
       .profile-layout {
-        grid-template-columns: minmax(0, 1.25fr) minmax(300px, .75fr);
+        grid-template-columns:
+          minmax(0,1.25fr)
+          minmax(300px,.75fr);
         align-items: start;
       }
 
-      .profile-main {
-        display: grid;
-        gap: 20px;
-      }
-
-      .profile-side {
-        display: grid;
-        gap: 20px;
-      }
-
-      .profile-card.full-width {
-        grid-column: 1 / -1;
-      }
-
       .album-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-template-columns:
+          repeat(4,minmax(0,1fr));
       }
+
     }
 
     @media (max-width: 640px) {
+
       .profile-page {
         padding: 12px;
       }
@@ -720,7 +730,7 @@
       .discovery-photo,
       .discovery-photo-placeholder {
         width: 100%;
-        height: min(340px, 72vw);
+        height: min(340px,72vw);
         border-radius: 18px;
       }
 
@@ -739,6 +749,7 @@
       .save-button {
         width: 100%;
       }
+
     }
   </style>
 </head>
@@ -746,10 +757,6 @@
 <body>
 
   <main class="profile-page">
-
-    <!-- =====================================================
-         HEADER
-    ====================================================== -->
 
     <header class="profile-header">
 
@@ -773,10 +780,6 @@
     </header>
 
 
-    <!-- =====================================================
-         HERO
-    ====================================================== -->
-
     <section class="profile-hero">
 
       <h1>Mi perfil</h1>
@@ -790,10 +793,6 @@
     </section>
 
 
-    <!-- =====================================================
-         ESTADO
-    ====================================================== -->
-
     <div
       id="statusMessage"
       class="status"
@@ -801,17 +800,12 @@
     ></div>
 
 
-    <!-- =====================================================
-         CONTENIDO PRINCIPAL
-    ====================================================== -->
-
     <div class="profile-layout">
 
       <div class="profile-main">
 
-        <!-- ===================================================
-             FOTO PRINCIPAL
-        ==================================================== -->
+
+        <!-- FOTO PRINCIPAL -->
 
         <section class="profile-card">
 
@@ -852,7 +846,8 @@
                 >
 
                 <p class="upload-help">
-                  JPG, PNG o WebP. Tamaño máximo: 5 MB.
+                  JPG, PNG o WebP.
+                  Tamaño máximo: 5 MB.
                 </p>
 
               </div>
@@ -864,9 +859,7 @@
         </section>
 
 
-        <!-- ===================================================
-             ÁLBUM
-        ==================================================== -->
+        <!-- ÁLBUM -->
 
         <section class="profile-card">
 
@@ -920,9 +913,7 @@
         </section>
 
 
-        <!-- ===================================================
-             DATOS DEL PERFIL
-        ==================================================== -->
+        <!-- INFORMACIÓN PERSONAL -->
 
         <section class="profile-card">
 
@@ -936,6 +927,7 @@
           </p>
 
           <div class="form-grid">
+
 
             <div class="form-row">
 
@@ -970,4 +962,53 @@
                   min="18"
                   max="100"
                   inputmode="numeric"
-          
+                  placeholder="Tu edad"
+                >
+
+              </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label for="ciudad">
+                Ciudad
+              </label>
+
+              <input
+                type="text"
+                id="ciudad"
+                name="ciudad"
+                maxlength="100"
+                autocomplete="address-level2"
+                placeholder="Tu ciudad"
+              >
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label for="descripcion">
+                Descripción
+              </label>
+
+              <textarea
+                id="descripcion"
+                name="descripcion"
+                maxlength="500"
+                placeholder="Contanos un poco sobre vos..."
+              ></textarea>
+
+              <div class="field-help">
+
+                <span>
+                  Presentate de manera auténtica.
+                </span>
+
+                <span id="descripcionCount">
+                  0/500
+                </span>
+
+   
