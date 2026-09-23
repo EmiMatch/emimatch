@@ -1,7 +1,7 @@
 /* =====================================================
    EmiMatch — Componentes compartidos
-   v1.2.0
-   Centro de actividad interactivo
+   v1.3.0
+   Centro de actividad — solo usuarios autenticados
 ===================================================== */
 
 (() => {
@@ -1055,10 +1055,11 @@
 
 
     /* =================================================
-       CREAR CENTRO
+       CENTRO DE ACTIVIDAD
+       SOLO USUARIOS AUTENTICADOS
     ================================================= */
 
-    initActivityCenter() {
+    async initActivityCenter() {
 
       if (
         document.getElementById(
@@ -1079,6 +1080,54 @@
 
         return;
       }
+
+      const client =
+        this.getSupabaseClient();
+
+      if (!client) {
+
+        console.error(
+          "EmiMatch: cliente Supabase no disponible."
+        );
+
+        return;
+      }
+
+      let session = null;
+
+      try {
+
+        const result =
+          await client.auth.getSession();
+
+        session =
+          result &&
+          result.data
+            ? result.data.session
+            : null;
+
+      } catch (error) {
+
+        console.error(
+          "EmiMatch: error verificando sesión.",
+          error
+        );
+
+        return;
+      }
+
+      /*
+       * SIN SESIÓN:
+       * No crear el Centro de actividad.
+       */
+
+      if (!session || !session.user) {
+        return;
+      }
+
+      /*
+       * CREAR CENTRO
+       */
 
       const center =
         document.createElement("section");
@@ -1185,7 +1234,7 @@
               </strong>
 
               <small>
-                Nuevos matches y actividad
+            Nuevos matches y actividad
               </small>
 
             </span>
@@ -1227,7 +1276,7 @@
             </span>
 
             <span
-            class="emimatch-activity-count"
+              class="emimatch-activity-count"
               id="emimatch-requests-count"
             >
               0
@@ -1239,15 +1288,13 @@
 
 
         <div
-          class="emimatch-activity-panel"
           id="emimatch-messages-panel"
+          class="emimatch-activity-panel"
           hidden
         >
 
-          <div
-            class="emimatch-activity-panel-title"
-          >
-            💬 Mensajes recientes
+          <div class="emimatch-activity-panel-title">
+            💬 Mensajes
           </div>
 
           <div
@@ -1258,14 +1305,12 @@
 
 
         <div
-          class="emimatch-activity-panel"
           id="emimatch-notifications-panel"
+          class="emimatch-activity-panel"
           hidden
         >
 
-          <div
-            class="emimatch-activity-panel-title"
-          >
+          <div class="emimatch-activity-panel-title">
             🔔 Notificaciones
           </div>
 
@@ -1277,15 +1322,13 @@
 
 
         <div
-          class="emimatch-activity-panel"
           id="emimatch-requests-panel"
+          class="emimatch-activity-panel"
           hidden
         >
 
-          <div
-            class="emimatch-activity-panel-title"
-          >
-            👥 Solicitudes recibidas
+          <div class="emimatch-activity-panel-title">
+            👥 Solicitudes
           </div>
 
           <div
@@ -1296,8 +1339,8 @@
 
 
         <div
-          class="emimatch-activity-status"
           id="emimatch-activity-status"
+          class="emimatch-activity-status"
           aria-live="polite"
         ></div>
 
@@ -1306,52 +1349,30 @@
       main.prepend(center);
 
 
-      /* =================================================
-         CAMBIO DE PANELES
-      ================================================= */
-
-      const togglePanel =
-        (panelId) => {
-
-          const panel =
-            document.getElementById(
-              panelId
-            );
-
-          if (!panel) {
-            return;
-          }
-
-          const shouldOpen =
-            panel.hidden;
-
-          document
-            .querySelectorAll(
-              ".emimatch-activity-panel"
-            )
-            .forEach(
-              (item) => {
-
-                item.hidden =
-                  true;
-
-              }
-            );
-
-          panel.hidden =
-            !shouldOpen;
-        };
-
-
       /*
-       =================================================
-         MENSAJES
-      ================================================= */
+       * BOTONES
+       */
 
       const messagesButton =
         document.getElementById(
           "emimatch-messages-button"
         );
+
+      const notificationsButton =
+        document.getElementById(
+          "emimatch-notifications-button"
+        );
+
+      const requestsButton =
+        document.getElementById(
+          "emimatch-requests-button"
+        );
+
+      const refreshButton =
+        document.getElementById(
+          "emimatch-activity-refresh"
+        );
+
 
       if (messagesButton) {
 
@@ -1359,7 +1380,7 @@
           "click",
           () => {
 
-            togglePanel(
+            this.toggleActivityPanel(
               "emimatch-messages-panel"
             );
 
@@ -1369,22 +1390,13 @@
       }
 
 
-      /* =================================================
-         NOTIFICACIONES
-      ================================================= */
-
-      const notificationsButton =
-        document.getElementById(
-          "emimatch-notifications-button"
-        );
-
       if (notificationsButton) {
 
         notificationsButton.addEventListener(
           "click",
           () => {
 
-            togglePanel(
+            this.toggleActivityPanel(
               "emimatch-notifications-panel"
             );
 
@@ -1394,22 +1406,13 @@
       }
 
 
-      /* =================================================
-         SOLICITUDES
-      ================================================= */
-
-      const requestsButton =
-        document.getElementById(
-          "emimatch-requests-button"
-        );
-
       if (requestsButton) {
 
         requestsButton.addEventListener(
           "click",
           () => {
 
-            togglePanel(
+            this.toggleActivityPanel(
               "emimatch-requests-panel"
             );
 
@@ -1418,15 +1421,6 @@
 
       }
 
-
-      /* =================================================
-         ACTUALIZAR
-      ================================================= */
-
-      const refreshButton =
-        document.getElementById(
-          "emimatch-activity-refresh"
-        );
 
       if (refreshButton) {
 
@@ -1442,7 +1436,156 @@
       }
 
 
-      this.loadActivity();
+      /*
+       * CARGAR DATOS
+       */
+
+      await this.loadActivity();
+
+
+      /*
+       * CONTROLAR CAMBIOS DE SESIÓN
+       */
+
+      try {
+
+        client.auth.onAuthStateChange(
+          (
+            event,
+            newSession
+          ) => {
+
+            if (
+              event ===
+              "SIGNED_OUT" ||
+              !newSession
+            ) {
+
+              const current =
+                document.getElementById(
+                  "emimatch-activity-center"
+                );
+
+              if (current) {
+                current.remove();
+              }
+
+              return;
+            }
+
+            if (
+              event ===
+              "SIGNED_IN" ||
+              event ===
+              "TOKEN_REFRESHED"
+            ) {
+
+              const existing =
+                document.getElementById(
+                  "emimatch-activity-center"
+                );
+
+              if (!existing) {
+
+                this.initActivityCenter();
+
+              }
+
+            }
+
+          }
+        );
+
+      } catch (error) {
+
+        console.warn(
+          "EmiMatch: no se pudo registrar el cambio de sesión.",
+          error
+        );
+
+      }
+    },
+=================================================
+       CLIENTE SUPABASE
+    ================================================= */
+
+    getSupabaseClient() {
+
+      if (
+        window.EmiMatchSupabase
+      ) {
+
+        return window.EmiMatchSupabase;
+
+      }
+
+      if (
+        window.supabase &&
+        typeof window.supabase.createClient ===
+          "function"
+      ) {
+
+        const config =
+          window.EMIMATCH_CONFIG;
+
+        if (
+          config &&
+          config.supabaseUrl &&
+          config.supabaseKey
+        ) {
+
+          window.EmiMatchSupabase =
+            window.supabase.createClient(
+              config.supabaseUrl,
+              config.supabaseKey
+            );
+
+          return window.EmiMatchSupabase;
+        }
+      }
+
+      return null;
+    },
+
+
+    /* =================================================
+       MOSTRAR / OCULTAR PANEL
+    ================================================= */
+
+    toggleActivityPanel(
+      panelId
+    ) {
+
+      const panels = [
+        "emimatch-messages-panel",
+        "emimatch-notifications-panel",
+        "emimatch-requests-panel"
+      ];
+
+      panels.forEach(
+        (id) => {
+
+          const panel =
+            document.getElementById(id);
+
+          if (!panel) {
+            return;
+          }
+
+          if (id === panelId) {
+
+            panel.hidden =
+              !panel.hidden;
+
+          } else {
+
+            panel.hidden =
+              true;
+
+          }
+
+        }
+      );
     },
 
 
@@ -1452,15 +1595,12 @@
 
     async loadActivity() {
 
-      const config =
-        window.EMIMATCH_CONFIG;
+      const center =
+        document.getElementById(
+          "emimatch-activity-center"
+        );
 
-      if (
-        !config ||
-        !config.supabaseUrl ||
-        !config.supabaseKey ||
-        !window.supabase
-      ) {
+      if (!center) {
         return;
       }
 
@@ -1469,39 +1609,74 @@
           "emimatch-activity-status"
         );
 
-      try {
+      const client =
+        this.getSupabaseClient();
 
-        const client =
-          window.EmiMatchActivitySupabase ||
-          (
-            window.EmiMatchActivitySupabase =
-              window.supabase.createClient(
-                config.supabaseUrl,
-                config.supabaseKey
-              )
-          );
-
-
-        const {
-          data: {
-            user
-          } = {}
-        } =
-          await client.auth.getUser();
-
-
-        if (!user) {
-          return;
-        }
-
+      if (!client) {
 
         if (status) {
 
           status.textContent =
-            "Actualizando actividad...";
+            "No pudimos conectar con la aplicación.";
 
         }
 
+        return;
+      }
+
+
+      let user = null;
+
+      try {
+
+        const sessionResult =
+          await client.auth.getSession();
+
+        const session =
+          sessionResult &&
+          sessionResult.data
+            ? sessionResult.data.session
+            : null;
+
+        user =
+          session &&
+          session.user
+            ? session.user
+            : null;
+
+      } catch (error) {
+
+        console.error(
+          "EmiMatch Activity Session:",
+          error
+        );
+
+        return;
+      }
+
+
+      /*
+       * SI NO HAY USUARIO,
+       * EL CENTRO NO DEBE EXISTIR.
+       */
+
+      if (!user) {
+
+        center.remove();
+
+        return;
+      }
+
+
+      if (status) {
+
+        status.textContent =
+          "Actualizando actividad...";
+
+      }
+
+
+      try {
 
         const [
           messagesResult,
@@ -1620,8 +1795,7 @@
 
         const messagesCount =
           Number(
-            messagesResult.count ||
-            0
+            messagesResult.count || 0
           );
 
 
@@ -1649,6 +1823,10 @@
             : [];
 
 
+        /*
+         * IDENTIFICAR MATCHES
+         */
+
         const matchUserIds =
           new Set(
 
@@ -1669,6 +1847,12 @@
 
           );
 
+
+        /*
+         * SOLICITUDES:
+         * LIKES RECIBIDOS QUE TODAVÍA
+         * NO SON MATCH.
+         */
 
         const requests =
           receivedLikes.filter(
@@ -1691,17 +1875,19 @@
           );
 
 
+        /*
+         * CONTADORES
+         */
+
         const messagesElement =
           document.getElementById(
             "emimatch-messages-count"
           );
 
-
         const notificationsElement =
           document.getElementById(
             "emimatch-notifications-count"
           );
-
 
         const requestsElement =
           document.getElementById(
@@ -1744,6 +1930,10 @@
 
         }
 
+
+        /*
+         * RENDER
+         */
 
         await this.renderActivityMessages(
           client,
@@ -1802,12 +1992,10 @@
         }
 
       }
-
     },
 
 
-    /*
-     =================================================
+    /* =================================================
        RENDER MENSAJES
     ================================================= */
 
@@ -2248,7 +2436,8 @@
     },
 
 
-    /* =================================================
+    /*
+    =================================================
        RENDER SOLICITUDES
     ================================================= */
 
@@ -2549,7 +2738,10 @@
 
 
   app.logUpdate(
-    "Componentes compartidos y Centro de actividad interactivo cargados correctamente."
+    "Componentes compartidos y Centro de actividad v1.3.0 cargados correctamente."
   );
 
 })();
+
+    /*
+     
