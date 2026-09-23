@@ -1,7 +1,7 @@
 /* =====================================================
    EmiMatch — Componentes compartidos
-   v1.1.1
-   Centro de actividad
+   v1.2.0
+   Centro de actividad interactivo
 ===================================================== */
 
 (() => {
@@ -68,25 +68,15 @@
         bottom: 24px;
         transform: translateX(-50%);
         z-index: 99999;
-
         width: min(92%, 440px);
-
         padding: 14px 18px;
-
         border-radius: 16px;
-
         background: rgba(15,23,42,.96);
-
         color: #ffffff;
-
         border: 1px solid rgba(255,255,255,.12);
-
-        box-shadow:
-          0 15px 40px rgba(0,0,0,.35);
-
+        box-shadow: 0 15px 40px rgba(0,0,0,.35);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
-
         font-family: Arial, sans-serif;
       `;
 
@@ -117,13 +107,11 @@
     getIcon(type) {
 
       const icons = {
-
         success: "✅",
         error: "❌",
         warning: "⚠️",
         info: "ℹ️",
         loading: "🔄"
-
       };
 
       return (
@@ -134,59 +122,45 @@
 
 
     /* =================================================
-       ATAJOS DE MENSAJES
+       ATAJOS
     ================================================= */
 
     success(message) {
-
       this.notify(
         message,
         "success"
       );
-
     },
 
-
     error(message) {
-
       this.notify(
         message,
         "error"
       );
-
     },
 
-
     warning(message) {
-
       this.notify(
         message,
         "warning"
       );
-
     },
 
-
     info(message) {
-
       this.notify(
         message,
         "info"
       );
-
     },
-
 
     loading(
       message = "Cargando..."
     ) {
-
       this.notify(
         message,
         "loading",
         999999
       );
-
     },
 
 
@@ -220,40 +194,24 @@
       const element =
         document.createElement(tag);
 
-      if (
-        options.className
-      ) {
-
+      if (options.className) {
         element.className =
           options.className;
-
       }
 
-      if (
-        options.id
-      ) {
-
+      if (options.id) {
         element.id =
           options.id;
-
       }
 
-      if (
-        options.text != null
-      ) {
-
+      if (options.text != null) {
         element.textContent =
           options.text;
-
       }
 
-      if (
-        options.html != null
-      ) {
-
+      if (options.html != null) {
         element.innerHTML =
           options.html;
-
       }
 
       return element;
@@ -279,21 +237,15 @@
       container.innerHTML = `
 
         <div class="emimatch-empty-icon">
-
           ${this.escapeHTML(icon)}
-
         </div>
 
         <h3>
-
           ${this.escapeHTML(title)}
-
         </h3>
 
         <p>
-
           ${this.escapeHTML(message)}
-
         </p>
 
       `;
@@ -303,7 +255,7 @@
 
 
     /* =================================================
-       ESTADO DE ERROR
+       ESTADO ERROR
     ================================================= */
 
     errorState(
@@ -323,21 +275,15 @@
       container.innerHTML = `
 
         <div class="emimatch-error-icon">
-
           ❌
-
         </div>
 
         <h3>
-
           ${this.escapeHTML(title)}
-
         </h3>
 
         <p>
-
           ${this.escapeHTML(message)}
-
         </p>
 
       `;
@@ -416,7 +362,6 @@
           "emimatch-components-base-style"
         )
       ) {
-
         return;
       }
 
@@ -429,29 +374,19 @@
       style.textContent = `
 
         .emimatch-notification-content {
-
           display: flex;
-
           align-items: center;
-
           gap: 10px;
-
         }
 
         .emimatch-notification-icon {
-
           font-size: 18px;
-
           flex: 0 0 auto;
-
         }
 
         .emimatch-notification-message {
-
           font-size: 14px;
-
           line-height: 1.4;
-
         }
 
       `;
@@ -462,8 +397,7 @@
     },
 
 
-    /*
-     =================================================
+    /* =================================================
        ESTILOS CENTRO DE ACTIVIDAD
     ================================================= */
 
@@ -474,7 +408,6 @@
           "emimatch-activity-style"
         )
       ) {
-
         return;
       }
 
@@ -539,7 +472,6 @@
 
           -webkit-backdrop-filter:
             blur(18px);
-
         }
 
 
@@ -559,7 +491,6 @@
 
           margin-bottom:
             16px;
-
         }
 
 
@@ -585,7 +516,6 @@
 
           margin-bottom:
             5px;
-
         }
 
 
@@ -599,7 +529,6 @@
 
           font-size:
             24px;
-
         }
 
 
@@ -616,7 +545,6 @@
 
           line-height:
             1.5;
-
         }
 
 
@@ -659,7 +587,6 @@
 
           cursor:
             pointer;
-
         }
 
 
@@ -679,7 +606,6 @@
 
           gap:
             12px;
-
         }
 
 
@@ -732,8 +658,14 @@
           cursor:
             pointer;
 
-          font: inherit;
+          font:
+            inherit;
 
+          width:
+            100%;
+
+          box-sizing:
+            border-box;
         }
 
 
@@ -746,7 +678,6 @@
               108,
               .34
             );
-
         }
 
 
@@ -757,7 +688,6 @@
 
           flex:
             0 0 auto;
-
         }
 
 
@@ -774,7 +704,6 @@
 
           flex:
             1;
-
         }
 
 
@@ -782,7 +711,6 @@
 
           font-size:
             15px;
-
         }
 
 
@@ -799,7 +727,6 @@
 
           line-height:
             1.35;
-
         }
 
 
@@ -836,7 +763,6 @@
 
           font-weight:
             700;
-
         }
 
 
@@ -867,7 +793,6 @@
               24,
               .32
             );
-
         }
 
 
@@ -881,7 +806,6 @@
 
           color:
             #f1d99a;
-
         }
 
 
@@ -895,7 +819,6 @@
 
           color:
             #b9bdd1;
-
         }
 
 
@@ -909,7 +832,6 @@
 
           margin-bottom:
             7px;
-
         }
 
 
@@ -920,7 +842,6 @@
 
           color:
             #ffffff;
-
         }
 
 
@@ -931,7 +852,6 @@
 
           margin-top:
             5px;
-
         }
 
 
@@ -957,7 +877,6 @@
               255,
               .07
             );
-
         }
 
 
@@ -965,7 +884,6 @@
 
           border-bottom:
             0;
-
         }
 
 
@@ -988,7 +906,6 @@
 
           background:
             #1b2242;
-
         }
 
 
@@ -999,7 +916,6 @@
 
           flex:
             1;
-
         }
 
 
@@ -1010,7 +926,6 @@
 
           color:
             #ffffff;
-
         }
 
 
@@ -1025,6 +940,17 @@
           margin-top:
             3px;
 
+          line-height:
+            1.4;
+
+          overflow:
+            hidden;
+
+          text-overflow:
+            ellipsis;
+
+          white-space:
+            nowrap;
         }
 
 
@@ -1044,7 +970,13 @@
 
           white-space:
             nowrap;
+        }
 
+
+        .emimatch-activity-profile:hover {
+
+          text-decoration:
+            underline;
         }
 
 
@@ -1061,7 +993,6 @@
 
           min-height:
             16px;
-
         }
 
 
@@ -1076,7 +1007,6 @@
 
             border-radius:
               20px;
-
           }
 
 
@@ -1084,7 +1014,6 @@
 
             font-size:
               20px;
-
           }
 
 
@@ -1092,7 +1021,6 @@
 
             grid-template-columns:
               1fr;
-
           }
 
 
@@ -1100,7 +1028,6 @@
 
             padding:
               14px;
-
           }
 
 
@@ -1108,7 +1035,6 @@
 
             align-items:
               flex-start;
-
           }
 
 
@@ -1116,7 +1042,6 @@
 
             font-size:
               12px;
-
           }
 
         }
@@ -1129,9 +1054,8 @@
     },
 
 
-    /*
-     =================================================
-       CREAR CENTRO DE ACTIVIDAD
+    /* =================================================
+       CREAR CENTRO
     ================================================= */
 
     initActivityCenter() {
@@ -1141,7 +1065,6 @@
           "emimatch-activity-center"
         )
       ) {
-
         return;
       }
 
@@ -1205,9 +1128,10 @@
 
         <div class="emimatch-activity-grid">
 
-          <a
+          <button
+            type="button"
             class="emimatch-activity-card"
-            href="matches.html"
+            id="emimatch-messages-button"
           >
 
             <span
@@ -1225,7 +1149,7 @@
               </strong>
 
               <small>
-                Conversaciones y matches
+                Conversaciones recientes
               </small>
 
             </span>
@@ -1237,7 +1161,7 @@
               0
             </span>
 
-          </a>
+          </button>
 
 
           <button
@@ -1303,13 +1227,32 @@
             </span>
 
             <span
-              class="emimatch-activity-count"
+            class="emimatch-activity-count"
               id="emimatch-requests-count"
             >
               0
             </span>
 
           </button>
+
+        </div>
+
+
+        <div
+          class="emimatch-activity-panel"
+          id="emimatch-messages-panel"
+          hidden
+        >
+
+          <div
+            class="emimatch-activity-panel-title"
+          >
+            💬 Mensajes recientes
+          </div>
+
+          <div
+            id="emimatch-messages-list"
+          ></div>
 
         </div>
 
@@ -1363,9 +1306,8 @@
       main.prepend(center);
 
 
-      /*
-       =================================================
-         ABRIR / CERRAR PANELES
+      /* =================================================
+         CAMBIO DE PANELES
       ================================================= */
 
       const togglePanel =
@@ -1401,14 +1343,42 @@
         };
 
 
+      /*
+       =================================================
+         MENSAJES
+      ================================================= */
+
+      const messagesButton =
+        document.getElementById(
+          "emimatch-messages-button"
+        );
+
+      if (messagesButton) {
+
+        messagesButton.addEventListener(
+          "click",
+          () => {
+
+            togglePanel(
+              "emimatch-messages-panel"
+            );
+
+          }
+        );
+
+      }
+
+
+      /* =================================================
+         NOTIFICACIONES
+      ================================================= */
+
       const notificationsButton =
         document.getElementById(
           "emimatch-notifications-button"
         );
 
-      if (
-        notificationsButton
-      ) {
+      if (notificationsButton) {
 
         notificationsButton.addEventListener(
           "click",
@@ -1424,14 +1394,16 @@
       }
 
 
+      /* =================================================
+         SOLICITUDES
+      ================================================= */
+
       const requestsButton =
         document.getElementById(
           "emimatch-requests-button"
         );
 
-      if (
-        requestsButton
-      ) {
+      if (requestsButton) {
 
         requestsButton.addEventListener(
           "click",
@@ -1447,14 +1419,16 @@
       }
 
 
+      /* =================================================
+         ACTUALIZAR
+      ================================================= */
+
       const refreshButton =
         document.getElementById(
           "emimatch-activity-refresh"
         );
 
-      if (
-        refreshButton
-      ) {
+      if (refreshButton) {
 
         refreshButton.addEventListener(
           "click",
@@ -1487,16 +1461,13 @@
         !config.supabaseKey ||
         !window.supabase
       ) {
-
         return;
       }
-
 
       const status =
         document.getElementById(
           "emimatch-activity-status"
         );
-
 
       try {
 
@@ -1520,7 +1491,6 @@
 
 
         if (!user) {
-
           return;
         }
 
@@ -1536,7 +1506,8 @@
         const [
           messagesResult,
           matchesResult,
-          requestsResult
+          requestsResult,
+          recentMessagesResult
         ] =
           await Promise.all([
 
@@ -1587,7 +1558,26 @@
                     false
                 }
               )
-              .limit(20)
+              .limit(20),
+
+
+            client
+              .from("messages")
+              .select(
+                "id,sender_id,content,created_at"
+              )
+              .eq(
+                "receiver_id",
+                user.id
+              )
+              .order(
+                "created_at",
+                {
+                  ascending:
+                    false
+                }
+              )
+              .limit(10)
 
           ]);
 
@@ -1619,6 +1609,15 @@
         }
 
 
+        if (
+          recentMessagesResult.error
+        ) {
+
+          throw recentMessagesResult.error;
+
+        }
+
+
         const messagesCount =
           Number(
             messagesResult.count ||
@@ -1639,6 +1638,14 @@
             requestsResult.data
           )
             ? requestsResult.data
+            : [];
+
+
+        const recentMessages =
+          Array.isArray(
+            recentMessagesResult.data
+          )
+            ? recentMessagesResult.data
             : [];
 
 
@@ -1689,10 +1696,12 @@
             "emimatch-messages-count"
           );
 
+
         const notificationsElement =
           document.getElementById(
             "emimatch-notifications-count"
           );
+
 
         const requestsElement =
           document.getElementById(
@@ -1734,6 +1743,13 @@
             );
 
         }
+
+
+        await this.renderActivityMessages(
+          client,
+          user.id,
+          recentMessages
+        );
 
 
         await this.renderActivityNotifications(
@@ -1787,6 +1803,243 @@
 
       }
 
+    },
+
+
+    /*
+     =================================================
+       RENDER MENSAJES
+    ================================================= */
+
+    async renderActivityMessages(
+      client,
+      currentUserId,
+      messages
+    ) {
+
+      const list =
+        document.getElementById(
+          "emimatch-messages-list"
+        );
+
+      if (!list) {
+        return;
+      }
+
+
+      if (!messages.length) {
+
+        list.innerHTML = `
+
+          <div
+            class="emimatch-activity-empty"
+          >
+
+            <span>
+              💬
+            </span>
+
+            <strong>
+              No tenés mensajes todavía
+            </strong>
+
+            <small>
+              Cuando recibas un mensaje aparecerá aquí.
+            </small>
+
+          </div>
+
+        `;
+
+        return;
+      }
+
+
+      const ids =
+        [
+          ...new Set(
+
+            messages
+              .map(
+                (item) =>
+                  item.sender_id
+              )
+              .filter(
+                (id) =>
+                  id &&
+                  id !== currentUserId
+              )
+
+          )
+        ];
+
+
+      if (!ids.length) {
+
+        list.innerHTML = `
+
+          <div
+            class="emimatch-activity-empty"
+          >
+
+            <span>
+              💬
+            </span>
+
+            <strong>
+              No tenés mensajes todavía
+            </strong>
+
+            <small>
+              Cuando recibas un mensaje aparecerá aquí.
+            </small>
+
+          </div>
+
+        `;
+
+        return;
+      }
+
+
+      const {
+        data: profiles,
+        error
+      } =
+        await client
+          .from("profiles")
+          .select(
+            "id,nombre,foto_url"
+          )
+          .in(
+            "id",
+            ids
+          );
+
+
+      if (error) {
+        throw error;
+      }
+
+
+      const profileMap =
+        new Map(
+
+          (
+            profiles || []
+          ).map(
+            (profile) => {
+
+              return [
+                profile.id,
+                profile
+              ];
+
+            }
+          )
+
+        );
+
+
+      list.innerHTML =
+        messages
+          .map(
+            (message) => {
+
+              const profile =
+                profileMap.get(
+                  message.sender_id
+                ) || {};
+
+
+              const name =
+                this.escapeHTML(
+                  profile.nombre ||
+                  "Usuario"
+                );
+
+
+              const content =
+                this.escapeHTML(
+                  message.content ||
+                  "Nuevo mensaje"
+                );
+
+
+              const photo =
+                profile.foto_url
+                  ? this.escapeHTML(
+                      profile.foto_url
+                    )
+                  : "";
+
+
+              const href =
+                "chat.html?user=" +
+                encodeURIComponent(
+                  message.sender_id
+                );
+
+
+              return `
+
+                <div
+                  class="emimatch-activity-item"
+                >
+
+                  ${
+                    photo
+
+                      ? `
+
+                        <img
+                          class="emimatch-activity-avatar"
+                          src="${photo}"
+                          alt=""
+                        >
+
+                      `
+
+                      : `
+
+                        <div
+                          class="emimatch-activity-avatar"
+                          aria-hidden="true"
+                        ></div>
+
+                      `
+                  }
+
+
+                  <div
+                    class="emimatch-activity-item-copy"
+                  >
+
+                    <strong>
+                      ${name}
+                    </strong>
+
+                    <small>
+                      ${content}
+                    </small>
+
+                  </div>
+
+
+                  <a
+                    class="emimatch-activity-profile"
+                    href="${href}"
+                  >
+                    Abrir chat
+                  </a>
+
+                </div>
+
+              `;
+
+            }
+          )
+          .join("");
     },
 
 
@@ -1864,6 +2117,11 @@
         ];
 
 
+      if (!ids.length) {
+        return;
+      }
+
+
       const {
         data: profiles,
         error
@@ -1880,9 +2138,7 @@
 
 
       if (error) {
-
         throw error;
-
       }
 
 
@@ -1913,6 +2169,7 @@
               const profile =
                 profileMap.get(id) ||
                 {};
+
 
               const name =
                 this.escapeHTML(
@@ -1988,12 +2245,10 @@
             }
           )
           .join("");
-
     },
 
 
-    /*
-     =================================================
+    /* =================================================
        RENDER SOLICITUDES
     ================================================= */
 
@@ -2060,6 +2315,34 @@
         ];
 
 
+      if (!ids.length) {
+
+        list.innerHTML = `
+
+          <div
+            class="emimatch-activity-empty"
+          >
+
+            <span>
+              💫
+            </span>
+
+            <strong>
+              No tenés solicitudes pendientes
+            </strong>
+
+            <small>
+              Cuando alguien indique interés aparecerá aquí.
+            </small>
+
+          </div>
+
+        `;
+
+        return;
+      }
+
+
       const {
         data: profiles,
         error
@@ -2076,9 +2359,7 @@
 
 
       if (error) {
-
         throw error;
-
       }
 
 
@@ -2211,7 +2492,6 @@
             }
           )
           .join("");
-
     }
 
   };
@@ -2227,14 +2507,14 @@
     );
 
 
-/* =================================================
+  /* =================================================
      ESTILOS
   ================================================= */
 
   Components.injectBaseStyles();
 
   Components.injectActivityStyles();
-   
+
 
   /* =================================================
      INICIALIZACIÓN
@@ -2269,7 +2549,7 @@
 
 
   app.logUpdate(
-    "Componentes compartidos y Centro de actividad cargados correctamente."
+    "Componentes compartidos y Centro de actividad interactivo cargados correctamente."
   );
 
 })();
