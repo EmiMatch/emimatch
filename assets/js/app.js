@@ -1,15 +1,12 @@
 /* =====================================================
    EmiMatch — Núcleo central de aplicación
-   v1.0.0
+   v1.0.1
 ===================================================== */
 
 (() => {
   "use strict";
 
   const config = window.EMIMATCH_CONFIG;
-     
-   const analytics =
-    window.EmiMatchAnalytics || null;
 
   if (!config) {
     console.error(
@@ -18,7 +15,7 @@
     return;
   }
 
-  window.EmiMatchApp.analytics
+  window.EmiMatchApp = {
 
     config,
 
