@@ -3,8 +3,12 @@ name: Android APK
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   build:
+    name: Compilar EmiMatch APK
     runs-on: ubuntu-latest
 
     steps:
@@ -16,31 +20,59 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
+          cache: gradle
 
       - name: Configurar Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
+        with:
+          cmdline-tools-version: '15859902'
+          accept-android-sdk-licenses: 'true'
+          log-accepted-android-sdk-licenses: 'false'
+          packages: 'platform-tools'
 
-      - name: Aceptar licencias Android
-        run: yes | sdkmanager --licenses
-
-      - name: Instalar SDK Android
+      - name: Instalar Android SDK requerido
         run: |
-          sdkmanager "platform-tools"
           sdkmanager "platforms;android-36"
           sdkmanager "build-tools;36.0.0"
 
-      - name: Instalar dependencias
+      - name: Verificar archivos de EmiMatch
+        run: |
+          test -f package.json
+          test -f package-lock.json
+          test -f capacitor.config.json
+          test -d android
+          test -d www
+          echo "Archivos principales encontrados correctamente."
+
+      - name: Instalar dependencias Node
         run: npm ci
+
+      - name: Verificar Capacitor
+        run: npx cap --version
 
       - name: Sincronizar Capacitor
         run: npx cap sync android
 
-      - name: Compilar APK
-        working-directory: android
-        run: ./gradlew assembleDebug
+      - name: Dar permisos a Gradle
+        run: chmod +x android/gradlew
 
-      - name: Subir APK
+      - name: Limpiar proyecto Android
+        working-directory: android
+        run: ./gradlew clean --no-daemon
+
+      - name: Compilar APK Debug
+        working-directory: android
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: Verificar APK generado
+        run: |
+          test -f android/app/build/outputs/apk/debug/app-debug.apk
+          ls -lh android/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Subir APK de EmiMatch
         uses: actions/upload-artifact@v4
         with:
           name: EmiMatch-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 7
