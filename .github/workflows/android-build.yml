@@ -20,56 +20,53 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
-          cache: gradle
 
       - name: Configurar Android SDK
         uses: android-actions/setup-android@v4
         with:
-          cmdline-tools-version: '15859902'
-          accept-android-sdk-licenses: 'true'
-          log-accepted-android-sdk-licenses: 'false'
-          packages: 'platform-tools'
+          accept-android-sdk-licenses: true
 
-      - name: Instalar Android SDK requerido
+      - name: Instalar SDK Android
         run: |
+          sdkmanager "platform-tools"
           sdkmanager "platforms;android-36"
           sdkmanager "build-tools;36.0.0"
 
-      - name: Verificar archivos de EmiMatch
+      - name: Verificar proyecto EmiMatch
         run: |
+          echo "=== Archivos principales ==="
+          ls -la
+          echo "=== Android ==="
+          ls -la android
+          echo "=== Web ==="
+          ls -la www
           test -f package.json
           test -f package-lock.json
           test -f capacitor.config.json
-          test -d android
+          test -f android/gradlew
           test -d www
-          echo "Archivos principales encontrados correctamente."
+          echo "Proyecto EmiMatch encontrado correctamente."
 
-      - name: Instalar dependencias Node
+      - name: Instalar dependencias
         run: npm ci
-
-      - name: Verificar Capacitor
-        run: npx cap --version
 
       - name: Sincronizar Capacitor
         run: npx cap sync android
 
-      - name: Dar permisos a Gradle
+      - name: Preparar Gradle
         run: chmod +x android/gradlew
 
-      - name: Limpiar proyecto Android
-        working-directory: android
-        run: ./gradlew clean --no-daemon
-
-      - name: Compilar APK Debug
+      - name: Compilar EmiMatch APK
         working-directory: android
         run: ./gradlew assembleDebug --no-daemon --stacktrace
 
-      - name: Verificar APK generado
+      - name: Verificar APK
         run: |
           test -f android/app/build/outputs/apk/debug/app-debug.apk
+          echo "APK generado correctamente:"
           ls -lh android/app/build/outputs/apk/debug/app-debug.apk
 
-      - name: Subir APK de EmiMatch
+      - name: Subir APK
         uses: actions/upload-artifact@v4
         with:
           name: EmiMatch-APK
