@@ -1100,14 +1100,8 @@
            */
 
           const redirectUrl =
-            window.location.origin +
-            window.location.pathname
-              .replace(
-                "index.html",
-                "restablecer.html"
-              );
-
-
+  new URL("restablecer.html", window.location.href).href;
+              
           const { error } =
             await client.auth.resetPasswordForEmail(
               email,
