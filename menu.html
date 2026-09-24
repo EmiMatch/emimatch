@@ -1,307 +1,60 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Menú - EmiMatch</title>
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f5f7fb;
-      color: #222;
-      padding-bottom: 85px;
-    }
-
-    .contenido {
-      max-width: 600px;
-      margin: auto;
-      padding: 20px;
-      text-align: center;
-    }
-
-    .logo {
-      width: 85px;
-      height: 85px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #071a3d, #123b78);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 30px auto 15px;
-      color: #d4af37;
-      font-size: 38px;
-      box-shadow: 0 5px 20px rgba(0,0,0,.15);
-    }
-
-    h1 {
-      color: #071a3d;
-      margin-bottom: 5px;
-    }
-
-    p {
-      color: #777;
-    }
-
-    .boton {
-      display: block;
-      width: 100%;
-      padding: 15px;
-      margin: 12px 0;
-      background: white;
-      color: #123b78;
-      text-decoration: none;
-      border-radius: 14px;
-      font-weight: bold;
-      box-shadow: 0 3px 12px rgba(0,0,0,.08);
-    }
-
-    .boton:hover {
-      background: #f0f3f8;
-    }
-
-    /* BARRA INFERIOR */
-
-    .barra {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-
-      height: 72px;
-
-      background: white;
-
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-
-      border-top: 1px solid #ddd;
-
-      box-shadow:
-        0 -3px 15px rgba(0,0,0,.12);
-
-      z-index: 9999;
-    }
-
-    .nav-item {
-      position: relative;
-
-      text-decoration: none;
-
-      color: #777;
-
-      text-align: center;
-
-      font-size: 12px;
-
-      min-width: 55px;
-    }
-
-    .nav-icon {
-      display: block;
-
-      font-size: 25px;
-
-      line-height: 28px;
-
-      margin-bottom: 3px;
-    }
-
-    .nav-item.activo {
-      color: #123b78;
-      font-weight: bold;
-    }
-
-    .badge {
-      position: absolute;
-
-      top: -4px;
-      right: 5px;
-
-      min-width: 18px;
-      height: 18px;
-
-      padding: 2px 5px;
-
-      background: #e53935;
-
-      color: white;
-
-      border-radius: 20px;
-
-      font-size: 11px;
-
-      display: none;
-
-      align-items: center;
-      justify-content: center;
-    }
-
-    @media (min-width: 700px) {
-
-      .barra {
-        max-width: 600px;
-
-        left: 50%;
-
-        transform: translateX(-50%);
-
-        border-radius: 18px 18px 0 0;
-      }
-
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Menú - EmiMatch</title>
+<link rel="stylesheet" href="assets/css/app.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/components.js"></script>
 </head>
-
 <body>
-
-<div class="contenido">
-
-  <div class="logo">
-    💕
-  </div>
-
-  <h1>EmiMatch</h1>
-
-  <p>
-    Conectá con personas compatibles.
-  </p>
-
-  <a
-    class="boton"
-    href="perfil.html"
-  >
-    👤 Mi perfil
-  </a>
-
-  <a
-    class="boton"
-    href="descubrir.html"
-  >
-    🔎 Descubrir personas
-  </a>
-
-  <a
-    class="boton"
-    href="likes.html"
-  >
-    ❤️ Me gustas
-  </a>
-
-  <a
-    class="boton"
-    href="chat.html"
-  >
-    💕 Mis Matches
-  </a>
-
-  <a
-    class="boton"
-    href="notificaciones.html"
-  >
-    🔔 Notificaciones
-  </a>
-
-  <a
-    class="boton"
-    href="configuracion.html"
-  >
-    ⚙️ Configuración
-  </a>
-
+<main class="em-container em-section">
+<section class="em-shell">
+<div class="em-card">
+<div class="em-brand"><span class="em-brand-mark">💕</span><span>EmiMatch</span></div>
+<h1>☰ Menú</h1>
+<p class="em-muted">Todo lo que necesitás para administrar tu experiencia.</p>
 </div>
 
+<div class="em-card">
+<h2>💘 Conexiones</h2>
+<a class="em-button em-button-primary" href="descubrir.html">🔎 Descubrir personas</a>
+<a class="em-button" href="matches.html">💕 Mis Matches</a>
+<a class="em-button" href="likes.html">❤️ Me gustas</a>
+<a class="em-button" href="chat.html">💬 Mis mensajes</a>
+</div>
 
-<!-- =========================
-     BARRA INFERIOR
-========================= -->
+<div class="em-card">
+<h2>👤 Mi cuenta</h2>
+<a class="em-button" href="perfil.html">👤 Mi perfil</a>
+<a class="em-button" href="perfil-usuario.html">🔗 Ver perfil público</a>
+<a class="em-button" href="notificaciones.html">🔔 Notificaciones</a>
+<a class="em-button" href="configuracion.html">⚙️ Configuración</a>
+</div>
 
-<nav class="barra">
+<div class="em-card">
+<h2>🛡️ Seguridad</h2>
+<p class="em-muted">Administrá tu cuenta y mantené una experiencia segura dentro de EmiMatch.</p>
+<a class="em-button" href="configuracion.html">🔐 Seguridad y cuenta</a>
+</div>
 
-  <a
-    href="perfil.html"
-    class="nav-item"
-  >
-
-    <span class="nav-icon">
-      👤
-    </span>
-
-    Perfil
-
-  </a>
-
-
-  <a
-    href="descubrir.html"
-    class="nav-item"
-  >
-
-    <span class="nav-icon">
-      🔎
-    </span>
-
-    Descubrir
-
-  </a>
-
-
-  <a
-    href="likes.html"
-    class="nav-item"
-  >
-
-    <span class="nav-icon">
-      ❤️
-    </span>
-
-    Me gustas
-
-  </a>
-
-
-  <a
-    href="chat.html"
-    class="nav-item"
-  >
-
-    <span class="nav-icon">
-      💕
-    </span>
-
-    Matches
-
-  </a>
-
-
-  <a
-    href="notificaciones.html"
-    class="nav-item"
-  >
-
-    <span class="nav-icon">
-      🔔
-    </span>
-
-    Notificaciones
-
-    <span
-      id="badgeNotificaciones"
-      class="badge"
-    >
-      0
-    </span>
-
-  </a>
-
-</nav>
-
+<div id="message" class="em-alert" hidden></div>
+</section>
+</main>
+<script>
+(()=>{
+"use strict";
+const c=window.EMIMATCH_CONFIG;
+if(!c){location.replace('index.html');return;}
+const db=window.supabase.createClient(c.supabaseUrl,c.supabaseKey);
+(async()=>{
+ const {data,error}=await db.auth.getSession();
+ if(error||!data.session){location.replace('index.html');}
+})();
+})();
+</script>
 </body>
 </html>
