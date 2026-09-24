@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="EmiMatch - Descubrí nuevas conexiones.">
+  <meta name="theme-color" content="#08111f">
+
   <title>EmiMatch - Descubrir</title>
 
   <link rel="stylesheet" href="assets/css/app.css">
@@ -17,22 +20,22 @@
     .discover-page {
       max-width: 700px;
       margin: auto;
-      padding: 90px 16px 120px;
+      padding: 90px 15px 120px;
     }
 
     .discover-top {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       margin-bottom: 18px;
     }
 
-    .discover-top h1 {
+    .discover-title h1 {
       margin: 0;
-      font-size: 25px;
+      font-size: 26px;
     }
 
-    .discover-top p {
+    .discover-title p {
       margin: 5px 0 0;
       color: #9ca9bd;
       font-size: 14px;
@@ -45,17 +48,17 @@
       border-radius: 50%;
       background: #18243a;
       color: #fff;
-      font-size: 20px;
       cursor: pointer;
+      font-size: 19px;
     }
 
     .filters {
       display: none;
+      padding: 16px;
+      margin-bottom: 16px;
       background: #111d30;
       border: 1px solid #26344b;
       border-radius: 18px;
-      padding: 16px;
-      margin-bottom: 16px;
     }
 
     .filters.show {
@@ -74,10 +77,11 @@
       box-sizing: border-box;
       margin-bottom: 12px;
       padding: 12px;
-      border-radius: 12px;
       border: 1px solid #30415c;
+      border-radius: 12px;
       background: #0a1424;
       color: #fff;
+      outline: none;
     }
 
     .profile-card {
@@ -85,7 +89,7 @@
       background: #111d30;
       border: 1px solid #26344b;
       border-radius: 26px;
-      box-shadow: 0 20px 50px rgba(0,0,0,.3);
+      box-shadow: 0 20px 50px rgba(0,0,0,.32);
     }
 
     .profile-photo {
@@ -99,28 +103,6 @@
       height: 100%;
       object-fit: cover;
       display: block;
-    }
-
-    .photo-overlay {
-      position: absolute;
-      inset: auto 0 0 0;
-      padding: 55px 20px 20px;
-      background: linear-gradient(
-        transparent,
-        rgba(0,0,0,.88)
-      );
-    }
-
-    .profile-name {
-      margin: 0;
-      font-size: 27px;
-      font-weight: 800;
-    }
-
-    .profile-city {
-      margin-top: 5px;
-      color: #d5dbea;
-      font-size: 14px;
     }
 
     .badges {
@@ -140,21 +122,45 @@
       font-size: 12px;
     }
 
+    .photo-overlay {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      padding: 60px 20px 20px;
+      background: linear-gradient(
+        transparent,
+        rgba(0,0,0,.9)
+      );
+    }
+
+    .profile-name {
+      margin: 0;
+      font-size: 27px;
+      font-weight: 800;
+    }
+
+    .profile-city {
+      margin-top: 5px;
+      color: #d5dbea;
+      font-size: 14px;
+    }
+
     .profile-info {
       padding: 18px;
     }
 
     .profile-description {
+      margin: 0 0 14px;
       color: #d3d9e5;
       line-height: 1.5;
       font-size: 14px;
-      margin: 0 0 14px;
     }
 
     .interests {
       display: flex;
-      gap: 7px;
       flex-wrap: wrap;
+      gap: 7px;
     }
 
     .interest {
@@ -175,21 +181,21 @@
     .action {
       width: 58px;
       height: 58px;
-      border-radius: 50%;
       border: 0;
-      cursor: pointer;
-      font-size: 22px;
+      border-radius: 50%;
       background: #1a2940;
       color: #fff;
+      cursor: pointer;
+      font-size: 22px;
+    }
+
+    .action.pass {
+      background: #252f42;
     }
 
     .action.like {
       background: #d7aa3f;
       color: #111;
-    }
-
-    .action.pass {
-      background: #252f42;
     }
 
     .action.block {
@@ -206,22 +212,22 @@
       font-size: 14px;
     }
 
-    .error {
+    .message.error {
       border-color: #7f1d1d;
       color: #fecaca;
     }
 
     .empty {
-      text-align: center;
       padding: 50px 20px;
+      text-align: center;
       background: #111d30;
       border: 1px solid #26344b;
       border-radius: 22px;
     }
 
     .empty-icon {
-      font-size: 42px;
       margin-bottom: 10px;
+      font-size: 42px;
     }
 
     .empty h2 {
@@ -229,8 +235,10 @@
     }
 
     .empty p {
+      margin: 0;
       color: #9ca9bd;
       font-size: 14px;
+      line-height: 1.5;
     }
 
     .modal {
@@ -238,10 +246,10 @@
       position: fixed;
       inset: 0;
       z-index: 9999;
-      background: rgba(0,0,0,.75);
       align-items: center;
       justify-content: center;
       padding: 20px;
+      background: rgba(0,0,0,.78);
     }
 
     .modal.show {
@@ -251,33 +259,44 @@
     .modal-box {
       width: 100%;
       max-width: 380px;
-      background: #111d30;
+      box-sizing: border-box;
+      padding: 25px;
       border: 1px solid #30415c;
       border-radius: 25px;
-      padding: 25px;
+      background: #111d30;
       text-align: center;
     }
 
     .modal-box h2 {
-      margin-top: 0;
+      margin: 8px 0;
+    }
+
+    .modal-box p {
+      color: #aebbd0;
+      font-size: 14px;
     }
 
     .modal-box button {
       width: 100%;
+      margin-top: 10px;
       padding: 13px;
       border: 0;
       border-radius: 13px;
       background: #d7aa3f;
       color: #111;
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
-      margin-top: 10px;
+    }
+
+    .modal-box .secondary {
+      background: #26344b;
+      color: #fff;
     }
 
     @media (max-width: 600px) {
       .discover-page {
-        padding-left: 12px;
         padding-right: 12px;
+        padding-left: 12px;
       }
 
       .profile-photo {
@@ -297,23 +316,30 @@
   <main class="discover-page">
 
     <div class="discover-top">
-      <div>
+
+      <div class="discover-title">
         <h1>💕 Descubrir</h1>
         <p>Encontrá nuevas conexiones.</p>
       </div>
 
       <button
-        class="filter-btn"
         id="filterButton"
+        class="filter-btn"
         type="button"
-        aria-label="Filtros">
+        aria-label="Abrir filtros">
         ⚙️
       </button>
+
     </div>
 
-    <section class="filters" id="filters">
+    <section
+      id="filters"
+      class="filters">
 
-      <label for="minAge">Edad mínima</label>
+      <label for="minAge">
+        Edad mínima
+      </label>
+
       <input
         id="minAge"
         type="number"
@@ -321,7 +347,10 @@
         max="100"
         value="18">
 
-      <label for="maxAge">Edad máxima</label>
+      <label for="maxAge">
+        Edad máxima
+      </label>
+
       <input
         id="maxAge"
         type="number"
@@ -329,7 +358,10 @@
         max="100"
         value="60">
 
-      <label for="cityFilter">Ciudad</label>
+      <label for="cityFilter">
+        Ciudad
+      </label>
+
       <input
         id="cityFilter"
         type="text"
@@ -350,25 +382,41 @@
 
   </main>
 
-  <div class="modal" id="matchModal">
+  <!-- MATCH -->
+
+  <div
+    id="matchModal"
+    class="modal">
+
     <div class="modal-box">
-      <div style="font-size:50px;">💕</div>
-      <h2>¡Hicieron Match!</h2>
+
+      <div style="font-size:50px;">
+        💕
+      </div>
+
+      <h2>
+        ¡Hicieron Match!
+      </h2>
+
       <p id="matchText">
         Los dos se dieron Like.
       </p>
 
-      <button id="chatButton" type="button">
+      <button
+        id="chatButton"
+        type="button">
         💬 Enviar mensaje
       </button>
 
       <button
         id="closeMatch"
-        type="button"
-        style="background:#26344b;color:#fff;">
+        class="secondary"
+        type="button">
         Seguir descubriendo
       </button>
+
     </div>
+
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -376,6 +424,7 @@
 
   <script>
     (() => {
+
       "use strict";
 
       let db = null;
@@ -384,18 +433,29 @@
       let currentIndex = 0;
       let currentProfile = null;
 
-      const $ = (id) => document.getElementById(id);
+      const $ = id =>
+        document.getElementById(id);
 
-      function showStatus(message, error = false) {
+      function showStatus(
+        message,
+        error = false
+      ) {
+
+        if (!message) {
+          $("status").innerHTML = "";
+          return;
+        }
+
         $("status").innerHTML =
           '<div class="message ' +
           (error ? "error" : "") +
           '">' +
-          message +
+          escapeHTML(message) +
           "</div>";
       }
 
       function escapeHTML(value) {
+
         return String(value ?? "")
           .replace(/&/g, "&amp;")
           .replace(/</g, "&lt;")
@@ -405,12 +465,16 @@
       }
 
       function getPhoto(profile) {
+
         return profile.foto_url ||
           "https://placehold.co/700x900/111d30/d7aa3f?text=EmiMatch";
       }
 
       function getInterests(profile) {
-        if (!profile.intereses) return [];
+
+        if (!profile.intereses) {
+          return [];
+        }
 
         if (Array.isArray(profile.intereses)) {
           return profile.intereses;
@@ -418,79 +482,133 @@
 
         return String(profile.intereses)
           .split(",")
-          .map(x => x.trim())
+          .map(item => item.trim())
           .filter(Boolean);
       }
 
       function renderEmpty() {
+
         $("profileContainer").innerHTML = `
           <div class="empty">
-            <div class="empty-icon">💫</div>
-            <h2>No hay más perfiles</h2>
+
+            <div class="empty-icon">
+              💫
+            </div>
+
+            <h2>
+              No hay más perfiles
+            </h2>
+
             <p>
               Probá ampliar el rango de edad
-              o cambiar la ciudad.
+              o cambiar la ciudad para descubrir
+              nuevas personas.
             </p>
+
           </div>
         `;
       }
 
       function renderProfile() {
-        if (!profiles.length || currentIndex >= profiles.length) {
+
+        if (
+          !profiles.length ||
+          currentIndex >= profiles.length
+        ) {
+
           renderEmpty();
           return;
         }
 
-        currentProfile = profiles[currentIndex];
+        currentProfile =
+          profiles[currentIndex];
 
-        const interests = getInterests(currentProfile);
+        const interests =
+          getInterests(currentProfile);
 
-        const interestsHTML = interests
-          .slice(0, 8)
-          .map(
-            interest =>
-              `<span class="interest">${escapeHTML(interest)}</span>`
-          )
-          .join("");
+        const interestsHTML =
+          interests
+            .slice(0, 8)
+            .map(
+              item =>
+                `<span class="interest">
+                  ${escapeHTML(item)}
+                </span>`
+            )
+            .join("");
 
         $("profileContainer").innerHTML = `
+
           <article class="profile-card">
 
             <div class="profile-photo">
 
               <img
-                src="${escapeHTML(getPhoto(currentProfile))}"
-                alt="Foto de ${escapeHTML(currentProfile.nombre)}"
-                onerror="this.src='https://placehold.co/700x900/111d30/d7aa3f?text=EmiMatch';">
+                src="${escapeHTML(
+                  getPhoto(currentProfile)
+                )}"
+                alt="Foto de ${escapeHTML(
+                  currentProfile.nombre
+                )}"
+                onerror="
+                  this.src='https://placehold.co/700x900/111d30/d7aa3f?text=EmiMatch';
+                ">
 
               <div class="badges">
-                <span class="badge">💚 Disponible</span>
+
+                <span class="badge">
+                  💚 Disponible
+                </span>
+
               </div>
 
               <div class="photo-overlay">
+
                 <h2 class="profile-name">
-                  ${escapeHTML(currentProfile.nombre)}
-                  ${currentProfile.edad ? ", " + escapeHTML(currentProfile.edad) : ""}
+
+                  ${escapeHTML(
+                    currentProfile.nombre ||
+                    "Usuario"
+                  )}
+
+                  ${
+                    currentProfile.edad
+                      ? ", " +
+                        escapeHTML(
+                          currentProfile.edad
+                        )
+                      : ""
+                  }
+
                 </h2>
 
                 <div class="profile-city">
-                  📍 ${escapeHTML(currentProfile.ciudad || "Argentina")}
+
+                  📍
+                  ${escapeHTML(
+                    currentProfile.ciudad ||
+                    "Argentina"
+                  )}
+
                 </div>
+
               </div>
 
             </div>
 
             <div class="profile-info">
 
-              ${
-                currentProfile.descripcion
-                  ? `<p class="profile-description">
-                      ${escapeHTML(currentProfile.descripcion)}
-                    </p>`
-                  : `<p class="profile-description">
-                      Conocé más sobre esta persona en su perfil.
-                    </p>`
-              }
+              <p class="profile-description">
+
+                ${
+                  currentProfile.descripcion
+                    ? escapeHTML(
+                        currentProfile.descripcion
+                      )
+                    : "Conocé más sobre esta persona en su perfil."
+                }
+
+              </p>
 
               <div class="interests">
                 ${interestsHTML}
@@ -501,24 +619,24 @@
             <div class="actions">
 
               <button
-                class="action pass"
                 id="passButton"
+                class="action pass"
                 type="button"
                 title="Pasar">
                 ✕
               </button>
 
               <button
-                class="action"
                 id="blockButton"
+                class="action block"
                 type="button"
                 title="Bloquear">
                 🚫
               </button>
 
               <button
-                class="action like"
                 id="likeButton"
+                class="action like"
                 type="button"
                 title="Me gusta">
                 ♥
@@ -529,162 +647,284 @@
           </article>
         `;
 
-        $("passButton").addEventListener(
-          "click",
-          () => swipe("pass")
-        );
+        $("passButton")
+          .addEventListener(
+            "click",
+            () => swipe("pass")
+          );
 
-        $("likeButton").addEventListener(
-          "click",
-          () => swipe("like")
-        );
+        $("likeButton")
+          .addEventListener(
+            "click",
+            () => swipe("like")
+          );
 
-        $("blockButton").addEventListener(
-          "click",
-          blockCurrentProfile
-        );
+        $("blockButton")
+          .addEventListener(
+            "click",
+            blockCurrentProfile
+          );
       }
 
       async function initialize() {
 
         if (!window.EMIMATCH_CONFIG) {
+
           showStatus(
             "No se encontró la configuración de EmiMatch.",
             true
           );
+
           return;
         }
 
-        db = window.supabase.createClient(
-          window.EMIMATCH_CONFIG.supabaseUrl,
-          window.EMIMATCH_CONFIG.supabaseKey
-        );
+        if (
+          !window.supabase ||
+          !window.supabase.createClient
+        ) {
 
-        const {
-          data: {
-            session
-          },
-          error: sessionError
-        } = await db.auth.getSession();
-
-        if (sessionError) {
           showStatus(
-            "Error de sesión: " +
-            escapeHTML(sessionError.message),
+            "No se pudo cargar Supabase.",
             true
           );
+
           return;
         }
 
-        if (!session) {
-          window.location.href = "index.html";
+        db =
+          window.supabase.createClient(
+            window.EMIMATCH_CONFIG.supabaseUrl,
+            window.EMIMATCH_CONFIG.supabaseKey
+          );
+
+        const {
+          data,
+          error
+        } =
+          await db.auth.getSession();
+
+        if (error) {
+
+          showStatus(
+            "Error de sesión: " +
+            error.message,
+            true
+          );
+
           return;
         }
 
-        currentUser = session.user;
+        if (!data.session) {
+
+          window.location.replace(
+            "index.html"
+          );
+
+          return;
+        }
+
+        currentUser =
+          data.session.user;
 
         await loadProfiles();
       }
 
       async function loadProfiles() {
 
-        showStatus("Buscando perfiles...");
+        showStatus(
+          "Buscando perfiles..."
+        );
 
         currentIndex = 0;
 
         const minAge =
-          Number($("minAge").value) || 18;
+          Math.max(
+            18,
+            Number($("minAge").value) || 18
+          );
 
         const maxAge =
-          Number($("maxAge").value) || 100;
+          Math.max(
+            minAge,
+            Number($("maxAge").value) || 100
+          );
 
         const city =
-          $("cityFilter").value.trim();
+          $("cityFilter")
+            .value
+            .trim();
 
         /*
-          IMPORTANTE:
+         * 1. Cargar bloqueos reales.
+         *
+         * Esquema confirmado:
+         * blocker_id
+         * blocked_id
+         */
 
-          No consultamos user_blocks directamente.
+        const {
+          data: blocks,
+          error: blocksError
+        } =
+          await db
+            .from("user_blocks")
+            .select("blocked_id")
+            .eq(
+              "blocker_id",
+              currentUser.id
+            );
 
-          La versión anterior fallaba porque asumía
-          que existía user_blocks.blocked_user_id.
+        if (blocksError) {
 
-          Primero cargamos los perfiles y luego usamos
-          las relaciones disponibles para evitar que
-          una columna inexistente rompa Descubrir.
-        */
+          showStatus(
+            "user_blocks: " +
+            blocksError.message,
+            true
+          );
 
-        let query = db
-          .from("profiles")
-          .select("*")
-          .neq("id", currentUser.id)
-          .gte("edad", minAge)
-          .lte("edad", maxAge)
-          .order("created_at", {
-            ascending: false
-          });
+          $("profileContainer")
+            .innerHTML = "";
+
+          return;
+        }
+
+        const blockedIds =
+          new Set(
+            (blocks || [])
+              .map(
+                row => row.blocked_id
+              )
+              .filter(Boolean)
+          );
+
+        /*
+         * 2. Cargar swipes realizados.
+         */
+
+        const {
+          data: swipes,
+          error: swipesError
+        } =
+          await db
+            .from("swipes")
+            .select(
+              "target_user_id, type"
+            )
+            .eq(
+              "user_id",
+              currentUser.id
+            );
+
+        if (swipesError) {
+
+          showStatus(
+            "swipes: " +
+            swipesError.message,
+            true
+          );
+
+          $("profileContainer")
+            .innerHTML = "";
+
+          return;
+        }
+
+        const swipedIds =
+          new Set(
+            (swipes || [])
+              .map(
+                row =>
+                  row.target_user_id
+              )
+              .filter(Boolean)
+          );
+
+        /*
+         * 3. Cargar perfiles.
+         */
+
+        let query =
+          db
+            .from("profiles")
+            .select("*")
+            .neq(
+              "id",
+              currentUser.id
+            )
+            .gte(
+              "edad",
+              minAge
+            )
+            .lte(
+              "edad",
+              maxAge
+            )
+            .order(
+              "created_at",
+              {
+                ascending: false
+              }
+            );
 
         if (city) {
-          query = query.ilike(
-            "ciudad",
-            "%" + city + "%"
-          );
+
+          query =
+            query.ilike(
+              "ciudad",
+              "%" + city + "%"
+            );
         }
 
         const {
           data,
           error
-        } = await query;
+        } =
+          await query;
 
         if (error) {
+
           showStatus(
             "profiles: " +
-            escapeHTML(error.message),
+            error.message,
             true
           );
 
-          $("profileContainer").innerHTML = "";
+          $("profileContainer")
+            .innerHTML = "";
+
           return;
         }
 
-        profiles = data || [];
-
         /*
-          Quitamos perfiles con los que ya hubo swipe.
+         * 4. Excluir:
+         * - usuario actual
+         * - bloqueados
+         * - perfiles ya procesados
+         */
 
-          Si la tabla swipes todavía tiene problemas de
-          permisos/RLS, no destruimos toda la pantalla:
-          mostramos los perfiles disponibles.
-        */
+        profiles =
+          (data || []).filter(
+            profile => {
 
-        const {
-          data: swipes,
-          error: swipesError
-        } = await db
-          .from("swipes")
-          .select("target_user_id")
-          .eq("user_id", currentUser.id);
+              if (
+                blockedIds.has(
+                  profile.id
+                )
+              ) {
+                return false;
+              }
 
-        if (!swipesError && swipes) {
+              if (
+                swipedIds.has(
+                  profile.id
+                )
+              ) {
+                return false;
+              }
 
-          const swipedIds = new Set(
-            swipes.map(
-              swipe => swipe.target_user_id
-            )
+              return true;
+            }
           );
-
-          profiles = profiles.filter(
-            profile =>
-              !swipedIds.has(profile.id)
-          );
-        }
-
-        if (swipesError) {
-          console.warn(
-            "EmiMatch: no se pudieron cargar los swipes:",
-            swipesError.message
-          );
-        }
 
         showStatus("");
 
@@ -693,197 +933,141 @@
 
       async function swipe(type) {
 
-        if (!currentProfile) return;
+        if (!currentProfile) {
+          return;
+        }
 
         const targetId =
           currentProfile.id;
 
         const {
           error
-        } = await db
-          .from("swipes")
-          .upsert(
-            {
-              user_id: currentUser.id,
-              target_user_id: targetId,
-              type: type
-            },
-            {
-              onConflict:
-                "user_id,target_user_id"
-            }
-          );
+        } =
+          await db
+            .from("swipes")
+            .upsert(
+              {
+                user_id:
+                  currentUser.id,
+
+                target_user_id:
+                  targetId,
+
+                type
+              },
+              {
+                onConflict:
+                  "user_id,target_user_id"
+              }
+            );
 
         if (error) {
+
           showStatus(
             "No se pudo guardar la acción: " +
-            escapeHTML(error.message),
+            error.message,
             true
           );
+
           return;
         }
 
         if (type === "like") {
-          await checkMatch(targetId);
+
+          await checkMatch(
+            targetId
+          );
         }
 
         currentIndex++;
+
         renderProfile();
       }
 
-      async function checkMatch(targetId) {
+      async function checkMatch(
+        targetId
+      ) {
 
         const {
           data,
           error
-        } = await db
-          .from("swipes")
-          .select("id")
-          .eq("user_id", targetId)
-          .eq("target_user_id", currentUser.id)
-          .eq("type", "like")
-          .maybeSingle();
+        } =
+          await db
+            .from("swipes")
+            .select("id")
+            .eq(
+              "user_id",
+              targetId
+            )
+            .eq(
+              "target_user_id",
+              currentUser.id
+            )
+            .eq(
+              "type",
+              "like"
+            )
+            .maybeSingle();
 
         if (error) {
+
           console.warn(
             "No se pudo comprobar el match:",
             error.message
           );
+
           return;
         }
 
-        if (!data) return;
+        if (!data) {
+          return;
+        }
+
+        /*
+         * Verificar si ya existe el match.
+         */
 
         const {
-          data: existingMatch
-        } = await db
-          .from("matches")
-          .select("id")
-          .or(
-            "and(user1_id.eq." +
-            currentUser.id +
-            ",user2_id.eq." +
-            targetId +
-            "),and(user1_id.eq." +
-            targetId +
-            ",user2_id.eq." +
-            currentUser.id +
-            ")"
-          )
-          .maybeSingle();
+          data: existingMatch,
+          error: existingMatchError
+        } =
+          await db
+            .from("matches")
+            .select("id")
+            .or(
+              "and(user1_id.eq." +
+              currentUser.id +
+              ",user2_id.eq." +
+              targetId +
+              "),and(user1_id.eq." +
+              targetId +
+              ",user2_id.eq." +
+              currentUser.id +
+              ")"
+            )
+            .maybeSingle();
 
-        if (!existingMatch) {
+        if (
+          existingMatchError
+        ) {
+
+          console.warn(
+            "No se pudo comprobar matches:",
+            existingMatchError.message
+          );
+
+        } else if (
+          !existingMatch
+        ) {
 
           const {
             error: matchError
-          } = await db
-            .from("matches")
-            .insert({
-              user1_id: currentUser.id,
-              user2_id: targetId
-            });
+          } =
+            await db
+              .from("matches")
+              .insert({
+                user1_id:
+                  currentUser.id,
 
-          if (matchError) {
-            console.warn(
-              "No se pudo crear el match:",
-              matchError.message
-            );
-          }
-        }
-
-        $("matchText").textContent =
-          "Vos y " +
-          (currentProfile.nombre || "esta persona") +
-          " se dieron Like.";
-
-        $("matchModal").classList.add("show");
-
-        $("chatButton").onclick = () => {
-          window.location.href =
-            "conversacion.html?user=" +
-            encodeURIComponent(targetId);
-        };
-      }
-
-      async function blockCurrentProfile() {
-
-        if (!currentProfile) return;
-
-        const confirmed =
-          window.confirm(
-            "¿Querés bloquear a " +
-            (currentProfile.nombre || "esta persona") +
-            "?"
-          );
-
-        if (!confirmed) return;
-
-        /*
-          No usamos una columna inventada.
-
-          El bloqueo queda representado por un swipe
-          especial para que Descubrir no vuelva a mostrar
-          a esta persona.
-
-          Esto evita romper la aplicación mientras
-          verificamos el esquema real de user_blocks.
-        */
-
-        const {
-          error
-        } = await db
-          .from("swipes")
-          .upsert(
-            {
-              user_id: currentUser.id,
-              target_user_id: currentProfile.id,
-              type: "block"
-            },
-            {
-              onConflict:
-                "user_id,target_user_id"
-            }
-          );
-
-        if (error) {
-          showStatus(
-            "No se pudo bloquear: " +
-            escapeHTML(error.message),
-            true
-          );
-          return;
-        }
-
-        currentIndex++;
-        renderProfile();
-      }
-
-      $("filterButton").addEventListener(
-        "click",
-        () => {
-          $("filters").classList.toggle("show");
-        }
-      );
-
-      $("applyFilters").addEventListener(
-        "click",
-        loadProfiles
-      );
-
-      $("closeMatch").addEventListener(
-        "click",
-        () => {
-          $("matchModal").classList.remove("show");
-        }
-      );
-
-      initialize();
-
-    })();
-  </script>
-
-  <script src="assets/js/app.js"></script>
-  <script src="assets/js/components.js"></script>
-
-</body>
-</html>
+                user2_id:
+                  ta
