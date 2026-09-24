@@ -1,1305 +1,726 @@
-<!DOCTYPE html><html lang="es">
+<!DOCTYPE html>
+<html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Descubrir - EmiMatch</title><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><style>
-*{
-  box-sizing:border-box;
-}
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07111f">
+<title>Descubrir - EmiMatch</title>
 
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:linear-gradient(135deg,#07152f,#102d59);
-  color:white;
-  min-height:100vh;
-  padding-bottom:85px;
-}
+<link rel="stylesheet" href="assets/css/app.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/config.js"></script>
 
-header{
-  background:linear-gradient(135deg,#111827,#7c3aed);
-  padding:18px;
-  text-align:center;
-  position:sticky;
-  top:0;
-  z-index:20;
-}
-
-header h1{
-  margin:0;
-  font-size:24px;
-}
-
-.contenedor{
-  width:100%;
-  max-width:650px;
+<style>
+.discovery{
+  max-width:680px;
   margin:auto;
-  padding:15px;
+  padding:25px 16px;
 }
 
-.estado{
-  background:rgba(255,255,255,.08);
-  border-radius:16px;
-  padding:20px;
+.discovery-title{
   text-align:center;
-  margin-bottom:15px;
+  margin:10px 0 22px;
 }
 
-.filtros{
-  background:rgba(255,255,255,.08);
-  padding:15px;
-  border-radius:18px;
+.discovery-title h1{
+  margin:0;
+}
+
+.discovery-title p{
+  color:var(--em-muted,#94a3b8);
+  margin:7px 0 0;
+}
+
+.filters{
+  padding:16px;
   margin-bottom:18px;
 }
 
-.filtros h3{
-  margin-top:0;
-}
-
-.fila{
-  display:flex;
+.filter-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
   gap:10px;
 }
 
-.campo{
-  flex:1;
-}
-
-label{
-  display:block;
-  font-size:13px;
-  margin-bottom:6px;
-  color:#d1d5db;
-}
-
-input{
-  width:100%;
-  padding:12px;
-  border:0;
-  border-radius:10px;
-  outline:none;
-  font-size:15px;
-}
-
-button{
-  border:0;
-  border-radius:12px;
-  padding:12px 16px;
-  font-weight:bold;
-  font-size:15px;
-  cursor:pointer;
-}
-
-.btn-filtrar{
-  width:100%;
-  margin-top:12px;
-  background:#d9ad45;
-  color:#111827;
-}
-
-.card{
-  background:white;
-  color:#111827;
-  border-radius:22px;
+.profile-card{
   overflow:hidden;
-  box-shadow:0 10px 30px rgba(0,0,0,.3);
 }
 
-.foto{
+.profile-photo{
   width:100%;
-  height:380px;
+  height:420px;
   object-fit:cover;
   display:block;
-  background:#e5e7eb;
+  background:#111827;
 }
 
-.info{
-  padding:18px;
+.profile-info{
+  padding:20px;
 }
 
-.nombre{
-  font-size:25px;
-  font-weight:bold;
+.profile-name{
+  font-size:1.55rem;
+  font-weight:900;
 }
 
-.ciudad{
-  color:#6b7280;
-  margin:6px 0 14px;
+.profile-city{
+  color:var(--em-muted,#94a3b8);
+  margin:5px 0 15px;
 }
 
-.descripcion{
-  line-height:1.5;
+.profile-description{
+  line-height:1.6;
   margin-bottom:12px;
 }
 
-.intereses{
-  color:#4b5563;
+.profile-interests{
+  color:var(--em-muted,#94a3b8);
   margin-bottom:18px;
 }
 
-.acciones{
-  display:flex;
+.actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
   gap:10px;
 }
 
-.btn-pasar{
-  flex:1;
-  background:#e5e7eb;
-  color:#111827;
+.pass{
+  background:#ffffff12;
+  color:var(--em-text,#fff);
 }
 
-.btn-like{
-  flex:1;
-  background:#ec4899;
-  color:white;
+.like{
+  background:linear-gradient(135deg,#ec4899,#db2777);
+  color:#fff;
 }
 
-.btn-bloquear{
+.block{
   width:100%;
   margin-top:10px;
-  background:#fee2e2;
-  color:#991b1b;
+  background:#ef444415;
+  color:#fca5a5;
 }
 
-.vacio{
-  background:rgba(255,255,255,.08);
-  border-radius:18px;
-  padding:30px 20px;
+.state{
   text-align:center;
+  padding:25px 15px;
 }
 
-.error{
-  background:#7f1d1d;
-  border-radius:15px;
-  padding:18px;
-}
-
-.error-detalle{
-  margin-top:10px;
-  font-size:13px;
-  color:#fecaca;
-  word-break:break-word;
-}
-
-.nav{
-  position:fixed;
-  left:0;
-  right:0;
-  bottom:0;
-  background:#0b1730;
-  border-top:1px solid rgba(255,255,255,.12);
-  display:flex;
-  justify-content:space-around;
-  padding:9px 5px;
-  z-index:50;
-}
-
-.nav a{
-  color:#d1d5db;
-  text-decoration:none;
-  font-size:12px;
-  text-align:center;
-}
-
-.nav a.activo{
-  color:#d9ad45;
-  font-weight:bold;
-}
-
-.badge{
-  display:inline-block;
-  min-width:18px;
-  padding:2px 5px;
-  border-radius:10px;
-  background:#ef4444;
-  color:white;
-  font-size:10px;
-}
-
-.modal{
-  display:none;
+.match-modal{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.78);
-  z-index:100;
-  align-items:center;
-  justify-content:center;
+  z-index:1000;
+  display:none;
+  place-items:center;
   padding:20px;
+  background:#000b;
 }
 
-.modal-contenido{
-  width:100%;
-  max-width:420px;
-  background:white;
-  color:#111827;
-  border-radius:22px;
-  padding:25px;
+.match-box{
+  width:min(420px,100%);
   text-align:center;
+  padding:25px;
 }
 
-.modal-contenido h2{
-  color:#ec4899;
-}
-
-.fotos-match{
+.match-photos{
   display:flex;
   justify-content:center;
-  gap:12px;
+  gap:15px;
   margin:20px 0;
 }
 
-.foto-match{
-  width:100px;
-  height:100px;
+.match-photos img{
+  width:95px;
+  height:95px;
   object-fit:cover;
   border-radius:50%;
-  border:4px solid #ec4899;
+  border:3px solid var(--em-primary,#f5c451);
 }
 
-.btn-chat{
+.match-box button{
   width:100%;
-  background:#7c3aed;
-  color:white;
-}
-
-.btn-continuar{
-  width:100%;
-  background:#e5e7eb;
-  color:#111827;
   margin-top:10px;
 }
 
 @media(max-width:500px){
-
-  .fila{
-    flex-direction:column;
+  .filter-grid{
+    grid-template-columns:1fr;
   }
 
-  .foto{
-    height:340px;
+  .profile-photo{
+    height:360px;
   }
-
 }
-</style></head><body><header>
-  <h1>💕 Descubrir</h1>
-</header><div class="contenedor">  <div id="estado" class="estado">
-    🔄 Cargando EmiMatch...
-  </div>  <div id="contenido" style="display:none;"><div class="filtros">
+</style>
+</head>
 
-  <h3>🔎 Buscar perfiles</h3>
+<body>
 
-  <div class="fila">
+<main class="discovery">
 
-    <div class="campo">
-      <label>Edad mínima</label>
+  <header class="discovery-title">
+    <h1>💕 Descubrir</h1>
+    <p>Conocé nuevas personas y encontrá conexiones.</p>
+  </header>
 
-      <input
-        id="edadMin"
-        type="number"
-        min="18"
-        max="100"
-        value="18"
-      >
+  <section class="em-card filters">
+
+    <h3>🔎 Filtros</h3>
+
+    <div class="filter-grid">
+
+      <div>
+        <label for="edadMin">Edad mínima</label>
+        <input
+          id="edadMin"
+          class="em-input"
+          type="number"
+          min="18"
+          max="100"
+          value="18">
+      </div>
+
+      <div>
+        <label for="edadMax">Edad máxima</label>
+        <input
+          id="edadMax"
+          class="em-input"
+          type="number"
+          min="18"
+          max="100"
+          value="100">
+      </div>
+
     </div>
 
-    <div class="campo">
-      <label>Edad máxima</label>
-
+    <div style="margin-top:12px">
+      <label for="ciudadFiltro">Ciudad</label>
       <input
-        id="edadMax"
-        type="number"
-        min="18"
-        max="100"
-        value="100"
-      >
+        id="ciudadFiltro"
+        class="em-input"
+        type="text"
+        placeholder="Ej. Buenos Aires">
     </div>
+
+    <button
+      id="filtrarButton"
+      class="em-btn em-btn-primary"
+      style="width:100%;margin-top:12px">
+      🔎 Aplicar filtros
+    </button>
+
+  </section>
+
+  <section id="estado" class="em-card state">
+    🔄 Cargando perfiles...
+  </section>
+
+  <section id="perfiles"></section>
+
+</main>
+
+<!-- MATCH -->
+
+<div id="modalMatch" class="match-modal">
+
+  <div class="em-card match-box">
+
+    <h2>💕 ¡Hay Match!</h2>
+
+    <p>Los dos se dieron Like.</p>
+
+    <div class="match-photos">
+
+      <img id="fotoMiMatch" alt="Tu foto">
+
+      <img id="fotoOtroMatch" alt="Foto del match">
+
+    </div>
+
+    <button
+      id="chatMatchButton"
+      class="em-btn em-btn-primary">
+      💬 Enviar mensaje
+    </button>
+
+    <button
+      id="continuarButton"
+      class="em-btn">
+      🔎 Seguir descubriendo
+    </button>
 
   </div>
 
-  <div style="margin-top:10px;">
-
-    <label>Ciudad</label>
-
-    <input
-      id="ciudadFiltro"
-      type="text"
-      placeholder="Ej: Buenos Aires"
-    >
-
-  </div>
-
-  <button
-    id="filtrarButton"
-    class="btn-filtrar"
-  >
-    🔎 Aplicar filtros
-  </button>
-
 </div>
 
-<div id="perfiles"></div>
+<script>
+(() => {
 
-  </div></div><div id="modalMatch" class="modal">  <div class="modal-contenido"><h2>💕 ¡Hay Match!</h2>
+"use strict";
 
-<p>¡Los dos se dieron Like!</p>
+const config = window.EMIMATCH_CONFIG;
 
-<div class="fotos-match">
+if (!config || !window.supabase) {
+  document.getElementById("estado").textContent =
+    "⚠️ No se pudo iniciar EmiMatch.";
+  return;
+}
 
-  <img
-    id="fotoMiMatch"
-    class="foto-match"
-    alt="Tu foto"
-  >
+const supabase = window.supabase.createClient(
+  config.supabaseUrl,
+  config.supabaseKey
+);
 
-  <img
-    id="fotoOtroMatch"
-    class="foto-match"
-    alt="Match"
-  >
+const $ = id => document.getElementById(id);
 
-</div>
-
-<button
-  id="chatMatchButton"
-  class="btn-chat"
->
-  💬 Enviar mensaje
-</button>
-
-<button
-  id="continuarButton"
-  class="btn-continuar"
->
-  🔎 Seguir descubriendo
-</button>
-
-  </div></div><nav class="nav">  <a href="perfil.html">
-    👤<br>Perfil
-  </a>  <a href="descubrir.html" class="activo">
-    🔎<br>Descubrir
-  </a>  <a href="likes.html">
-    ❤️<br>Likes
-  </a>  <a href="chat.html">
-    💬<br>Chat
-  </a>  <a href="notificaciones.html">
-    🔔<br>Notif.
-    <span
-      id="badgeNotificaciones"
-      class="badge"
-      style="display:none;"
-    >0</span>
-  </a></nav><script>
-
-/* =====================================
-   SUPABASE
-===================================== */
-
-const SUPABASE_URL =
-"https://kngiadwaesdbmvwivdev.supabase.co";
-
-const SUPABASE_KEY =
-"sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
-
-let supabaseClient = null;
-
-let usuarioActual = null;
-
+let user = null;
 let perfiles = [];
-
-let indiceActual = 0;
-
-let perfilMatchActual = null;
+let index = 0;
+let currentProfile = null;
 
 
-/* =====================================
-   ELEMENTOS
-===================================== */
+/* =========================
+   UTILIDADES
+========================= */
 
-const estado =
-document.getElementById("estado");
+function escapeHTML(value) {
 
-const contenido =
-document.getElementById("contenido");
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
 
-const perfilesDiv =
-document.getElementById("perfiles");
+function placeholder(text="EmiMatch") {
 
-
-/* =====================================
-   CONECTAR
-===================================== */
-
-function conectarSupabase(){
-
-  if(
-    typeof window.supabase === "undefined"
-  ){
-
-    mostrarError(
-      "Supabase no se pudo cargar."
-    );
-
-    return false;
-  }
-
-  if(
-    typeof window.supabase.createClient !==
-    "function"
-  ){
-
-    mostrarError(
-      "La biblioteca de Supabase no está disponible."
-    );
-
-    return false;
-  }
-
-  try{
-
-    supabaseClient =
-      window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-      );
-
-    return true;
-
-  }catch(error){
-
-    mostrarError(
-      "No se pudo conectar con Supabase.",
-      error
-    );
-
-    return false;
-  }
+  return "https://placehold.co/700x700/111827/ffffff?text=" +
+    encodeURIComponent(text);
 }
 
 
-/* =====================================
-   INICIO
-===================================== */
+/* =========================
+   SESIÓN
+========================= */
 
-async function iniciar(){
+async function init() {
 
-  estado.style.display = "block";
+  try {
 
-  contenido.style.display = "none";
+    const {data,error} =
+      await supabase.auth.getSession();
 
-  estado.textContent =
-    "🔄 Conectando con EmiMatch...";
+    if(error) throw error;
 
+    if(!data.session) {
 
-  if(!conectarSupabase()){
-
-    return;
-  }
-
-
-  estado.textContent =
-    "🔄 Verificando sesión...";
-
-
-  try{
-
-    /*
-      IMPORTANTE:
-      obtenemos la sesión directamente.
-    */
-
-    const respuesta =
-      await supabaseClient.auth.getSession();
-
-
-    console.log(
-      "EmiMatch sesión:",
-      respuesta
-    );
-
-
-    if(respuesta.error){
-
-      throw respuesta.error;
-    }
-
-
-    if(
-      !respuesta.data ||
-      !respuesta.data.session
-    ){
-
-      estado.innerHTML =
-      "⚠️ No hay una sesión activa.<br><br>" +
-      "Redirigiendo al inicio...";
-
-      setTimeout(
-        function(){
-
-          window.location.replace(
-            "index.html"
-          );
-
-        },
-        1200
-      );
-
+      window.location.href = "index.html";
       return;
     }
 
+    user = data.session.user;
 
-    usuarioActual =
-      respuesta.data.session.user;
+    await loadProfiles();
 
+  } catch(error) {
 
-    console.log(
-      "Usuario conectado:",
-      usuarioActual.id
-    );
+    console.error(error);
 
-
-    estado.style.display =
-      "none";
-
-    contenido.style.display =
-      "block";
-
-
-    await cargarPerfiles();
-
-    await cargarNotificaciones();
-
-
-  }catch(error){
-
-    console.error(
-      "ERROR SESIÓN:",
-      error
-    );
-
-    mostrarError(
-      "No se pudo verificar la sesión.",
-      error
+    showState(
+      "❌ No se pudieron cargar los perfiles."
     );
   }
 }
 
 
-/* =====================================
+/* =========================
    CARGAR PERFILES
-===================================== */
+========================= */
 
-async function cargarPerfiles(){
+async function loadProfiles() {
 
-  perfilesDiv.innerHTML =
-  `
-  <div class="estado">
-    🔄 Buscando perfiles...
-  </div>
-  `;
+  showState("🔄 Buscando personas...");
 
-  indiceActual = 0;
+  index = 0;
 
+  const min =
+    Number($("edadMin").value) || 18;
 
-  const edadMin =
-    Number(
-      document.getElementById("edadMin").value
-    ) || 18;
+  const max =
+    Number($("edadMax").value) || 100;
 
-
-  const edadMax =
-    Number(
-      document.getElementById("edadMax").value
-    ) || 100;
-
-
-  const ciudad =
-    document
-      .getElementById("ciudadFiltro")
-      .value
+  const city =
+    $("ciudadFiltro").value
       .trim()
       .toLowerCase();
 
+  try {
 
-  try{
+    /*
+     * Las consultas se realizan en paralelo
+     * para reducir el tiempo de espera.
+     */
 
-    /* BLOQUEOS */
+    const [
+      blocksResult,
+      swipesResult,
+      profilesResult
+    ] = await Promise.all([
 
-    const bloqueos =
-      await supabaseClient
+      supabase
         .from("user_blocks")
-        .select(
-          "blocker_id,blocked_id"
-        )
+        .select("blocker_id,blocked_id")
         .or(
-          "blocker_id.eq." +
-          usuarioActual.id +
-          ",blocked_id.eq." +
-          usuarioActual.id
-        );
+          `blocker_id.eq.${user.id},blocked_id.eq.${user.id}`
+        ),
 
-
-    if(bloqueos.error){
-
-      throw bloqueos.error;
-    }
-
-
-    const bloqueados =
-      new Set();
-
-
-    (bloqueos.data || [])
-      .forEach(function(item){
-
-        if(
-          item.blocker_id ===
-          usuarioActual.id
-        ){
-
-          bloqueados.add(
-            item.blocked_id
-          );
-        }
-
-        if(
-          item.blocked_id ===
-          usuarioActual.id
-        ){
-
-          bloqueados.add(
-            item.blocker_id
-          );
-        }
-
-      });
-
-
-    /* SWIPES */
-
-    const swipes =
-      await supabaseClient
+      supabase
         .from("swipes")
-        .select(
-          "target_user_id"
-        )
-        .eq(
-          "user_id",
-          usuarioActual.id
-        );
+        .select("target_user_id")
+        .eq("user_id",user.id),
 
-
-    if(swipes.error){
-
-      throw swipes.error;
-    }
-
-
-    const vistos =
-      new Set(
-        (swipes.data || [])
-          .map(function(item){
-
-            return item.target_user_id;
-
-          })
-      );
-
-
-    /* PERFILES */
-
-    const resultado =
-      await supabaseClient
+      supabase
         .from("profiles")
         .select(
           "id,nombre,edad,ciudad,descripcion,foto_url,intereses,created_at"
         )
-        .neq(
-          "id",
-          usuarioActual.id
-        )
-        .gte(
-          "edad",
-          edadMin
-        )
-        .lte(
-          "edad",
-          edadMax
-        )
-        .order(
-          "created_at",
-          {
-            ascending:false
-          }
-        );
+        .neq("id",user.id)
+        .gte("edad",min)
+        .lte("edad",max)
+        .order("created_at",{ascending:false})
+        .limit(50)
+
+    ]);
+
+    if(blocksResult.error)
+      throw blocksResult.error;
+
+    if(swipesResult.error)
+      throw swipesResult.error;
+
+    if(profilesResult.error)
+      throw profilesResult.error;
 
 
-    if(resultado.error){
+    const blocked = new Set();
 
-      throw resultado.error;
-    }
+    (blocksResult.data || []).forEach(item => {
+
+      if(item.blocker_id === user.id)
+        blocked.add(item.blocked_id);
+
+      if(item.blocked_id === user.id)
+        blocked.add(item.blocker_id);
+
+    });
+
+
+    const swiped = new Set(
+      (swipesResult.data || [])
+        .map(item => item.target_user_id)
+    );
 
 
     perfiles =
-      (resultado.data || [])
-      .filter(function(perfil){
+      (profilesResult.data || [])
+      .filter(profile => {
+
+        if(blocked.has(profile.id))
+          return false;
+
+        if(swiped.has(profile.id))
+          return false;
 
         if(
-          bloqueados.has(
-            perfil.id
-          )
-        ){
-
+          city &&
+          !String(profile.ciudad || "")
+            .toLowerCase()
+            .includes(city)
+        )
           return false;
-        }
-
-
-        if(
-          vistos.has(
-            perfil.id
-          )
-        ){
-
-          return false;
-        }
-
-
-        if(
-          ciudad &&
-          !String(
-            perfil.ciudad || ""
-          )
-          .toLowerCase()
-          .includes(ciudad)
-        ){
-
-          return false;
-        }
-
 
         return true;
-
       });
 
 
-    mostrarPerfil();
+    renderProfile();
 
-
-  }catch(error){
+  } catch(error) {
 
     console.error(
-      "ERROR PERFILES:",
+      "Error cargando perfiles:",
       error
     );
 
-    mostrarError(
-      "No se pudieron cargar los perfiles.",
-      error
+    showState(
+      "⚠️ No se pudieron cargar los perfiles."
     );
   }
 }
 
 
-/* =====================================
+/* =========================
    MOSTRAR PERFIL
-===================================== */
+========================= */
 
-function mostrarPerfil(){
+function renderProfile() {
 
-  if(
-    indiceActual >=
-    perfiles.length
-  ){
+  if(index >= perfiles.length) {
 
-    perfilesDiv.innerHTML =
-    `
-    <div class="vacio">
-
-      <h2>💙 No hay más perfiles</h2>
-
+    showState(`
+      <h3>💙 No hay más perfiles</h3>
       <p>
-        Probá cambiar los filtros
-        o volvé más tarde.
+        Probá cambiar los filtros o
+        volvé más tarde.
       </p>
-
-    </div>
-    `;
+    `);
 
     return;
   }
 
+  const profile = perfiles[index];
 
-  const perfil =
-    perfiles[indiceActual];
+  currentProfile = profile;
 
+  $("estado").style.display = "none";
 
-  const foto =
-    perfil.foto_url ||
-    "https://via.placeholder.com/600x500?text=EmiMatch";
+  $("perfiles").innerHTML = `
 
+    <article class="em-card profile-card">
 
-  perfilesDiv.innerHTML =
-  `
-  <div class="card">
+      <img
+        class="profile-photo"
+        src="${escapeHTML(
+          profile.foto_url || placeholder()
+        )}"
+        alt="Foto de ${escapeHTML(profile.nombre || "usuario")}"
+        onerror="this.src='${placeholder()}'">
 
-    <img
-      class="foto"
-      src="${escapar(foto)}"
-      alt="Foto"
-      onerror="this.src='https://via.placeholder.com/600x500?text=EmiMatch'"
-    >
+      <div class="profile-info">
 
-    <div class="info">
+        <div class="profile-name">
+          ${escapeHTML(profile.nombre || "Sin nombre")}
+          ${profile.edad ? ", " + escapeHTML(profile.edad) : ""}
+        </div>
 
-      <div class="nombre">
-
-        ${escapar(
-          perfil.nombre ||
-          "Sin nombre"
-        )}
+        <div class="profile-city">
+          📍 ${escapeHTML(profile.ciudad || "Sin ciudad")}
+        </div>
 
         ${
-          perfil.edad
-          ?
-          ", " +
-          escapar(perfil.edad)
-          :
-          ""
+          profile.descripcion
+          ? `
+            <div class="profile-description">
+              ${escapeHTML(profile.descripcion)}
+            </div>
+          `
+          : ""
         }
 
-      </div>
+        ${
+          profile.intereses
+          ? `
+            <div class="profile-interests">
+              ❤️ ${escapeHTML(profile.intereses)}
+            </div>
+          `
+          : ""
+        }
 
-      <div class="ciudad">
+        <div class="actions">
 
-        📍
-        ${escapar(
-          perfil.ciudad ||
-          "Sin ciudad"
-        )}
+          <button
+            class="em-btn pass"
+            id="passButton">
+            ❌ Pasar
+          </button>
 
-      </div>
+          <button
+            class="em-btn like"
+            id="likeButton">
+            ❤️ Like
+          </button>
 
-      ${
-        perfil.descripcion
-        ?
-        `
-        <div class="descripcion">
-          ${escapar(
-            perfil.descripcion
-          )}
         </div>
-        `
-        :
-        ""
-      }
-
-      ${
-        perfil.intereses
-        ?
-        `
-        <div class="intereses">
-          ❤️
-          ${escapar(
-            perfil.intereses
-          )}
-        </div>
-        `
-        :
-        ""
-      }
-
-      <div class="acciones">
 
         <button
-          class="btn-pasar"
-          onclick="registrarSwipe('pass')"
-        >
-          ❌ Pasar
-        </button>
-
-        <button
-          class="btn-like"
-          onclick="registrarSwipe('like')"
-        >
-          ❤️ Like
+          class="em-btn block"
+          id="blockButton">
+          🚫 Bloquear
         </button>
 
       </div>
 
-      <button
-        class="btn-bloquear"
-        onclick="bloquearUsuario()"
-      >
-        🚫 Bloquear
-      </button>
-
-    </div>
-
-  </div>
+    </article>
   `;
+
+
+  $("passButton").onclick =
+    () => swipe("pass");
+
+  $("likeButton").onclick =
+    () => swipe("like");
+
+  $("blockButton").onclick =
+    blockUser;
 }
 
 
-/* =====================================
+/* =========================
    SWIPE
-===================================== */
+========================= */
 
-async function registrarSwipe(
-  accion
-){
+async function swipe(action) {
 
-  if(
-    !usuarioActual ||
-    indiceActual >=
-    perfiles.length
-  ){
-
+  if(!currentProfile)
     return;
-  }
 
+  const target = currentProfile;
 
-  const perfil =
-    perfiles[indiceActual];
+  $("passButton").disabled = true;
+  $("likeButton").disabled = true;
 
+  try {
 
-  try{
-
-    const resultado =
-      await supabaseClient
+    const {error} =
+      await supabase
         .from("swipes")
         .insert({
-
-          user_id:
-          usuarioActual.id,
-
-          target_user_id:
-          perfil.id,
-
-          action:
-          accion
-
+          user_id:user.id,
+          target_user_id:target.id,
+          action
         });
 
-
-    if(resultado.error){
-
-      if(
-        resultado.error.code ===
-        "23505"
-      ){
-
-        indiceActual++;
-
-        mostrarPerfil();
-
-        return;
-      }
-
-      throw resultado.error;
-    }
+    if(error && error.code !== "23505")
+      throw error;
 
 
-    if(
-      accion === "like"
-    ){
+    index++;
 
-      const match =
-        await comprobarMatch(
-          perfil.id
-        );
+    if(action === "like") {
 
+      const isMatch =
+        await checkMatch(target.id);
 
-      indiceActual++;
+      if(isMatch) {
 
+        await prepareMatch(target);
 
-      if(match){
-
-        await prepararMatch(
-          perfil
-        );
-
-        document.getElementById(
-          "modalMatch"
-        ).style.display =
-        "flex";
+        $("modalMatch").style.display =
+          "grid";
 
         return;
       }
-
-    }else{
-
-      indiceActual++;
-
     }
 
+    renderProfile();
 
-    mostrarPerfil();
+  } catch(error) {
 
-
-  }catch(error){
-
-    console.error(
-      "ERROR SWIPE:",
-      error
-    );
+    console.error(error);
 
     alert(
       "No se pudo guardar la acción."
     );
+
+    renderProfile();
   }
 }
 
 
-/* =====================================
+/* =========================
    MATCH
-===================================== */
+========================= */
 
-async function comprobarMatch(
-  perfilId
-){
+async function checkMatch(targetId) {
 
-  try{
+  const [
+    direct,
+    reverse
+  ] = await Promise.all([
 
-    const a =
-      await supabaseClient
-        .from("matches")
-        .select("id")
-        .eq(
-          "user1_id",
-          usuarioActual.id
-        )
-        .eq(
-          "user2_id",
-          perfilId
-        )
-        .limit(1);
+    supabase
+      .from("matches")
+      .select("id")
+      .eq("user1_id",user.id)
+      .eq("user2_id",targetId)
+      .limit(1),
 
+    supabase
+      .from("matches")
+      .select("id")
+      .eq("user1_id",targetId)
+      .eq("user2_id",user.id)
+      .limit(1)
 
-    if(a.error){
+  ]);
 
-      throw a.error;
-    }
-
-
-    if(
-      a.data &&
-      a.data.length
-    ){
-
-      return true;
-    }
-
-
-    const b =
-      await supabaseClient
-        .from("matches")
-        .select("id")
-        .eq(
-          "user1_id",
-          perfilId
-        )
-        .eq(
-          "user2_id",
-          usuarioActual.id
-        )
-        .limit(1);
-
-
-    if(b.error){
-
-      throw b.error;
-    }
-
-
-    return !!(
-      b.data &&
-      b.data.length
-    );
-
-
-  }catch(error){
-
-    console.error(
-      "ERROR MATCH:",
-      error
-    );
-
+  if(direct.error || reverse.error)
     return false;
-  }
+
+  return Boolean(
+    direct.data?.length ||
+    reverse.data?.length
+  );
 }
 
 
-/* =====================================
+/* =========================
    PREPARAR MATCH
-===================================== */
+========================= */
 
-async function prepararMatch(
-  perfil
-){
+async function prepareMatch(profile) {
 
-  perfilMatchActual =
-    perfil;
+  const {data} =
+    await supabase
+      .from("profiles")
+      .select("foto_url")
+      .eq("id",user.id)
+      .maybeSingle();
 
+  $("fotoMiMatch").src =
+    data?.foto_url || placeholder("Yo");
 
-  let miFoto =
-    "https://via.placeholder.com/200?text=Yo";
-
-
-  try{
-
-    const resultado =
-      await supabaseClient
-        .from("profiles")
-        .select("foto_url")
-        .eq(
-          "id",
-          usuarioActual.id
-        )
-        .maybeSingle();
-
-
-    if(
-      !resultado.error &&
-      resultado.data &&
-      resultado.data.foto_url
-    ){
-
-      miFoto =
-        resultado.data.foto_url;
-    }
-
-  }catch(error){
-
-    console.error(
-      error
-    );
-  }
-
-
-  document.getElementById(
-    "fotoMiMatch"
-  ).src =
-  miFoto;
-
-
-  document.getElementById(
-    "fotoOtroMatch"
-  ).src =
-  perfil.foto_url ||
-  "https://via.placeholder.com/200?text=Match";
+  $("fotoOtroMatch").src =
+    profile.foto_url || placeholder("Match");
 }
 
 
-/* =====================================
-   CHAT
-===================================== */
-
-document.getElementById(
-  "chatMatchButton"
-).onclick =
-function(){
-
-  if(
-    !perfilMatchActual
-  ){
-
-    return;
-  }
-
-
-  window.location.href =
-    "conversacion.html?user=" +
-    encodeURIComponent(
-      perfilMatchActual.id
-    );
-
-};
-
-
-/* =====================================
-   CONTINUAR
-===================================== */
-
-document.getElementById(
-  "continuarButton"
-).onclick =
-function(){
-
-  document.getElementById(
-    "modalMatch"
-  ).style.display =
-  "none";
-
-  mostrarPerfil();
-
-};
-
-
-/* =====================================
+/* =========================
    BLOQUEAR
-===================================== */
+========================= */
 
-async function bloquearUsuario(){
+async function blockUser() {
 
-  if(
-    !usuarioActual ||
-    indiceActual >=
-    perfiles.length
-  ){
-
+  if(!currentProfile)
     return;
-  }
 
-
-  const perfil =
-    perfiles[indiceActual];
-
-
-  if(
-    !confirm(
-      "¿Querés bloquear a este usuario?"
-    )
-  ){
-
+  if(!confirm(
+    "¿Querés bloquear a este usuario?"
+  ))
     return;
-  }
 
+  try {
 
-  try{
-
-    const resultado =
-      await supabaseClient
+    const {error} =
+      await supabase
         .from("user_blocks")
         .insert({
-
-          blocker_id:
-          usuarioActual.id,
-
-          blocked_id:
-          perfil.id
-
+          blocker_id:user.id,
+          blocked_id:currentProfile.id
         });
 
+    if(error && error.code !== "23505")
+      throw error;
 
-    if(
-      resultado.error &&
-      resultado.error.code !==
-      "23505"
-    ){
+    index++;
 
-      throw resultado.error;
-    }
+    renderProfile();
 
+  } catch(error) {
 
-    indiceActual++;
-
-    mostrarPerfil();
-
-
-  }catch(error){
-
-    console.error(
-      "ERROR BLOQUEO:",
-      error
-    );
+    console.error(error);
 
     alert(
       "No se pudo bloquear al usuario."
@@ -1308,133 +729,65 @@ async function bloquearUsuario(){
 }
 
 
-/* =====================================
-   NOTIFICACIONES
-===================================== */
+/* =========================
+   ESTADO
+========================= */
 
-async function cargarNotificaciones(){
+function showState(html) {
 
-  try{
-
-    const badge =
-      document.getElementById(
-        "badgeNotificaciones"
-      );
-
-
-    const resultado =
-      await supabaseClient
-        .from("matches")
-        .select(
-          "id,user1_id,user2_id"
-        )
-        .or(
-          "user1_id.eq." +
-          usuarioActual.id +
-          ",user2_id.eq." +
-          usuarioActual.id
-        );
-
-
-    if(resultado.error){
-
-      throw resultado.error;
-    }
-
-
-    const ids =
-      (resultado.data || [])
-      .map(function(item){
-
-        return item.id;
-
-      });
-
-
-    if(!ids.length){
-
-      badge.style.display =
-      "none";
-
-      return;
-    }
-
-
-    const mensajes =
-      await supabaseClient
-        .from("messages")
-        .select(
-          "id,match_id,sender_id,read_at"
-        )
-        .in(
-          "match_id",
-          ids
-        )
-        .neq(
-          "sender_id",
-          usuarioActual.id
-        )
-        .is(
-          "read_at",
-          null
-        );
-
-
-    if(mensajes.error){
-
-      throw mensajes.error;
-    }
-
-
-    const cantidad =
-      mensajes.data?.length || 0;
-
-
-    if(cantidad){
-
-      badge.textContent =
-        cantidad > 99
-        ?
-        "99+"
-        :
-        cantidad;
-
-      badge.style.display =
-        "inline-block";
-
-    }else{
-
-      badge.style.display =
-        "none";
-    }
-
-
-  }catch(error){
-
-    console.error(
-      "ERROR NOTIFICACIONES:",
-      error
-    );
-  }
+  $("estado").style.display = "block";
+  $("estado").innerHTML = html;
+  $("perfiles").innerHTML = "";
 }
 
 
-/* =====================================
+/* =========================
    FILTROS
-===================================== */
+========================= */
 
-document.getElementById(
-  "filtrarButton"
-).onclick =
-function(){
+$("filtrarButton").onclick =
+  loadProfiles;
 
-  cargarPerfiles();
 
+/* =========================
+   MODAL MATCH
+========================= */
+
+$("continuarButton").onclick =
+() => {
+
+  $("modalMatch").style.display =
+    "none";
+
+  renderProfile();
 };
 
 
-/* =====================================
-   CERRAR MODAL
-===================================== */
+$("chatMatchButton").onclick =
+() => {
 
-docume
+  if(!currentProfile)
+    return;
+
+  window.location.href =
+    "conversacion.html?user=" +
+    encodeURIComponent(
+      currentProfile.id
+    );
+};
+
+
+/* =========================
+   INICIAR
+========================= */
+
+init();
+
+})();
+</script>
+
+<script src="assets/js/app.js"></script>
+<script src="assets/js/components.js"></script>
+
+</body>
+</html>
