@@ -1,254 +1,141 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0b1026">
-  <meta name="description" content="EmiMatch — Tu perfil, tus intereses y nuevas conexiones.">
-  <title>EmiMatch — Mi perfil</title>
-  <link rel="stylesheet" href="assets/css/app.css">
-  <style>
-    :root{--profile-bg:#0b1026;--profile-bg-2:#151a38;--profile-card:rgba(255,255,255,.07);--profile-border:rgba(255,255,255,.12);--profile-text:#f8f8fc;--profile-muted:#b9bdd1;--profile-gold:#d9b86c;--profile-gold-soft:#f1d99a;--profile-purple:#8f78d8;--profile-danger:#e98b9a;--profile-success:#8fd5b1}
-    *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#1b2044 0,#0b1026 48%,#070a19 100%);color:var(--profile-text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}
-    a{color:inherit}.profile-page{max-width:980px;margin:0 auto;padding:34px 18px 120px}.profile-hero{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:20px}.hero-copy h1{margin:0;font-size:clamp(1.7rem,4vw,2.5rem);letter-spacing:-.03em}.hero-copy p{margin:7px 0 0;color:var(--profile-muted)}.status{min-height:42px;padding:11px 14px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid var(--profile-border);color:var(--profile-muted);display:none}.status.show{display:block}.status.success{color:var(--profile-success);border-color:rgba(143,213,177,.25)}.status.error{color:var(--profile-danger);border-color:rgba(233,139,154,.3)}
-    .card{background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.045));border:1px solid var(--profile-border);border-radius:20px;padding:20px;margin-bottom:16px;box-shadow:0 18px 50px rgba(0,0,0,.18);backdrop-filter:blur(14px)}.card-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.card-title h2{margin:0;font-size:1.05rem}.muted{color:var(--profile-muted);font-size:.86rem}
-    .photo-layout{display:grid;grid-template-columns:180px 1fr;gap:20px;align-items:center}.main-photo{width:180px;height:180px;border-radius:24px;overflow:hidden;background:rgba(255,255,255,.05);border:1px solid var(--profile-border);display:flex;align-items:center;justify-content:center}.main-photo img{width:100%;height:100%;object-fit:cover}.photo-placeholder{font-size:3rem;opacity:.65}.photo-actions{display:flex;flex-direction:column;gap:10px}.upload-label{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 16px;border:1px solid rgba(217,184,108,.35);border-radius:12px;background:rgba(217,184,108,.1);color:var(--profile-gold-soft);cursor:pointer}.upload-label:hover{background:rgba(217,184,108,.16)}input[type=file]{display:none}.upload-help{margin:0;color:var(--profile-muted);font-size:.8rem;line-height:1.45}
-    .album-header{display:flex;justify-content:space-between;align-items:center;gap:12px}.album-count{color:var(--profile-gold-soft);font-size:.84rem}.album-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}.album-item{position:relative;aspect-ratio:1;overflow:hidden;border:1px solid var(--profile-border);border-radius:15px;background:rgba(255,255,255,.04)}.album-item img{width:100%;height:100%;object-fit:cover}.album-actions{position:absolute;left:6px;right:6px;bottom:6px;display:flex;gap:5px}.album-action{flex:1;min-height:34px;padding:5px;border:1px solid rgba(255,255,255,.15);border-radius:9px;background:rgba(7,10,25,.8);color:#fff;cursor:pointer;font-size:.7rem}.primary-badge{position:absolute;top:7px;left:7px;padding:4px 7px;border-radius:999px;background:rgba(217,184,108,.92);color:#17120a;font-size:.67rem;font-weight:700}.empty-album{grid-column:1/-1;padding:24px;border:1px dashed rgba(255,255,255,.15);border-radius:14px;color:var(--profile-muted);text-align:center;font-size:.9rem}
-    .form-grid{display:grid;gap:16px}.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}.form-group{display:grid;gap:7px}.form-group label{font-size:.88rem;font-weight:600}.form-group input,.form-group textarea{width:100%;padding:12px 13px;border:1px solid rgba(255,255,255,.13);border-radius:12px;outline:none;background:rgba(0,0,0,.16);color:#fff}.form-group input{min-height:46px}.form-group textarea{min-height:120px;resize:vertical}.form-group input:focus,.form-group textarea:focus{border-color:rgba(217,184,108,.6);box-shadow:0 0 0 3px rgba(217,184,108,.08)}.field-help{display:flex;justify-content:space-between;gap:10px;color:var(--profile-muted);font-size:.75rem}.save-area{display:flex;justify-content:flex-end;margin-top:20px}.save-button{min-height:46px;padding:11px 22px;border:0;border-radius:13px;background:linear-gradient(135deg,var(--profile-gold),var(--profile-gold-soft));color:#17120a;font-weight:700;cursor:pointer}.save-button:disabled{opacity:.65;cursor:wait}
-    .quick-links{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.quick-link{display:flex;align-items:center;gap:10px;min-height:54px;padding:12px 14px;border:1px solid var(--profile-border);border-radius:14px;background:rgba(255,255,255,.045);text-decoration:none}.quick-link:hover{border-color:rgba(217,184,108,.35);background:rgba(255,255,255,.07)}.quick-link strong{display:block}.quick-link span{color:var(--profile-muted);font-size:.78rem}
-    .discover-card{overflow:hidden}.discover-profile{display:grid;grid-template-columns:140px 1fr;gap:18px;align-items:center}.discover-photo{width:140px;height:170px;border-radius:18px;overflow:hidden;background:rgba(255,255,255,.05);border:1px solid var(--profile-border)}.discover-photo img{width:100%;height:100%;object-fit:cover}.discover-info h3{margin:0 0 5px;font-size:1.2rem}.discover-info p{margin:7px 0;color:var(--profile-muted);line-height:1.5}.interests{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.interest{padding:5px 9px;border-radius:999px;background:rgba(143,120,216,.12);border:1px solid rgba(143,120,216,.25);font-size:.72rem;color:#ddd6ff}.discover-actions{display:flex;gap:10px;margin-top:15px}.discover-btn{flex:1;min-height:44px;border-radius:12px;border:1px solid var(--profile-border);background:rgba(255,255,255,.05);color:#fff;cursor:pointer;font-weight:650}.discover-btn.like{background:rgba(217,184,108,.12);border-color:rgba(217,184,108,.4);color:var(--profile-gold-soft)}.discover-btn:disabled{opacity:.5;cursor:wait}.empty-state{text-align:center;padding:24px;color:var(--profile-muted)}
-    .match-box{display:none;margin-top:15px;padding:18px;border-radius:16px;text-align:center;background:linear-gradient(135deg,rgba(217,184,108,.14),rgba(143,120,216,.14));border:1px solid rgba(217,184,108,.28)}.match-box.show{display:block}.match-box h3{margin:0 0 7px}.match-box p{margin:0 0 13px;color:var(--profile-muted)}.match-link{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:9px 16px;border-radius:11px;background:linear-gradient(135deg,var(--profile-gold),var(--profile-gold-soft));color:#17120a;text-decoration:none;font-weight:700}.logout{margin-top:4px;background:transparent;color:var(--profile-danger);border:1px solid rgba(233,139,154,.25)}
-    @media(max-width:680px){.profile-page{padding:24px 12px 120px}.profile-hero{align-items:flex-start;flex-direction:column}.photo-layout,.discover-profile{grid-template-columns:1fr}.main-photo{width:150px;height:150px}.discover-photo{width:100%;height:230px}.form-row,.quick-links{grid-template-columns:1fr}.album-grid{grid-template-columns:repeat(2,1fr)}.save-area{justify-content:stretch}.save-button{width:100%}}
-  </style>
-</head>
-<body>
-<main class="profile-page">
-  <section class="profile-hero">
-    <div class="hero-copy"><h1>Mi perfil</h1><p>Mostrá quién sos y empezá a crear conexiones reales.</p></div>
-    <div id="status" class="status" role="status" aria-live="polite"></div>
-  </section>
+async function swipe(action, target) {
+  if (busy) return;
 
-  <section class="card">
-    <div class="card-title"><div><h2>📷 Foto principal</h2><div class="muted">Tu foto principal aparece cuando otros descubren tu perfil.</div></div></div>
-    <div class="photo-layout">
-      <div id="mainPhoto" class="main-photo"><span class="photo-placeholder">👤</span></div>
-      <div class="photo-actions">
-        <label class="upload-label" for="mainPhotoInput">📷 Cambiar foto principal</label>
-        <input id="mainPhotoInput" type="file" accept="image/jpeg,image/png,image/webp">
-        <p class="upload-help">Usá una foto clara. JPG, PNG o WebP. Máximo recomendado: 5 MB.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="card">
-    <div class="album-header"><div><h2 style="margin:0;font-size:1.05rem">🖼️ Mi álbum</h2><div class="muted">Podés guardar hasta 6 fotos.</div></div><span id="albumCount" class="album-count">0/6</span></div>
-    <label class="upload-label" for="albumInput" style="margin-top:14px">＋ Agregar fotos</label>
-    <input id="albumInput" type="file" accept="image/jpeg,image/png,image/webp" multiple>
-    <div id="albumGrid" class="album-grid"><div class="empty-album">Todavía no agregaste fotos a tu álbum.</div></div>
-  </section>
-
-  <section class="card">
-    <div class="card-title"><div><h2>✏️ Datos personales</h2><div class="muted">Mantené tu información actualizada.</div></div></div>
-    <form id="profileForm" class="form-grid" novalidate>
-      <div class="form-row">
-        <div class="form-group"><label for="nombre">Nombre *</label><input id="nombre" name="nombre" type="text" maxlength="80" autocomplete="name" placeholder="Tu nombre" required></div>
-        <div class="form-group"><label for="edad">Edad *</label><input id="edad" name="edad" type="number" min="18" max="100" inputmode="numeric" placeholder="Tu edad" required></div>
-      </div>
-      <div class="form-group"><label for="ciudad">Ciudad *</label><input id="ciudad" name="ciudad" type="text" maxlength="100" autocomplete="address-level2" placeholder="Tu ciudad" required></div>
-      <div class="form-group"><label for="descripcion">Descripción</label><textarea id="descripcion" name="descripcion" maxlength="500" placeholder="Contanos un poco sobre vos..."></textarea><div class="field-help"><span>Presentate de manera auténtica.</span><span id="descripcionCount">0/500</span></div></div>
-      <div class="form-group"><label for="intereses">Intereses</label><textarea id="intereses" name="intereses" maxlength="300" placeholder="Música, fútbol, viajes, cocina..."></textarea><div class="field-help"><span>Separalos con comas.</span><span id="interesesCount">0/300</span></div></div>
-      <div class="save-area"><button id="saveButton" class="save-button" type="submit">💾 Guardar perfil</button></div>
-    </form>
-  </section>
-
-  <section class="card">
-    <div class="card-title"><div><h2>⚡ Accesos rápidos</h2><div class="muted">Todo EmiMatch desde un mismo lugar.</div></div></div>
-    <div class="quick-links">
-      <a class="quick-link" href="descubrir.html"><b>🔎</b><div><strong>Descubrir</strong><span>Conocé nuevos perfiles</span></div></a>
-      <a class="quick-link" href="matches.html"><b>💕</b><div><strong>Mis Matches</strong><span>Revisá tus conexiones</span></div></a>
-      <a class="quick-link" href="chat.html"><b>💬</b><div><strong>Mensajes</strong><span>Continuá tus conversaciones</span></div></a>
-      <a class="quick-link" href="notificaciones.html"><b>🔔</b><div><strong>Notificaciones</strong><span>Actividad reciente</span></div></a>
-    </div>
-  </section>
-
-  <section class="card discover-card">
-    <div class="card-title"><div><h2>🔎 Descubrir</h2><div class="muted">Encontrá personas nuevas según tus conexiones.</div></div></div>
-    <div id="discoveryArea" class="empty-state">Cargando perfiles...</div>
-    <div id="matchBox" class="match-box"><h3>💕 ¡Hicieron Match!</h3><p>Los dos se dieron Me gusta. Ahora pueden empezar a hablar.</p><a class="match-link" href="chat.html">💬 Ir a mensajes</a></div>
-  </section>
-
-  <section class="card">
-    <button id="logoutButton" class="discover-btn logout" type="button">🚪 Cerrar sesión</button>
-  </section>
-</main>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="assets/js/config.js"></script>
-<script src="assets/js/app.js"></script>
-<script src="assets/js/components.js"></script>
-<script>
-(() => {
-  "use strict";
-  const cfg = window.EMIMATCH_CONFIG;
-  if (!cfg || !window.supabase) return;
-  const client = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseKey);
-  const $ = (id) => document.getElementById(id);
-  const MAX_ALBUM = 6;
-  const PLACEHOLDER = "https://placehold.co/600x600/151a38/f1d99a?text=EmiMatch";
-  let currentUser = null;
-  let currentProfile = null;
-  let albumFiles = [];
-  let discovery = [];
-  let busy = false;
-
-  function status(message, type="") {
-    const el = $("status");
-    if (!el) return;
-    el.textContent = message || "";
-    el.className = "status" + (message ? " show " + type : "");
-  }
-  function escapeHtml(value="") { return String(value).replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","\"":"&quot;"}[c])); }
-  function updateCounters(){ $("descripcionCount").textContent = `${$("descripcion").value.length}/500`; $("interesesCount").textContent = `${$("intereses").value.length}/300`; }
-  function validImage(file){ return file && ["image/jpeg","image/png","image/webp"].includes(file.type) && file.size <= 5*1024*1024; }
-
-  async function getSession(){
-    const {data,error}=await client.auth.getSession();
-    if(error) throw error;
-    if(!data.session){ window.location.replace("index.html"); return null; }
-    currentUser=data.session.user; return currentUser;
+  if (action !== "like" && action !== "dislike") {
+    console.error("Acción inválida:", action);
+    return;
   }
 
-  async function loadProfile(){
-    const {data,error}=await client.from("profiles").select("id,nombre,edad,ciudad,descripcion,foto_url,intereses,created_at").eq("id",currentUser.id).maybeSingle();
-    if(error) throw error;
-    currentProfile=data;
-    if(!data) return;
-    $("nombre").value=data.nombre || ""; $("edad").value=data.edad || ""; $("ciudad").value=data.ciudad || ""; $("descripcion").value=data.descripcion || ""; $("intereses").value=data.intereses || "";
-    renderMainPhoto(data.foto_url);
-    updateCounters();
+  if (!target) {
+    console.error("No se recibió el usuario objetivo.");
+    return;
   }
 
-  function renderMainPhoto(url){ $("mainPhoto").innerHTML = `<img src="${escapeHtml(url || PLACEHOLDER)}" alt="Foto de perfil" onerror="this.src='${PLACEHOLDER}'">`; }
+  busy = true;
 
-  async function saveProfile(event){
-    event.preventDefault();
-    if(busy) return;
-    const nombre=$("nombre").value.trim(), edad=Number($("edad").value), ciudad=$("ciudad").value.trim(), descripcion=$("descripcion").value.trim(), intereses=$("intereses").value.trim();
-    if(!nombre || !ciudad || !Number.isInteger(edad) || edad<18 || edad>100){ status("Completá nombre, edad (18 a 100) y ciudad.","error"); return; }
-    busy=true; $("saveButton").disabled=true; status("Guardando perfil...");
-    try{
-      const payload={id:currentUser.id,nombre,edad,ciudad,descripcion,intereses};
-      if(currentProfile?.foto_url) payload.foto_url=currentProfile.foto_url;
-      const {data,error}=await client.from("profiles").upsert(payload,{onConflict:"id"}).select().single();
-      if(error) throw error;
-      currentProfile=data; renderMainPhoto(data.foto_url); status("Perfil guardado correctamente.","success");
-    }catch(e){ console.error(e); status("No pudimos guardar el perfil. Revisá Supabase y las políticas RLS.","error"); }
-    finally{busy=false;$("saveButton").disabled=false;}
-  }
+  try {
 
-  async function uploadMainPhoto(file){
-    if(!validImage(file)){ status("Elegí una imagen JPG, PNG o WebP de hasta 5 MB.","error"); return; }
-    status("Subiendo foto...");
-    try{
-      const ext=file.name.split(".").pop().toLowerCase().replace(/[^a-z0-9]/g,"") || "jpg";
-      const path=`${currentUser.id}/principal-${Date.now()}.${ext}`;
-      const {error:upError}=await client.storage.from("profile-photos").upload(path,file,{upsert:false,contentType:file.type});
-      if(upError) throw upError;
-      const {data}=client.storage.from("profile-photos").getPublicUrl(path);
-      const url=data.publicUrl;
-      const {data:profile,error}=await client.from("profiles").upsert({id:currentUser.id,foto_url:url},{onConflict:"id"}).select().single();
-      if(error) throw error;
-      currentProfile=profile; renderMainPhoto(url); status("Foto principal actualizada.","success"); await loadAlbum();
-    }catch(e){ console.error(e); status("No pudimos subir la foto. Verificá el bucket profile-photos y sus políticas.","error"); }
-  }
+    /* =========================
+       GUARDAR SWIPE
+    ========================= */
 
-  async function loadAlbum(){
-    try{
-      const {data,error}=await client.storage.from("profile-photos").list(currentUser.id,{limit:100,sortBy:{column:"created_at",order:"asc"}});
-      if(error) throw error;
-      albumFiles=(data||[]).filter(f=>f.name && !f.name.startsWith(".") && !f.name.startsWith("principal-temp"));
-      renderAlbum();
-    }catch(e){ console.error(e); $("albumGrid").innerHTML='<div class="empty-album">No pudimos cargar el álbum. La foto principal puede seguir funcionando.</div>'; }
-  }
+    const { error: swipeError } = await client
+      .from("swipes")
+      .upsert(
+        {
+          user_id: user.id,
+          target_user_id: target,
+          action: action
+        },
+        {
+          onConflict: "user_id,target_user_id"
+        }
+      );
 
-  function renderAlbum(){
-    $("albumCount").textContent=`${Math.min(albumFiles.length,MAX_ALBUM)}/${MAX_ALBUM}`;
-    if(!albumFiles.length){$("albumGrid").innerHTML='<div class="empty-album">Todavía no agregaste fotos a tu álbum.</div>';return;}
-    $("albumGrid").innerHTML=albumFiles.slice(0,MAX_ALBUM).map(file=>{
-      const {data}=client.storage.from("profile-photos").getPublicUrl(`${currentUser.id}/${file.name}`);
-      const isPrimary=currentProfile?.foto_url===data.publicUrl;
-      return `<div class="album-item"><img src="${escapeHtml(data.publicUrl)}" alt="Foto del álbum"><span class="primary-badge" style="display:${isPrimary?'block':'none'}">⭐ Principal</span><div class="album-actions"><button class="album-action" data-primary="${escapeHtml(data.publicUrl)}">⭐ Principal</button><button class="album-action" data-delete="${escapeHtml(file.name)}">🗑️ Eliminar</button></div></div>`;
-    }).join("");
-  }
+    if (swipeError) {
+      throw swipeError;
+    }
 
-  async function uploadAlbum(files){
-    const selected=Array.from(files||[]).filter(validImage);
-    if(!selected.length){status("No hay imágenes válidas seleccionadas.","error");return;}
-    const remaining=MAX_ALBUM-albumFiles.length;
-    if(remaining<=0){status("El álbum ya tiene 6 fotos.","error");return;}
-    status("Subiendo fotos...");
-    try{
-      for(const file of selected.slice(0,remaining)){
-        const ext=file.name.split(".").pop().toLowerCase().replace(/[^a-z0-9]/g,"")||"jpg";
-        const path=`${currentUser.id}/album-${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
-        const {error}=await client.storage.from("profile-photos").upload(path,file,{upsert:false,contentType:file.type});
-        if(error) throw error;
+
+    /* =========================
+       COMPROBAR MATCH
+    ========================= */
+
+    if (action === "like") {
+
+      const {
+        data: reverseLike,
+        error: reverseError
+      } = await client
+        .from("swipes")
+        .select("id")
+        .eq("user_id", target)
+        .eq("target_user_id", user.id)
+        .eq("action", "like")
+        .maybeSingle();
+
+      if (reverseError) {
+        throw reverseError;
       }
-      status("Álbum actualizado.","success"); await loadAlbum();
-    }catch(e){console.error(e);status("No pudimos completar la carga del álbum.","error");}
-  }
 
-  async function setPrimary(url){
-    try{const {data,error}=await client.from("profiles").update({foto_url:url}).eq("id",currentUser.id).select().single();if(error)throw error;currentProfile=data;renderMainPhoto(url);renderAlbum();status("Foto principal actualizada.","success");}catch(e){console.error(e);status("No pudimos cambiar la foto principal.","error");}}
-  async function deletePhoto(name){
-    if(!confirm("¿Eliminar esta foto?")) return;
-    try{const {error}=await client.storage.from("profile-photos").remove([`${currentUser.id}/${name}`]);if(error)throw error;await loadAlbum();status("Foto eliminada.","success");}catch(e){console.error(e);status("No pudimos eliminar la foto.","error");}}
 
-  async function loadDiscovery(){
-    try{
-      const {data:blocked,error:be}=await client.from("block").select("blocked_id").eq("blocker_id",currentUser.id);
-      if(be && !/does not exist|relation/i.test(be.message)) throw be;
-      const blockedIds=new Set((blocked||[]).map(x=>x.blocked_id));
-      const {data:swipes,error:se}=await client.from("swipes").select("target_id").eq("user_id",currentUser.id);
-      if(se) throw se;
-      const seen=new Set((swipes||[]).map(x=>x.target_id));
-      const {data:profiles,error:pe}=await client.from("profiles").select("id,nombre,edad,ciudad,descripcion,foto_url,intereses").neq("id",currentUser.id).limit(100);
-      if(pe) throw pe;
-      discovery=(profiles||[]).filter(p=>!blockedIds.has(p.id)&&!seen.has(p.id)); renderDiscovery();
-    }catch(e){console.error(e);$("discoveryArea").innerHTML='<div class="empty-state">No pudimos cargar perfiles ahora. Si aparece “permission denied”, hay que corregir las políticas RLS de Supabase.</div>';}
-  }
+      /* =========================
+         CREAR MATCH
+      ========================= */
 
-  function renderDiscovery(){
-    if(!discovery.length){$("discoveryArea").innerHTML='<div class="empty-state">💕 No hay perfiles nuevos para mostrarte por ahora.</div>';return;}
-    const p=discovery[0]; const interests=String(p.intereses||"").split(",").map(x=>x.trim()).filter(Boolean).slice(0,8);
-    $("discoveryArea").innerHTML=`<div class="discover-profile"><div class="discover-photo"><img src="${escapeHtml(p.foto_url||PLACEHOLDER)}" alt="Perfil de ${escapeHtml(p.nombre||"usuario")}" onerror="this.src='${PLACEHOLDER}'"></div><div class="discover-info"><h3>${escapeHtml(p.nombre||"Sin nombre")} ${p.edad?`· ${escapeHtml(p.edad)}`:""}</h3><div class="muted">📍 ${escapeHtml(p.ciudad||"Sin ciudad")}</div><p>${escapeHtml(p.descripcion||"Todavía no agregó una descripción.")}</p><div class="interests">${interests.map(i=>`<span class="interest">${escapeHtml(i)}</span>`).join("")}</div><div class="discover-actions"><button class="discover-btn" data-swipe="pass">❌ Pasar</button><button class="discover-btn like" data-swipe="like">❤️ Me gusta</button></div></div></div>`;
-  }
+      if (reverseLike) {
 
-  async function swipe(action,targetId){
-    if(busy)return;busy=true;$("discoveryArea").querySelectorAll("button").forEach(b=>b.disabled=true);
-    try{
-      const {error}=await client.from("swipes").upsert({user_id:currentUser.id,target_id:targetId,action},{onConflict:"user_id,target_id"});if(error)throw error;
-      if(action==="like"){
-        const {data:reverse,error:re}=await client.from("swipes").select("id").eq("user_id",targetId).eq("target_id",currentUser.id).eq("action","like").maybeSingle();if(re)throw re;
-        if(reverse){const ids=[currentUser.id,targetId].sort();const {error:me}=await client.from("matches").upsert({user1_id:ids[0],user2_id:ids[1]},{onConflict:"user1_id,user2_id"});if(me)throw me;$("matchBox").classList.add("show");}
+        const ids =
+          [user.id, target].sort();
+
+        const {
+          data: existingMatch,
+          error: matchCheckError
+        } = await client
+          .from("matches")
+          .select("id")
+          .eq("user1_id", ids[0])
+          .eq("user2_id", ids[1])
+          .maybeSingle();
+
+        if (matchCheckError) {
+          throw matchCheckError;
+        }
+
+
+        if (!existingMatch) {
+
+          const {
+            error: matchInsertError
+          } = await client
+            .from("matches")
+            .insert({
+              user1_id: ids[0],
+              user2_id: ids[1]
+            });
+
+          if (matchInsertError) {
+            throw matchInsertError;
+          }
+        }
+
+
+        $("matchBox").classList.add("show");
       }
-      discovery.shift();renderDiscovery();
-    }catch(e){console.error(e);status("No pudimos registrar tu elección. Revisá las políticas RLS de swipes/matches.","error");}
-    finally{busy=false;}
+    }
+
+
+    /* =========================
+       QUITAR PERFIL ACTUAL
+    ========================= */
+
+    if (Array.isArray(window.discoveryList)) {
+
+      window.discoveryList =
+        window.discoveryList.filter(
+          item => item.id !== target
+        );
+
+      renderDiscovery(
+        window.discoveryList
+      );
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Error en swipe:",
+      error
+    );
+
+    status(
+      "No pudimos registrar tu elección: " +
+      error.message,
+      "error"
+    );
+
+  } finally {
+
+    busy = false;
   }
-
-  $("profileForm").addEventListener("submit",saveProfile);
-  $("descripcion").addEventListener("input",updateCounters); $("intereses").addEventListener("input",updateCounters);
-  $("mainPhotoInput").addEventListener("change",e=>uploadMainPhoto(e.target.files[0]));
-  $("albumInput").addEventListener("change",e=>{uploadAlbum(e.target.files);e.target.value=""});
-  $("albumGrid").addEventListener("click",e=>{const p=e.target.closest("[data-primary]"),d=e.target.closest("[data-delete]");if(p)setPrimary(p.dataset.primary);if(d)deletePhoto(d.dataset.delete)});
-  $("discoveryArea").addEventListener("click",e=>{const b=e.target.closest("[data-swipe]");if(b&&discovery[0])swipe(b.dataset.swipe,discovery[0].id)});
-  $("logoutButton").addEventListener("click",async()=>{await client.auth.signOut();window.location.replace("index.html")});
-  client.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT"||!session)window.location.replace("index.html")});
-
-  (async()=>{try{if(!await getSession())return;await loadProfile();await loadAlbum();await loadDiscovery();updateCounters();}catch(e){console.error(e);status("No pudimos cargar tu perfil. Intentá nuevamente.","error");}})();
-})();
-</script>
-<script src="assets/js/analytics.js"></script>
-</body>
-</html>
+}
