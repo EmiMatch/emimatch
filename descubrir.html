@@ -1,46 +1,77 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>EmiMatch - Descubrir</title>
-<link rel="stylesheet" href="assets/css/app.css">
-<style>
-body{margin:0;background:#071225;color:#fff;font-family:Arial,sans-serif}.discover-page{max-width:760px;margin:auto;padding:90px 16px 120px}.discover-page h1{text-align:center;margin:0 0 18px}.filters,.card,.empty,.status{background:#101d34;border:1px solid #263653;border-radius:18px;padding:16px;margin-bottom:16px}.filters{display:grid;grid-template-columns:1fr 1fr;gap:10px}.filters input{width:100%;box-sizing:border-box;padding:12px;border-radius:10px;border:1px solid #354563;background:#081426;color:#fff}.filters button{grid-column:1/-1;padding:12px;border:0;border-radius:12px;background:#d8ad42;color:#071225;font-weight:bold}.card{text-align:center}.card img{width:180px;height:180px;object-fit:cover;border-radius:50%;border:3px solid #d8ad42}.card h2{margin:12px 0 5px}.muted{color:#aab6ca}.bio{line-height:1.5}.actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}.actions button{padding:13px 20px;border:0;border-radius:12px;font-weight:bold}.pass{background:#263653;color:#fff}.like{background:#d8ad42;color:#071225}.block{background:#8e3142;color:#fff}.modal{display:none;position:fixed;inset:0;background:#000b;align-items:center;justify-content:center;padding:20px;z-index:999}.modal.show{display:flex}.modal-box{max-width:400px;width:100%;background:#101d34;border-radius:20px;padding:25px;text-align:center;border:1px solid #d8ad42}.modal-box button{width:100%;margin-top:10px;padding:13px;border:0;border-radius:12px;font-weight:bold}.msg{background:#d8ad42}.close{background:#263653;color:#fff}
-</style>
-</head>
-<body>
-<main class="discover-page">
-<h1>💕 Descubrir</h1>
-<section class="filters">
-<input id="minAge" type="number" min="18" max="100" placeholder="Edad mínima">
-<input id="maxAge" type="number" min="18" max="100" placeholder="Edad máxima">
-<input id="cityFilter" type="text" placeholder="Ciudad">
-<button id="filterBtn">Aplicar filtros</button>
-</section>
-<div id="status" class="status">Cargando perfiles...</div>
-<section id="profileContainer"></section>
-</main>
-<div id="matchModal" class="modal">
-<div class="modal-box">
-<h2>💕 ¡Hicieron Match!</h2>
-<p id="matchText">Ahora pueden comenzar a conocerse.</p>
-<button id="messageBtn" class="msg">💬 Enviar mensaje</button>
-<button id="continueBtn" class="close">Seguir descubriendo</button>
-</div></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="assets/js/config.js"></script>
-<script>
-"use strict";let client,user,profiles=[],index=0,blocked=[],swiped=[],selected=null;const $=id=>document.getElementById(id);const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
-async function start(){if(!window.EMIMATCH_CONFIG){$("status").textContent="Error: falta config.js";return}client=window.supabase.createClient(EMIMATCH_CONFIG.supabaseUrl,EMIMATCH_CONFIG.supabaseKey);const {data:{session}}=await client.auth.getSession();if(!session){location.href="index.html";return}user=session.user;await load()}
-async function load(){$("status").textContent="Buscando perfiles...";const min=Number($("minAge").value)||18,max=Number($("maxAge").value)||100,city=$("cityFilter").value.trim();let b=await client.from("user_blocks").select("blocked_id").eq("blocker_id",user.id);if(b.error){$("status").textContent="Error al cargar bloqueos: "+b.error.message;return}blocked=(b.data||[]).map(x=>x.blocked_id);let s=await client.from("swipes").select("target_user_id").eq("user_id",user.id);if(s.error){$("status").textContent="Error al cargar swipes: "+s.error.message;return}swiped=(s.data||[]).map(x=>x.target_user_id);let q=client.from("profiles").select("id,nombre,edad,ciudad,descripcion,foto_url,intereses").neq("id",user.id).gte("edad",min).lte("edad",max).limit(100);if(city)q=q.ilike("ciudad","%"+city+"%");const r=await q;if(r.error){$("status").textContent="Error al cargar perfiles: "+r.error.message;return}profiles=(r.data||[]).filter(p=>!blocked.includes(p.id)&&!swiped.includes(p.id));index=0;render()}
-function render(){const c=$("profileContainer");if(index>=profiles.length){c.innerHTML='<div class="empty">No hay más perfiles disponibles con estos filtros.</div>';$("status").textContent="Sin nuevos perfiles";return}const p=profiles[index],photo=p.foto_url||"https://placehold.co/400x400?text=EmiMatch";c.innerHTML=`<article class="card"><img src="${esc(photo)}" alt="Foto de ${esc(p.nombre)}"><h2>${esc(p.nombre)}, ${esc(p.edad)}</h2><div class="muted">📍 ${esc(p.ciudad||"Sin ciudad")}</div><p class="bio">${esc(p.descripcion||"Sin descripción")}</p><p class="muted">${esc(p.intereses||"")}</p><div class="actions"><button class="pass" onclick="swipe('pass')">✕ Pasar</button><button class="like" onclick="swipe('like')">♥ Me gusta</button><button class="block" onclick="blockUser()">🚫 Bloquear</button></div></article>`;$("status").textContent="Perfil "+(index+1)+" de "+profiles.length}
-async function swipe(type){const p=profiles[index];if(!p)return;const r=await client.from("swipes").upsert({user_id:user.id,target_user_id:p.id,type},{onConflict:"user_id,target_user_id"});if(r.error){alert("No se pudo guardar la acción: "+r.error.message);return}if(type==="like"){const a=await client.from("swipes").select("id").eq("user_id",p.id).eq("target_user_id",user.id).eq("type","like").maybeSingle();if(a.data){let m=await client.from("matches").select("id").or(`and(user1_id.eq.${user.id},user2_id.eq.${p.id}),and(user1_id.eq.${p.id},user2_id.eq.${user.id})`).maybeSingle();if(!m.data)m=await client.from("matches").insert({user1_id:user.id,user2_id:p.id}).select("id").single();if(m.error)alert("Like guardado, pero no se pudo crear el match: "+m.error.message);else showMatch(p)}}index++;render()}
-async function blockUser(){const p=profiles[index];if(!p)return;if(!confirm("¿Bloquear a este usuario?"))return;const r=await client.from("user_blocks").insert({blocker_id:user.id,blocked_id:p.id});if(r.error){alert("No se pudo bloquear: "+r.error.message);return}blocked.push(p.id);index++;render()}
-function showMatch(p){selected=p;$("matchText").textContent="Hicieron Match con "+p.nombre+".";$("matchModal").classList.add("show")}
-$("messageBtn").onclick=()=>{if(selected)location.href="conversacion.html?user="+encodeURIComponent(selected.id)};$("continueBtn").onclick=()=>$("matchModal").classList.remove("show");$("filterBtn").onclick=load;$("matchModal").onclick=e=>{if(e.target.id==="matchModal")$("matchModal").classList.remove("show")};document.addEventListener("keydown",e=>{if(e.key==="Escape")$("matchModal").classList.remove("show")});start();
-</script>
-<script src="assets/js/app.js"></script>
-<script src="assets/js/components.js"></script>
-</body>
-</html>
+async function swipe(action){
+  const p = profiles[index];
+  if (!p) return;
+
+  if (action !== "like" && action !== "dislike") {
+    console.error("Acción inválida:", action);
+    return;
+  }
+
+  const r = await client
+    .from("swipes")
+    .upsert(
+      {
+        user_id: user.id,
+        target_user_id: p.id,
+        action: action
+      },
+      {
+        onConflict: "user_id,target_user_id"
+      }
+    );
+
+  if (r.error) {
+    alert("No se pudo guardar la acción: " + r.error.message);
+    return;
+  }
+
+  if (action === "like") {
+    const a = await client
+      .from("swipes")
+      .select("id")
+      .eq("user_id", p.id)
+      .eq("target_user_id", user.id)
+      .eq("action", "like")
+      .maybeSingle();
+
+    if (a.error) {
+      alert("No se pudo comprobar el Match: " + a.error.message);
+      return;
+    }
+
+    if (a.data) {
+      const ids = [user.id, p.id].sort();
+
+      let m = await client
+        .from("matches")
+        .select("id")
+        .eq("user1_id", ids[0])
+        .eq("user2_id", ids[1])
+        .maybeSingle();
+
+      if (!m.data) {
+        m = await client
+          .from("matches")
+          .insert({
+            user1_id: ids[0],
+            user2_id: ids[1]
+          })
+          .select("id")
+          .single();
+      }
+
+      if (m.error) {
+        alert(
+          "Like guardado, pero no se pudo crear el Match: " +
+          m.error.message
+        );
+        return;
+      }
+
+      showMatch(p);
+    }
+  }
+
+  index++;
+  render();
+}
