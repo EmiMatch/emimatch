@@ -5,35 +5,1229 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#0b1230">
 <title>Configuración - EmiMatch</title>
+
 <link rel="stylesheet" href="assets/css/app.css">
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/js/config.js"></script>
 <script src="assets/js/app.js"></script>
+
 <style>
-.settings-page{max-width:820px;margin:0 auto}.settings-hero{position:relative;overflow:hidden;padding:28px}.settings-hero:after{content:"";position:absolute;right:-80px;top:-110px;width:300px;height:300px;border-radius:50%;background:rgba(244,201,93,.12);filter:blur(5px)}.settings-brand{position:relative;z-index:1;display:flex;align-items:center;gap:15px}.settings-logo{width:64px;height:64px;border-radius:20px;display:grid;place-items:center;background:linear-gradient(145deg,#f4c95d,#b88919);box-shadow:0 14px 35px rgba(0,0,0,.28);font-size:32px}.settings-brand-name{font-size:27px;font-weight:850}.settings-subtitle{margin:3px 0 0;color:var(--em-muted)}.settings-title{position:relative;z-index:1;margin:25px 0 5px;font-size:32px}.settings-intro{position:relative;z-index:1;margin:0;color:var(--em-muted)}.settings-card{margin-top:18px;padding:22px}.settings-card h2{margin:0 0 15px;font-size:20px}.settings-actions{display:grid;gap:10px}.settings-action{width:100%;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px 16px;border:1px solid rgba(255,255,255,.08);border-radius:16px;background:rgba(255,255,255,.025);color:inherit;text-decoration:none;transition:.2s;cursor:pointer;text-align:left}.settings-action:hover{transform:translateY(-1px);border-color:rgba(244,201,93,.35);background:rgba(255,255,255,.045)}.settings-action-main{display:flex;align-items:center;gap:13px;min-width:0}.settings-icon{width:43px;height:43px;border-radius:13px;display:grid;place-items:center;background:rgba(244,201,93,.12);font-size:21px;flex:0 0 auto}.settings-action strong{display:block}.settings-action small{display:block;color:var(--em-muted);margin-top:3px}.settings-arrow{color:var(--em-muted);font-size:22px}.settings-switch{display:flex;align-items:center;justify-content:space-between;gap:18px}.settings-switch input{width:48px;height:26px;accent-color:#f4c95d}.blocked-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.blocked-count{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:28px;padding:0 9px;border-radius:999px;background:rgba(244,201,93,.14);color:#f7d979;font-weight:800}.blocked-list{display:grid;gap:10px;margin-top:14px}.blocked-user{display:flex;align-items:center;gap:13px;padding:13px;border:1px solid rgba(255,255,255,.08);border-radius:16px;background:rgba(255,255,255,.025)}.blocked-photo{width:54px;height:54px;border-radius:50%;object-fit:cover;background:#151d3d;display:grid;place-items:center;font-size:24px;flex:0 0 auto}.blocked-info{min-width:0;flex:1}.blocked-info strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.blocked-meta{margin-top:4px;color:var(--em-muted);font-size:.9rem}.unblock-btn{border:1px solid rgba(244,201,93,.38);background:transparent;color:#f7d979;border-radius:11px;padding:9px 12px;font-weight:700;cursor:pointer}.unblock-btn:hover{background:rgba(244,201,93,.08)}.empty-blocked{padding:18px;text-align:center;border:1px dashed rgba(255,255,255,.12);border-radius:15px;color:var(--em-muted)}.settings-danger{border-color:rgba(255,90,90,.22)}.settings-danger h2{color:#ff9a9a}.settings-danger-btn{background:transparent!important;color:#ff9a9a!important;border:1px solid rgba(255,90,90,.4)!important}.settings-note{font-size:.9rem;line-height:1.55}.settings-divider{height:1px;background:rgba(255,255,255,.08);margin:16px 0}@media(max-width:560px){.settings-hero{padding:22px}.settings-title{font-size:27px}.settings-card{padding:18px}.blocked-user{align-items:flex-start}.unblock-btn{padding:8px 10px}}
+.settings-page{max-width:820px;margin:0 auto}
+
+.settings-hero{
+  position:relative;
+  overflow:hidden;
+  padding:28px
+}
+
+.settings-hero:after{
+  content:"";
+  position:absolute;
+  right:-80px;
+  top:-110px;
+  width:300px;
+  height:300px;
+  border-radius:50%;
+  background:rgba(244,201,93,.12);
+  filter:blur(5px)
+}
+
+.settings-brand{
+  position:relative;
+  z-index:1;
+  display:flex;
+  align-items:center;
+  gap:15px
+}
+
+.settings-logo{
+  width:64px;
+  height:64px;
+  border-radius:20px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(145deg,#f4c95d,#b88919);
+  box-shadow:0 14px 35px rgba(0,0,0,.28);
+  font-size:32px
+}
+
+.settings-brand-name{
+  font-size:27px;
+  font-weight:850
+}
+
+.settings-subtitle{
+  margin:3px 0 0;
+  color:var(--em-muted)
+}
+
+.settings-title{
+  position:relative;
+  z-index:1;
+  margin:25px 0 5px;
+  font-size:32px
+}
+
+.settings-intro{
+  position:relative;
+  z-index:1;
+  margin:0;
+  color:var(--em-muted)
+}
+
+.settings-card{
+  margin-top:18px;
+  padding:22px
+}
+
+.settings-card h2{
+  margin:0 0 15px;
+  font-size:20px
+}
+
+.settings-actions{
+  display:grid;
+  gap:10px
+}
+
+.settings-action{
+  width:100%;
+  box-sizing:border-box;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  padding:15px 16px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:16px;
+  background:rgba(255,255,255,.025);
+  color:inherit;
+  text-decoration:none;
+  transition:.2s;
+  cursor:pointer;
+  text-align:left
+}
+
+.settings-action:hover{
+  transform:translateY(-1px);
+  border-color:rgba(244,201,93,.35);
+  background:rgba(255,255,255,.045)
+}
+
+.settings-action-main{
+  display:flex;
+  align-items:center;
+  gap:13px;
+  min-width:0
+}
+
+.settings-icon{
+  width:43px;
+  height:43px;
+  border-radius:13px;
+  display:grid;
+  place-items:center;
+  background:rgba(244,201,93,.12);
+  font-size:21px;
+  flex:0 0 auto
+}
+
+.settings-action strong{
+  display:block
+}
+
+.settings-action small{
+  display:block;
+  color:var(--em-muted);
+  margin-top:3px
+}
+
+.settings-arrow{
+  color:var(--em-muted);
+  font-size:22px
+}
+
+.settings-switch{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px
+}
+
+.settings-switch input{
+  width:48px;
+  height:26px;
+  accent-color:#f4c95d
+}
+
+.blocked-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px
+}
+
+.blocked-count{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:30px;
+  height:28px;
+  padding:0 9px;
+  border-radius:999px;
+  background:rgba(244,201,93,.14);
+  color:#f7d979;
+  font-weight:800
+}
+
+.blocked-list{
+  display:grid;
+  gap:10px;
+  margin-top:14px
+}
+
+.blocked-user{
+  display:flex;
+  align-items:center;
+  gap:13px;
+  padding:13px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:16px;
+  background:rgba(255,255,255,.025)
+}
+
+.blocked-photo{
+  width:54px;
+  height:54px;
+  border-radius:50%;
+  object-fit:cover;
+  background:#151d3d;
+  display:grid;
+  place-items:center;
+  font-size:24px;
+  flex:0 0 auto
+}
+
+.blocked-info{
+  min-width:0;
+  flex:1
+}
+
+.blocked-info strong{
+  display:block;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis
+}
+
+.blocked-meta{
+  margin-top:4px;
+  color:var(--em-muted);
+  font-size:.9rem
+}
+
+.unblock-btn{
+  border:1px solid rgba(244,201,93,.38);
+  background:transparent;
+  color:#f7d979;
+  border-radius:11px;
+  padding:9px 12px;
+  font-weight:700;
+  cursor:pointer
+}
+
+.empty-blocked{
+  padding:18px;
+  text-align:center;
+  border:1px dashed rgba(255,255,255,.12);
+  border-radius:15px;
+  color:var(--em-muted)
+}
+
+.settings-danger{
+  border-color:rgba(255,90,90,.22)
+}
+
+.settings-danger h2{
+  color:#ff9a9a
+}
+
+.settings-danger-btn{
+  background:transparent!important;
+  color:#ff9a9a!important;
+  border:1px solid rgba(255,90,90,.4)!important
+}
+
+.settings-note{
+  font-size:.9rem;
+  line-height:1.55
+}
+
+.settings-divider{
+  height:1px;
+  background:rgba(255,255,255,.08);
+  margin:16px 0
+}
+
+.delete-status{
+  margin-top:12px;
+  line-height:1.5
+}
+
+@media(max-width:560px){
+  .settings-hero{padding:22px}
+  .settings-title{font-size:27px}
+  .settings-card{padding:18px}
+  .blocked-user{align-items:flex-start}
+  .unblock-btn{padding:8px 10px}
+}
 </style>
 </head>
+
 <body>
-<main class="em-container em-section"><section class="em-shell settings-page">
-<div class="em-card settings-hero"><div class="settings-brand"><div class="settings-logo" aria-hidden="true">💕</div><div><div class="settings-brand-name">EmiMatch</div><p class="settings-subtitle">Tu espacio, tus preferencias.</p></div></div><h1 class="settings-title">⚙️ Configuración</h1><p class="settings-intro">Administrá tu cuenta, privacidad y experiencia en EmiMatch.</p></div>
-<div class="em-card settings-card"><h2>👤 Cuenta</h2><div class="settings-actions"><a class="settings-action" href="perfil.html"><span class="settings-action-main"><span class="settings-icon">👤</span><span><strong>Editar mi perfil</strong><small>Fotos, nombre, ciudad e intereses</small></span></span><span class="settings-arrow">›</span></a><button class="settings-action" id="passwordBtn" type="button"><span class="settings-action-main"><span class="settings-icon">🔐</span><span><strong>Cambiar contraseña</strong><small>Actualizá la contraseña de tu cuenta</small></span></span><span class="settings-arrow">›</span></button><button class="settings-action" id="logoutBtn" type="button"><span class="settings-action-main"><span class="settings-icon">🚪</span><span><strong>Cerrar sesión</strong><small>Salir de tu cuenta de forma segura</small></span></span><span class="settings-arrow">›</span></button></div></div>
-<div class="em-card settings-card"><h2>🔔 Notificaciones</h2><label class="settings-switch"><span><strong>Notificaciones dentro de EmiMatch</strong><br><small class="em-muted">Activá o desactivá las alertas de la aplicación.</small></span><input id="notifications" type="checkbox" aria-label="Activar notificaciones"></label></div>
-<div class="em-card settings-card"><div class="blocked-head"><h2 style="margin-bottom:0">🚫 Usuarios bloqueados</h2><span id="blockedCount" class="blocked-count">0</span></div><p id="blockedInfo" class="em-muted" style="margin:8px 0 0">Cargando usuarios bloqueados...</p><div id="blockedList" class="blocked-list"></div></div>
-<div class="em-card settings-card"><h2>🛡️ Privacidad</h2><p class="em-muted">Tus bloqueos se respetan durante el descubrimiento. Las conversaciones y acciones de tu cuenta están vinculadas a tu sesión.</p><a class="em-button" href="notificaciones.html">🔔 Ver notificaciones</a></div>
-<div class="em-card settings-card settings-danger"><h2>🗑️ Eliminar cuenta</h2><p class="em-muted">La eliminación definitiva requiere una operación segura del servidor. Nunca se debe colocar una clave privilegiada de Supabase dentro de esta aplicación.</p><p class="settings-note em-muted">Desde aquí podés iniciar la solicitud. La eliminación definitiva deberá ejecutarse mediante una función segura del servidor.</p><div class="settings-divider"></div><button class="em-button settings-danger-btn" id="deleteAccountBtn" type="button">🗑️ Solicitar eliminación de cuenta</button></div>
-<div id="message" class="em-alert" hidden></div></section></main>
+
+<main class="em-container em-section">
+
+<section class="em-shell settings-page">
+
+<!-- HERO -->
+<div class="em-card settings-hero">
+
+  <div class="settings-brand">
+
+    <div class="settings-logo" aria-hidden="true">
+      💕
+    </div>
+
+    <div>
+      <div class="settings-brand-name">
+        EmiMatch
+      </div>
+
+      <p class="settings-subtitle">
+        Tu espacio, tus preferencias.
+      </p>
+    </div>
+
+  </div>
+
+  <h1 class="settings-title">
+    ⚙️ Configuración
+  </h1>
+
+  <p class="settings-intro">
+    Administrá tu cuenta, privacidad y experiencia en EmiMatch.
+  </p>
+
+</div>
+
+
+<!-- CUENTA -->
+<div class="em-card settings-card">
+
+  <h2>👤 Cuenta</h2>
+
+  <div class="settings-actions">
+
+    <a class="settings-action" href="perfil.html">
+
+      <span class="settings-action-main">
+
+        <span class="settings-icon">
+          👤
+        </span>
+
+        <span>
+          <strong>Editar mi perfil</strong>
+          <small>
+            Fotos, nombre, ciudad e intereses
+          </small>
+        </span>
+
+      </span>
+
+      <span class="settings-arrow">›</span>
+
+    </a>
+
+
+    <button
+      class="settings-action"
+      id="passwordBtn"
+      type="button">
+
+      <span class="settings-action-main">
+
+        <span class="settings-icon">
+          🔐
+        </span>
+
+        <span>
+          <strong>Cambiar contraseña</strong>
+          <small>
+            Actualizá la contraseña de tu cuenta
+          </small>
+        </span>
+
+      </span>
+
+      <span class="settings-arrow">›</span>
+
+    </button>
+
+
+    <button
+      class="settings-action"
+      id="logoutBtn"
+      type="button">
+
+      <span class="settings-action-main">
+
+        <span class="settings-icon">
+          🚪
+        </span>
+
+        <span>
+          <strong>Cerrar sesión</strong>
+          <small>
+            Salir de tu cuenta de forma segura
+          </small>
+        </span>
+
+      </span>
+
+      <span class="settings-arrow">›</span>
+
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- NOTIFICACIONES -->
+<div class="em-card settings-card">
+
+  <h2>🔔 Notificaciones</h2>
+
+  <label class="settings-switch">
+
+    <span>
+
+      <strong>
+        Notificaciones dentro de EmiMatch
+      </strong>
+
+      <br>
+
+      <small class="em-muted">
+        Activá o desactivá las alertas de la aplicación.
+      </small>
+
+    </span>
+
+    <input
+      id="notifications"
+      type="checkbox"
+      aria-label="Activar notificaciones">
+
+  </label>
+
+</div>
+
+
+<!-- BLOQUEADOS -->
+<div class="em-card settings-card">
+
+  <div class="blocked-head">
+
+    <h2 style="margin-bottom:0">
+      🚫 Usuarios bloqueados
+    </h2>
+
+    <span
+      id="blockedCount"
+      class="blocked-count">
+      0
+    </span>
+
+  </div>
+
+  <p
+    id="blockedInfo"
+    class="em-muted"
+    style="margin:8px 0 0">
+
+    Cargando usuarios bloqueados...
+
+  </p>
+
+  <div
+    id="blockedList"
+    class="blocked-list">
+  </div>
+
+</div>
+
+
+<!-- PRIVACIDAD -->
+<div class="em-card settings-card">
+
+  <h2>
+    🛡️ Privacidad
+  </h2>
+
+  <p class="em-muted">
+
+    Tus bloqueos se respetan durante el descubrimiento.
+    Las conversaciones y acciones de tu cuenta están vinculadas
+    a tu sesión.
+
+  </p>
+
+  <a
+    class="em-button"
+    href="notificaciones.html">
+
+    🔔 Ver notificaciones
+
+  </a>
+
+</div>
+
+
+<!-- ELIMINAR CUENTA -->
+<div class="em-card settings-card settings-danger">
+
+  <h2>
+    🗑️ Eliminar cuenta
+  </h2>
+
+  <p class="em-muted">
+
+    La eliminación definitiva se gestionará mediante una función
+    segura del servidor. Esta etapa solo verifica que la conexión
+    segura funcione correctamente.
+
+  </p>
+
+  <p class="settings-note em-muted">
+
+    No se elimina ninguna cuenta durante esta prueba y nunca se
+    coloca una clave privilegiada de Supabase en el navegador.
+
+  </p>
+
+  <div class="settings-divider"></div>
+
+  <button
+    class="em-button settings-danger-btn"
+    id="deleteAccountBtn"
+    type="button">
+
+    🗑️ Continuar con eliminación
+
+  </button>
+
+  <div
+    id="deleteStatus"
+    class="delete-status em-muted"
+    hidden>
+  </div>
+
+</div>
+
+
+<!-- MENSAJES -->
+<div
+  id="message"
+  class="em-alert"
+  hidden>
+</div>
+
+</section>
+
+</main>
+
+
 <script>
-(()=>{'use strict';const c=window.EMIMATCH_CONFIG;if(!c){location.replace('index.html');return;}const db=window.supabase.createClient(c.supabaseUrl,c.supabaseKey),$=id=>document.getElementById(id);let currentUser=null;
-function msg(t,e=false){const b=$('message');b.hidden=false;b.textContent=t;b.className='em-alert '+(e?'em-alert-danger':'em-alert-success');clearTimeout(window.__settingsMsg);window.__settingsMsg=setTimeout(()=>b.hidden=true,3500)}
-function esc(v){return String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]))}
-function photo(url,name){return url?`<img class="blocked-photo" src="${esc(url)}" alt="Foto de ${esc(name)}" loading="lazy" onerror="this.outerHTML='<span class="blocked-photo" aria-hidden="true">👤</span>'">`:'<span class="blocked-photo" aria-hidden="true">👤</span>'}
-async function loadBlocked(){const list=$('blockedList');list.innerHTML='<div class="empty-blocked">Cargando...</div>';const {data:blocks,error}=await db.from('user_blocks').select('blocked_id,created_at').eq('blocker_id',currentUser.id).order('created_at',{ascending:false});if(error){$('blockedCount').textContent='0';$('blockedInfo').textContent='No se pudo cargar la lista de bloqueados.';list.innerHTML='<div class="empty-blocked">Ocurrió un error al consultar los bloqueos.</div>';console.error(error);return}const ids=(blocks||[]).map(x=>x.blocked_id).filter(Boolean);$('blockedCount').textContent=String(ids.length);$('blockedInfo').textContent=ids.length?`Tenés ${ids.length} usuario${ids.length===1?'':'s'} bloqueado${ids.length===1?'':'s'}.`:'No tenés usuarios bloqueados.';if(!ids.length){list.innerHTML='<div class="empty-blocked">✨ No hay usuarios bloqueados.</div>';return}const {data:profiles,error:pe}=await db.from('profiles').select('id,nombre,edad,ciudad,foto_url').in('id',ids);if(pe){list.innerHTML='<div class="empty-blocked">No se pudieron cargar los perfiles bloqueados.</div>';console.error(pe);return}const map=new Map((profiles||[]).map(p=>[p.id,p]));list.innerHTML=ids.map(id=>{const p=map.get(id)||{id,nombre:'Usuario',edad:'',ciudad:'',foto_url:''};const meta=[p.edad?`${esc(p.edad)} años`:'',p.ciudad?esc(p.ciudad):''].filter(Boolean).join(' · ');return `<div class="blocked-user">${photo(p.foto_url,p.nombre)}<div class="blocked-info"><strong>${esc(p.nombre||'Usuario')}</strong><div class="blocked-meta">${meta||'Perfil no disponible'}</div></div><button class="unblock-btn" type="button" data-unblock="${esc(id)}">Desbloquear</button></div>`}).join('')}
-async function unblock(id,button){if(!confirm('¿Querés desbloquear a esta persona?'))return;button.disabled=true;button.textContent='...';const {error}=await db.from('user_blocks').delete().eq('blocker_id',currentUser.id).eq('blocked_id',id);if(error){button.disabled=false;button.textContent='Desbloquear';msg('❌ No se pudo desbloquear al usuario.',true);console.error(error);return}msg('✅ Usuario desbloqueado correctamente.');await loadBlocked()}
-$('blockedList').addEventListener('click',e=>{const b=e.target.closest('[data-unblock]');if(b)unblock(b.dataset.unblock,b)});
-$('notifications').addEventListener('change',e=>{localStorage.setItem('emimatch_notificaciones',e.target.checked?'on':'off');msg(e.target.checked?'🔔 Notificaciones activadas.':'🔕 Notificaciones desactivadas.')});
-$('passwordBtn').addEventListener('click',async()=>{const p=prompt('Ingresá tu nueva contraseña (mínimo 6 caracteres):');if(p===null)return;if(p.length<6){msg('❌ La contraseña debe tener al menos 6 caracteres.',true);return}const q=prompt('Repetí la nueva contraseña:');if(q!==p){msg('❌ Las contraseñas no coinciden.',true);return}const {error}=await db.auth.updateUser({password:p});if(error){msg('❌ No se pudo cambiar la contraseña.',true);console.error(error);return}msg('✅ Contraseña actualizada correctamente.')});
-$('logoutBtn').addEventListener('click',async()=>{if(!confirm('¿Querés cerrar sesión?'))return;const {error}=await db.auth.signOut();if(error){msg('❌ No se pudo cerrar la sesión.',true);return}location.replace('index.html')});
-$('deleteAccountBtn').addEventListener('click',()=>{const x=prompt('Para solicitar la eliminación, escribí ELIMINAR');if(x===null)return;if(x.trim().toUpperCase()!=='ELIMINAR'){msg('❌ Solicitud cancelada. Debés escribir ELIMINAR exactamente.',true);return}msg('ℹ️ Solicitud registrada. La eliminación definitiva requiere una función segura del servidor.')});
-async function init(){const {data,error}=await db.auth.getSession();if(error||!data.session){location.replace('index.html');return}currentUser=data.session.user;$('notifications').checked=localStorage.getItem('emimatch_notificaciones')!=='off';await loadBlocked()}init();})();
-</script><script src="assets/js/components.js"></script>
-</body></html>
+(() => {
+
+"use strict";
+
+
+/* ================================
+   CONFIGURACIÓN
+================================ */
+
+const c = window.EMIMATCH_CONFIG;
+
+if (!c) {
+  location.replace("index.html");
+  return;
+}
+
+
+const db = window.supabase.createClient(
+  c.supabaseUrl,
+  c.supabaseKey
+);
+
+
+const $ = id =>
+  document.getElementById(id);
+
+
+let currentUser = null;
+
+
+/* ================================
+   MENSAJES
+================================ */
+
+function msg(text, error = false) {
+
+  const box = $("message");
+
+  box.hidden = false;
+
+  box.textContent = text;
+
+  box.className =
+    "em-alert " +
+    (error
+      ? "em-alert-danger"
+      : "em-alert-success");
+
+
+  clearTimeout(window.__settingsMsg);
+
+
+  window.__settingsMsg =
+    setTimeout(() => {
+
+      box.hidden = true;
+
+    }, 3500);
+
+}
+
+
+/* ================================
+   ESCAPE HTML
+================================ */
+
+function esc(value) {
+
+  return String(value ?? "")
+    .replace(
+      /[&<>"']/g,
+      char => ({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#039;"
+      }[char])
+    );
+
+}
+
+
+/* ================================
+   FOTO
+================================ */
+
+function photo(url, name) {
+
+  if (!url) {
+
+    return `
+      <span
+        class="blocked-photo"
+        aria-hidden="true">
+        👤
+      </span>
+    `;
+
+  }
+
+
+  return `
+    <img
+      class="blocked-photo"
+      src="${esc(url)}"
+      alt="Foto de ${esc(name)}"
+      loading="lazy"
+      onerror="this.outerHTML='<span class="blocked-photo" aria-hidden="true">👤</span>'">
+  `;
+
+}
+
+
+/* ================================
+   USUARIOS BLOQUEADOS
+================================ */
+
+async function loadBlocked() {
+
+  const list = $("blockedList");
+
+  list.innerHTML =
+    '<div class="empty-blocked">Cargando...</div>';
+
+
+  const {
+    data: blocks,
+    error
+  } = await db
+    .from("user_blocks")
+    .select("blocked_id,created_at")
+    .eq("blocker_id", currentUser.id)
+    .order("created_at", {
+      ascending:false
+    });
+
+
+  if (error) {
+
+    $("blockedCount").textContent = "0";
+
+    $("blockedInfo").textContent =
+      "No se pudo cargar la lista de bloqueados.";
+
+    list.innerHTML =
+      '<div class="empty-blocked">Ocurrió un error al consultar los bloqueos.</div>';
+
+    console.error(error);
+
+    return;
+
+  }
+
+
+  const ids =
+    (blocks || [])
+      .map(item => item.blocked_id)
+      .filter(Boolean);
+
+
+  $("blockedCount").textContent =
+    String(ids.length);
+
+
+  $("blockedInfo").textContent =
+    ids.length
+      ? `Tenés ${ids.length} usuario${ids.length === 1 ? "" : "s"} bloqueado${ids.length === 1 ? "" : "s"}.`
+      : "No tenés usuarios bloqueados.";
+
+
+  if (!ids.length) {
+
+    list.innerHTML =
+      '<div class="empty-blocked">✨ No hay usuarios bloqueados.</div>';
+
+    return;
+
+  }
+
+
+  const {
+    data: profiles,
+    error: profileError
+  } = await db
+    .from("profiles")
+    .select(
+      "id,nombre,edad,ciudad,foto_url"
+    )
+    .in("id", ids);
+
+
+  if (profileError) {
+
+    list.innerHTML =
+      '<div class="empty-blocked">No se pudieron cargar los perfiles bloqueados.</div>';
+
+    console.error(profileError);
+
+    return;
+
+  }
+
+
+  const map =
+    new Map(
+      (profiles || [])
+        .map(profile => [
+          profile.id,
+          profile
+        ])
+    );
+
+
+  list.innerHTML =
+    ids.map(id => {
+
+      const p =
+        map.get(id) || {
+          id,
+          nombre:"Usuario",
+          edad:"",
+          ciudad:"",
+          foto_url:""
+        };
+
+
+      const meta =
+        [
+          p.edad
+            ? `${esc(p.edad)} años`
+            : "",
+
+          p.ciudad
+            ? esc(p.ciudad)
+            : ""
+
+        ]
+        .filter(Boolean)
+        .join(" · ");
+
+
+      return `
+        <div class="blocked-user">
+
+          ${photo(
+            p.foto_url,
+            p.nombre
+          )}
+
+          <div class="blocked-info">
+
+            <strong>
+              ${esc(p.nombre || "Usuario")}
+            </strong>
+
+            <div class="blocked-meta">
+              ${meta || "Perfil no disponible"}
+            </div>
+
+          </div>
+
+          <button
+            class="unblock-btn"
+            type="button"
+            data-unblock="${esc(id)}">
+
+            Desbloquear
+
+          </button>
+
+        </div>
+      `;
+
+    }).join("");
+
+}
+
+
+/* ================================
+   DESBLOQUEAR
+================================ */
+
+async function unblock(id, button) {
+
+  if (
+    !confirm(
+      "¿Querés desbloquear a esta persona?"
+    )
+  ) {
+    return;
+  }
+
+
+  button.disabled = true;
+
+  button.textContent = "...";
+
+
+  const {
+    error
+  } = await db
+    .from("user_blocks")
+    .delete()
+    .eq("blocker_id", currentUser.id)
+    .eq("blocked_id", id);
+
+
+  if (error) {
+
+    button.disabled = false;
+
+    button.textContent =
+      "Desbloquear";
+
+    msg(
+      "❌ No se pudo desbloquear al usuario.",
+      true
+    );
+
+    console.error(error);
+
+    return;
+
+  }
+
+
+  msg(
+    "✅ Usuario desbloqueado correctamente."
+  );
+
+
+  await loadBlocked();
+
+}
+
+
+$("blockedList").addEventListener(
+  "click",
+  event => {
+
+    const button =
+      event.target.closest(
+        "[data-unblock]"
+      );
+
+
+    if (button) {
+
+      unblock(
+        button.dataset.unblock,
+        button
+      );
+
+    }
+
+  }
+);
+
+
+/* ================================
+   NOTIFICACIONES
+================================ */
+
+$("notifications").addEventListener(
+  "change",
+  event => {
+
+    localStorage.setItem(
+      "emimatch_notificaciones",
+      event.target.checked
+        ? "on"
+        : "off"
+    );
+
+
+    msg(
+      event.target.checked
+        ? "🔔 Notificaciones activadas."
+        : "🔕 Notificaciones desactivadas."
+    );
+
+  }
+);
+
+
+/* ================================
+   CAMBIAR CONTRASEÑA
+================================ */
+
+$("passwordBtn").addEventListener(
+  "click",
+  async () => {
+
+    const password =
+      prompt(
+        "Ingresá tu nueva contraseña (mínimo 6 caracteres):"
+      );
+
+
+    if (password === null) {
+      return;
+    }
+
+
+    if (password.length < 6) {
+
+      msg(
+        "❌ La contraseña debe tener al menos 6 caracteres.",
+        true
+      );
+
+      return;
+
+    }
+
+
+    const confirmation =
+      prompt(
+        "Repetí la nueva contraseña:"
+      );
+
+
+    if (confirmation !== password) {
+
+      msg(
+        "❌ Las contraseñas no coinciden.",
+        true
+      );
+
+      return;
+
+    }
+
+
+    const {
+      error
+    } =
+      await db.auth.updateUser({
+        password
+      });
+
+
+    if (error) {
+
+      msg(
+        "❌ No se pudo cambiar la contraseña.",
+        true
+      );
+
+      console.error(error);
+
+      return;
+
+    }
+
+
+    msg(
+      "✅ Contraseña actualizada correctamente."
+    );
+
+  }
+);
+
+
+/* ================================
+   CERRAR SESIÓN
+================================ */
+
+$("logoutBtn").addEventListener(
+  "click",
+  async () => {
+
+    if (
+      !confirm(
+        "¿Querés cerrar sesión?"
+      )
+    ) {
+      return;
+    }
+
+
+    const {
+      error
+    } =
+      await db.auth.signOut();
+
+
+    if (error) {
+
+      msg(
+        "❌ No se pudo cerrar la sesión.",
+        true
+      );
+
+      return;
+
+    }
+
+
+    location.replace(
+      "index.html"
+    );
+
+  }
+);
+
+
+/* ================================
+   VERIFICAR EDGE FUNCTION
+================================ */
+
+async function verifyDeleteFunction() {
+
+  const status =
+    $("deleteStatus");
+
+
+  status.hidden = false;
+
+  status.textContent =
+    "🔄 Verificando conexión segura...";
+
+
+  const {
+    data,
+    error
+  } =
+    await db.auth.getSession();
+
+
+  if (
+    error ||
+    !data.session
+  ) {
+
+    status.textContent =
+      "❌ Tu sesión no es válida. Volvé a iniciar sesión.";
+
+    return;
+
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        c.supabaseUrl +
+        "/functions/v1/delete-account",
+        {
+          method:"POST",
+
+          headers:{
+            "Authorization":
+              "Bearer " +
+              data.session.access_token,
+
+            "Content-Type":
+              "application/json"
+          },
+
+          body:JSON.stringify({
+            action:"verify"
+          })
+        }
+      );
+
+
+    const result =
+      await response
+        .json()
+        .catch(() => ({}));
+
+
+    if (!response.ok) {
+
+      console.error(result);
+
+      status.textContent =
+        "❌ El servidor rechazó la verificación.";
+
+      return;
+
+    }
+
+
+    status.textContent =
+      "✅ Servidor verificado correctamente. La cuenta todavía NO fue eliminada.";
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    status.textContent =
+      "❌ No se pudo conectar con la función segura.";
+
+  }
+
+}
+
+
+/* ================================
+   BOTÓN ELIMINAR
+================================ */
+
+$("deleteAccountBtn").addEventListener(
+  "click",
+  async () => {
+
+    const confirmed =
+      confirm(
+        "Esto solo verificará la conexión segura. La cuenta NO será eliminada. ¿Continuar?"
+      );
+
+
+    if (!confirmed) {
+      return;
+    }
+
+
+    await verifyDeleteFunction();
+
+  }
+);
+
+
+/* ================================
+   INICIO
+================================ */
+
+async function init() {
+
+  const {
+    data,
+    error
+  } =
+    await db.auth.getSession();
+
+
+  if (
+    error ||
+    !data.session
+  ) {
+
+    location.replace(
+      "index.html"
+    );
+
+    return;
+
+  }
+
+
+  currentUser =
+    data.session.user;
+
+
+  $("notifications").checked =
+    localStorage.getItem(
+      "emimatch_notificaciones"
+    ) !== "off";
+
+
+  await loadBlocked();
+
+}
+
+
+init();
+
+})();
+</script>
+
+<script src="assets/js/components.js"></script>
+
+</body>
+</html>
