@@ -1,8 +1,28 @@
-<!DOCTYPE html><html lang="es">
+<!DOCTYPE html>
+<html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>Conversación · EmiMatch</title>  <meta name="theme-color" content="#07152f">
-  <meta name="description" content="Conversación privada de EmiMatch.">  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>  <style>
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Conversación · EmiMatch</title>
+
+  <meta
+    name="theme-color"
+    content="#07152f"
+  >
+
+  <meta
+    name="description"
+    content="Conversación privada de EmiMatch."
+  >
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
     * {
       box-sizing: border-box;
     }
@@ -18,8 +38,17 @@
 
     body {
       background:
-        radial-gradient(circle at top right, rgba(124,58,237,.20), transparent 35%),
-        linear-gradient(145deg, #07152f, #102b5c);
+        radial-gradient(
+          circle at top right,
+          rgba(124,58,237,.20),
+          transparent 35%
+        ),
+        linear-gradient(
+          145deg,
+          #07152f,
+          #102b5c
+        );
+
       color: #172033;
     }
 
@@ -29,9 +58,12 @@
       height: 100dvh;
       min-height: 100vh;
       margin: auto;
+
       background: #f4f7fb;
+
       display: flex;
       flex-direction: column;
+
       position: relative;
       overflow: hidden;
     }
@@ -42,66 +74,106 @@
 
     .header {
       flex-shrink: 0;
+
       height: 70px;
+
       display: flex;
       align-items: center;
+
       gap: 11px;
+
       padding: 10px 12px;
+
       background:
-        linear-gradient(135deg, #07152f, #123b91 65%, #4c1d95);
+        linear-gradient(
+          135deg,
+          #07152f,
+          #123b91 65%,
+          #4c1d95
+        );
+
       color: white;
-      box-shadow: 0 5px 18px rgba(0,0,0,.22);
+
+      box-shadow:
+        0 5px 18px rgba(0,0,0,.22);
+
       z-index: 10;
     }
 
     .back {
       width: 42px;
       height: 42px;
+
       flex-shrink: 0;
+
       border: 0;
       border-radius: 50%;
-      background: rgba(255,255,255,.10);
+
+      background:
+        rgba(255,255,255,.10);
+
       color: white;
+
       font-size: 31px;
       line-height: 1;
+
       cursor: pointer;
+
       display: flex;
       align-items: center;
       justify-content: center;
+
       transition: .18s ease;
     }
 
     .back:active {
       transform: scale(.92);
-      background: rgba(255,255,255,.18);
+
+      background:
+        rgba(255,255,255,.18);
     }
 
     .avatar-wrap {
       position: relative;
+
       width: 46px;
       height: 46px;
+
       flex-shrink: 0;
     }
 
     .avatar {
       width: 46px;
       height: 46px;
+
       border-radius: 50%;
+
       object-fit: cover;
+
       background: #dbe2ed;
-      border: 2px solid rgba(255,255,255,.75);
+
+      border:
+        2px solid rgba(255,255,255,.75);
+
       display: block;
     }
 
     .online-dot {
       position: absolute;
+
       right: 0;
       bottom: 1px;
+
       width: 12px;
       height: 12px;
+
       border-radius: 50%;
+
       background: #22c55e;
-      border: 2px solid #123b91;
+
+      border:
+        2px solid #123b91;
+
       display: none;
     }
 
@@ -112,8 +184,10 @@
 
     .header-info strong {
       display: block;
+
       font-size: 16px;
       line-height: 1.2;
+
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -121,8 +195,11 @@
 
     .status {
       font-size: 11px;
+
       opacity: .88;
+
       margin-top: 4px;
+
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -131,19 +208,34 @@
     .block-btn {
       width: 40px;
       height: 40px;
+
       flex-shrink: 0;
+
       border: 0;
       border-radius: 50%;
-      background: rgba(255,255,255,.08);
+
+      background:
+        rgba(255,255,255,.08);
+
       color: white;
+
       cursor: pointer;
+
       font-size: 18px;
+
       transition: .18s ease;
     }
 
     .block-btn:active {
       transform: scale(.92);
-      background: rgba(255,255,255,.18);
+
+      background:
+        rgba(255,255,255,.18);
+    }
+
+    .block-btn:disabled {
+      opacity: .45;
+      cursor: not-allowed;
     }
 
     /* =========================
@@ -152,19 +244,37 @@
 
     .messages {
       flex: 1;
+
       min-height: 0;
-      padding: 18px 13px 12px;
+
+      padding:
+        18px
+        13px
+        12px;
+
       overflow-y: auto;
       overflow-x: hidden;
+
       display: flex;
       flex-direction: column;
+
       gap: 7px;
+
       scroll-behavior: smooth;
+
       -webkit-overflow-scrolling: touch;
 
       background:
-        radial-gradient(circle at 15% 10%, rgba(124,58,237,.05), transparent 25%),
-        radial-gradient(circle at 85% 80%, rgba(212,175,55,.05), transparent 25%),
+        radial-gradient(
+          circle at 15% 10%,
+          rgba(124,58,237,.05),
+          transparent 25%
+        ),
+        radial-gradient(
+          circle at 85% 80%,
+          rgba(212,175,55,.05),
+          transparent 25%
+        ),
         #f4f7fb;
     }
 
@@ -174,63 +284,102 @@
 
     .messages::-webkit-scrollbar-thumb {
       background: #cbd5e1;
+
       border-radius: 10px;
     }
 
     .message {
       position: relative;
+
       max-width: 80%;
-      padding: 10px 13px 8px;
+
+      padding:
+        10px
+        13px
+        8px;
+
       border-radius: 18px;
+
       font-size: 15px;
       line-height: 1.42;
+
       word-break: break-word;
       overflow-wrap: anywhere;
-      box-shadow: 0 3px 10px rgba(0,0,0,.07);
-      animation: aparecer .18s ease;
+
+      box-shadow:
+        0 3px 10px rgba(0,0,0,.07);
+
+      animation:
+        aparecer .18s ease;
     }
 
     @keyframes aparecer {
+
       from {
         opacity: 0;
-        transform: translateY(4px);
+        transform:
+          translateY(4px);
       }
 
       to {
         opacity: 1;
-        transform: translateY(0);
+        transform:
+          translateY(0);
       }
+
     }
 
     .mine {
       align-self: flex-end;
+
       background:
-        linear-gradient(135deg, #123b91, #2563eb);
+        linear-gradient(
+          135deg,
+          #123b91,
+          #2563eb
+        );
+
       color: white;
+
       border-bottom-right-radius: 5px;
-      box-shadow: 0 4px 12px rgba(18,59,145,.20);
+
+      box-shadow:
+        0 4px 12px
+        rgba(18,59,145,.20);
     }
 
     .theirs {
       align-self: flex-start;
+
       background: white;
+
       color: #172033;
+
       border-bottom-left-radius: 5px;
-      border: 1px solid #e5eaf2;
+
+      border:
+        1px solid #e5eaf2;
     }
 
     .time {
       display: block;
+
       font-size: 9px;
+
       opacity: .72;
+
       margin-top: 5px;
+
       text-align: right;
+
       white-space: nowrap;
     }
 
     .checks {
       margin-left: 4px;
+
       font-size: 11px;
+
       letter-spacing: -2px;
     }
 
@@ -244,11 +393,20 @@
 
     .typing {
       flex-shrink: 0;
+
       min-height: 25px;
-      padding: 3px 16px 5px;
+
+      padding:
+        3px
+        16px
+        5px;
+
       font-size: 11px;
+
       color: #64748b;
+
       font-style: italic;
+
       background: #f4f7fb;
     }
 
@@ -258,38 +416,76 @@
 
     .composer {
       flex-shrink: 0;
+
       width: 100%;
-      padding: 9px 10px calc(9px + env(safe-area-inset-bottom));
-      background: rgba(255,255,255,.97);
-      border-top: 1px solid #e1e6ef;
+
+      padding:
+        9px
+        10px
+        calc(9px + env(safe-area-inset-bottom));
+
+      background:
+        rgba(255,255,255,.97);
+
+      border-top:
+        1px solid #e1e6ef;
+
       display: flex;
+
       align-items: flex-end;
+
       gap: 8px;
+
       z-index: 20;
-      box-shadow: 0 -5px 18px rgba(0,0,0,.07);
+
+      box-shadow:
+        0 -5px 18px
+        rgba(0,0,0,.07);
     }
 
     .composer textarea {
       flex: 1;
+
       width: 100%;
+
       resize: none;
-      border: 1px solid #d6dce7;
+
+      border:
+        1px solid #d6dce7;
+
       border-radius: 21px;
-      padding: 11px 14px;
+
+      padding:
+        11px
+        14px;
+
       outline: none;
+
       font-family: inherit;
+
       font-size: 15px;
+
       line-height: 1.35;
+
       min-height: 43px;
       max-height: 105px;
+
       background: #f8fafc;
+
       color: #172033;
-      transition: border-color .18s ease, box-shadow .18s ease;
+
+      transition:
+        border-color .18s ease,
+        box-shadow .18s ease;
     }
 
     .composer textarea:focus {
       border-color: #4c6fd8;
-      box-shadow: 0 0 0 3px rgba(76,111,216,.10);
+
+      box-shadow:
+        0 0 0 3px
+        rgba(76,111,216,.10);
+
       background: white;
     }
 
@@ -300,15 +496,29 @@
     .send {
       width: 44px;
       height: 44px;
+
       min-width: 44px;
+
       border: 0;
       border-radius: 50%;
+
       background:
-        linear-gradient(135deg, #123b91, #4c1d95);
+        linear-gradient(
+          135deg,
+          #123b91,
+          #4c1d95
+        );
+
       color: white;
+
       font-size: 19px;
+
       cursor: pointer;
-      box-shadow: 0 5px 14px rgba(18,59,145,.25);
+
+      box-shadow:
+        0 5px 14px
+        rgba(18,59,145,.25);
+
       transition: .18s ease;
     }
 
@@ -318,7 +528,9 @@
 
     .send:disabled {
       opacity: .45;
+
       cursor: not-allowed;
+
       box-shadow: none;
     }
 
@@ -329,16 +541,20 @@
     .empty,
     .error {
       width: 100%;
-      max-width: 320px;
-      text-align: center;
-      margin: auto;
-      color: #64748b;
-      padding: 30px 20px;
-      line-height: 1.5;
-    }
 
-    .empty::first-line {
-      font-size: 15px;
+      max-width: 320px;
+
+      text-align: center;
+
+      margin: auto;
+
+      color: #64748b;
+
+      padding:
+        30px
+        20px;
+
+      line-height: 1.5;
     }
 
     /* =========================
@@ -346,15 +562,29 @@
     ========================= */
 
     .bloqueado-info {
-      margin: 8px auto 4px;
+      margin:
+        8px
+        auto
+        4px;
+
       max-width: 330px;
-      padding: 9px 14px;
+
+      padding:
+        9px
+        14px;
+
       border-radius: 14px;
+
       background: #fff7ed;
+
       color: #9a3412;
+
       font-size: 12px;
+
       text-align: center;
-      border: 1px solid #fed7aa;
+
+      border:
+        1px solid #fed7aa;
     }
 
     /* =========================
@@ -362,9 +592,11 @@
     ========================= */
 
     @media (min-width: 701px) {
+
       .app {
         box-shadow:
-          0 0 50px rgba(0,0,0,.30);
+          0 0 50px
+          rgba(0,0,0,.30);
       }
 
       .header {
@@ -380,6 +612,7 @@
         padding-left: 18px;
         padding-right: 18px;
       }
+
     }
 
     /* =========================
@@ -390,13 +623,18 @@
 
       .header {
         height: 64px;
-        padding: 8px 9px;
+
+        padding:
+          8px
+          9px;
+
         gap: 8px;
       }
 
       .back {
         width: 38px;
         height: 38px;
+
         font-size: 28px;
       }
 
@@ -409,6 +647,7 @@
       .block-btn {
         width: 37px;
         height: 37px;
+
         font-size: 16px;
       }
 
@@ -421,112 +660,163 @@
       }
 
       .messages {
-        padding: 14px 9px 9px;
+        padding:
+          14px
+          9px
+          9px;
       }
 
       .message {
         max-width: 86%;
+
         font-size: 14px;
-        padding: 9px 11px 7px;
+
+        padding:
+          9px
+          11px
+          7px;
       }
 
       .composer {
-        padding: 7px 7px;
+        padding: 7px;
       }
 
       .composer textarea {
         font-size: 14px;
-        padding: 10px 12px;
+
+        padding:
+          10px
+          12px;
       }
 
       .send {
         width: 42px;
         height: 42px;
+
         min-width: 42px;
       }
+
     }
-  </style></head><body><div class="app">  <div class="header"><button
-  class="back"
-  onclick="volver()"
-  aria-label="Volver"
->
-  ‹
-</button>
+  </style>
+</head>
 
-<div class="avatar-wrap">
+<body>
 
-  <img
-    id="avatar"
-    class="avatar"
-    src="https://via.placeholder.com/100"
-    alt="Foto"
-  >
+<div class="app">
+
+  <div class="header">
+
+    <button
+      class="back"
+      onclick="volver()"
+      aria-label="Volver"
+      type="button"
+    >
+      ‹
+    </button>
+
+    <div class="avatar-wrap">
+
+      <img
+        id="avatar"
+        class="avatar"
+        src="https://via.placeholder.com/100"
+        alt="Foto"
+      >
+
+      <div
+        id="onlineDot"
+        class="online-dot"
+      ></div>
+
+    </div>
+
+    <div class="header-info">
+
+      <strong id="nombreUsuario">
+        Cargando...
+      </strong>
+
+      <div
+        id="estadoUsuario"
+        class="status"
+      >
+        ⏳
+      </div>
+
+    </div>
+
+    <button
+      id="btnBloquear"
+      class="block-btn"
+      onclick="bloquearUsuario()"
+      title="Bloquear"
+      aria-label="Bloquear usuario"
+      type="button"
+    >
+      🚫
+    </button>
+
+  </div>
+
 
   <div
-    id="onlineDot"
-    class="online-dot"
+    id="messages"
+    class="messages"
+  >
+
+    <div class="empty">
+      ⏳ Cargando conversación...
+    </div>
+
+  </div>
+
+
+  <div
+    id="typing"
+    class="typing"
+    aria-live="polite"
   ></div>
 
-</div>
 
-<div class="header-info">
+  <div class="composer">
 
-  <strong id="nombreUsuario">
-    Cargando...
-  </strong>
+    <textarea
+      id="inputMensaje"
+      placeholder="Escribí un mensaje..."
+      rows="1"
+      maxlength="2000"
+      disabled
+    ></textarea>
 
-  <div
-    id="estadoUsuario"
-    class="status"
-  >
-    ⏳
+    <button
+      id="btnEnviar"
+      class="send"
+      onclick="enviarMensaje()"
+      disabled
+      aria-label="Enviar mensaje"
+      type="button"
+    >
+      ➤
+    </button>
+
   </div>
 
 </div>
 
-<button
-  class="block-btn"
-  onclick="bloquearUsuario()"
-  title="Bloquear"
-  aria-label="Bloquear usuario"
->
-  🚫
-</button>
 
-  </div>  <div
-    id="messages"
-    class="messages"
-  ><div class="empty">
-  ⏳ Cargando conversación...
-</div>
+<script>
 
-  </div>  <div
-    id="typing"
-    class="typing"
-  ></div>  <div class="composer"><textarea
-  id="inputMensaje"
-  placeholder="Escribí un mensaje..."
-  rows="1"
-  disabled
-></textarea>
-
-<button
-  id="btnEnviar"
-  class="send"
-  onclick="enviarMensaje()"
-  disabled
-  aria-label="Enviar mensaje"
->
-  ➤
-</button>
-
-  </div></div><script>
+/* =========================================================
+   CONFIGURACIÓN
+========================================================= */
 
 const SUPABASE_URL =
   "https://kngiadwaesdbmvwivdev.supabase.co";
 
 const SUPABASE_KEY =
   "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
+
 
 const supabaseClient =
   supabase.createClient(
@@ -535,58 +825,92 @@ const supabaseClient =
   );
 
 
+/* =========================================================
+   ESTADO
+========================================================= */
+
 let usuarioActual = null;
+
 let usuarioDestino = null;
+
 let matchActual = null;
+
 let bloqueado = false;
 
 let canalMensajes = null;
-let canalTyping = null;
 
-let typingTimeout = null;
-let ultimoEstadoTyping = false;
 
+/* =========================================================
+   PARÁMETROS
+========================================================= */
 
 const params =
   new URLSearchParams(
     window.location.search
   );
 
+
 const destinoId =
   params.get("user");
 
 
+/* =========================================================
+   ELEMENTOS
+========================================================= */
+
 const messagesDiv =
-  document.getElementById("messages");
+  document.getElementById(
+    "messages"
+  );
+
 
 const inputMensaje =
-  document.getElementById("inputMensaje");
+  document.getElementById(
+    "inputMensaje"
+  );
+
 
 const btnEnviar =
-  document.getElementById("btnEnviar");
+  document.getElementById(
+    "btnEnviar"
+  );
+
+
+const btnBloquear =
+  document.getElementById(
+    "btnBloquear"
+  );
+
 
 const typingDiv =
-  document.getElementById("typing");
+  document.getElementById(
+    "typing"
+  );
 
 
-
-/* =========================
+/* =========================================================
    INICIAR
-========================= */
+========================================================= */
 
 async function iniciar() {
 
   try {
 
     const {
-      data: { session },
+      data,
       error
     } =
       await supabaseClient.auth.getSession();
 
+
     if (error) {
       throw error;
     }
+
+
+    const session =
+      data?.session;
+
 
     if (!session) {
 
@@ -595,6 +919,7 @@ async function iniciar() {
 
       return;
     }
+
 
     usuarioActual =
       session.user;
@@ -605,6 +930,23 @@ async function iniciar() {
       mostrarError(
         "No se encontró el usuario."
       );
+
+      desactivarChat();
+
+      return;
+    }
+
+
+    if (
+      destinoId ===
+      usuarioActual.id
+    ) {
+
+      mostrarError(
+        "No podés abrir una conversación con tu propia cuenta."
+      );
+
+      desactivarChat();
 
       return;
     }
@@ -620,29 +962,27 @@ async function iniciar() {
 
     activarRealtimeMensajes();
 
-    activarRealtimeTyping();
-
-    activarInputTyping();
-
+    activarInputMensaje();
 
   } catch (error) {
 
     console.error(
-      "Error al iniciar:",
+      "Error al iniciar conversación:",
       error
     );
 
     mostrarError(
       "No se pudo cargar la conversación."
     );
+
+    desactivarChat();
   }
 }
 
 
-
-/* =========================
-   USUARIO
-========================= */
+/* =========================================================
+   CARGAR USUARIO
+========================================================= */
 
 async function cargarUsuario() {
 
@@ -652,13 +992,26 @@ async function cargarUsuario() {
   } =
     await supabaseClient
       .from("profiles")
-      .select("*")
-      .eq("id", destinoId)
-      .single();
+      .select(
+        "id,nombre,foto_url,online,last_seen"
+      )
+      .eq(
+        "id",
+        destinoId
+      )
+      .maybeSingle();
 
 
   if (error) {
     throw error;
+  }
+
+
+  if (!data) {
+
+    throw new Error(
+      "No se encontró el perfil."
+    );
   }
 
 
@@ -669,7 +1022,8 @@ async function cargarUsuario() {
   document.getElementById(
     "nombreUsuario"
   ).textContent =
-    data.nombre || "Usuario";
+    data.nombre ||
+    "Usuario";
 
 
   document.getElementById(
@@ -680,14 +1034,12 @@ async function cargarUsuario() {
 
 
   actualizarEstadoUsuario();
-
 }
 
 
-
-/* =========================
+/* =========================================================
    ESTADO ONLINE
-========================= */
+========================================================= */
 
 function actualizarEstadoUsuario() {
 
@@ -700,6 +1052,7 @@ function actualizarEstadoUsuario() {
     document.getElementById(
       "estadoUsuario"
     );
+
 
   const onlineDot =
     document.getElementById(
@@ -727,22 +1080,21 @@ function actualizarEstadoUsuario() {
     onlineDot.style.display =
       "block";
 
-  } else {
-
-    estado.textContent =
-      "⚪ Desconectado";
-
-    onlineDot.style.display =
-      "none";
+    return;
   }
 
+
+  estado.textContent =
+    "⚪ Desconectado";
+
+  onlineDot.style.display =
+    "none";
 }
 
 
-
-/* =========================
-   MATCH
-========================= */
+/* =========================================================
+   CARGAR MATCH
+========================================================= */
 
 async function cargarMatch() {
 
@@ -752,7 +1104,9 @@ async function cargarMatch() {
   } =
     await supabaseClient
       .from("matches")
-      .select("*")
+      .select(
+        "id,user1_id,user2_id,created_at"
+      )
       .or(
         `and(user1_id.eq.${usuarioActual.id},user2_id.eq.${destinoId}),and(user1_id.eq.${destinoId},user2_id.eq.${usuarioActual.id})`
       )
@@ -770,7 +1124,7 @@ async function cargarMatch() {
   ) {
 
     throw new Error(
-      "No existe un Match."
+      "No existe un Match válido con este usuario."
     );
   }
 
@@ -780,10 +1134,9 @@ async function cargarMatch() {
 }
 
 
-
-/* =========================
-   BLOQUEO
-========================= */
+/* =========================================================
+   COMPROBAR BLOQUEO
+========================================================= */
 
 async function comprobarBloqueo() {
 
@@ -793,7 +1146,9 @@ async function comprobarBloqueo() {
   } =
     await supabaseClient
       .from("user_blocks")
-      .select("*")
+      .select(
+        "id,blocker_id,blocked_id"
+      )
       .or(
         `and(blocker_id.eq.${usuarioActual.id},blocked_id.eq.${destinoId}),and(blocker_id.eq.${destinoId},blocked_id.eq.${usuarioActual.id})`
       );
@@ -805,8 +1160,11 @@ async function comprobarBloqueo() {
 
 
   bloqueado =
-    data &&
+    Array.isArray(data) &&
     data.length > 0;
+
+
+  actualizarEstadoUsuario();
 
 
   if (bloqueado) {
@@ -817,24 +1175,70 @@ async function comprobarBloqueo() {
     btnEnviar.disabled =
       true;
 
-  } else {
+    btnBloquear.disabled =
+      true;
 
-    inputMensaje.disabled =
-      false;
+    mostrarAvisoBloqueado();
 
-    btnEnviar.disabled =
-      false;
+    return;
   }
 
 
-  actualizarEstadoUsuario();
+  inputMensaje.disabled =
+    false;
+
+  btnEnviar.disabled =
+    true;
+
+  btnBloquear.disabled =
+    false;
 }
 
 
+/* =========================================================
+   AVISO BLOQUEADO
+========================================================= */
 
-/* =========================
+function mostrarAvisoBloqueado() {
+
+  const existente =
+    document.getElementById(
+      "bloqueadoInfo"
+    );
+
+
+  if (existente) {
+    return;
+  }
+
+
+  const aviso =
+    document.createElement(
+      "div"
+    );
+
+
+  aviso.id =
+    "bloqueadoInfo";
+
+  aviso.className =
+    "bloqueado-info";
+
+
+  aviso.textContent =
+    "🚫 Esta conversación está bloqueada.";
+
+
+  messagesDiv.parentNode.insertBefore(
+    aviso,
+    messagesDiv
+  );
+}
+
+
+/* =========================================================
    CARGAR MENSAJES
-========================= */
+========================================================= */
 
 async function cargarMensajes() {
 
@@ -849,7 +1253,9 @@ async function cargarMensajes() {
   } =
     await supabaseClient
       .from("messages")
-      .select("*")
+      .select(
+        "id,match_id,sender_id,content,created_at,read_at,delivered_at"
+      )
       .eq(
         "match_id",
         matchActual.id
@@ -888,9 +1294,23 @@ async function cargarMensajes() {
       const mensaje of data
     ) {
 
-      await marcarMensajeComoLeido(
-        mensaje
-      );
+      if (
+        mensaje.sender_id !==
+        usuarioActual.id
+      ) {
+
+        await marcarMensajeComoLeido(
+          mensaje
+        );
+
+        mensaje.read_at =
+          new Date().toISOString();
+
+        mensaje.delivered_at =
+          mensaje.delivered_at ||
+          mensaje.read_at;
+      }
+
 
       mostrarMensaje(
         mensaje
@@ -903,23 +1323,660 @@ async function cargarMensajes() {
 
     inputMensaje.disabled =
       false;
-
-    btnEnviar.disabled =
-      false;
   }
 
+
+  actualizarEstadoBotonEnviar();
 
   bajarAlFinal();
 }
 
 
-
-/* =========================
+/* =========================================================
    MOSTRAR MENSAJE
-========================= */
+========================================================= */
 
 function mostrarMensaje(mensaje) {
 
+  if (!mensaje?.id) {
+    return;
+  }
+
+
+  const existente =
+    messagesDiv.querySelector(
+      `[data-message-id="${mensaje.id}"]`
+    );
+
+
+  if (existente) {
+
+    actualizarMensajeVisual(
+      existente,
+      mensaje
+    );
+
+    return;
+  }
+
+
+  const vacio =
+    messagesDiv.querySelector(
+      ".empty"
+    );
+
+
+  if (vacio) {
+    vacio.remove();
+  }
+
+  div.dataset.messageId = mensaje.id;
+
+  const contenido = document.createElement("div");
+  contenido.textContent = mensaje.content || "";
+
+  const hora = document.createElement("span");
+  hora.className = "time";
+
+  const fecha = new Date(mensaje.created_at);
+
+  hora.textContent = fecha.toLocaleTimeString("es-AR", {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+
+  if (mio) {
+    const checks = document.createElement("span");
+    checks.className = "checks";
+
+    if (mensaje.read_at) {
+      checks.classList.add("read");
+      checks.textContent = "✓✓";
+    } else if (mensaje.delivered_at) {
+      checks.textContent = "✓✓";
+    } else {
+      checks.textContent = "✓";
+    }
+
+    hora.appendChild(checks);
+  }
+
+  div.appendChild(contenido);
+  div.appendChild(hora);
+
+  messagesDiv.appendChild(div);
+}
+
+
+/* =========================================================
+   ACTUALIZAR MENSAJE EXISTENTE
+========================================================= */
+
+function actualizarMensajeVisual(elemento, mensaje) {
+
+  if (
+    mensaje.sender_id !==
+    usuarioActual.id
+  ) {
+    return;
+  }
+
+  const checks =
+    elemento.querySelector(".checks");
+
+  if (!checks) {
+    return;
+  }
+
+  if (mensaje.read_at) {
+
+    checks.classList.add("read");
+    checks.textContent = "✓✓";
+
+  } else if (mensaje.delivered_at) {
+
+    checks.classList.remove("read");
+    checks.textContent = "✓✓";
+
+  } else {
+
+    checks.classList.remove("read");
+    checks.textContent = "✓";
+  }
+}
+
+
+/* =========================================================
+   MARCAR MENSAJE COMO LEÍDO
+========================================================= */
+
+async function marcarMensajeComoLeido(mensaje) {
+
+  if (
+    !mensaje?.id ||
+    mensaje.sender_id === usuarioActual.id
+  ) {
+    return;
+  }
+
+  if (mensaje.read_at) {
+    return;
+  }
+
+  const ahora =
+    new Date().toISOString();
+
+  const {
+    error
+  } =
+    await supabaseClient
+      .from("messages")
+      .update({
+        read_at: ahora,
+        delivered_at:
+          mensaje.delivered_at || ahora
+      })
+      .eq(
+        "id",
+        mensaje.id
+      );
+
+  if (error) {
+
+    console.warn(
+      "No se pudo marcar mensaje como leído:",
+      error
+    );
+  }
+}
+
+
+/* =========================================================
+   REALTIME
+========================================================= */
+
+function activarRealtimeMensajes() {
+
+  if (!matchActual) {
+    return;
+  }
+
+  if (canalMensajes) {
+    try {
+      supabaseClient.removeChannel(
+        canalMensajes
+      );
+    } catch (_) {}
+  }
+
+  canalMensajes =
+    supabaseClient
+      .channel(
+        "emimatch-messages-" +
+        matchActual.id
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "messages",
+          filter:
+            "match_id=eq." +
+            matchActual.id
+        },
+        async (payload) => {
+
+          const mensaje =
+            payload?.new;
+
+          if (!mensaje?.id) {
+            return;
+          }
+
+          if (
+            mensaje.sender_id !==
+            usuarioActual.id
+          ) {
+
+            await marcarMensajeComoLeido(
+              mensaje
+            );
+
+            mensaje.read_at =
+              new Date().toISOString();
+
+            mensaje.delivered_at =
+              mensaje.delivered_at ||
+              mensaje.read_at;
+          }
+
+          mostrarMensaje(
+            mensaje
+          );
+
+          bajarAlFinal();
+        }
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "messages",
+          filter:
+            "match_id=eq." +
+            matchActual.id
+        },
+        (payload) => {
+
+          const mensaje =
+            payload?.new;
+
+          if (!mensaje?.id) {
+            return;
+          }
+
+          const elemento =
+            messagesDiv.querySelector(
+              `[data-message-id="${mensaje.id}"]`
+            );
+
+          if (elemento) {
+
+            actualizarMensajeVisual(
+              elemento,
+              mensaje
+            );
+          }
+        }
+      )
+      .subscribe(
+        (status) => {
+
+          console.log(
+            "Realtime mensajes:",
+            status
+          );
+        }
+      );
+}
+
+
+/* =========================================================
+   INPUT
+========================================================= */
+
+function activarInputMensaje() {
+
+  inputMensaje.addEventListener(
+    "input",
+    () => {
+
+      ajustarAlturaInput();
+      actualizarEstadoBotonEnviar();
+    }
+  );
+
+
+  inputMensaje.addEventListener(
+    "keydown",
+    (event) => {
+
+      if (
+        event.key === "Enter" &&
+        !event.shiftKey
+      ) {
+
+        event.preventDefault();
+
+        enviarMensaje();
+      }
+    }
+  );
+}
+
+
+/* =========================================================
+   AJUSTAR INPUT
+========================================================= */
+
+function ajustarAlturaInput() {
+
+  inputMensaje.style.height =
+    "auto";
+
+  inputMensaje.style.height =
+    Math.min(
+      inputMensaje.scrollHeight,
+      105
+    ) + "px";
+}
+
+
+/* =========================================================
+   BOTÓN ENVIAR
+========================================================= */
+
+function actualizarEstadoBotonEnviar() {
+
+  const texto =
+    inputMensaje.value.trim();
+
+  btnEnviar.disabled =
+    bloqueado ||
+    !matchActual ||
+    texto.length === 0;
+}
+
+
+/* =========================================================
+   ENVIAR MENSAJE
+========================================================= */
+
+async function enviarMensaje() {
+
+  if (
+    bloqueado ||
+    !matchActual ||
+    !usuarioActual
+  ) {
+    return;
+  }
+
+  const contenido =
+    inputMensaje.value.trim();
+
+  if (!contenido) {
+    return;
+  }
+
+  if (contenido.length > 2000) {
+
+    alert(
+      "El mensaje no puede superar los 2000 caracteres."
+    );
+
+    return;
+  }
+
+  btnEnviar.disabled = true;
+  inputMensaje.disabled = true;
+
+  try {
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+        .from("messages")
+        .insert({
+          match_id:
+            matchActual.id,
+
+          sender_id:
+            usuarioActual.id,
+
+          content:
+            contenido
+        })
+        .select(
+          "id,match_id,sender_id,content,created_at,read_at,delivered_at"
+        )
+        .single();
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    /*
+      Mostramos inmediatamente el mensaje.
+      Si Realtime también lo recibe,
+      mostrarMensaje() evita duplicarlo.
+    */
+
+    mostrarMensaje(data);
+
+    inputMensaje.value = "";
+
+    ajustarAlturaInput();
+
+    actualizarEstadoBotonEnviar();
+
+    bajarAlFinal();
+
+  } catch (error) {
+
+    console.error(
+      "Error enviando mensaje:",
+      error
+    );
+
+    alert(
+      "No se pudo enviar el mensaje: " +
+      (
+        error?.message ||
+        "Error desconocido"
+      )
+    );
+
+  } finally {
+
+    if (!bloqueado) {
+
+      inputMensaje.disabled =
+        false;
+    }
+
+    actualizarEstadoBotonEnviar();
+
+    inputMensaje.focus();
+  }
+}
+
+
+/* =========================================================
+   BLOQUEAR USUARIO
+========================================================= */
+
+async function bloquearUsuario() {
+
+  if (
+    !usuarioActual ||
+    !destinoId ||
+    bloqueado
+  ) {
+    return;
+  }
+
+  const confirmar =
+    window.confirm(
+      "¿Querés bloquear a este usuario?"
+    );
+
+  if (!confirmar) {
+    return;
+  }
+
+  btnBloquear.disabled =
+    true;
+
+  try {
+
+    const {
+      error
+    } =
+      await supabaseClient
+        .from("user_blocks")
+        .upsert(
+          {
+            blocker_id:
+              usuarioActual.id,
+
+            blocked_id:
+              destinoId
+          },
+          {
+            onConflict:
+              "blocker_id,blocked_id"
+          }
+        );
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    bloqueado = true;
+
+    inputMensaje.disabled =
+      true;
+
+    btnEnviar.disabled =
+      true;
+
+    mostrarAvisoBloqueado();
+
+    actualizarEstadoUsuario();
+
+  } catch (error) {
+
+    console.error(
+      "Error bloqueando usuario:",
+      error
+    );
+
+    alert(
+      "No se pudo bloquear al usuario: " +
+      (
+        error?.message ||
+        "Error desconocido"
+      )
+    );
+
+    btnBloquear.disabled =
+      false;
+  }
+}
+
+
+/* =========================================================
+   DESACTIVAR CHAT
+========================================================= */
+
+function desactivarChat() {
+
+  inputMensaje.disabled =
+    true;
+
+  btnEnviar.disabled =
+    true;
+
+  btnBloquear.disabled =
+    true;
+}
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+function mostrarError(mensaje) {
+
+  messagesDiv.innerHTML = "";
+
+  const div =
+    document.createElement(
+      "div"
+    );
+
+  div.className =
+    "error";
+
+  div.textContent =
+    "⚠️ " + mensaje;
+
+  messagesDiv.appendChild(div);
+}
+
+
+/* =========================================================
+   BAJAR AL FINAL
+========================================================= */
+
+function bajarAlFinal() {
+
+  requestAnimationFrame(
+    () => {
+
+      messagesDiv.scrollTop =
+        messagesDiv.scrollHeight;
+    }
+  );
+}
+
+
+/* =========================================================
+   VOLVER
+========================================================= */
+
+function volver() {
+
+  if (
+    document.referrer &&
+    document.referrer.includes(
+      "emimatch.github.io"
+    )
+  ) {
+
+    history.back();
+
+    return;
+  }
+
+  window.location.href =
+    "matches.html";
+}
+
+
+/* =========================================================
+   LIMPIEZA
+========================================================= */
+
+window.addEventListener(
+  "pagehide",
+  () => {
+
+    if (canalMensajes) {
+
+      try {
+
+        supabaseClient.removeChannel(
+          canalMensajes
+        );
+
+      } catch (_) {}
+
+      canalMensajes = null;
+    }
+  }
+);
+
+
+/* =========================================================
+   INICIAR APP
+========================================================= */
+
+iniciar();
+
+</script>
+
+</body>
+</html>
   const mio =
     mensaje.sender_id ===
     usuarioActual.id;
@@ -940,704 +1997,5 @@ function mostrarMensaje(mensaje) {
     );
 
 
-  const fecha =
-    new Date(
-      mensaje.created_at
-    );
-
-
-  const hora =
-    fecha.toLocaleTimeString(
-      "es-AR",
-      {
-        hour: "2-digit",
-        minute: "2-digit"
-      }
-    );
-
-
-  let checks = "";
-
-
-  if (mio) {
-
-    if (mensaje.read_at) {
-
-      checks =
-        `<span class="checks read">✓✓</span>`;
-
-    } else if (
-      mensaje.delivered_at
-    ) {
-
-      checks =
-        `<span class="checks">✓✓</span>`;
-
-    } else {
-
-      checks =
-        `<span class="checks">✓</span>`;
-    }
-  }
-
-
-  div.innerHTML = `
-    ${escapeHtml(
-      mensaje.content
-    )}
-
-    <span class="time">
-      ${hora}
-      ${checks}
-    </span>
-  `;
-
-
-  messagesDiv.appendChild(
-    div
-  );
-}
-
-
-
-/* =========================
-   MARCAR LEÍDO
-========================= */
-
-async function marcarMensajeComoLeido(
-  mensaje
-) {
-
-  if (
-    mensaje.sender_id ===
-    usuarioActual.id
-  ) {
-    return;
-  }
-
-
-  if (
-    !mensaje.delivered_at ||
-    !mensaje.read_at
-  ) {
-
-    const ahora =
-      new Date().toISOString();
-
-
-    await supabaseClient
-      .from("messages")
-      .update({
-
-        delivered_at:
-          mensaje.delivered_at ||
-          ahora,
-
-        read_at:
-          ahora
-
-      })
-      .eq(
-        "id",
-        mensaje.id
-      )
-      .eq(
-        "match_id",
-        matchActual.id
-      );
-  }
-}
-
-
-
-/* =========================
-   ENVIAR MENSAJE
-========================= */
-
-async function enviarMensaje() {
-
-  const texto =
-    inputMensaje.value.trim();
-
-
-  if (
-    !texto ||
-    !matchActual ||
-    bloqueado
-  ) {
-    return;
-  }
-
-
-  btnEnviar.disabled =
-    true;
-
-
-  await actualizarTyping(
-    false
-  );
-
-
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("messages")
-      .insert({
-
-        match_id:
-          matchActual.id,
-
-        sender_id:
-          usuarioActual.id,
-
-        content:
-          texto
-
-      })
-      .select()
-      .single();
-
-
-  if (error) {
-
-    console.error(
-      "Error enviando:",
-      error
-    );
-
-    alert(
-      "No se pudo enviar el mensaje."
-    );
-
-    btnEnviar.disabled =
-      false;
-
-    return;
-  }
-
-
-  inputMensaje.value =
-    "";
-
-
-  mostrarMensaje(
-    data
-  );
-
-
-  bajarAlFinal();
-
-
-  btnEnviar.disabled =
-    false;
-}
-
-
-
-/* =========================
-   REALTIME MENSAJES
-========================= */
-
-function activarRealtimeMensajes() {
-
-  if (!matchActual) {
-    return;
-  }
-
-
-  canalMensajes =
-    supabaseClient
-      .channel(
-        "mensajes-" +
-        matchActual.id
-      )
-
-      .on(
-
-        "postgres_changes",
-
-        {
-          event: "*",
-          schema: "public",
-          table: "messages",
-          filter:
-            `match_id=eq.${matchActual.id}`
-        },
-
-        async payload => {
-
-          if (
-            payload.eventType ===
-            "INSERT"
-          ) {
-
-            if (
-              payload.new.sender_id !==
-              usuarioActual.id
-            ) {
-
-              await marcarMensajeComoLeido(
-                payload.new
-              );
-            }
-
-            await cargarMensajes();
-
-          }
-
-
-          if (
-            payload.eventType ===
-            "UPDATE"
-          ) {
-
-            await cargarMensajes();
-          }
-
-        }
-
-      )
-
-      .subscribe();
-}
-
-
-
-/* =========================
-   REALTIME TYPING
-========================= */
-
-function activarRealtimeTyping() {
-
-  if (!matchActual) {
-    return;
-  }
-
-
-  canalTyping =
-    supabaseClient
-      .channel(
-        "typing-" +
-        matchActual.id
-      )
-
-      .on(
-
-        "postgres_changes",
-
-        {
-          event: "*",
-          schema: "public",
-          table: "typing_status",
-          filter:
-            `match_id=eq.${matchActual.id}`
-        },
-
-        payload => {
-
-          const typing =
-            payload.new;
-
-
-          if (!typing) {
-            return;
-          }
-
-
-          if (
-            typing.user_id ===
-            usuarioActual.id
-          ) {
-            return;
-          }
-
-
-          if (
-            typing.is_typing
-          ) {
-
-            typingDiv.textContent =
-              `✍️ ${usuarioDestino.nombre} está escribiendo...`;
-
-          } else {
-
-            typingDiv.textContent =
-              "";
-          }
-
-        }
-
-      )
-
-      .subscribe();
-}
-
-
-/* =========================
-   DETECTAR ESCRITURA
-========================= */
-
-function activarInputTyping() {
-
-  inputMensaje.addEventListener(
-    "input",
-    async () => {
-
-      clearTimeout(
-        typingTimeout
-      );
-
-
-      if (
-        !inputMensaje.value.trim()
-      ) {
-
-        await actualizarTyping(
-          false
-        );
-
-        return;
-      }
-
-
-      if (
-        !ultimoEstadoTyping
-      ) {
-
-        await actualizarTyping(
-          true
-        );
-      }
-
-
-      typingTimeout =
-        setTimeout(
-          async () => {
-
-            await actualizarTyping(
-              false
-            );
-
-          },
-          1500
-        );
-
-    }
-  );
-}
-
-
-
-/* =========================
-   ACTUALIZAR TYPING
-========================= */
-
-async function actualizarTyping(
-  valor
-) {
-
-  if (
-    !matchActual ||
-    !usuarioActual
-  ) {
-    return;
-  }
-
-
-  if (
-    ultimoEstadoTyping ===
-    valor
-  ) {
-    return;
-  }
-
-
-  ultimoEstadoTyping =
-    valor;
-
-
-  try {
-
-    await supabaseClient
-      .from("typing_status")
-      .upsert(
-
-        {
-          match_id:
-            matchActual.id,
-
-          user_id:
-            usuarioActual.id,
-
-          is_typing:
-            valor,
-
-          updated_at:
-            new Date().toISOString()
-        },
-
-        {
-          onConflict:
-            "match_id,user_id"
-        }
-
-      );
-
-  } catch (error) {
-
-    console.error(
-      "Error typing:",
-      error
-    );
-  }
-}
-
-
-
-/* =========================
-   BLOQUEAR
-========================= */
-
-async function bloquearUsuario() {
-
-  if (!usuarioDestino) {
-    return;
-  }
-
-
-  const confirmar =
-    confirm(
-      `¿Querés bloquear a ${usuarioDestino.nombre}?`
-    );
-
-
-  if (!confirmar) {
-    return;
-  }
-
-
-  const {
-    error
-  } =
-    await supabaseClient
-      .from("user_blocks")
-      .insert({
-
-        blocker_id:
-          usuarioActual.id,
-
-        blocked_id:
-          destinoId
-
-      });
-
-
-  if (error) {
-
-    if (
-      error.code ===
-      "23505"
-    ) {
-
-      alert(
-        "Este usuario ya está bloqueado."
-      );
-
-    } else {
-
-      console.error(
-        error
-      );
-
-      alert(
-        "No se pudo bloquear."
-      );
-    }
-
-    return;
-  }
-
-
-  bloqueado =
-    true;
-
-
-  inputMensaje.disabled =
-    true;
-
-  btnEnviar.disabled =
-    true;
-
-
-  typingDiv.textContent =
-    "";
-
-
-  actualizarEstadoUsuario();
-
-
-  alert(
-    "Usuario bloqueado."
-  );
-}
-
-
-
-/* =========================
-   ENTER
-========================= */
-
-inputMensaje.addEventListener(
-  "keydown",
-  event => {
-
-    if (
-      event.key === "Enter" &&
-      !event.shiftKey
-    ) {
-
-      event.preventDefault();
-
-      enviarMensaje();
-    }
-
-  }
-);
-
-
-
-/* =========================
-   SCROLL
-========================= */
-
-function bajarAlFinal() {
-
-  setTimeout(
-    () => {
-
-      messagesDiv.scrollTop =
-        messagesDiv.scrollHeight;
-
-    },
-    100
-  );
-}
-
-
-
-/* =========================
-   ESCAPAR HTML
-========================= */
-
-function escapeHtml(texto) {
-
-  return String(texto)
-
-    .replaceAll(
-      "&",
-      "&amp;"
-    )
-
-    .replaceAll(
-      "<",
-      "&lt;"
-    )
-
-    .replaceAll(
-      ">",
-      "&gt;"
-    )
-
-    .replaceAll(
-      '"',
-      "&quot;"
-    )
-
-    .replaceAll(
-      "'",
-      "&#039;"
-    );
-}
-
-
-
-/* =========================
-   ERROR
-========================= */
-
-function mostrarError(texto) {
-
-  messagesDiv.innerHTML = `
-    <div class="error">
-      ❌ ${escapeHtml(texto)}
-    </div>
-  `;
-}
-
-
-
-/* =========================
-   VOLVER
-========================= */
-
-function volver() {
-
-  window.location.href =
-    "chat.html";
-}
-
-
-
-/* =========================
-   LIMPIAR AL SALIR
-========================= */
-
-window.addEventListener(
-  "beforeunload",
-  () => {
-
-    if (
-      matchActual &&
-      usuarioActual
-    ) {
-
-      supabaseClient
-        .from("typing_status")
-        .upsert({
-
-          match_id:
-            matchActual.id,
-
-          user_id:
-            usuarioActual.id,
-
-          is_typing:
-            false,
-
-          updated_at:
-            new Date().toISOString()
-
-        }, {
-          onConflict:
-            "match_id,user_id"
-        });
-    }
-
-  }
-);
-
-
-
-/* =========================
-   ARRANCAR
-========================= */
-
-iniciar();
-
-</script>
-
-</body>
-</html>
-
+  div.dataset.messageId =
+ 
