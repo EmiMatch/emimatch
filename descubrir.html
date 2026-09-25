@@ -1,78 +1,914 @@
-async function swipe(action) {
-  const p = profiles[index];
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EmiMatch - Descubrir</title>
 
-  if (!p) return;
+<link rel="stylesheet" href="assets/css/app.css">
 
-  if (action !== "like" && action !== "dislike") {
-    console.error("Acción inválida:", action);
+<style>
+body{
+  margin:0;
+  background:#071225;
+  color:#fff;
+  font-family:Arial,sans-serif
+}
+
+.discover-page{
+  max-width:760px;
+  margin:auto;
+  padding:90px 16px 120px
+}
+
+.discover-page h1{
+  text-align:center;
+  margin:0 0 18px
+}
+
+.filters,
+.card,
+.empty,
+.status{
+  background:#101d34;
+  border:1px solid #263653;
+  border-radius:18px;
+  padding:16px;
+  margin-bottom:16px
+}
+
+.filters{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px
+}
+
+.filters input{
+  width:100%;
+  box-sizing:border-box;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid #354563;
+  background:#081426;
+  color:#fff
+}
+
+.filters button{
+  grid-column:1/-1;
+  padding:12px;
+  border:0;
+  border-radius:12px;
+  background:#d8ad42;
+  color:#071225;
+  font-weight:bold;
+  cursor:pointer
+}
+
+.card{
+  text-align:center
+}
+
+.card img{
+  width:180px;
+  height:180px;
+  object-fit:cover;
+  border-radius:50%;
+  border:3px solid #d8ad42
+}
+
+.card h2{
+  margin:12px 0 5px
+}
+
+.muted{
+  color:#aab6ca
+}
+
+.bio{
+  line-height:1.5
+}
+
+.actions{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap
+}
+
+.actions button{
+  padding:13px 20px;
+  border:0;
+  border-radius:12px;
+  font-weight:bold;
+  cursor:pointer
+}
+
+.pass{
+  background:#263653;
+  color:#fff
+}
+
+.like{
+  background:#d8ad42;
+  color:#071225
+}
+
+.block{
+  background:#8e3142;
+  color:#fff
+}
+
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:#000b;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  z-index:999
+}
+
+.modal.show{
+  display:flex
+}
+
+.modal-box{
+  max-width:400px;
+  width:100%;
+  background:#101d34;
+  border-radius:20px;
+  padding:25px;
+  text-align:center;
+  border:1px solid #d8ad42
+}
+
+.modal-box button{
+  width:100%;
+  margin-top:10px;
+  padding:13px;
+  border:0;
+  border-radius:12px;
+  font-weight:bold;
+  cursor:pointer
+}
+
+.msg{
+  background:#d8ad42;
+  color:#071225
+}
+
+.close{
+  background:#263653;
+  color:#fff
+}
+
+@media(max-width:600px){
+  .filters{
+    grid-template-columns:1fr
+  }
+
+  .filters button{
+    grid-column:auto
+  }
+
+  .actions button{
+    width:100%
+  }
+}
+</style>
+</head>
+
+<body>
+
+<main class="discover-page">
+
+  <h1>💕 Descubrir</h1>
+
+  <section class="filters">
+
+    <input
+      id="minAge"
+      type="number"
+      min="18"
+      max="100"
+      placeholder="Edad mínima"
+    >
+
+    <input
+      id="maxAge"
+      type="number"
+      min="18"
+      max="100"
+      placeholder="Edad máxima"
+    >
+
+    <input
+      id="cityFilter"
+      type="text"
+      placeholder="Ciudad"
+    >
+
+    <button id="filterBtn" type="button">
+      Aplicar filtros
+    </button>
+
+  </section>
+
+  <div id="status" class="status">
+    Cargando perfiles...
+  </div>
+
+  <section id="profileContainer"></section>
+
+</main>
+
+<div id="matchModal" class="modal">
+
+  <div class="modal-box">
+
+    <h2>💕 ¡Hicieron Match!</h2>
+
+    <p id="matchText">
+      Ahora pueden comenzar a conocerse.
+    </p>
+
+    <button id="messageBtn" class="msg" type="button">
+      💬 Enviar mensaje
+    </button>
+
+    <button id="continueBtn" class="close" type="button">
+      Seguir descubriendo
+    </button>
+
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/config.js"></script>
+
+<script>
+"use strict";
+
+let client = null;
+let user = null;
+
+let profiles = [];
+let index = 0;
+
+let blocked = [];
+let swiped = [];
+
+let selected = null;
+
+const $ = id => document.getElementById(id);
+
+const esc = value =>
+  String(value ?? "").replace(
+    /[&<>"']/g,
+    character => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    }[character])
+  );
+
+
+/* =========================
+   INICIO
+========================= */
+
+async function start() {
+
+  try {
+
+    if (!window.EMIMATCH_CONFIG) {
+      $("status").textContent =
+        "Error: falta assets/js/config.js";
+      return;
+    }
+
+    client = window.supabase.createClient(
+      EMIMATCH_CONFIG.supabaseUrl,
+      EMIMATCH_CONFIG.supabaseKey
+    );
+
+    const {
+      data,
+      error
+    } = await client.auth.getSession();
+
+    if (error) {
+      console.error(error);
+
+      $("status").textContent =
+        "Error al comprobar la sesión.";
+
+      return;
+    }
+
+    const session = data?.session;
+
+    if (!session) {
+      window.location.href = "index.html";
+      return;
+    }
+
+    user = session.user;
+
+    await load();
+
+  } catch (error) {
+
+    console.error(error);
+
+    $("status").textContent =
+      "No se pudo iniciar la sección Descubrir.";
+  }
+}
+
+
+/* =========================
+   CARGAR PERFILES
+========================= */
+
+async function load() {
+
+  $("status").textContent =
+    "Buscando perfiles...";
+
+  const min =
+    Number($("minAge").value) || 18;
+
+  const max =
+    Number($("maxAge").value) || 100;
+
+  const city =
+    $("cityFilter").value.trim();
+
+
+  /* =========================
+     BLOQUEOS
+  ========================= */
+
+  const {
+    data: blockData,
+    error: blockError
+  } = await client
+    .from("user_blocks")
+    .select("blocked_id")
+    .eq("blocker_id", user.id);
+
+  if (blockError) {
+
+    console.error(blockError);
+
+    $("status").textContent =
+      "Error al cargar bloqueos: " +
+      blockError.message;
+
     return;
   }
 
-  const r = await client
+  blocked =
+    (blockData || [])
+      .map(row => row.blocked_id);
+
+
+  /* =========================
+     SWIPES YA REALIZADOS
+  ========================= */
+
+  const {
+    data: swipeData,
+    error: swipeError
+  } = await client
+    .from("swipes")
+    .select("target_user_id")
+    .eq("user_id", user.id);
+
+  if (swipeError) {
+
+    console.error(swipeError);
+
+    $("status").textContent =
+      "Error al cargar swipes: " +
+      swipeError.message;
+
+    return;
+  }
+
+  swiped =
+    (swipeData || [])
+      .map(row => row.target_user_id);
+
+
+  /* =========================
+     PERFILES
+  ========================= */
+
+  let query = client
+    .from("profiles")
+    .select(
+      "id,nombre,edad,ciudad,descripcion,foto_url,intereses"
+    )
+    .neq("id", user.id)
+    .gte("edad", min)
+    .lte("edad", max)
+    .limit(100);
+
+  if (city) {
+
+    query = query.ilike(
+      "ciudad",
+      "%" + city + "%"
+    );
+  }
+
+  const {
+    data,
+    error
+  } = await query;
+
+  if (error) {
+
+    console.error(error);
+
+    $("status").textContent =
+      "Error al cargar perfiles: " +
+      error.message;
+
+    return;
+  }
+
+
+  /* =========================
+     FILTRAR BLOQUEADOS
+     Y SWIPES YA REALIZADOS
+  ========================= */
+
+  profiles =
+    (data || []).filter(profile =>
+      !blocked.includes(profile.id) &&
+      !swiped.includes(profile.id)
+    );
+
+  index = 0;
+
+  render();
+}
+
+
+/* =========================
+   MOSTRAR PERFIL
+========================= */
+
+function render() {
+
+  const container =
+    $("profileContainer");
+
+  if (index >= profiles.length) {
+
+    container.innerHTML =
+      '<div class="empty">' +
+      'No hay más perfiles disponibles con estos filtros.' +
+      '</div>';
+
+    $("status").textContent =
+      "Sin nuevos perfiles";
+
+    return;
+  }
+
+  const profile =
+    profiles[index];
+
+  const photo =
+    profile.foto_url ||
+    "https://placehold.co/400x400?text=EmiMatch";
+
+
+  container.innerHTML = `
+    <article class="card">
+
+      <img
+        src="${esc(photo)}"
+        alt="Foto de ${esc(profile.nombre)}"
+      >
+
+      <h2>
+        ${esc(profile.nombre)},
+        ${esc(profile.edad)}
+      </h2>
+
+      <div class="muted">
+        📍 ${esc(profile.ciudad || "Sin ciudad")}
+      </div>
+
+      <p class="bio">
+        ${esc(
+          profile.descripcion ||
+          "Sin descripción"
+        )}
+      </p>
+
+      <p class="muted">
+        ${esc(profile.intereses || "")}
+      </p>
+
+      <div class="actions">
+
+        <button
+          class="pass"
+          type="button"
+          onclick="swipe('dislike')"
+        >
+          ✕ Pasar
+        </button>
+
+        <button
+          class="like"
+          type="button"
+          onclick="swipe('like')"
+        >
+          ♥ Me gusta
+        </button>
+
+        <button
+          class="block"
+          type="button"
+          onclick="blockUser()"
+        >
+          🚫 Bloquear
+        </button>
+
+      </div>
+
+    </article>
+  `;
+
+  $("status").textContent =
+    "Perfil " +
+    (index + 1) +
+    " de " +
+    profiles.length;
+}
+
+
+/* =========================
+   LIKE / DISLIKE
+========================= */
+
+async function swipe(action) {
+
+  const profile =
+    profiles[index];
+
+  if (!profile) {
+    return;
+  }
+
+
+  /* Solo permitimos los valores
+     existentes en la base de datos */
+
+  if (
+    action !== "like" &&
+    action !== "dislike"
+  ) {
+
+    console.error(
+      "Acción inválida:",
+      action
+    );
+
+    return;
+  }
+
+
+  /* =========================
+     GUARDAR SWIPE
+  ========================= */
+
+  const {
+    error: swipeError
+  } = await client
     .from("swipes")
     .upsert(
       {
         user_id: user.id,
-        target_user_id: p.id,
+        target_user_id: profile.id,
         action: action
       },
       {
-        onConflict: "user_id,target_user_id"
+        onConflict:
+          "user_id,target_user_id"
       }
     );
 
-  if (r.error) {
-    alert("No se pudo guardar la acción: " + r.error.message);
+  if (swipeError) {
+
+    console.error(swipeError);
+
+    alert(
+      "No se pudo guardar la acción: " +
+      swipeError.message
+    );
+
     return;
   }
 
+
+  /* =========================
+     SI ES LIKE:
+     BUSCAR LIKE RECÍPROCO
+  ========================= */
+
   if (action === "like") {
-    const a = await client
+
+    const {
+      data: reverseLike,
+      error: reverseError
+    } = await client
       .from("swipes")
       .select("id")
-      .eq("user_id", p.id)
+      .eq("user_id", profile.id)
       .eq("target_user_id", user.id)
       .eq("action", "like")
       .maybeSingle();
 
-    if (a.error) {
-      alert("No se pudo comprobar el Match: " + a.error.message);
+
+    if (reverseError) {
+
+      console.error(reverseError);
+
+      alert(
+        "El Like se guardó, pero no se pudo comprobar el Match: " +
+        reverseError.message
+      );
+
       return;
     }
 
-    if (a.data) {
-      const ids = [user.id, p.id].sort();
 
-      let m = await client
+    /* =========================
+       MATCH
+    ========================= */
+
+    if (reverseLike) {
+
+      const ids =
+        [user.id, profile.id].sort();
+
+
+      /* Buscar Match existente */
+
+      let {
+        data: match,
+        error: matchError
+      } = await client
         .from("matches")
         .select("id")
         .eq("user1_id", ids[0])
         .eq("user2_id", ids[1])
         .maybeSingle();
 
-      if (!m.data) {
-        m = await client
-          .from("matches")
-          .insert({
-            user1_id: ids[0],
-            user2_id: ids[1]
-          })
-          .select("id")
-          .single();
-      }
 
-      if (m.error) {
+      if (matchError) {
+
+        console.error(matchError);
+
         alert(
-          "Like guardado, pero no se pudo crear el Match: " +
-          m.error.message
+          "No se pudo comprobar el Match: " +
+          matchError.message
         );
+
         return;
       }
 
-      showMatch(p);
+
+      /* Crear Match si todavía no existe */
+
+      if (!match) {
+
+        const result =
+          await client
+            .from("matches")
+            .insert({
+              user1_id: ids[0],
+              user2_id: ids[1]
+            })
+            .select("id")
+            .single();
+
+        match =
+          result.data;
+
+        matchError =
+          result.error;
+
+
+        if (matchError) {
+
+          console.error(matchError);
+
+          alert(
+            "Like guardado, pero no se pudo crear el Match: " +
+            matchError.message
+          );
+
+          return;
+        }
+      }
+
+
+      /* Mostrar Match */
+
+      showMatch(profile);
     }
   }
 
+
+  /* =========================
+     SIGUIENTE PERFIL
+  ========================= */
+
   index++;
+
   render();
 }
+
+
+/* =========================
+   BLOQUEAR USUARIO
+========================= */
+
+async function blockUser() {
+
+  const profile =
+    profiles[index];
+
+  if (!profile) {
+    return;
+  }
+
+
+  const confirmed =
+    confirm(
+      "¿Bloquear a este usuario?"
+    );
+
+  if (!confirmed) {
+    return;
+  }
+
+
+  const {
+    error
+  } = await client
+    .from("user_blocks")
+    .insert({
+      blocker_id: user.id,
+      blocked_id: profile.id
+    });
+
+
+  if (error) {
+
+    console.error(error);
+
+    alert(
+      "No se pudo bloquear: " +
+      error.message
+    );
+
+    return;
+  }
+
+
+  blocked.push(profile.id);
+
+  index++;
+
+  render();
+}
+
+
+/* =========================
+   MODAL MATCH
+========================= */
+
+function showMatch(profile) {
+
+  selected =
+    profile;
+
+  $("matchText").textContent =
+    "Hicieron Match con " +
+    profile.nombre +
+    ".";
+
+  $("matchModal")
+    .classList
+    .add("show");
+}
+
+
+/* =========================
+   BOTÓN MENSAJE
+========================= */
+
+$("messageBtn").onclick =
+  () => {
+
+    if (!selected) {
+      return;
+    }
+
+    window.location.href =
+      "conversacion.html?user=" +
+      encodeURIComponent(
+        selected.id
+      );
+  };
+
+
+/* =========================
+   CONTINUAR
+========================= */
+
+$("continueBtn").onclick =
+  () => {
+
+    $("matchModal")
+      .classList
+      .remove("show");
+  };
+
+
+/* =========================
+   FILTROS
+========================= */
+
+$("filterBtn").onclick =
+  () => {
+
+    load();
+  };
+
+
+/* =========================
+   CERRAR MODAL
+========================= */
+
+$("matchModal").onclick =
+  event => {
+
+    if (
+      event.target.id ===
+      "matchModal"
+    ) {
+
+      $("matchModal")
+        .classList
+        .remove("show");
+    }
+  };
+
+
+/* =========================
+   ESC
+========================= */
+
+document.addEventListener(
+  "keydown",
+  event => {
+
+    if (
+      event.key === "Escape"
+    ) {
+
+      $("matchModal")
+        .classList
+        .remove("show");
+    }
+  }
+);
+
+
+/* =========================
+   INICIAR
+========================= */
+
+start();
+</script>
+
+<script src="assets/js/app.js"></script>
+<script src="assets/js/components.js"></script>
+
+</body>
+  </html>
