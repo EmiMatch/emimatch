@@ -1,33 +1,100 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Me gustas - EmiMatch</title>
-<link rel="stylesheet" href="assets/css/app.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="assets/js/config.js"></script><script src="assets/js/app.js"></script>
-</head>
-<body><main class="em-container em-section"><section class="em-shell">
-<div class="em-card"><div class="em-brand"><span class="em-brand-mark">♥</span><span>EmiMatch</span></div><h1>❤️ Me gustas</h1><p class="em-muted">Personas que mostraron interés en vos.</p></div>
-<div class="em-actions"><a class="em-button" href="descubrir.html">🔎 Descubrir</a><button class="em-button em-button-primary" id="refreshBtn" type="button">🔄 Actualizar</button></div>
-<div id="status" class="em-alert" hidden></div><div id="list" class="em-grid">Cargando...</div>
-</section></main>
-<script>
-(()=>{const c=window.EMIMATCH_CONFIG;if(!c){location.replace('index.html');return}const db=window.supabase.createClient(c.supabaseUrl,c.supabaseKey),$=id=>document.getElementById(id);let me=null;
-const esc=s=>String(s??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[x]));
-function notice(t,bad=false){const x=$('status');x.hidden=false;x.textContent=t;x.className='em-alert '+(bad?'em-alert-danger':'em-alert-success');setTimeout(()=>x.hidden=true,3000)}
-function empty(t='No hay Me gustas nuevos.'){$('list').innerHTML=`<div class="em-card em-empty"><div class="em-empty-icon">❤️</div><h2>${esc(t)}</h2><p class="em-muted">Cuando alguien muestre interés por vos, aparecerá acá.</p></div>`}
-async function init(){const{data,error}=await db.auth.getSession();if(error||!data.session){location.replace('index.html');return}me=data.session.user;await load()}
-async function load(){if(!me)return;$('list').innerHTML='<div class="em-card em-loading">⏳ Buscando Me gustas...</div>';
-const{data:likes,error}=await db.from('swipes').select('user_id,target_user_id,type,created_at').eq('target_user_id',me.id).eq('type','like').order('created_at',{ascending:false});
-if(error){console.error(error);notice('No se pudieron cargar los Me gustas.',true);$('list').innerHTML='';return}if(!likes?.length){empty();return}
-const{data:blocks}=await db.from('user_blocks').select('blocker_id,blocked_id').or(`blocker_id.eq.${me.id},blocked_id.eq.${me.id}`);const blocked=new Set();(blocks||[]).forEach(b=>blocked.add(b.blocker_id===me.id?b.blocked_id:b.blocker_id));
-const ids=[...new Set(likes.map(x=>x.user_id).filter(id=>id!==me.id&&!blocked.has(id)))];if(!ids.length){empty();return}
-const{data:matches}=await db.from('matches').select('id,user1_id,user2_id').or(`user1_id.eq.${me.id},user2_id.eq.${me.id}`);const matched=new Map();(matches||[]).forEach(m=>matched.set(m.user1_id===me.id?m.user2_id:m.user1_id,m.id));
-const{data:profiles,error:pe}=await db.from('profiles').select('id,nombre,edad,ciudad,descripcion,foto_url').in('id',ids);if(pe){console.error(pe);notice('No se pudieron cargar los perfiles.',true);$('list').innerHTML='';return}
-const map=new Map((profiles||[]).map(p=>[p.id,p]));$('list').innerHTML=ids.map(id=>{const p=map.get(id);if(!p)return '';const matchId=matched.get(id);return `<article class="em-card" id="like-${id}"><div class="em-profile-row"><div class="em-avatar">${p.foto_url?`<img src="${esc(p.foto_url)}" alt="Foto de ${esc(p.nombre||'Usuario')}">`:'👤'}</div><div class="em-profile-info"><h2>${esc(p.nombre||'Usuario')}${p.edad?`, ${esc(p.edad)}`:''}</h2><p class="em-muted">${p.ciudad?'📍 '+esc(p.ciudad):''}</p><p>${esc(p.descripcion||'Sin descripción.')}</p></div></div><div class="em-actions"><a class="em-button" href="perfil-usuario.html?id=${encodeURIComponent(id)}">👤 Ver perfil</a>${matchId?`<a class="em-button em-button-primary" href="conversacion.html?user=${encodeURIComponent(id)}">💬 Mensaje</a>`:`<button class="em-button em-button-primary" data-like="${id}">💕 Me gusta</button><button class="em-button" data-pass="${id}">✕ Pasar</button>`}</div></article>`}).join('')||empty();
+async function swipe(id, action) {
+  if (!me) return;
+
+  if (action !== "like" && action !== "dislike") {
+    console.error("Acción inválida:", action);
+    return;
+  }
+
+  const { error } = await db
+    .from("swipes")
+    .upsert(
+      {
+        user_id: me.id,
+        target_user_id: id,
+        action: action
+      },
+      {
+        onConflict: "user_id,target_user_id"
+      }
+    );
+
+  if (error) {
+    console.error(error);
+    notice("No se pudo guardar la acción.", true);
+    return;
+  }
+
+  if (action === "like") {
+
+    const { data: other, error: otherError } = await db
+      .from("swipes")
+      .select("action")
+      .eq("user_id", id)
+      .eq("target_user_id", me.id)
+      .eq("action", "like")
+      .maybeSingle();
+
+    if (otherError) {
+      console.error(otherError);
+      notice("No se pudo comprobar el Match.", true);
+      return;
+    }
+
+    if (other?.action === "like") {
+
+      const [a, b] = [me.id, id].sort();
+
+      const { data: existingMatch, error: matchCheckError } =
+        await db
+          .from("matches")
+          .select("id")
+          .eq("user1_id", a)
+          .eq("user2_id", b)
+          .maybeSingle();
+
+      if (matchCheckError) {
+        console.error(matchCheckError);
+        notice("No se pudo comprobar el Match.", true);
+        return;
+      }
+
+      if (!existingMatch) {
+        const { error: matchError } = await db
+          .from("matches")
+          .insert({
+            user1_id: a,
+            user2_id: b
+          });
+
+        if (matchError) {
+          console.error(matchError);
+          notice("No se pudo crear el Match.", true);
+          return;
+        }
+      }
+
+      notice("💕 ¡Hicieron Match!");
+
+      setTimeout(() => {
+        location.href =
+          "conversacion.html?user=" +
+          encodeURIComponent(id);
+      }, 700);
+
+      return;
+    }
+
+    notice("❤️ Me gusta enviado.");
+
+  } else {
+
+    notice("Perfil descartado.");
+  }
+
+  const card = document.getElementById("like-" + id);
+
+  if (card) {
+    card.remove();
+  }
 }
-async function swipe(id,type){if(!me)return;const{error}=await db.from('swipes').upsert({user_id:me.id,target_user_id:id,type},{onConflict:'user_id,target_user_id'});if(error){console.error(error);notice('No se pudo guardar la acción.',true);return}if(type==='like'){const{data:other}=await db.from('swipes').select('type').eq('user_id',id).eq('target_user_id',me.id).maybeSingle();if(other?.type==='like'){const[a,b]=[me.id,id].sort();await db.from('matches').upsert({user1_id:a,user2_id:b},{onConflict:'user1_id,user2_id'});notice('💕 ¡Hicieron Match!');location.href='conversacion.html?user='+encodeURIComponent(id);return}notice('❤️ Me gusta enviado.')}else notice('Perfil descartado.');await load()}
-$('refreshBtn').addEventListener('click',load);$('list').addEventListener('click',e=>{const like=e.target.closest('[data-like]'),pass=e.target.closest('[data-pass]');if(like)swipe(like.dataset.like,'like');if(pass)swipe(pass.dataset.pass,'pass')});init();
-})();
-</script></body></html>
