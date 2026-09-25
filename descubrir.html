@@ -42,12 +42,15 @@ async function swipe(action){
     if (a.data) {
       const ids = [user.id, p.id].sort();
 
-      let m = await client
-        .from("matches")
-        .select("id")
-        .eq("user1_id", ids[0])
-        .eq("user2_id", ids[1])
-        .maybeSingle();
+      let s = await client
+  .from("swipes")
+  .select("target_user_id")
+  .eq("user_id", user.id);
+        
+        
+        
+        
+        
 
       if (!m.data) {
         m = await client
@@ -73,5 +76,5 @@ async function swipe(action){
   }
 
   index++;
-  render();
+  onclick="swipe('dislike')"
 }
