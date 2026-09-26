@@ -1,141 +1,663 @@
-async function swipe(action, target) {
-  if (busy) return;
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#10152f">
+  <meta name="description" content="Tu perfil de EmiMatch">
 
-  if (action !== "like" && action !== "dislike") {
-    console.error("Acción inválida:", action);
-    return;
-  }
+  <title>Mi perfil — EmiMatch</title>
 
-  if (!target) {
-    console.error("No se recibió el usuario objetivo.");
-    return;
-  }
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/app.css">
 
-  busy = true;
-
-  try {
-
-    /* =========================
-       GUARDAR SWIPE
-    ========================= */
-
-    const { error: swipeError } = await client
-      .from("swipes")
-      .upsert(
-        {
-          user_id: user.id,
-          target_user_id: target,
-          action: action
-        },
-        {
-          onConflict: "user_id,target_user_id"
-        }
-      );
-
-    if (swipeError) {
-      throw swipeError;
+  <style>
+    :root {
+      --profile-bg: #0b1024;
+      --profile-card: rgba(255,255,255,.07);
+      --profile-border: rgba(255,255,255,.12);
+      --profile-text: #f7f8ff;
+      --profile-muted: #aeb5d0;
+      --profile-accent: #d9b45b;
+      --profile-blue: #5865f2;
+      --profile-danger: #ff5c72;
     }
 
+    * {
+      box-sizing: border-box;
+    }
 
-    /* =========================
-       COMPROBAR MATCH
-    ========================= */
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(88,101,242,.22), transparent 35%),
+        radial-gradient(circle at top right, rgba(217,180,91,.13), transparent 30%),
+        var(--profile-bg);
+      color: var(--profile-text);
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      padding-bottom: 90px;
+    }
 
-    if (action === "like") {
+    .profile-page {
+      width: min(100%, 720px);
+      margin: 0 auto;
+      padding: 18px 16px 32px;
+    }
 
-      const {
-        data: reverseLike,
-        error: reverseError
-      } = await client
-        .from("swipes")
-        .select("id")
-        .eq("user_id", target)
-        .eq("target_user_id", user.id)
-        .eq("action", "like")
-        .maybeSingle();
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
 
-      if (reverseError) {
-        throw reverseError;
+    .topbar h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -.4px;
+    }
+
+    .topbar a {
+      color: var(--profile-text);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+      opacity: .9;
+    }
+
+    .profile-card {
+      overflow: hidden;
+      border: 1px solid var(--profile-border);
+      border-radius: 28px;
+      background: var(--profile-card);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: 0 20px 60px rgba(0,0,0,.28);
+    }
+
+    .cover {
+      height: 130px;
+      background:
+        linear-gradient(135deg, rgba(88,101,242,.9), rgba(217,180,91,.35)),
+        #161c3d;
+    }
+
+    .profile-content {
+      padding: 0 20px 24px;
+    }
+
+    .avatar-wrap {
+      position: relative;
+      width: 116px;
+      height: 116px;
+      margin-top: -58px;
+      margin-bottom: 14px;
+    }
+
+    .avatar {
+      width: 116px;
+      height: 116px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      border: 5px solid #10152f;
+      background: #1b2143;
+    }
+
+    .avatar-placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #cbd0e8;
+      font-size: 40px;
+      font-weight: 800;
+    }
+
+    .verified {
+      position: absolute;
+      right: 3px;
+      bottom: 5px;
+      width: 29px;
+      height: 29px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--profile-blue);
+      border: 3px solid #10152f;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .name {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.1;
+      font-weight: 850;
+    }
+
+    .location {
+      margin: 7px 0 0;
+      color: var(--profile-muted);
+      font-size: 15px;
+    }
+
+    .bio {
+      margin: 20px 0 0;
+      color: #e8eaf5;
+      line-height: 1.55;
+      white-space: pre-wrap;
+    }
+
+    .section {
+      margin-top: 24px;
+    }
+
+    .section-title {
+      margin: 0 0 11px;
+      font-size: 14px;
+      color: var(--profile-muted);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      font-weight: 800;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .info-item {
+      padding: 13px;
+      border: 1px solid var(--profile-border);
+      border-radius: 17px;
+      background: rgba(255,255,255,.045);
+    }
+
+    .info-label {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--profile-muted);
+      font-size: 12px;
+    }
+
+    .info-value {
+      display: block;
+      font-size: 15px;
+      font-weight: 700;
+      word-break: break-word;
+    }
+
+    .actions {
+      display: grid;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .btn {
+      width: 100%;
+      min-height: 50px;
+      border: 0;
+      border-radius: 16px;
+      padding: 13px 16px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      color: white;
+      background: linear-gradient(135deg, #5865f2, #7459e8);
+    }
+
+    .btn-secondary {
+      color: var(--profile-text);
+      background: rgba(255,255,255,.07);
+      border: 1px solid var(--profile-border);
+    }
+
+    .btn-danger {
+      color: #ffb6c0;
+      background: rgba(255,92,114,.09);
+      border: 1px solid rgba(255,92,114,.22);
+    }
+
+    .status {
+      min-height: 24px;
+      margin-top: 14px;
+      color: var(--profile-muted);
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .loading {
+      padding: 70px 20px;
+      text-align: center;
+      color: var(--profile-muted);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 480px) {
+      .profile-page {
+        padding-left: 12px;
+        padding-right: 12px;
       }
 
+      .profile-content {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
 
-      /* =========================
-         CREAR MATCH
-      ========================= */
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
 
-      if (reverseLike) {
+      .name {
+        font-size: 25px;
+      }
+    }
+  </style>
+</head>
 
-        const ids =
-          [user.id, target].sort();
+<body>
+
+  <main class="profile-page">
+
+    <header class="topbar">
+      <h1>Mi perfil</h1>
+      <a href="menu.html">☰ Menú</a>
+    </header>
+
+    <section id="loading" class="profile-card loading">
+      Cargando tu perfil...
+    </section>
+
+    <section id="profileCard" class="profile-card hidden">
+
+      <div class="cover"></div>
+
+      <div class="profile-content">
+
+        <div class="avatar-wrap">
+          <img
+            id="profilePhoto"
+            class="avatar"
+            src=""
+            alt="Foto de perfil"
+          >
+
+          <div
+            id="avatarPlaceholder"
+            class="avatar avatar-placeholder hidden"
+            aria-hidden="true"
+          >
+            EM
+          </div>
+
+          <div id="verifiedBadge" class="verified hidden" title="Perfil verificado">
+            ✓
+          </div>
+        </div>
+
+        <h2 id="profileName" class="name">Mi perfil</h2>
+
+        <p id="profileLocation" class="location">
+          Ubicación no disponible
+        </p>
+
+        <p id="profileBio" class="bio">
+          Todavía no agregaste una descripción.
+        </p>
+
+        <div class="section">
+          <h3 class="section-title">Información</h3>
+
+          <div class="info-grid">
+
+            <div class="info-item">
+              <span class="info-label">Edad</span>
+              <span id="profileAge" class="info-value">—</span>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label">Ciudad</span>
+              <span id="profileCity" class="info-value">—</span>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="section">
+          <h3 class="section-title">Cuenta</h3>
+
+          <div class="info-grid">
+
+            <div class="info-item">
+              <span class="info-label">Email</span>
+              <span id="profileEmail" class="info-value">—</span>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label">Estado</span>
+              <span id="profileStatus" class="info-value">Activo</span>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="actions">
+
+          <a
+            class="btn btn-primary"
+            href="editar-perfil.html"
+          >
+            ✎ Editar perfil
+          </a>
+
+          <a
+            class="btn btn-secondary"
+            href="configuracion.html"
+          >
+            ⚙ Configuración
+          </a>
+
+          <a
+            class="btn btn-secondary"
+            href="descubrir.html"
+          >
+            ✨ Seguir descubriendo
+          </a>
+
+          <a
+            class="btn btn-danger"
+            href="configuracion.html#eliminar-cuenta"
+          >
+            Eliminar cuenta
+          </a>
+
+        </div>
+
+        <div id="status" class="status"></div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <script src="assets/js/config.js"></script>
+
+  <script type="module">
+
+    const loading = document.getElementById("loading");
+    const profileCard = document.getElementById("profileCard");
+
+    const profilePhoto = document.getElementById("profilePhoto");
+    const avatarPlaceholder = document.getElementById("avatarPlaceholder");
+    const verifiedBadge = document.getElementById("verifiedBadge");
+
+    const profileName = document.getElementById("profileName");
+    const profileLocation = document.getElementById("profileLocation");
+    const profileBio = document.getElementById("profileBio");
+
+    const profileAge = document.getElementById("profileAge");
+    const profileCity = document.getElementById("profileCity");
+    const profileEmail = document.getElementById("profileEmail");
+    const profileStatus = document.getElementById("profileStatus");
+
+    const statusElement = document.getElementById("status");
+
+    function showStatus(message) {
+      statusElement.textContent = message || "";
+    }
+
+    function getConfig() {
+      const config = window.EMIMATCH_CONFIG || {};
+
+      if (!config.supabaseUrl || !config.supabaseAnonKey) {
+        throw new Error("Configuración de Supabase incompleta.");
+      }
+
+      return config;
+    }
+
+    async function loadSupabase() {
+      const config = getConfig();
+
+      const module = await import(
+        "https://esm.sh/@supabase/supabase-js@2"
+      );
+
+      return module.createClient(
+        config.supabaseUrl,
+        config.supabaseAnonKey
+      );
+    }
+
+    function calculateAge(birthDate) {
+      if (!birthDate) return null;
+
+      const date = new Date(birthDate);
+
+      if (Number.isNaN(date.getTime())) {
+        return null;
+      }
+
+      const today = new Date();
+
+      let age =
+        today.getFullYear() -
+        date.getFullYear();
+
+      const month =
+        today.getMonth() -
+        date.getMonth();
+
+      if (
+        month < 0 ||
+        (
+          month === 0 &&
+          today.getDate() < date.getDate()
+        )
+      ) {
+        age--;
+      }
+
+      return age >= 0 ? age : null;
+    }
+
+    function setPhoto(photoUrl, name) {
+      if (photoUrl) {
+        profilePhoto.src = photoUrl;
+        profilePhoto.alt = `Foto de ${name || "perfil"}`;
+
+        profilePhoto.classList.remove("hidden");
+        avatarPlaceholder.classList.add("hidden");
+
+        profilePhoto.onerror = () => {
+          profilePhoto.classList.add("hidden");
+          avatarPlaceholder.classList.remove("hidden");
+        };
+
+        return;
+      }
+
+      profilePhoto.classList.add("hidden");
+      avatarPlaceholder.classList.remove("hidden");
+
+      const initials = String(name || "EM")
+        .trim()
+        .split(/\s+/)
+        .slice(0, 2)
+        .map(word => word.charAt(0))
+        .join("")
+        .toUpperCase();
+
+      avatarPlaceholder.textContent = initials || "EM";
+    }
+
+    async function loadProfile() {
+
+      try {
+
+        const client = await loadSupabase();
 
         const {
-          data: existingMatch,
-          error: matchCheckError
+          data: {
+            user
+          },
+          error: sessionError
+        } = await client.auth.getUser();
+
+        if (sessionError) {
+          throw sessionError;
+        }
+
+        if (!user) {
+          window.location.href = "index.html";
+          return;
+        }
+
+        const {
+          data: profile,
+          error: profileError
         } = await client
-          .from("matches")
-          .select("id")
-          .eq("user1_id", ids[0])
-          .eq("user2_id", ids[1])
+          .from("profiles")
+          .select("*")
+          .eq("id", user.id)
           .maybeSingle();
 
-        if (matchCheckError) {
-          throw matchCheckError;
+        if (profileError) {
+          throw profileError;
         }
 
-
-        if (!existingMatch) {
-
-          const {
-            error: matchInsertError
-          } = await client
-            .from("matches")
-            .insert({
-              user1_id: ids[0],
-              user2_id: ids[1]
-            });
-
-          if (matchInsertError) {
-            throw matchInsertError;
-          }
+        if (!profile) {
+          throw new Error(
+            "No encontramos tu perfil."
+          );
         }
 
+        const name =
+          profile.nombre ||
+          profile.name ||
+          user.user_metadata?.nombre ||
+          user.email?.split("@")[0] ||
+          "Usuario EmiMatch";
 
-        $("matchBox").classList.add("show");
+        const city =
+          profile.ciudad ||
+          profile.city ||
+          "";
+
+        const bio =
+          profile.descripcion ||
+          profile.bio ||
+          "";
+
+        const photo =
+          profile.foto_url ||
+          profile.photo_url ||
+          "";
+
+        const age =
+          profile.edad ??
+          profile.age ??
+          calculateAge(
+            profile.fecha_nacimiento ||
+            profile.birth_date
+          );
+
+        const verified =
+          profile.verificado === true ||
+          profile.verified === true;
+
+        profileName.textContent = name;
+
+        profileLocation.textContent =
+          city
+            ? `📍 ${city}`
+            : "Ubicación no disponible";
+
+        profileBio.textContent =
+          bio ||
+          "Todavía no agregaste una descripción.";
+
+        profileAge.textContent =
+          age !== null &&
+          age !== undefined &&
+          age !== ""
+            ? String(age)
+            : "—";
+
+        profileCity.textContent =
+          city || "—";
+
+        profileEmail.textContent =
+          user.email || "—";
+
+        profileStatus.textContent =
+          user.email_confirmed_at
+            ? "Cuenta activa"
+            : "Email pendiente";
+
+        if (verified) {
+          verifiedBadge.classList.remove("hidden");
+        } else {
+          verifiedBadge.classList.add("hidden");
+        }
+
+        setPhoto(photo, name);
+
+        loading.classList.add("hidden");
+        profileCard.classList.remove("hidden");
+
+        showStatus("");
+
+      } catch (error) {
+
+        console.error(
+          "Error cargando perfil:",
+          error
+        );
+
+        loading.innerHTML = `
+          <strong>No pudimos cargar tu perfil.</strong>
+          <br><br>
+          ${escapeHtml(error?.message || "Error desconocido")}
+          <br><br>
+          <a href="index.html" style="color:#fff;">
+            Volver al inicio
+          </a>
+        `;
+
       }
     }
 
+    function escapeHtml(value) {
 
-    /* =========================
-       QUITAR PERFIL ACTUAL
-    ========================= */
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
 
-    if (Array.isArray(window.discoveryList)) {
-
-      window.discoveryList =
-        window.discoveryList.filter(
-          item => item.id !== target
-        );
-
-      renderDiscovery(
-        window.discoveryList
-      );
     }
 
-  } catch (error) {
+    loadProfile();
 
-    console.error(
-      "Error en swipe:",
-      error
-    );
+  </script>
 
-    status(
-      "No pudimos registrar tu elección: " +
-      error.message,
-      "error"
-    );
-
-  } finally {
-
-    busy = false;
-  }
-}
+</body>
+          </html>
