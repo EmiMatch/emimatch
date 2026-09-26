@@ -10,6 +10,6 @@ window.EMIMATCH_CONFIG = Object.freeze({
   supabaseUrl:
     "https://kngiadwaesdbmvwivdev.supabase.co",
 
-  supabaseKey:
+  supabaseAnonKey:
     "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m"
 });
