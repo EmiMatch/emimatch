@@ -2,23 +2,12 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Conversación · EmiMatch</title>
 
-  <meta
-    name="theme-color"
-    content="#07152f"
-  >
-
-  <meta
-    name="description"
-    content="Conversación privada de EmiMatch."
-  >
+  <meta name="theme-color" content="#07152f">
+  <meta name="description" content="Conversación privada de EmiMatch.">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -38,17 +27,8 @@
 
     body {
       background:
-        radial-gradient(
-          circle at top right,
-          rgba(124,58,237,.20),
-          transparent 35%
-        ),
-        linear-gradient(
-          145deg,
-          #07152f,
-          #102b5c
-        );
-
+        radial-gradient(circle at top right, rgba(124,58,237,.20), transparent 35%),
+        linear-gradient(145deg, #07152f, #102b5c);
       color: #172033;
     }
 
@@ -58,122 +38,79 @@
       height: 100dvh;
       min-height: 100vh;
       margin: auto;
-
       background: #f4f7fb;
-
       display: flex;
       flex-direction: column;
-
       position: relative;
       overflow: hidden;
     }
 
-    /* =========================
-       HEADER
-    ========================= */
-
     .header {
       flex-shrink: 0;
-
       height: 70px;
-
       display: flex;
       align-items: center;
-
       gap: 11px;
-
       padding: 10px 12px;
-
-      background:
-        linear-gradient(
-          135deg,
-          #07152f,
-          #123b91 65%,
-          #4c1d95
-        );
-
+      background: linear-gradient(135deg, #07152f, #123b91 65%, #4c1d95);
       color: white;
-
-      box-shadow:
-        0 5px 18px rgba(0,0,0,.22);
-
+      box-shadow: 0 5px 18px rgba(0,0,0,.22);
       z-index: 10;
+    }
+
+    .back,
+    .block-btn {
+      flex-shrink: 0;
+      border: 0;
+      border-radius: 50%;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: .18s ease;
     }
 
     .back {
       width: 42px;
       height: 42px;
-
-      flex-shrink: 0;
-
-      border: 0;
-      border-radius: 50%;
-
-      background:
-        rgba(255,255,255,.10);
-
-      color: white;
-
+      background: rgba(255,255,255,.10);
       font-size: 31px;
       line-height: 1;
-
-      cursor: pointer;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      transition: .18s ease;
     }
 
-    .back:active {
+    .back:active,
+    .block-btn:active {
       transform: scale(.92);
-
-      background:
-        rgba(255,255,255,.18);
+      background: rgba(255,255,255,.18);
     }
 
     .avatar-wrap {
       position: relative;
-
       width: 46px;
       height: 46px;
-
       flex-shrink: 0;
     }
 
     .avatar {
       width: 46px;
       height: 46px;
-
       border-radius: 50%;
-
       object-fit: cover;
-
       background: #dbe2ed;
-
-      border:
-        2px solid rgba(255,255,255,.75);
-
+      border: 2px solid rgba(255,255,255,.75);
       display: block;
     }
 
     .online-dot {
       position: absolute;
-
       right: 0;
       bottom: 1px;
-
       width: 12px;
       height: 12px;
-
       border-radius: 50%;
-
       background: #22c55e;
-
-      border:
-        2px solid #123b91;
-
+      border: 2px solid #123b91;
       display: none;
     }
 
@@ -184,10 +121,8 @@
 
     .header-info strong {
       display: block;
-
       font-size: 16px;
       line-height: 1.2;
-
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -195,11 +130,8 @@
 
     .status {
       font-size: 11px;
-
       opacity: .88;
-
       margin-top: 4px;
-
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -208,29 +140,8 @@
     .block-btn {
       width: 40px;
       height: 40px;
-
-      flex-shrink: 0;
-
-      border: 0;
-      border-radius: 50%;
-
-      background:
-        rgba(255,255,255,.08);
-
-      color: white;
-
-      cursor: pointer;
-
+      background: rgba(255,255,255,.08);
       font-size: 18px;
-
-      transition: .18s ease;
-    }
-
-    .block-btn:active {
-      transform: scale(.92);
-
-      background:
-        rgba(255,255,255,.18);
     }
 
     .block-btn:disabled {
@@ -238,43 +149,21 @@
       cursor: not-allowed;
     }
 
-    /* =========================
-       MENSAJES
-    ========================= */
-
     .messages {
       flex: 1;
-
       min-height: 0;
-
-      padding:
-        18px
-        13px
-        12px;
-
+      padding: 18px 13px 12px;
       overflow-y: auto;
       overflow-x: hidden;
-
       display: flex;
       flex-direction: column;
-
       gap: 7px;
-
       scroll-behavior: smooth;
-
       -webkit-overflow-scrolling: touch;
 
       background:
-        radial-gradient(
-          circle at 15% 10%,
-          rgba(124,58,237,.05),
-          transparent 25%
-        ),
-        radial-gradient(
-          circle at 85% 80%,
-          rgba(212,175,55,.05),
-          transparent 25%
-        ),
+        radial-gradient(circle at 15% 10%, rgba(124,58,237,.05), transparent 25%),
+        radial-gradient(circle at 85% 80%, rgba(212,175,55,.05), transparent 25%),
         #f4f7fb;
     }
 
@@ -284,102 +173,62 @@
 
     .messages::-webkit-scrollbar-thumb {
       background: #cbd5e1;
-
       border-radius: 10px;
     }
 
     .message {
       position: relative;
-
       max-width: 80%;
-
-      padding:
-        10px
-        13px
-        8px;
-
+      padding: 10px 13px 8px;
       border-radius: 18px;
-
       font-size: 15px;
       line-height: 1.42;
-
       word-break: break-word;
       overflow-wrap: anywhere;
-
-      box-shadow:
-        0 3px 10px rgba(0,0,0,.07);
-
-      animation:
-        aparecer .18s ease;
+      box-shadow: 0 3px 10px rgba(0,0,0,.07);
+      animation: aparecer .18s ease;
     }
 
     @keyframes aparecer {
-
       from {
         opacity: 0;
-        transform:
-          translateY(4px);
+        transform: translateY(4px);
       }
 
       to {
         opacity: 1;
-        transform:
-          translateY(0);
+        transform: translateY(0);
       }
-
     }
 
     .mine {
       align-self: flex-end;
-
-      background:
-        linear-gradient(
-          135deg,
-          #123b91,
-          #2563eb
-        );
-
+      background: linear-gradient(135deg, #123b91, #2563eb);
       color: white;
-
       border-bottom-right-radius: 5px;
-
-      box-shadow:
-        0 4px 12px
-        rgba(18,59,145,.20);
+      box-shadow: 0 4px 12px rgba(18,59,145,.20);
     }
 
     .theirs {
       align-self: flex-start;
-
       background: white;
-
       color: #172033;
-
       border-bottom-left-radius: 5px;
-
-      border:
-        1px solid #e5eaf2;
+      border: 1px solid #e5eaf2;
     }
 
     .time {
       display: block;
-
       font-size: 9px;
-
       opacity: .72;
-
       margin-top: 5px;
-
       text-align: right;
-
       white-space: nowrap;
     }
 
     .checks {
       margin-left: 4px;
-
       font-size: 11px;
-
       letter-spacing: -2px;
     }
 
@@ -387,105 +236,50 @@
       color: #5ee7ff;
     }
 
-    /* =========================
-       TYPING
-    ========================= */
-
     .typing {
       flex-shrink: 0;
-
       min-height: 25px;
-
-      padding:
-        3px
-        16px
-        5px;
-
+      padding: 3px 16px 5px;
       font-size: 11px;
-
       color: #64748b;
-
       font-style: italic;
-
       background: #f4f7fb;
     }
 
-    /* =========================
-       COMPOSER
-    ========================= */
-
     .composer {
       flex-shrink: 0;
-
       width: 100%;
-
-      padding:
-        9px
-        10px
-        calc(9px + env(safe-area-inset-bottom));
-
-      background:
-        rgba(255,255,255,.97);
-
-      border-top:
-        1px solid #e1e6ef;
-
+      padding: 9px 10px calc(9px + env(safe-area-inset-bottom));
+      background: rgba(255,255,255,.97);
+      border-top: 1px solid #e1e6ef;
       display: flex;
-
       align-items: flex-end;
-
       gap: 8px;
-
       z-index: 20;
-
-      box-shadow:
-        0 -5px 18px
-        rgba(0,0,0,.07);
+      box-shadow: 0 -5px 18px rgba(0,0,0,.07);
     }
 
     .composer textarea {
       flex: 1;
-
       width: 100%;
-
       resize: none;
-
-      border:
-        1px solid #d6dce7;
-
+      border: 1px solid #d6dce7;
       border-radius: 21px;
-
-      padding:
-        11px
-        14px;
-
+      padding: 11px 14px;
       outline: none;
-
       font-family: inherit;
-
       font-size: 15px;
-
       line-height: 1.35;
-
       min-height: 43px;
       max-height: 105px;
-
       background: #f8fafc;
-
       color: #172033;
-
-      transition:
-        border-color .18s ease,
-        box-shadow .18s ease;
+      transition: border-color .18s ease, box-shadow .18s ease;
     }
 
     .composer textarea:focus {
       border-color: #4c6fd8;
-
-      box-shadow:
-        0 0 0 3px
-        rgba(76,111,216,.10);
-
+      box-shadow: 0 0 0 3px rgba(76,111,216,.10);
       background: white;
     }
 
@@ -496,29 +290,14 @@
     .send {
       width: 44px;
       height: 44px;
-
       min-width: 44px;
-
       border: 0;
       border-radius: 50%;
-
-      background:
-        linear-gradient(
-          135deg,
-          #123b91,
-          #4c1d95
-        );
-
+      background: linear-gradient(135deg, #123b91, #4c1d95);
       color: white;
-
       font-size: 19px;
-
       cursor: pointer;
-
-      box-shadow:
-        0 5px 14px
-        rgba(18,59,145,.25);
-
+      box-shadow: 0 5px 14px rgba(18,59,145,.25);
       transition: .18s ease;
     }
 
@@ -528,75 +307,36 @@
 
     .send:disabled {
       opacity: .45;
-
       cursor: not-allowed;
-
       box-shadow: none;
     }
-
-    /* =========================
-       ESTADOS
-    ========================= */
 
     .empty,
     .error {
       width: 100%;
-
       max-width: 320px;
-
       text-align: center;
-
       margin: auto;
-
       color: #64748b;
-
-      padding:
-        30px
-        20px;
-
+      padding: 30px 20px;
       line-height: 1.5;
     }
 
-    /* =========================
-       BLOQUEADO
-    ========================= */
-
     .bloqueado-info {
-      margin:
-        8px
-        auto
-        4px;
-
+      margin: 8px auto 4px;
       max-width: 330px;
-
-      padding:
-        9px
-        14px;
-
+      padding: 9px 14px;
       border-radius: 14px;
-
       background: #fff7ed;
-
       color: #9a3412;
-
       font-size: 12px;
-
       text-align: center;
-
-      border:
-        1px solid #fed7aa;
+      border: 1px solid #fed7aa;
     }
 
-    /* =========================
-       DESKTOP
-    ========================= */
-
     @media (min-width: 701px) {
-
       .app {
-        box-shadow:
-          0 0 50px
-          rgba(0,0,0,.30);
+        box-shadow: 0 0 50px rgba(0,0,0,.30);
       }
 
       .header {
@@ -612,29 +352,18 @@
         padding-left: 18px;
         padding-right: 18px;
       }
-
     }
 
-    /* =========================
-       CELULARES PEQUEÑOS
-    ========================= */
-
     @media (max-width: 380px) {
-
       .header {
         height: 64px;
-
-        padding:
-          8px
-          9px;
-
+        padding: 8px 9px;
         gap: 8px;
       }
 
       .back {
         width: 38px;
         height: 38px;
-
         font-size: 28px;
       }
 
@@ -647,7 +376,6 @@
       .block-btn {
         width: 37px;
         height: 37px;
-
         font-size: 16px;
       }
 
@@ -660,21 +388,13 @@
       }
 
       .messages {
-        padding:
-          14px
-          9px
-          9px;
+        padding: 14px 9px 9px;
       }
 
       .message {
         max-width: 86%;
-
         font-size: 14px;
-
-        padding:
-          9px
-          11px
-          7px;
+        padding: 9px 11px 7px;
       }
 
       .composer {
@@ -683,19 +403,14 @@
 
       .composer textarea {
         font-size: 14px;
-
-        padding:
-          10px
-          12px;
+        padding: 10px 12px;
       }
 
       .send {
         width: 42px;
         height: 42px;
-
         min-width: 42px;
       }
-
     }
   </style>
 </head>
@@ -704,7 +419,7 @@
 
 <div class="app">
 
-  <div class="header">
+  <header class="header">
 
     <button
       class="back"
@@ -716,26 +431,21 @@
     </button>
 
     <div class="avatar-wrap">
-
       <img
         id="avatar"
         class="avatar"
         src="https://via.placeholder.com/100"
-        alt="Foto"
+        alt="Foto de perfil"
       >
 
       <div
         id="onlineDot"
         class="online-dot"
       ></div>
-
     </div>
 
     <div class="header-info">
-
-      <strong id="nombreUsuario">
-        Cargando...
-      </strong>
+      <strong id="nombreUsuario">Cargando...</strong>
 
       <div
         id="estadoUsuario"
@@ -743,7 +453,6 @@
       >
         ⏳
       </div>
-
     </div>
 
     <button
@@ -757,27 +466,22 @@
       🚫
     </button>
 
-  </div>
+  </header>
 
-
-  <div
+  <main
     id="messages"
     class="messages"
   >
-
     <div class="empty">
       ⏳ Cargando conversación...
     </div>
-
-  </div>
-
+  </main>
 
   <div
     id="typing"
     class="typing"
     aria-live="polite"
   ></div>
-
 
   <div class="composer">
 
@@ -804,8 +508,8 @@
 
 </div>
 
-
 <script>
+"use strict";
 
 /* =========================================================
    CONFIGURACIÓN
@@ -816,7 +520,6 @@ const SUPABASE_URL =
 
 const SUPABASE_KEY =
   "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
-
 
 const supabaseClient =
   supabase.createClient(
@@ -830,13 +533,9 @@ const supabaseClient =
 ========================================================= */
 
 let usuarioActual = null;
-
 let usuarioDestino = null;
-
 let matchActual = null;
-
 let bloqueado = false;
-
 let canalMensajes = null;
 
 
@@ -849,7 +548,6 @@ const params =
     window.location.search
   );
 
-
 const destinoId =
   params.get("user");
 
@@ -859,37 +557,23 @@ const destinoId =
 ========================================================= */
 
 const messagesDiv =
-  document.getElementById(
-    "messages"
-  );
-
+  document.getElementById("messages");
 
 const inputMensaje =
-  document.getElementById(
-    "inputMensaje"
-  );
-
+  document.getElementById("inputMensaje");
 
 const btnEnviar =
-  document.getElementById(
-    "btnEnviar"
-  );
-
+  document.getElementById("btnEnviar");
 
 const btnBloquear =
-  document.getElementById(
-    "btnBloquear"
-  );
-
+  document.getElementById("btnBloquear");
 
 const typingDiv =
-  document.getElementById(
-    "typing"
-  );
+  document.getElementById("typing");
 
 
 /* =========================================================
-   INICIAR
+   INICIO
 ========================================================= */
 
 async function iniciar() {
@@ -902,15 +586,12 @@ async function iniciar() {
     } =
       await supabaseClient.auth.getSession();
 
-
     if (error) {
       throw error;
     }
 
-
     const session =
       data?.session;
-
 
     if (!session) {
 
@@ -920,10 +601,8 @@ async function iniciar() {
       return;
     }
 
-
     usuarioActual =
       session.user;
-
 
     if (!destinoId) {
 
@@ -935,7 +614,6 @@ async function iniciar() {
 
       return;
     }
-
 
     if (
       destinoId ===
@@ -951,17 +629,12 @@ async function iniciar() {
       return;
     }
 
-
     await cargarUsuario();
-
     await cargarMatch();
-
     await comprobarBloqueo();
-
     await cargarMensajes();
 
     activarRealtimeMensajes();
-
     activarInputMensaje();
 
   } catch (error) {
@@ -992,20 +665,13 @@ async function cargarUsuario() {
   } =
     await supabaseClient
       .from("profiles")
-      .select(
-        "id,nombre,foto_url,online,last_seen"
-      )
-      .eq(
-        "id",
-        destinoId
-      )
+      .select("id,nombre,foto_url")
+      .eq("id", destinoId)
       .maybeSingle();
-
 
   if (error) {
     throw error;
   }
-
 
   if (!data) {
 
@@ -1014,10 +680,8 @@ async function cargarUsuario() {
     );
   }
 
-
   usuarioDestino =
     data;
-
 
   document.getElementById(
     "nombreUsuario"
@@ -1025,40 +689,31 @@ async function cargarUsuario() {
     data.nombre ||
     "Usuario";
 
-
   document.getElementById(
     "avatar"
   ).src =
     data.foto_url ||
     "https://via.placeholder.com/100";
 
-
   actualizarEstadoUsuario();
 }
 
 
 /* =========================================================
-   ESTADO ONLINE
+   ESTADO DEL USUARIO
 ========================================================= */
 
 function actualizarEstadoUsuario() {
-
-  if (!usuarioDestino) {
-    return;
-  }
-
 
   const estado =
     document.getElementById(
       "estadoUsuario"
     );
 
-
   const onlineDot =
     document.getElementById(
       "onlineDot"
     );
-
 
   if (bloqueado) {
 
@@ -1071,21 +726,8 @@ function actualizarEstadoUsuario() {
     return;
   }
 
-
-  if (usuarioDestino.online) {
-
-    estado.textContent =
-      "🟢 En línea";
-
-    onlineDot.style.display =
-      "block";
-
-    return;
-  }
-
-
   estado.textContent =
-    "⚪ Desconectado";
+    "💬 Conversación";
 
   onlineDot.style.display =
     "none";
@@ -1112,11 +754,9 @@ async function cargarMatch() {
       )
       .limit(1);
 
-
   if (error) {
     throw error;
   }
-
 
   if (
     !data ||
@@ -1127,7 +767,6 @@ async function cargarMatch() {
       "No existe un Match válido con este usuario."
     );
   }
-
 
   matchActual =
     data[0];
@@ -1153,19 +792,27 @@ async function comprobarBloqueo() {
         `and(blocker_id.eq.${usuarioActual.id},blocked_id.eq.${destinoId}),and(blocker_id.eq.${destinoId},blocked_id.eq.${usuarioActual.id})`
       );
 
-
   if (error) {
-    throw error;
+
+    /*
+      Si user_blocks todavía no está preparado en producción,
+      no bloqueamos todo el chat por un error de esa consulta.
+    */
+    console.warn(
+      "No se pudo comprobar el bloqueo:",
+      error
+    );
+
+    bloqueado = false;
+
+  } else {
+
+    bloqueado =
+      Array.isArray(data) &&
+      data.length > 0;
   }
 
-
-  bloqueado =
-    Array.isArray(data) &&
-    data.length > 0;
-
-
   actualizarEstadoUsuario();
-
 
   if (bloqueado) {
 
@@ -1182,7 +829,6 @@ async function comprobarBloqueo() {
 
     return;
   }
-
 
   inputMensaje.disabled =
     false;
@@ -1206,17 +852,14 @@ function mostrarAvisoBloqueado() {
       "bloqueadoInfo"
     );
 
-
   if (existente) {
     return;
   }
-
 
   const aviso =
     document.createElement(
       "div"
     );
-
 
   aviso.id =
     "bloqueadoInfo";
@@ -1224,10 +867,8 @@ function mostrarAvisoBloqueado() {
   aviso.className =
     "bloqueado-info";
 
-
   aviso.textContent =
     "🚫 Esta conversación está bloqueada.";
-
 
   messagesDiv.parentNode.insertBefore(
     aviso,
@@ -1246,7 +887,6 @@ async function cargarMensajes() {
     return;
   }
 
-
   const {
     data,
     error
@@ -1254,7 +894,7 @@ async function cargarMensajes() {
     await supabaseClient
       .from("messages")
       .select(
-        "id,match_id,sender_id,content,created_at,read_at,delivered_at"
+        "id,match_id,sender_id,content,created_at"
       )
       .eq(
         "match_id",
@@ -1267,14 +907,12 @@ async function cargarMensajes() {
         }
       );
 
-
   if (error) {
     throw error;
   }
 
-
-  messagesDiv.innerHTML = "";
-
+  messagesDiv.innerHTML =
+    "";
 
   if (
     !data ||
@@ -1294,37 +932,17 @@ async function cargarMensajes() {
       const mensaje of data
     ) {
 
-      if (
-        mensaje.sender_id !==
-        usuarioActual.id
-      ) {
-
-        await marcarMensajeComoLeido(
-          mensaje
-        );
-
-        mensaje.read_at =
-          new Date().toISOString();
-
-        mensaje.delivered_at =
-          mensaje.delivered_at ||
-          mensaje.read_at;
-      }
-
-
       mostrarMensaje(
         mensaje
       );
     }
   }
 
-
   if (!bloqueado) {
 
     inputMensaje.disabled =
       false;
   }
-
 
   actualizarEstadoBotonEnviar();
 
@@ -1334,6 +952,7 @@ async function cargarMensajes() {
 
 /* =========================================================
    MOSTRAR MENSAJE
+   CORRECCIÓN PRINCIPAL
 ========================================================= */
 
 function mostrarMensaje(mensaje) {
@@ -1342,152 +961,121 @@ function mostrarMensaje(mensaje) {
     return;
   }
 
-
   const existente =
     messagesDiv.querySelector(
       `[data-message-id="${mensaje.id}"]`
     );
 
-
   if (existente) {
-
-    actualizarMensajeVisual(
-      existente,
-      mensaje
-    );
-
     return;
   }
-
 
   const vacio =
     messagesDiv.querySelector(
       ".empty"
     );
 
-
   if (vacio) {
     vacio.remove();
   }
 
-  div.dataset.messageId = mensaje.id;
+  /*
+    CORRECCIÓN:
+    primero se determina si el mensaje
+    pertenece al usuario actual.
+  */
 
-  const contenido = document.createElement("div");
-  contenido.textContent = mensaje.content || "";
+  const mio =
+    mensaje.sender_id ===
+    usuarioActual.id;
 
-  const hora = document.createElement("span");
-  hora.className = "time";
+  /*
+    CORRECCIÓN:
+    el elemento div se crea ANTES
+    de usar div.dataset.messageId.
+  */
 
-  const fecha = new Date(mensaje.created_at);
+  const div =
+    document.createElement(
+      "div"
+    );
 
-  hora.textContent = fecha.toLocaleTimeString("es-AR", {
-    hour: "2-digit",
-    minute: "2-digit"
-  });
+  div.className =
+    "message " +
+    (
+      mio
+        ? "mine"
+        : "theirs"
+    );
+
+  div.dataset.messageId =
+    mensaje.id;
+
+  const contenido =
+    document.createElement(
+      "div"
+    );
+
+  contenido.textContent =
+    mensaje.content || "";
+
+  const hora =
+    document.createElement(
+      "span"
+    );
+
+  hora.className =
+    "time";
+
+  const fecha =
+    new Date(
+      mensaje.created_at
+    );
+
+  hora.textContent =
+    fecha.toLocaleTimeString(
+      "es-AR",
+      {
+        hour: "2-digit",
+        minute: "2-digit"
+      }
+    );
+
+  /*
+    Se mantienen checks visuales simples
+    sin depender de columnas read_at/delivered_at
+    que todavía no fueron confirmadas.
+  */
 
   if (mio) {
-    const checks = document.createElement("span");
-    checks.className = "checks";
 
-    if (mensaje.read_at) {
-      checks.classList.add("read");
-      checks.textContent = "✓✓";
-    } else if (mensaje.delivered_at) {
-      checks.textContent = "✓✓";
-    } else {
-      checks.textContent = "✓";
-    }
-
-    hora.appendChild(checks);
-  }
-
-  div.appendChild(contenido);
-  div.appendChild(hora);
-
-  messagesDiv.appendChild(div);
-}
-
-
-/* =========================================================
-   ACTUALIZAR MENSAJE EXISTENTE
-========================================================= */
-
-function actualizarMensajeVisual(elemento, mensaje) {
-
-  if (
-    mensaje.sender_id !==
-    usuarioActual.id
-  ) {
-    return;
-  }
-
-  const checks =
-    elemento.querySelector(".checks");
-
-  if (!checks) {
-    return;
-  }
-
-  if (mensaje.read_at) {
-
-    checks.classList.add("read");
-    checks.textContent = "✓✓";
-
-  } else if (mensaje.delivered_at) {
-
-    checks.classList.remove("read");
-    checks.textContent = "✓✓";
-
-  } else {
-
-    checks.classList.remove("read");
-    checks.textContent = "✓";
-  }
-}
-
-
-/* =========================================================
-   MARCAR MENSAJE COMO LEÍDO
-========================================================= */
-
-async function marcarMensajeComoLeido(mensaje) {
-
-  if (
-    !mensaje?.id ||
-    mensaje.sender_id === usuarioActual.id
-  ) {
-    return;
-  }
-
-  if (mensaje.read_at) {
-    return;
-  }
-
-  const ahora =
-    new Date().toISOString();
-
-  const {
-    error
-  } =
-    await supabaseClient
-      .from("messages")
-      .update({
-        read_at: ahora,
-        delivered_at:
-          mensaje.delivered_at || ahora
-      })
-      .eq(
-        "id",
-        mensaje.id
+    const checks =
+      document.createElement(
+        "span"
       );
 
-  if (error) {
+    checks.className =
+      "checks";
 
-    console.warn(
-      "No se pudo marcar mensaje como leído:",
-      error
+    checks.textContent =
+      "✓";
+
+    hora.appendChild(
+      checks
     );
   }
+
+  div.appendChild(
+    contenido
+  );
+
+  div.appendChild(
+    hora
+  );
+
+  messagesDiv.appendChild(
+    div
+  );
 }
 
 
@@ -1502,11 +1090,17 @@ function activarRealtimeMensajes() {
   }
 
   if (canalMensajes) {
+
     try {
+
       supabaseClient.removeChannel(
         canalMensajes
       );
+
     } catch (_) {}
+
+    canalMensajes =
+      null;
   }
 
   canalMensajes =
@@ -1525,49 +1119,6 @@ function activarRealtimeMensajes() {
             "match_id=eq." +
             matchActual.id
         },
-        async (payload) => {
-
-          const mensaje =
-            payload?.new;
-
-          if (!mensaje?.id) {
-            return;
-          }
-
-          if (
-            mensaje.sender_id !==
-            usuarioActual.id
-          ) {
-
-            await marcarMensajeComoLeido(
-              mensaje
-            );
-
-            mensaje.read_at =
-              new Date().toISOString();
-
-            mensaje.delivered_at =
-              mensaje.delivered_at ||
-              mensaje.read_at;
-          }
-
-          mostrarMensaje(
-            mensaje
-          );
-
-          bajarAlFinal();
-        }
-      )
-      .on(
-        "postgres_changes",
-        {
-          event: "UPDATE",
-          schema: "public",
-          table: "messages",
-          filter:
-            "match_id=eq." +
-            matchActual.id
-        },
         (payload) => {
 
           const mensaje =
@@ -1577,18 +1128,11 @@ function activarRealtimeMensajes() {
             return;
           }
 
-          const elemento =
-            messagesDiv.querySelector(
-              `[data-message-id="${mensaje.id}"]`
-            );
+          mostrarMensaje(
+            mensaje
+          );
 
-          if (elemento) {
-
-            actualizarMensajeVisual(
-              elemento,
-              mensaje
-            );
-          }
+          bajarAlFinal();
         }
       )
       .subscribe(
@@ -1618,7 +1162,6 @@ function activarInputMensaje() {
     }
   );
 
-
   inputMensaje.addEventListener(
     "keydown",
     (event) => {
@@ -1638,7 +1181,7 @@ function activarInputMensaje() {
 
 
 /* =========================================================
-   AJUSTAR INPUT
+   ALTURA DEL INPUT
 ========================================================= */
 
 function ajustarAlturaInput() {
@@ -1691,7 +1234,9 @@ async function enviarMensaje() {
     return;
   }
 
-  if (contenido.length > 2000) {
+  if (
+    contenido.length > 2000
+  ) {
 
     alert(
       "El mensaje no puede superar los 2000 caracteres."
@@ -1700,8 +1245,11 @@ async function enviarMensaje() {
     return;
   }
 
-  btnEnviar.disabled = true;
-  inputMensaje.disabled = true;
+  btnEnviar.disabled =
+    true;
+
+  inputMensaje.disabled =
+    true;
 
   try {
 
@@ -1722,25 +1270,26 @@ async function enviarMensaje() {
             contenido
         })
         .select(
-          "id,match_id,sender_id,content,created_at,read_at,delivered_at"
+          "id,match_id,sender_id,content,created_at"
         )
         .single();
-
 
     if (error) {
       throw error;
     }
 
-
     /*
-      Mostramos inmediatamente el mensaje.
-      Si Realtime también lo recibe,
+      Se muestra inmediatamente.
+      Si Realtime también entrega el INSERT,
       mostrarMensaje() evita duplicarlo.
     */
 
-    mostrarMensaje(data);
+    mostrarMensaje(
+      data
+    );
 
-    inputMensaje.value = "";
+    inputMensaje.value =
+      "";
 
     ajustarAlturaInput();
 
@@ -1825,13 +1374,12 @@ async function bloquearUsuario() {
           }
         );
 
-
     if (error) {
       throw error;
     }
 
-
-    bloqueado = true;
+    bloqueado =
+      true;
 
     inputMensaje.disabled =
       true;
@@ -1882,12 +1430,15 @@ function desactivarChat() {
 
 
 /* =========================================================
-   ERROR
+   MOSTRAR ERROR
 ========================================================= */
 
-function mostrarError(mensaje) {
+function mostrarError(
+  mensaje
+) {
 
-  messagesDiv.innerHTML = "";
+  messagesDiv.innerHTML =
+    "";
 
   const div =
     document.createElement(
@@ -1898,9 +1449,12 @@ function mostrarError(mensaje) {
     "error";
 
   div.textContent =
-    "⚠️ " + mensaje;
+    "⚠️ " +
+    mensaje;
 
-  messagesDiv.appendChild(div);
+  messagesDiv.appendChild(
+    div
+  );
 }
 
 
@@ -1944,7 +1498,7 @@ function volver() {
 
 
 /* =========================================================
-   LIMPIEZA
+   LIMPIEZA REALTIME
 ========================================================= */
 
 window.addEventListener(
@@ -1961,14 +1515,15 @@ window.addEventListener(
 
       } catch (_) {}
 
-      canalMensajes = null;
+      canalMensajes =
+        null;
     }
   }
 );
 
 
 /* =========================================================
-   INICIAR APP
+   ARRANCAR
 ========================================================= */
 
 iniciar();
@@ -1977,25 +1532,3 @@ iniciar();
 
 </body>
 </html>
-  const mio =
-    mensaje.sender_id ===
-    usuarioActual.id;
-
-
-  const div =
-    document.createElement(
-      "div"
-    );
-
-
-  div.className =
-    "message " +
-    (
-      mio
-        ? "mine"
-        : "theirs"
-    );
-
-
-  div.dataset.messageId =
- 
