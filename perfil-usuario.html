@@ -77,7 +77,66 @@ await Promise.all([checkBlock(),loadGallery(id)]);$('profile').hidden=false;$('l
 function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
 async function checkBlock(){const {data,error}=await supabase.from('user_blocks').select('id').eq('blocker_id',currentUser.id).eq('blocked_id',viewedUser.id).maybeSingle();if(error)throw error;isBlocked=!!data}
 function updateBlock(){$('blockBtn').textContent=isBlocked?'🔓 Desbloquear usuario':'🚫 Bloquear usuario';$('chatBtn').disabled=isBlocked}
-async function toggleBlock(){const btn=$('blockBtn');btn.disabled=true;try{if(isBlocked){const {error}=await supabase.from('user_blocks').delete().eq('blocker_id',currentUser.id).eq('blocked_id',viewedUser.id);if(error)throw error;isBlocked=false;toast('Usuario desbloqueado correctamente.','success')}else{const {error}=await supabase.from('user_blocks').insert({blocker_id:currentUser.id,blocked_id:viewedUser.id});if(error)throw error;isBlocked=true;toast('Usuario bloqueado correctamente.','success')}updateBlock()}catch(e){console.error(e);toast('No se pudo actualizar el bloqueo.','danger')}finally{btn.disabled=false}}
+async function toggleBlock() {
+  const btn = $('blockBtn');
+  btn.disabled = true;
+
+  try {
+    if (isBlocked) {
+      const { error } = await supabase
+        .from('user_blocks')
+        .delete()
+        .eq('blocker_id', currentUser.id)
+        .eq('blocked_id', viewedUser.id);
+
+      if (error) throw error;
+
+      isBlocked = false;
+      toast('Usuario desbloqueado correctamente.', 'success');
+
+    } else {
+      const { error } = await supabase
+        .from('user_blocks')
+        .insert({
+          blocker_id: currentUser.id,
+          blocked_id: viewedUser.id
+        });
+
+      if (error) throw error;
+
+      isBlocked = true;
+      toast('Usuario bloqueado correctamente.', 'success');
+    }
+
+    updateBlock();
+
+  } catch (e) {
+    console.error(
+      'Error real de Supabase al actualizar user_blocks:',
+      e
+    );
+
+    const msg =
+      e?.message ||
+      e?.details ||
+      e?.hint ||
+      e?.code ||
+      String(e);
+
+    toast('ERROR SUPABASE: ' + msg, 'danger');
+
+    alert(
+      'Error real de Supabase\n\n' +
+      msg +
+      (e?.details ? '\n\nDetalles: ' + e.details : '') +
+      (e?.hint ? '\n\nSugerencia: ' + e.hint : '') +
+      (e?.code ? '\n\nCódigo: ' + e.code : '')
+    );
+
+  } finally {
+    btn.disabled = false;
+  }
+}
 async function loadGallery(id){const box=$('gallery');box.innerHTML='';const {data,error}=await supabase.storage.from('profile-photos').list(id,{limit:20,sortBy:{column:'created_at',order:'asc'}});if(error){console.warn('Galería:',error);return}const files=(data||[]).filter(x=>x.name);if(!files.length){box.innerHTML='<span class="em-muted">No hay fotos adicionales.</span>';return}files.forEach(file=>{const {data:u}=supabase.storage.from('profile-photos').getPublicUrl(`${id}/${file.name}`);if(!u?.publicUrl)return;const img=document.createElement('img');img.src=u.publicUrl;img.alt='Foto de perfil';img.loading='lazy';img.style='width:100%;aspect-ratio:1;object-fit:cover;border-radius:14px;cursor:pointer';img.onclick=()=>window.open(u.publicUrl,'_blank');box.appendChild(img)})}
 async function openChat(){
   if(!viewedUser || isBlocked) return;
