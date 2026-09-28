@@ -1,452 +1,189 @@
-<!DOCTYPE html><html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>Configuración - EmiMatch</title>  <link rel="stylesheet" href="assets/css/app.css">  <!-- Supabase -->  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>  <!-- Configuración EmiMatch -->  <script src="assets/js/config.js"></script></head><body>  <main class="em-container em-section em-with-navigation"><section class="em-shell">
+"use strict";
 
-  <!-- =====================================================
-       ENCABEZADO
-  ====================================================== -->
+/*
+ * EmiMatch — Eliminación de cuenta
+ * Utiliza Supabase Functions.invoke()
+ */
 
-  <div class="em-card">
+(() => {
+  const config = window.EMIMATCH_CONFIG;
 
-    <a
-      href="menu.html"
-      class="em-muted"
-      style="text-decoration:none;"
-    >
-      ← Volver
-    </a>
+  if (!config) {
+    console.error("EmiMatch: falta EMIMATCH_CONFIG.");
+    return;
+  }
 
-    <div
-      class="em-brand"
-      style="margin-top:18px;"
-    >
-      <span class="em-brand-mark">💕</span>
-      <span>EmiMatch</span>
-    </div>
+  if (!window.supabase) {
+    console.error("EmiMatch: Supabase JS no está disponible.");
+    return;
+  }
 
-    <h1>⚙️ Configuración</h1>
+  const supabase = window.supabase.createClient(
+    config.supabaseUrl,
+    config.supabaseKey
+  );
 
-    <p class="em-muted">
-      Administrá tu cuenta, seguridad y preferencias.
-    </p>
+  const button = document.getElementById("deleteAccountButton");
+  const status = document.getElementById("deleteStatus");
 
-  </div>
+  let deleting = false;
 
+  function showStatus(message, error = false) {
+    if (!status) return;
 
-  <!-- =====================================================
-       ESTADO DE CUENTA
-  ====================================================== -->
+    status.hidden = false;
+    status.textContent = message;
+    status.setAttribute(
+      "data-type",
+      error ? "error" : "success"
+    );
+  }
 
-  <div class="em-card">
+  async function deleteAccount() {
+    if (deleting) return;
 
-    <h2>👤 Mi cuenta</h2>
-
-    <div
-      id="accountInfo"
-      class="em-muted"
-    >
-      Cargando información...
-    </div>
-
-  </div>
-
-
-  <!-- =====================================================
-       SEGURIDAD
-  ====================================================== -->
-
-  <div class="em-card">
-
-    <h2>🛡️ Seguridad</h2>
-
-    <p class="em-muted">
-      Protegé tu cuenta y cerrá tu sesión cuando termines
-      de usar EmiMatch.
-    </p>
-
-    <button
-      id="logoutButton"
-      class="em-button"
-      type="button"
-    >
-      🚪 Cerrar sesión
-    </button>
-
-  </div>
-
-
-  <!-- =====================================================
-       PRIVACIDAD
-  ====================================================== -->
-
-  <div class="em-card">
-
-    <h2>🔐 Privacidad</h2>
-
-    <p class="em-muted">
-      Revisá la información relacionada con privacidad
-      y seguridad.
-    </p>
-
-    <a
-      href="privacidad.html"
-      class="em-button"
-    >
-      🔐 Ver privacidad
-    </a>
-
-  </div>
-
-
-  <!-- =====================================================
-       ELIMINAR CUENTA
-  ====================================================== -->
-
-  <div
-    class="em-card"
-    id="eliminar-cuenta"
-  >
-
-    <h2>⚠️ Zona de riesgo</h2>
-
-    <p class="em-muted">
-      La eliminación de una cuenta es una acción permanente.
-    </p>
-
-    <p
-      class="em-muted"
-      style="font-size:14px;"
-    >
-      Se eliminarán la cuenta y los datos relacionados
-      disponibles en EmiMatch.
-    </p>
-
-    <button
-      id="deleteAccountButton"
-      class="em-button"
-      type="button"
-    >
-      🗑️ Eliminar mi cuenta
-    </button>
-
-    <div
-      id="deleteStatus"
-      class="em-alert"
-      hidden
-      style="margin-top:12px;"
-      role="status"
-      aria-live="polite"
-    ></div>
-
-  </div>
-
-
-  <!-- =====================================================
-       INFORMACIÓN
-  ====================================================== -->
-
-  <div class="em-card">
-
-    <h2>ℹ️ Información</h2>
-
-    <p class="em-muted">
-      EmiMatch
-    </p>
-
-    <p
-      id="appVersion"
-      class="em-muted"
-    >
-      Versión: —
-    </p>
-
-  </div>
-
-</section>
-
-  </main>  <!-- =======================================================
-       NAVEGACIÓN INFERIOR
-  ======================================================== -->  <nav
-    class="em-bottom-nav"
-    aria-label="Navegación principal"
-  ><a href="descubrir.html">
-  <span>🔎</span>
-  <small>Descubrir</small>
-</a>
-
-<a href="likes.html">
-  <span>❤️</span>
-  <small>Likes</small>
-</a>
-
-<a href="matches.html">
-  <span>💕</span>
-  <small>Matches</small>
-</a>
-
-<a href="chat.html">
-  <span>💬</span>
-  <small>Chat</small>
-</a>
-
-<a
-  href="configuracion.html"
-  class="active"
-  aria-current="page"
->
-  <span>⚙️</span>
-  <small>Cuenta</small>
-</a>
-
-  </nav>  <!-- =======================================================
-       SESIÓN / CUENTA
-  ======================================================== -->  <script>
-  "use strict";
-
-  (() => {
-
-    const config = window.EMIMATCH_CONFIG;
-
-    if (!config) {
-      console.error(
-        "EmiMatch: EMIMATCH_CONFIG no está disponible."
-      );
-
-      window.location.replace("index.html");
-      return;
-    }
-
-    if (!window.supabase) {
-      console.error(
-        "EmiMatch: Supabase JS no está disponible."
-      );
-
-      return;
-    }
-
-    const supabase = window.supabase.createClient(
-      config.supabaseUrl,
-      config.supabaseKey
+    const first = window.confirm(
+      "¿Seguro que querés eliminar tu cuenta de EmiMatch?\n\n" +
+      "Esta acción es permanente."
     );
 
+    if (!first) return;
 
-    /* =====================================================
-       ELEMENTOS
-    ====================================================== */
+    const second = window.confirm(
+      "⚠️ ÚLTIMA CONFIRMACIÓN\n\n" +
+      "Se eliminará tu cuenta y sus datos relacionados.\n\n" +
+      "¿Querés continuar?"
+    );
 
-    const accountInfo =
-      document.getElementById("accountInfo");
+    if (!second) return;
 
-    const logoutButton =
-      document.getElementById("logoutButton");
+    deleting = true;
 
-    const appVersion =
-      document.getElementById("appVersion");
-
-
-    let currentUser = null;
-    let loggingOut = false;
-
-
-    /* =====================================================
-       VERSIÓN
-    ====================================================== */
-
-    if (appVersion) {
-
-      appVersion.textContent =
-        "Versión: " +
-        (config.version || "1.0.0");
-
+    if (button) {
+      button.disabled = true;
+      button.textContent = "⏳ Eliminando cuenta...";
     }
 
+    showStatus("⏳ Eliminando tu cuenta...");
 
-    /* =====================================================
-       ESCAPAR HTML
-    ====================================================== */
+    try {
+      const {
+        data: sessionData,
+        error: sessionError
+      } = await supabase.auth.getSession();
 
-    function escapeHtml(value) {
-
-      return String(value)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-
-    }
-
-
-    /* =====================================================
-       MOSTRAR INFORMACIÓN DE CUENTA
-    ====================================================== */
-
-    function renderAccount() {
-
-      if (!accountInfo || !currentUser) {
-        return;
+      if (sessionError) {
+        throw sessionError;
       }
 
-      const email =
-        currentUser.email ||
-        "Sin correo disponible";
+      let session = sessionData?.session;
 
-      accountInfo.innerHTML = `
-        <strong>Cuenta activa</strong>
-        <br>
-        <span>${escapeHtml(email)}</span>
-      `;
+      if (!session?.access_token) {
+        throw new Error(
+          "La sesión expiró. Iniciá sesión nuevamente."
+        );
+      }
 
-    }
+      const {
+        data: refreshData,
+        error: refreshError
+      } = await supabase.auth.refreshSession();
 
+      if (!refreshError && refreshData?.session) {
+        session = refreshData.session;
+      }
 
-    /* =====================================================
-       CARGAR SESIÓN
-    ====================================================== */
+      if (!session?.access_token) {
+        throw new Error(
+          "No se pudo obtener una sesión válida."
+        );
+      }
 
-    async function loadSession() {
+      /*
+       * Supabase agrega automáticamente:
+       * Authorization
+       * apikey
+       * Content-Type
+       */
+      const { data, error } =
+        await supabase.functions.invoke(
+          "delete-account",
+          {
+            body: {}
+          }
+        );
 
-      try {
-
-        const {
-          data,
-          error
-        } = await supabase.auth.getSession();
-
-
-        if (error) {
-
-          console.error(
-            "EmiMatch: error obteniendo sesión:",
-            error
-          );
-
-          window.location.replace("index.html");
-          return;
-        }
-
-
-        const session =
-          data?.session;
-
-
-        if (!session?.user) {
-
-          window.location.replace("index.html");
-          return;
-        }
-
-
-        currentUser =
-          session.user;
-
-
-        renderAccount();
-
-
-      } catch (error) {
-
+      if (error) {
         console.error(
-          "EmiMatch: error cargando sesión:",
+          "EmiMatch — error de Edge Function:",
           error
         );
 
-        window.location.replace("index.html");
-
-      }
-
-    }
-
-
-    /* =====================================================
-       CERRAR SESIÓN
-    ====================================================== */
-
-    async function logout() {
-
-      if (
-        loggingOut ||
-        !logoutButton
-      ) {
-        return;
-      }
-
-
-      loggingOut = true;
-
-      logoutButton.disabled = true;
-
-      logoutButton.textContent =
-        "⏳ Cerrando sesión...";
-
-
-      try {
-
-        const {
-          error
-        } = await supabase.auth.signOut();
-
-
-        if (error) {
-          throw error;
-        }
-
-
-        window.location.replace("index.html");
-
-
-      } catch (error) {
-
-        console.error(
-          "EmiMatch: error cerrando sesión:",
-          error
+        throw new Error(
+          error.message ||
+          "No se pudo conectar con el servidor."
         );
-
-
-        loggingOut = false;
-
-        logoutButton.disabled = false;
-
-        logoutButton.textContent =
-          "🚪 Cerrar sesión";
-
-
-        alert(
-          "No se pudo cerrar la sesión. " +
-          "Intentá nuevamente."
-        );
-
       }
 
-    }
+      if (!data?.success) {
+        throw new Error(
+          data?.error ||
+          "La cuenta no pudo ser eliminada."
+        );
+      }
 
-
-    /* =====================================================
-       EVENTO LOGOUT
-    ====================================================== */
-
-    if (logoutButton) {
-
-      logoutButton.addEventListener(
-        "click",
-        logout
+      showStatus(
+        "✅ Cuenta eliminada correctamente."
       );
 
+      if (button) {
+        button.textContent = "✅ Cuenta eliminada";
+      }
+
+      /*
+       * Limpiar sesión local.
+       */
+      try {
+        await supabase.auth.signOut();
+      } catch (signOutError) {
+        console.warn(
+          "EmiMatch: no se pudo limpiar la sesión local:",
+          signOutError
+        );
+      }
+
+      setTimeout(() => {
+        window.location.replace("index.html");
+      }, 1200);
+
+    } catch (error) {
+      console.error(
+        "EmiMatch — error eliminando cuenta:",
+        error
+      );
+
+      deleting = false;
+
+      if (button) {
+        button.disabled = false;
+        button.textContent =
+          "🗑️ Eliminar mi cuenta";
+      }
+
+      showStatus(
+        `❌ ${
+          error?.message ||
+          "No se pudo eliminar la cuenta."
+        }`,
+        true
+      );
     }
+  }
 
-
-    /* =====================================================
-       INICIO
-    ====================================================== */
-
-    loadSession();
-
-  })();
-  </script>  <!-- =======================================================
-       ELIMINACIÓN DE CUENTA
-       IMPORTANTE:
-       Este archivo es el ÚNICO encargado del botón
-       "Eliminar mi cuenta".
-  ======================================================== -->  <script src="assets/js/eliminar-cuenta.js"></script></body>
-</html>
+  if (button) {
+    button.addEventListener(
+      "click",
+      deleteAccount
+    );
+  }
+})();
