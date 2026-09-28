@@ -1,8 +1,8 @@
 "use strict";
 
 /*
- * EmiMatch — Eliminación de cuenta
- * Utiliza Supabase Functions.invoke()
+ * EmiMatch — Eliminación real de cuenta
+ * Llama directamente a la Edge Function delete-account.
  */
 
 (() => {
@@ -67,6 +67,9 @@
     showStatus("⏳ Eliminando tu cuenta...");
 
     try {
+      /*
+       * Obtener la sesión actual.
+       */
       const {
         data: sessionData,
         error: sessionError
@@ -84,6 +87,9 @@
         );
       }
 
+      /*
+       * Intentar renovar la sesión antes de eliminar.
+       */
       const {
         data: refreshData,
         error: refreshError
@@ -100,34 +106,60 @@
       }
 
       /*
-       * Supabase agrega automáticamente:
-       * Authorization
-       * apikey
-       * Content-Type
+       * Endpoint oficial de la Edge Function.
        */
-      const { data, error } =
-  await supabase.functions.invoke(
-    "delete-account",
-    {
-      body: {},
-      headers: {
-        Authorization: `Bearer ${session.access_token}`
-      }
-    }
-  );
+      const functionUrl =
+        `${config.supabaseUrl}/functions/v1/delete-account`;
 
-      if (error) {
+      /*
+       * Llamada HTTPS directa.
+       */
+      const response = await fetch(functionUrl, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${session.access_token}`,
+          "apikey": config.supabaseKey,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({})
+      });
+
+      /*
+       * Intentar interpretar la respuesta como JSON.
+       */
+      let data = null;
+      const responseText = await response.text();
+
+      try {
+        data = responseText
+          ? JSON.parse(responseText)
+          : null;
+      } catch (parseError) {
         console.error(
-          "EmiMatch — error de Edge Function:",
-          error
+          "EmiMatch — respuesta no JSON:",
+          responseText
+        );
+      }
+
+      /*
+       * Mostrar errores HTTP reales.
+       */
+      if (!response.ok) {
+        console.error(
+          "EmiMatch — Edge Function HTTP:",
+          response.status,
+          data || responseText
         );
 
         throw new Error(
-          error.message ||
-          "No se pudo conectar con el servidor."
+          data?.error ||
+          `Error del servidor (${response.status}).`
         );
       }
 
+      /*
+       * La función debe responder success:true.
+       */
       if (!data?.success) {
         throw new Error(
           data?.error ||
@@ -135,6 +167,9 @@
         );
       }
 
+      /*
+       * Cuenta eliminada correctamente.
+       */
       showStatus(
         "✅ Cuenta eliminada correctamente."
       );
@@ -144,7 +179,7 @@
       }
 
       /*
-       * Limpiar sesión local.
+       * Limpiar la sesión local.
        */
       try {
         await supabase.auth.signOut();
@@ -155,6 +190,9 @@
         );
       }
 
+      /*
+       * Volver al inicio.
+       */
       setTimeout(() => {
         window.location.replace("index.html");
       }, 1200);
@@ -183,10 +221,17 @@
     }
   }
 
+  /*
+   * Activar el botón.
+   */
   if (button) {
     button.addEventListener(
       "click",
       deleteAccount
+    );
+  } else {
+    console.warn(
+      "EmiMatch: no se encontró #deleteAccountButton."
     );
   }
 })();
