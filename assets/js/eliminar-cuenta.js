@@ -106,12 +106,15 @@
        * Content-Type
        */
       const { data, error } =
-        await supabase.functions.invoke(
-          "delete-account",
-          {
-            body: {}
-          }
-        );
+  await supabase.functions.invoke(
+    "delete-account",
+    {
+      body: {},
+      headers: {
+        Authorization: `Bearer ${session.access_token}`
+      }
+    }
+  );
 
       if (error) {
         console.error(
