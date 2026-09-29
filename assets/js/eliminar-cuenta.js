@@ -1,240 +1,259 @@
-"use strict";
+import { createClient } from "npm:@supabase/supabase-js@2";
+import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 
-/*
- * EmiMatch — Eliminación real de cuenta
- */
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 
-(() => {
-  const config = window.EMIMATCH_CONFIG;
+// Compatibilidad con claves antiguas y nuevas de Supabase.
+const SUPABASE_ADMIN_KEY =
+  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ||
+  Deno.env.get("SUPABASE_SECRET_KEY");
 
-  if (!config) {
-    console.error("EmiMatch: falta EMIMATCH_CONFIG.");
-    return;
-  }
+const SUPABASE_ANON_KEY =
+  Deno.env.get("SUPABASE_ANON_KEY") ||
+  Deno.env.get("SUPABASE_PUBLISHABLE_KEY");
 
-  if (!window.supabase) {
-    console.error("EmiMatch: Supabase JS no está disponible.");
-    return;
-  }
-
-  const supabase = window.supabase.createClient(
-    config.supabaseUrl,
-    config.supabaseKey
+function jsonResponse(
+  body: Record<string, unknown>,
+  status = 200
+) {
+  return new Response(
+    JSON.stringify(body),
+    {
+      status,
+      headers: {
+        ...corsHeaders,
+        "Content-Type": "application/json",
+      },
+    }
   );
+}
 
-  const button = document.getElementById("deleteAccountButton");
-  const status = document.getElementById("deleteStatus");
+Deno.serve(async (req: Request) => {
+  /*
+   * CORS / navegador
+   */
+  if (req.method === "OPTIONS") {
+    return new Response("ok", {
+      status: 204,
+      headers: corsHeaders,
+    });
+  }
 
-  let deleting = false;
-
-  function showStatus(message, error = false) {
-    if (!status) return;
-
-    status.hidden = false;
-    status.textContent = message;
-    status.setAttribute(
-      "data-type",
-      error ? "error" : "success"
+  /*
+   * Solo POST
+   */
+  if (req.method !== "POST") {
+    return jsonResponse(
+      {
+        success: false,
+        error: "Método no permitido.",
+      },
+      405
     );
   }
 
-  async function deleteAccount() {
-    if (deleting) return;
-
-    const first = window.confirm(
-      "¿Seguro que querés eliminar tu cuenta de EmiMatch?\n\n" +
-      "Esta acción es permanente."
-    );
-
-    if (!first) return;
-
-    const second = window.confirm(
-      "⚠️ ÚLTIMA CONFIRMACIÓN\n\n" +
-      "Se eliminará tu cuenta y sus datos relacionados.\n\n" +
-      "¿Querés continuar?"
-    );
-
-    if (!second) return;
-
-    deleting = true;
-
-    if (button) {
-      button.disabled = true;
-      button.textContent = "⏳ Eliminando cuenta...";
-    }
-
-    showStatus("⏳ Eliminando tu cuenta...");
-
-    try {
-      /*
-       * Obtener sesión actual.
-       */
-      const {
-        data: sessionData,
-        error: sessionError
-      } = await supabase.auth.getSession();
-
-      if (sessionError) {
-        throw new Error(
-          sessionError.message ||
-          "No se pudo obtener la sesión."
-        );
-      }
-
-      let session = sessionData?.session;
-
-      /*
-       * Renovar si fuera necesario.
-       */
-      if (!session?.access_token) {
-        const {
-          data: refreshData,
-          error: refreshError
-        } = await supabase.auth.refreshSession();
-
-        if (refreshError) {
-          throw new Error(
-            refreshError.message ||
-            "La sesión expiró. Iniciá sesión nuevamente."
-          );
-        }
-
-        session = refreshData?.session;
-      }
-
-      if (!session?.access_token) {
-        throw new Error(
-          "No se pudo obtener un token de sesión válido."
-        );
-      }
-
-      /*
-       * Invocación oficial de Supabase.
-       * El cliente agrega la autorización de la sesión.
-       */
-      const {
-        data,
-        error
-      } = await supabase.functions.invoke(
-        "delete-account",
+  try {
+    /*
+     * Comprobaciones de configuración.
+     */
+    if (!SUPABASE_URL) {
+      console.error("Falta SUPABASE_URL.");
+      return jsonResponse(
         {
-          method: "POST",
-          body: {}
-        }
-      );
-
-      if (error) {
-        console.error(
-          "EmiMatch — delete-account:",
-          error
-        );
-
-        let detail =
-          error.message ||
-          "Error al comunicarse con Supabase.";
-
-        /*
-         * Intentar leer el body de la respuesta.
-         */
-        if (error.context) {
-          try {
-            const response = error.context;
-
-            if (typeof response.json === "function") {
-              const responseData =
-                await response.json();
-
-              if (responseData?.error) {
-                detail = responseData.error;
-              }
-
-              if (responseData?.message) {
-                detail = responseData.message;
-              }
-            }
-          } catch (readError) {
-            console.warn(
-              "EmiMatch: no se pudo leer el detalle:",
-              readError
-            );
-          }
-        }
-
-        throw new Error(detail);
-      }
-
-      if (!data?.success) {
-        throw new Error(
-          data?.error ||
-          "La cuenta no pudo ser eliminada."
-        );
-      }
-
-      /*
-       * Eliminación confirmada.
-       */
-      showStatus(
-        "✅ Cuenta eliminada correctamente."
-      );
-
-      if (button) {
-        button.textContent =
-          "✅ Cuenta eliminada";
-      }
-
-      /*
-       * Limpiar sesión local.
-       */
-      try {
-        await supabase.auth.signOut();
-      } catch (signOutError) {
-        console.warn(
-          "EmiMatch: no se pudo limpiar la sesión local:",
-          signOutError
-        );
-      }
-
-      /*
-       * Volver al inicio.
-       */
-      setTimeout(() => {
-        window.location.replace(
-          "index.html"
-        );
-      }, 1200);
-
-    } catch (error) {
-      console.error(
-        "EmiMatch — error eliminando cuenta:",
-        error
-      );
-
-      deleting = false;
-
-      if (button) {
-        button.disabled = false;
-        button.textContent =
-          "🗑️ Eliminar mi cuenta";
-      }
-
-      showStatus(
-        `❌ ${
-          error?.message ||
-          "No se pudo eliminar la cuenta."
-        }`,
-        true
+          success: false,
+          error: "Configuración de Supabase incompleta.",
+        },
+        500
       );
     }
-  }
 
-  if (button) {
-    button.addEventListener(
-      "click",
-      deleteAccount
+    if (!SUPABASE_ANON_KEY) {
+      console.error("Falta SUPABASE_ANON_KEY/PUBLISHABLE_KEY.");
+      return jsonResponse(
+        {
+          success: false,
+          error: "Clave pública de Supabase no configurada.",
+        },
+        500
+      );
+    }
+
+    if (!SUPABASE_ADMIN_KEY) {
+      console.error(
+        "Falta SUPABASE_SERVICE_ROLE_KEY/SUPABASE_SECRET_KEY."
+      );
+
+      return jsonResponse(
+        {
+          success: false,
+          error:
+            "Clave administrativa de Supabase no configurada.",
+        },
+        500
+      );
+    }
+
+    /*
+     * Obtener Authorization.
+     */
+    const authorization =
+      req.headers.get("Authorization") ||
+      req.headers.get("authorization");
+
+    if (!authorization) {
+      return jsonResponse(
+        {
+          success: false,
+          error: "Falta autorización.",
+        },
+        401
+      );
+    }
+
+    /*
+     * Debe ser:
+     * Authorization: Bearer <JWT>
+     */
+    if (!authorization.startsWith("Bearer ")) {
+      return jsonResponse(
+        {
+          success: false,
+          error: "Formato de autorización inválido.",
+        },
+        401
+      );
+    }
+
+    const accessToken =
+      authorization.substring("Bearer ".length).trim();
+
+    if (!accessToken) {
+      return jsonResponse(
+        {
+          success: false,
+          error: "Token de sesión vacío.",
+        },
+        401
+      );
+    }
+
+    /*
+     * Cliente para identificar al usuario autenticado.
+     */
+    const userClient = createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY,
+      {
+        auth: {
+          persistSession: false,
+          autoRefreshToken: false,
+        },
+        global: {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      }
     );
-  } else {
-    console.warn(
-      "EmiMatch: no se encontró #deleteAccountButton."
+
+    /*
+     * Validar JWT y obtener usuario real.
+     */
+    const {
+      data: userData,
+      error: userError,
+    } = await userClient.auth.getUser(accessToken);
+
+    if (userError || !userData?.user) {
+      console.error(
+        "JWT inválido:",
+        userError?.message
+      );
+
+      return jsonResponse(
+        {
+          success: false,
+          error:
+            "La sesión no es válida o expiró. Iniciá sesión nuevamente.",
+        },
+        401
+      );
+    }
+
+    const userId = userData.user.id;
+
+    /*
+     * Cliente ADMINISTRATIVO.
+     * Esta clave solamente existe dentro de la Edge Function.
+     */
+    const adminClient = createClient(
+      SUPABASE_URL,
+      SUPABASE_ADMIN_KEY,
+      {
+        auth: {
+          persistSession: false,
+          autoRefreshToken: false,
+        },
+      }
+    );
+
+    /*
+     * Eliminación definitiva del usuario.
+     *
+     * Supabase invalida las sesiones/refresh tokens
+     * asociados al usuario al eliminarlo.
+     */
+    const {
+      error: deleteError,
+    } = await adminClient.auth.admin.deleteUser(
+      userId,
+      false
+    );
+
+    if (deleteError) {
+      console.error(
+        "Error eliminando usuario:",
+        deleteError
+      );
+
+      return jsonResponse(
+        {
+          success: false,
+          error:
+            deleteError.message ||
+            "No se pudo eliminar la cuenta.",
+        },
+        500
+      );
+    }
+
+    /*
+     * ÉXITO REAL.
+     */
+    console.log(
+      `EmiMatch: cuenta eliminada correctamente. user_id=${userId}`
+    );
+
+    return jsonResponse({
+      success: true,
+      message: "Cuenta eliminada correctamente.",
+    });
+
+  } catch (error) {
+    console.error(
+      "delete-account error:",
+      error
+    );
+
+    return jsonResponse(
+      {
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "Error interno al eliminar la cuenta.",
+      },
+      500
     );
   }
-})();
+});
