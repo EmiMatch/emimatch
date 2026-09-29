@@ -3,7 +3,7 @@
 /*
 
 * EmiMatch — Eliminación real de cuenta
-* Usa la API oficial de Supabase Functions.
+* Envía explícitamente el access_token a la Edge Function.
   */
 
 (() => {
@@ -34,7 +34,10 @@ if (!status) return;
 
 status.hidden = false;
 status.textContent = message;
-status.setAttribute("data-type", error ? "error" : "success");
+status.setAttribute(
+  "data-type",
+  error ? "error" : "success"
+);
 
 }
 
@@ -67,7 +70,7 @@ showStatus("⏳ Eliminando tu cuenta...");
 
 try {
   /*
-   * Verificamos que exista una sesión válida.
+   * 1. Obtener sesión actual.
    */
   const {
     data: sessionData,
@@ -76,20 +79,41 @@ try {
 
   if (sessionError) {
     throw new Error(
-      sessionError.message || "No se pudo obtener la sesión."
+      sessionError.message ||
+      "No se pudo obtener la sesión."
     );
   }
 
   let session = sessionData?.session;
 
+  /*
+   * 2. Si no hay sesión, intentar renovarla.
+   */
+  if (!session?.access_token) {
+    const {
+      data: refreshData,
+      error: refreshError
+    } = await supabase.auth.refreshSession();
+
+    if (refreshError) {
+      throw new Error(
+        refreshError.message ||
+        "La sesión expiró. Iniciá sesión nuevamente."
+      );
+    }
+
+    session = refreshData?.session;
+  }
+
   if (!session?.access_token) {
     throw new Error(
-      "La sesión expiró. Iniciá sesión nuevamente."
+      "No se pudo obtener un token de sesión válido. Iniciá sesión nuevamente."
     );
   }
 
   /*
-   * Renovamos la sesión antes de llamar a la función.
+   * 3. Renovar la sesión para intentar utilizar
+   *    el token más reciente.
    */
   const {
     data: refreshData,
@@ -100,67 +124,73 @@ try {
     session = refreshData.session;
   }
 
-  if (!session?.access_token) {
+  const accessToken = session?.access_token;
+
+  if (!accessToken) {
     throw new Error(
-      "No se pudo obtener un token de sesión válido."
+      "No se pudo obtener el token de autorización."
     );
   }
 
   /*
-   * Invocación oficial de Supabase Edge Functions.
+   * 4. Llamada directa a la Edge Function.
+   *
+   *    Aquí enviamos explícitamente:
+   *    Authorization: Bearer <access_token>
+   *
+   *    El token nunca se muestra ni se guarda en el código.
    */
-  const {
-    data,
-    error
-  } = await supabase.functions.invoke(
-    "delete-account",
-    {
-      method: "POST",
-      body: {}
-    }
-  );
+  const functionUrl =
+    `${config.supabaseUrl}/functions/v1/delete-account`;
 
-  if (error) {
-    console.error(
-      "EmiMatch — error de delete-account:",
-      error
+  const response = await fetch(functionUrl, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${accessToken}`,
+      "apikey": config.supabaseKey,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({})
+  });
+
+  /*
+   * 5. Leer respuesta de la Edge Function.
+   */
+  let result = null;
+
+  try {
+    result = await response.json();
+  } catch (parseError) {
+    console.warn(
+      "EmiMatch: la Edge Function no devolvió JSON válido.",
+      parseError
     );
-
-    let detail = error.message || "Error al comunicarse con Supabase.";
-
-    /*
-     * Intentamos obtener información adicional
-     * cuando Supabase devuelve una respuesta HTTP.
-     */
-    if (error.context) {
-      try {
-        const response = error.context;
-
-        if (typeof response.json === "function") {
-          const responseData = await response.json();
-
-          if (responseData?.error) {
-            detail = responseData.error;
-          }
-        }
-      } catch (readError) {
-        console.warn(
-          "EmiMatch — no se pudo leer el detalle:",
-          readError
-        );
-      }
-    }
-
-    throw new Error(detail);
   }
 
-  if (!data?.success) {
+  console.log(
+    "EmiMatch — delete-account:",
+    response.status,
+    result
+  );
+
+  if (!response.ok) {
     throw new Error(
-      data?.error ||
+      result?.error ||
+      result?.message ||
+      `La Edge Function respondió con HTTP ${response.status}.`
+    );
+  }
+
+  if (!result?.success) {
+    throw new Error(
+      result?.error ||
       "La cuenta no pudo ser eliminada."
     );
   }
 
+  /*
+   * 6. Eliminación confirmada.
+   */
   showStatus("✅ Cuenta eliminada correctamente.");
 
   if (button) {
@@ -168,7 +198,7 @@ try {
   }
 
   /*
-   * Limpiamos la sesión local.
+   * 7. Limpiar sesión local.
    */
   try {
     await supabase.auth.signOut();
@@ -180,7 +210,7 @@ try {
   }
 
   /*
-   * Volvemos al inicio después de confirmar el éxito.
+   * 8. Volver al inicio.
    */
   setTimeout(() => {
     window.location.replace("index.html");
