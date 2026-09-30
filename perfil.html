@@ -1,341 +1,704 @@
-<!-- =====================================================
-     EMI MATCH — MI ÁLBUM DE FOTOS
-     ===================================================== -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<section id="albumSection" class="album-section">
+  <title>Mi perfil — EmiMatch</title>
 
-  <div class="album-header">
+  <link rel="stylesheet" href="assets/css/app.css">
 
-    <div>
-      <h2>📸 Mi álbum</h2>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top, rgba(91, 67, 160, .28), transparent 45%),
+        #090b18;
+      color: #fff;
+    }
 
-      <p>
-        Agregá fotos para mostrar más de vos.
-      </p>
-    </div>
+    .profile-page {
+      width: min(720px, 100%);
+      margin: 0 auto;
+      padding: 24px 16px 110px;
+      box-sizing: border-box;
+    }
 
-    <span id="albumCount">
-      0 fotos
-    </span>
+    .profile-header {
+      text-align: center;
+      margin-bottom: 22px;
+    }
 
-  </div>
+    .profile-header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
 
-  <!-- Selector de fotos -->
+    .profile-header p {
+      margin: 7px 0 0;
+      opacity: .72;
+      font-size: 14px;
+    }
 
-  <label
-    for="albumInput"
-    class="album-upload-button"
-  >
-    ➕ Agregar fotos
-  </label>
+    .profile-card {
+      overflow: hidden;
+      border-radius: 26px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: 0 20px 60px rgba(0,0,0,.28);
+    }
 
-  <input
-    id="albumInput"
-    type="file"
-    accept="image/jpeg,image/png,image/webp"
-    multiple
-    hidden
-  >
+    .profile-photo-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      max-height: 520px;
+      background: rgba(255,255,255,.04);
+    }
 
-  <!-- Estado de carga -->
+    .profile-photo {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
 
-  <div
-    id="albumStatus"
-    class="album-status"
-    aria-live="polite"
-  ></div>
+    .photo-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 60px;
+      background:
+        linear-gradient(145deg, rgba(91,67,160,.45), rgba(20,24,55,.8));
+    }
 
-  <!-- Galería -->
+    .photo-placeholder span {
+      font-size: 14px;
+      opacity: .65;
+    }
 
-  <div
-    id="albumGrid"
-    class="album-grid"
-  >
+    .profile-info {
+      padding: 22px;
+    }
 
-    <div
-      id="albumEmpty"
-      class="album-empty"
-    >
-      <div class="album-empty-icon">
-        🖼️
+    .profile-name {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.15;
+    }
+
+    .profile-meta {
+      margin-top: 8px;
+      color: rgba(255,255,255,.72);
+      font-size: 15px;
+    }
+
+    .profile-description {
+      margin: 18px 0 0;
+      line-height: 1.6;
+      color: rgba(255,255,255,.86);
+      white-space: pre-wrap;
+    }
+
+    .profile-actions {
+      display: grid;
+      gap: 11px;
+      margin-top: 22px;
+    }
+
+    .profile-actions a,
+    .profile-actions button {
+      width: 100%;
+      min-height: 50px;
+      border: 0;
+      border-radius: 15px;
+      padding: 13px 16px;
+      box-sizing: border-box;
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      text-align: center;
+      color: #fff;
+      background: rgba(255,255,255,.09);
+      border: 1px solid rgba(255,255,255,.10);
+    }
+
+    .profile-actions .primary {
+      background: linear-gradient(135deg, #7654d8, #9a5bcf);
+    }
+
+    .profile-actions .discover {
+      background: linear-gradient(135deg, #6b4ac9, #b34e9d);
+    }
+
+    .profile-actions .danger {
+      color: #ffb8c4;
+      background: rgba(190,45,75,.12);
+      border-color: rgba(255,100,130,.18);
+    }
+
+    .profile-actions button:disabled {
+      opacity: .55;
+      cursor: wait;
+    }
+
+    .status {
+      min-height: 22px;
+      margin: 14px 4px;
+      text-align: center;
+      font-size: 14px;
+      opacity: .82;
+    }
+
+    .loading {
+      padding: 60px 20px;
+      text-align: center;
+      opacity: .7;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .error-message {
+      color: #ffb8c4;
+      line-height: 1.5;
+    }
+
+    .error-message a {
+      color: #fff;
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="profile-page">
+
+    <header class="profile-header">
+      <h1>Mi perfil 💜</h1>
+      <p>Tu espacio en EmiMatch</p>
+    </header>
+
+    <section id="loadingState" class="profile-card">
+      <div class="loading">
+        Preparando tu perfil...
+      </div>
+    </section>
+
+    <section id="profileContent" class="profile-card hidden">
+
+      <div class="profile-photo-wrap">
+
+        <img
+          id="profilePhoto"
+          class="profile-photo hidden"
+          alt="Foto de perfil"
+        >
+
+        <div id="photoPlaceholder" class="photo-placeholder">
+          💕
+          <span>Agregá una foto a tu perfil</span>
+        </div>
+
       </div>
 
-      <strong>
-        Tu álbum está vacío
-      </strong>
+      <div class="profile-info">
 
-      <span>
-        Agregá algunas fotos para completar tu perfil.
-      </span>
-    </div>
+        <h2 id="profileName" class="profile-name">
+          Mi perfil
+        </h2>
 
-  </div>
+        <div id="profileMeta" class="profile-meta"></div>
 
-</section>
+        <p id="profileDescription" class="profile-description"></p>
 
+        <div class="profile-actions">
 
-<style>
+          <a
+            class="primary"
+            href="editar-perfil.html"
+          >
+            ✏️ Editar perfil
+          </a>
 
-  .album-section {
-    margin-top: 28px;
-    padding: 20px;
+          <a
+            class="discover"
+            href="descubrir.html"
+          >
+            💜 Seguir descubriendo
+          </a>
 
-    border-radius: 22px;
+          <a href="matches.html">
+            ❤️ Mis matches
+          </a>
 
-    background:
-      rgba(255,255,255,.06);
+          <a href="notificaciones.html">
+            🔔 Notificaciones
+          </a>
 
-    border:
-      1px solid rgba(255,255,255,.10);
+          <a href="configuracion.html">
+            ⚙️ Configuración
+          </a>
 
-    box-shadow:
-      0 15px 45px rgba(0,0,0,.18);
-  }
+          <button
+            id="deleteAccountButton"
+            class="danger"
+            type="button"
+          >
+            🗑️ Eliminar cuenta
+          </button>
 
+        </div>
 
-  .album-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+        <div
+          id="deleteStatus"
+          class="status"
+          aria-live="polite"
+        ></div>
 
-    gap: 16px;
+      </div>
 
-    margin-bottom: 16px;
-  }
+    </section>
 
+    <section
+      id="errorState"
+      class="profile-card hidden"
+    >
+      <div class="loading error-message">
 
-  .album-header h2 {
-    margin: 0;
+        <strong>No pudimos cargar tu perfil.</strong>
 
-    font-size: 20px;
-    font-weight: 800;
-  }
+        <br><br>
 
+        <span id="errorDetails">
+          Revisá tu sesión e intentá nuevamente.
+        </span>
 
-  .album-header p {
-    margin: 6px 0 0;
+        <br><br>
 
-    color:
-      rgba(255,255,255,.65);
+        <a href="index.html">
+          Volver al inicio
+        </a>
 
-    font-size: 13px;
-  }
+      </div>
+    </section>
 
+  </main>
 
-  #albumCount {
-    flex-shrink: 0;
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    padding:
-      7px 10px;
+  <!-- Configuración EmiMatch -->
+  <script src="assets/js/config.js"></script>
 
-    border-radius: 999px;
+  <script>
+    "use strict";
 
-    background:
-      rgba(255,255,255,.08);
+    (async function () {
 
-    color:
-      rgba(255,255,255,.75);
+      const loadingState =
+        document.getElementById("loadingState");
 
-    font-size: 12px;
+      const profileContent =
+        document.getElementById("profileContent");
 
-    font-weight: 700;
-  }
+      const errorState =
+        document.getElementById("errorState");
+
+      const errorDetails =
+        document.getElementById("errorDetails");
+
+      const profilePhoto =
+        document.getElementById("profilePhoto");
+
+      const photoPlaceholder =
+        document.getElementById("photoPlaceholder");
+
+      const profileName =
+        document.getElementById("profileName");
 
+      const profileMeta =
+        document.getElementById("profileMeta");
+
+      const profileDescription =
+        document.getElementById("profileDescription");
 
-  .album-upload-button {
-    display: flex;
+      const deleteButton =
+        document.getElementById("deleteAccountButton");
 
-    align-items: center;
-    justify-content: center;
+      const deleteStatus =
+        document.getElementById("deleteStatus");
 
-    min-height: 48px;
+      function showError(message) {
 
-    padding:
-      12px 16px;
+        console.error(
+          "EmiMatch — Error de perfil:",
+          message
+        );
 
-    border-radius: 15px;
+        loadingState.classList.add("hidden");
+        profileContent.classList.add("hidden");
+        errorState.classList.remove("hidden");
+
+        if (errorDetails && message) {
+          errorDetails.textContent = message;
+        }
+      }
+
+      function showProfile() {
+
+        loadingState.classList.add("hidden");
+        errorState.classList.add("hidden");
+        profileContent.classList.remove("hidden");
+      }
+
+      try {
+
+        /* =========================
+           CONFIGURACIÓN
+        ========================= */
+
+        const config =
+          window.EMIMATCH_CONFIG;
+
+        if (
+          !config ||
+          !config.supabaseUrl ||
+          !config.supabaseKey
+        ) {
+          showError(
+            "Configuración de Supabase incompleta."
+          );
+          return;
+        }
+
+        if (
+          !window.supabase ||
+          typeof window.supabase.createClient !== "function"
+        ) {
+          showError(
+            "No se pudo cargar el cliente de Supabase."
+          );
+          return;
+        }
 
-    cursor: pointer;
+        const supabase =
+          window.supabase.createClient(
+            config.supabaseUrl,
+            config.supabaseKey
+          );
+
+        /* =========================
+           SESIÓN
+        ========================= */
+
+        const {
+          data: sessionData,
+          error: sessionError
+        } = await supabase.auth.getSession();
 
-    color: #fff;
+        if (sessionError) {
 
-    font-weight: 800;
+          console.error(
+            "Error obteniendo sesión:",
+            sessionError
+          );
 
-    background:
-      linear-gradient(
-        135deg,
-        #7654d8,
-        #a14fbc
-      );
+          showError(
+            "No se pudo verificar tu sesión."
+          );
 
-    box-shadow:
-      0 10px 25px rgba(118,84,216,.20);
+          return;
+        }
 
-    transition:
-      transform .15s ease,
-      opacity .15s ease;
-  }
+        const session =
+          sessionData?.session;
 
+        if (!session?.user?.id) {
 
-  .album-upload-button:active {
-    transform: scale(.98);
-  }
+          window.location.replace(
+            "index.html"
+          );
 
+          return;
+        }
 
-  .album-status {
-    min-height: 22px;
+        const userId =
+          session.user.id;
 
-    margin:
-      12px 2px;
+        console.log(
+          "EmiMatch — sesión válida:",
+          userId
+        );
 
-    text-align: center;
+        /* =========================
+           PERFIL
+        ========================= */
 
-    color:
-      rgba(255,255,255,.72);
+        const {
+          data: profile,
+          error: profileError
+        } = await supabase
+          .from("profiles")
+          .select(
+            "id,nombre,edad,ciudad,descripcion,foto_url,intereses"
+          )
+          .eq("id", userId)
+          .maybeSingle();
 
-    font-size: 13px;
-  }
+        if (profileError) {
 
+          console.error(
+            "Error cargando profiles:",
+            profileError
+          );
 
-  .album-grid {
-    display: grid;
+          showError(
+            "No pudimos cargar los datos de tu perfil."
+          );
 
-    grid-template-columns:
-      repeat(3, minmax(0, 1fr));
+          return;
+        }
 
-    gap: 9px;
+        if (!profile) {
 
-    margin-top: 14px;
-  }
+          showError(
+            "Tu cuenta no tiene un perfil creado todavía."
+          );
 
+          return;
+        }
 
-  .album-item {
-    position: relative;
+        /* =========================
+           DATOS
+        ========================= */
 
-    overflow: hidden;
+        const name =
+          profile.nombre ||
+          "Mi perfil";
 
-    aspect-ratio: 1 / 1;
+        const age =
+          profile.edad ?? "";
 
-    border-radius: 15px;
+        const city =
+          profile.ciudad ||
+          "";
 
-    background:
-      rgba(255,255,255,.06);
+        const description =
+          profile.descripcion ||
+          "";
 
-    border:
-      1px solid rgba(255,255,255,.08);
-  }
+        const photoUrl =
+          profile.foto_url ||
+          "";
 
+        profileName.textContent =
+          name;
 
-  .album-item img {
-    width: 100%;
-    height: 100%;
+        const metaParts = [];
 
-    display: block;
+        if (age !== "") {
+          metaParts.push(
+            `${age} años`
+          );
+        }
 
-    object-fit: cover;
-  }
+        if (city) {
+          metaParts.push(city);
+        }
 
+        profileMeta.textContent =
+          metaParts.join(" · ");
 
-  .album-primary {
-    position: absolute;
+        profileDescription.textContent =
+          description ||
+          "Todavía no agregaste una descripción.";
 
-    left: 7px;
-    top: 7px;
+        /* =========================
+           FOTO
+        ========================= */
 
-    padding:
-      5px 7px;
+        if (photoUrl) {
 
-    border-radius: 999px;
+          profilePhoto.src =
+            photoUrl;
 
-    background:
-      rgba(0,0,0,.68);
+          profilePhoto.classList.remove(
+            "hidden"
+          );
 
-    color: #fff;
+          photoPlaceholder.classList.add(
+            "hidden"
+          );
 
-    font-size: 10px;
+          profilePhoto.onerror = function () {
 
-    font-weight: 800;
-  }
-
-
-  .album-delete {
-    position: absolute;
-
-    right: 7px;
-    bottom: 7px;
-
-    width: 34px;
-    height: 34px;
-
-    border: 0;
-
-    border-radius: 50%;
-
-    cursor: pointer;
-
-    background:
-      rgba(0,0,0,.72);
-
-    color: #fff;
-
-    font-size: 15px;
-  }
-
-
-  .album-empty {
-    grid-column: 1 / -1;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    flex-direction: column;
-
-    gap: 7px;
-
-    min-height: 150px;
-
-    text-align: center;
-
-    color:
-      rgba(255,255,255,.65);
-  }
-
-
-  .album-empty-icon {
-    font-size: 38px;
-
-    margin-bottom: 3px;
-  }
-
-
-  .album-empty strong {
-    color: #fff;
-
-    font-size: 14px;
-  }
-
-
-  .album-empty span {
-    max-width: 280px;
-
-    font-size: 12px;
-
-    line-height: 1.5;
-  }
-
-
-  @media (max-width: 420px) {
-
-    .album-section {
-      padding: 16px;
-    }
-
-    .album-grid {
-      gap: 7px;
-    }
-
-  }
-
-    </style>
+            profilePhoto.classList.add(
+              "hidden"
+            );
+
+            photoPlaceholder.classList.remove(
+              "hidden"
+            );
+          };
+
+        } else {
+
+          profilePhoto.classList.add(
+            "hidden"
+          );
+
+          photoPlaceholder.classList.remove(
+            "hidden"
+          );
+        }
+
+        showProfile();
+
+        /* =========================
+           ELIMINAR CUENTA
+        ========================= */
+
+        if (deleteButton) {
+
+          deleteButton.addEventListener(
+            "click",
+            async function () {
+
+              const firstConfirmation =
+                window.confirm(
+                  "¿Seguro que querés eliminar tu cuenta de EmiMatch?\n\n" +
+                  "Esta acción eliminará tu cuenta y sus datos."
+                );
+
+              if (!firstConfirmation) {
+                return;
+              }
+
+              const finalConfirmation =
+                window.confirm(
+                  "ÚLTIMA CONFIRMACIÓN\n\n" +
+                  "La eliminación de la cuenta es permanente.\n\n" +
+                  "¿Querés continuar?"
+                );
+
+              if (!finalConfirmation) {
+                return;
+              }
+
+              deleteButton.disabled = true;
+
+              deleteStatus.textContent =
+                "Eliminando tu cuenta...";
+
+              try {
+
+                const {
+                  data: currentSessionData,
+                  error: currentSessionError
+                } = await supabase.auth.getSession();
+
+                if (
+                  currentSessionError ||
+                  !currentSessionData?.session
+                ) {
+
+                  throw new Error(
+                    "Tu sesión expiró. Volvé a iniciar sesión."
+                  );
+                }
+
+                const {
+                  data,
+                  error
+                } = await supabase.functions.invoke(
+                  "delete-account",
+                  {
+                    method: "POST",
+                    body: {}
+                  }
+                );
+
+                if (error) {
+
+                  console.error(
+                    "Error Edge Function:",
+                    error
+                  );
+
+                  throw new Error(
+                    error.message ||
+                    "No se pudo eliminar la cuenta."
+                  );
+                }
+
+                if (
+                  data &&
+                  data.success === false
+                ) {
+
+                  throw new Error(
+                    data.error ||
+                    "No se pudo eliminar la cuenta."
+                  );
+                }
+
+                deleteStatus.textContent =
+                  "Cuenta eliminada correctamente.";
+
+                await supabase.auth.signOut();
+
+                setTimeout(
+                  function () {
+                    window.location.replace(
+                      "index.html"
+                    );
+                  },
+                  1200
+                );
+
+              } catch (deleteError) {
+
+                console.error(
+                  "Eliminación de cuenta:",
+                  deleteError
+                );
+
+                deleteStatus.textContent =
+                  deleteError.message ||
+                  "No se pudo eliminar la cuenta.";
+
+                deleteButton.disabled = false;
+              }
+            }
+          );
+        }
+
+      } catch (error) {
+
+        console.error(
+          "EmiMatch — error inesperado:",
+          error
+        );
+
+        showError(
+          error.message ||
+          "Ocurrió un error inesperado."
+        );
+      }
+
+    })();
+  </script>
+
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/components.js"></script>
+
+</body>
+</html>
