@@ -1,6 +1,447 @@
-<script src="assets/js/config.js"></script>
+<!DOCTYPE html><html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#10152f">
+<title>Editar perfil — EmiMatch</title><link rel="stylesheet" href="assets/css/app.css"><style>
+:root{
+  --bg:#0b1024;
+  --card:rgba(255,255,255,.07);
+  --border:rgba(255,255,255,.12);
+  --text:#f7f8ff;
+  --muted:#aeb5d0;
+  --primary:#5865f2;
+  --primary2:#7459e8;
+  --danger:#ff5c72;
+}
 
-<script>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  min-height:100vh;
+  padding:18px 14px 40px;
+  background:
+    radial-gradient(circle at top left,rgba(88,101,242,.22),transparent 35%),
+    radial-gradient(circle at top right,rgba(217,180,91,.13),transparent 30%),
+    var(--bg);
+  color:var(--text);
+  font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+
+.page{
+  width:min(100%,680px);
+  margin:auto;
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:18px;
+}
+
+.topbar h1{
+  margin:0;
+  font-size:24px;
+}
+
+.back{
+  color:#fff;
+  text-decoration:none;
+  font-weight:700;
+}
+
+.card{
+  padding:22px;
+  border:1px solid var(--border);
+  border-radius:26px;
+  background:var(--card);
+  backdrop-filter:blur(18px);
+}
+
+.hidden{
+  display:none!important;
+}
+
+.loading{
+  text-align:center;
+  color:var(--muted);
+  padding:45px 10px;
+}
+
+.intro{
+  margin-bottom:22px;
+}
+
+.intro h2{
+  margin:0 0 7px;
+}
+
+.intro p,
+.help{
+  color:var(--muted);
+  font-size:14px;
+}
+
+.field{
+  margin-bottom:17px;
+}
+
+label{
+  display:block;
+  margin-bottom:7px;
+  font-weight:800;
+}
+
+input,
+textarea{
+  width:100%;
+  padding:13px 14px;
+  border:1px solid var(--border);
+  border-radius:15px;
+  background:rgba(255,255,255,.06);
+  color:#fff;
+  font:inherit;
+}
+
+textarea{
+  min-height:130px;
+  resize:vertical;
+}
+
+.actions{
+  display:grid;
+  gap:10px;
+  margin-top:24px;
+}
+
+button,
+.button-link{
+  width:100%;
+  min-height:50px;
+  border:0;
+  border-radius:16px;
+  padding:13px 16px;
+  font:inherit;
+  font-weight:800;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  text-decoration:none;
+  cursor:pointer;
+}
+
+.save{
+  background:linear-gradient(135deg,var(--primary),var(--primary2));
+  color:#fff;
+}
+
+.cancel{
+  background:rgba(255,255,255,.06);
+  color:#fff;
+  border:1px solid var(--border);
+}
+
+.status,
+.album-status,
+.profile-photo-status{
+  text-align:center;
+  min-height:24px;
+  margin-top:12px;
+  line-height:1.4;
+}
+
+.success{
+  color:#9ee6bd;
+}
+
+.error{
+  color:#ffadb8;
+}
+
+/* FOTO DE PERFIL */
+
+.profile-photo-section{
+  margin:24px 0;
+  padding:20px;
+  border-radius:22px;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.04);
+  text-align:center;
+}
+
+.profile-photo-section h2{
+  margin:0 0 6px;
+}
+
+.profile-photo-section p{
+  margin:0 0 16px;
+  color:var(--muted);
+  font-size:13px;
+}
+
+.profile-photo-box{
+  width:150px;
+  height:150px;
+  margin:0 auto 15px;
+  border-radius:50%;
+  overflow:hidden;
+  border:3px solid rgba(255,255,255,.15);
+  background:rgba(255,255,255,.06);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.profile-photo-box img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.profile-photo-placeholder{
+  color:var(--muted);
+  font-size:42px;
+}
+
+.photo-button{
+  background:linear-gradient(135deg,#7654d8,#a14fbc);
+  color:#fff;
+  cursor:pointer;
+}
+
+/* ÁLBUM */
+
+.album{
+  margin-top:28px;
+  padding:20px;
+  border-radius:22px;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.04);
+}
+
+.album-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:15px;
+}
+
+.album h2{
+  margin:0;
+  font-size:20px;
+}
+
+.album p{
+  margin:5px 0 0;
+  color:var(--muted);
+  font-size:13px;
+}
+
+#albumCount{
+  padding:7px 10px;
+  border-radius:99px;
+  background:rgba(255,255,255,.08);
+  font-size:12px;
+}
+
+.upload{
+  width:100%;
+  min-height:48px;
+  padding:13px;
+  border-radius:15px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg,#7654d8,#a14fbc);
+  color:#fff;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.album-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-top:14px;
+}
+
+.album-item{
+  position:relative;
+  aspect-ratio:1;
+  overflow:hidden;
+  border-radius:14px;
+  background:rgba(255,255,255,.06);
+}
+
+.album-item img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.delete-photo{
+  position:absolute;
+  right:6px;
+  bottom:6px;
+  width:34px;
+  height:34px;
+  min-height:34px;
+  padding:0;
+  border:0;
+  border-radius:50%;
+  background:rgba(0,0,0,.75);
+  color:#fff;
+}
+
+.empty-album{
+  grid-column:1/-1;
+  text-align:center;
+  color:var(--muted);
+  padding:30px 10px;
+}
+
+@media(max-width:480px){
+  .card,
+  .album,
+  .profile-photo-section{
+    padding:17px;
+  }
+}
+</style></head><body><main class="page"><header class="topbar">
+  <h1>Editar perfil</h1>
+  <a class="back" href="perfil.html">← Volver</a>
+</header><section id="loading" class="card loading">
+  Cargando tu perfil...
+</section><section id="editor" class="card hidden"><div class="intro">
+  <h2>Personalizá tu perfil</h2>
+  <p>
+    Actualizá la información que otras personas podrán ver en EmiMatch.
+  </p>
+</div><form id="profileForm"><div class="field">
+  <label for="nombre">Nombre</label>
+  <input
+    id="nombre"
+    type="text"
+    maxlength="80"
+    placeholder="Tu nombre"
+  >
+</div><div class="field">
+  <label for="ciudad">Ciudad</label>
+  <input
+    id="ciudad"
+    type="text"
+    maxlength="100"
+    placeholder="Buenos Aires"
+  >
+</div><div class="field">
+  <label for="edad">Edad</label>
+  <input
+    id="edad"
+    type="number"
+    min="18"
+    max="100"
+    placeholder="31"
+  >
+  <div class="help">
+    La edad debe estar entre 18 y 100 años.
+  </div>
+</div><div class="field">
+  <label for="descripcion">Descripción</label>
+  <textarea
+    id="descripcion"
+    maxlength="500"
+    placeholder="Contá algo sobre vos..."
+  ></textarea>
+</div><!-- FOTO DE PERFIL --><section class="profile-photo-section"><h2>📸 Foto de perfil</h2><p>
+Esta será la foto principal que aparecerá en tu perfil.
+</p><div class="profile-photo-box"><img
+id="profilePhotoPreview"
+alt="Foto de perfil"
+style="display:none"
+
+«»
+
+  <div
+    id="profilePhotoPlaceholder"
+    class="profile-photo-placeholder"
+  >
+    👤
+  </div></div><label
+class="button-link photo-button"
+for="profilePhotoInput"
+
+«»
+
+📷 Cambiar foto de perfil
+</label>
+
+<input
+id="profilePhotoInput"
+type="file"
+accept="image/jpeg,image/png,image/webp"
+hidden
+
+«»
+
+<div
+  id="profilePhotoStatus"
+  class="profile-photo-status"
+></div></section><div class="actions"><button
+id="saveButton"
+class="save"
+type="submit"
+
+«»
+
+Guardar cambios
+</button>
+
+<a
+class="button-link cancel"
+href="perfil.html"
+
+«»
+
+Cancelar
+</a>
+
+</div><div
+  id="status"
+  class="status"
+></div></form><!-- ÁLBUM --><section class="album"><div class="album-head"><div>
+  <h2>🖼️ Mi álbum</h2>
+  <p>Agregá fotos para mostrar más de vos.</p>
+</div><span id="albumCount">
+  0 fotos
+</span></div><label
+class="upload"
+for="albumInput"
+
+«»
+
+➕ Agregar fotos
+</label>
+
+<input
+id="albumInput"
+type="file"
+accept="image/jpeg,image/png,image/webp"
+multiple
+hidden
+
+«»
+
+<div
+  id="albumStatus"
+  class="album-status"
+></div><div
+  id="albumGrid"
+  class="album-grid"
+>
+</div></section></section></main><script src="assets/js/config.js"></script><script type="module">
 
 "use strict";
 
@@ -17,75 +458,63 @@ const MAX_SIZE = 8 * 1024 * 1024;
    MENSAJES
 ========================================= */
 
-function showStatus(message, type = "") {
-
+function showStatus(message,type=""){
   const el = $("status");
+  if(!el)return;
 
-  if (!el) return;
-
-  el.textContent = message;
+  el.textContent = message || "";
   el.className = "status " + type;
 }
 
-
-function albumStatus(message, type = "") {
-
+function albumStatus(message,type=""){
   const el = $("albumStatus");
+  if(!el)return;
 
-  if (!el) return;
-
-  el.textContent = message;
+  el.textContent = message || "";
   el.className = "album-status " + type;
 }
 
-
-function profilePhotoStatus(message, type = "") {
-
+function profilePhotoStatus(message,type=""){
   const el = $("profilePhotoStatus");
+  if(!el)return;
 
-  if (!el) return;
-
-  el.textContent = message;
-  el.className = "album-status " + type;
+  el.textContent = message || "";
+  el.className = "profile-photo-status " + type;
 }
 
 
 /* =========================================
-   INICIAR SUPABASE
+   SUPABASE
 ========================================= */
 
-async function initSupabase() {
+async function initSupabase(){
 
-  try {
+  try{
 
-    const config = window.EMIMATCH_CONFIG;
+    const config =
+      window.EMIMATCH_CONFIG;
 
-    if (
+    if(
       !config ||
       !config.supabaseUrl ||
       !(
         config.supabaseAnonKey ||
         config.supabaseKey
       )
-    ) {
-
+    ){
       throw new Error(
         "Configuración de Supabase incompleta."
       );
-
     }
-
 
     const anonKey =
       config.supabaseAnonKey ||
       config.supabaseKey;
 
-
     const module =
       await import(
         "https://esm.sh/@supabase/supabase-js@2"
       );
-
 
     supabase =
       module.createClient(
@@ -93,50 +522,40 @@ async function initSupabase() {
         anonKey
       );
 
-
     const {
       data,
       error
     } =
       await supabase.auth.getUser();
 
-
-    if (error) {
+    if(error){
       throw error;
     }
 
+    user =
+      data?.user || null;
 
-    user = data?.user || null;
+    if(!user){
 
-
-    if (!user) {
-
-      showStatus(
-        "Tu sesión no está activa. Iniciá sesión nuevamente.",
-        "error"
+      throw new Error(
+        "Tu sesión no está activa. Iniciá sesión nuevamente."
       );
-
-      return false;
     }
-
 
     return true;
 
-
-  } catch (error) {
+  }catch(error){
 
     console.error(
-      "Error inicializando Supabase:",
+      "Supabase:",
       error
     );
-
 
     showStatus(
       error.message ||
       "No pudimos conectar con Supabase.",
       "error"
     );
-
 
     return false;
   }
@@ -147,7 +566,7 @@ async function initSupabase() {
    CARGAR PERFIL
 ========================================= */
 
-async function loadProfile() {
+async function loadProfile(){
 
   const {
     data,
@@ -158,37 +577,32 @@ async function loadProfile() {
       .select(
         "id,nombre,edad,ciudad,descripcion,foto_url"
       )
-      .eq("id", user.id)
+      .eq("id",user.id)
       .maybeSingle();
 
-
-  if (error) {
+  if(error){
     throw error;
   }
 
-
-  if (!data) {
-    return;
+  if(!data){
+    throw new Error(
+      "No encontramos tu perfil."
+    );
   }
-
 
   $("nombre").value =
     data.nombre || "";
 
-
   $("ciudad").value =
     data.ciudad || "";
-
 
   $("edad").value =
     data.edad ?? "";
 
-
   $("descripcion").value =
     data.descripcion || "";
 
-
-  if (data.foto_url) {
+  if(data.foto_url){
 
     $("profilePhotoPreview").src =
       data.foto_url;
@@ -199,7 +613,7 @@ async function loadProfile() {
     $("profilePhotoPlaceholder").style.display =
       "none";
 
-  } else {
+  }else{
 
     $("profilePhotoPreview").style.display =
       "none";
@@ -211,73 +625,60 @@ async function loadProfile() {
 
 
 /* =========================================
-   GUARDAR DATOS DEL PERFIL
+   GUARDAR PERFIL
 ========================================= */
 
-async function saveProfile(event) {
+async function saveProfile(event){
 
   event.preventDefault();
-
 
   const button =
     $("saveButton");
 
-
   button.disabled = true;
-
 
   showStatus(
     "Guardando cambios..."
   );
 
-
-  try {
+  try{
 
     const nombre =
       $("nombre").value.trim();
 
-
     const ciudad =
       $("ciudad").value.trim();
-
 
     const descripcion =
       $("descripcion").value.trim();
 
-
     const edadText =
       $("edad").value.trim();
 
-
-    if (!nombre) {
+    if(!nombre){
 
       throw new Error(
         "Ingresá tu nombre."
       );
     }
 
-
     let edad = null;
 
-
-    if (edadText) {
+    if(edadText){
 
       edad =
         Number(edadText);
 
-
-      if (
+      if(
         !Number.isInteger(edad) ||
         edad < 18 ||
         edad > 100
-      ) {
-
+      ){
         throw new Error(
           "La edad debe estar entre 18 y 100."
         );
       }
     }
-
 
     const {
       error
@@ -290,27 +691,23 @@ async function saveProfile(event) {
           edad,
           descripcion
         })
-        .eq("id", user.id);
+        .eq("id",user.id);
 
-
-    if (error) {
+    if(error){
       throw error;
     }
-
 
     showStatus(
       "✓ Perfil actualizado correctamente.",
       "success"
     );
 
-
-  } catch (error) {
+  }catch(error){
 
     console.error(
       "Guardar perfil:",
       error
     );
-
 
     showStatus(
       error.message ||
@@ -318,8 +715,7 @@ async function saveProfile(event) {
       "error"
     );
 
-
-  } finally {
+  }finally{
 
     button.disabled = false;
   }
@@ -330,73 +726,62 @@ async function saveProfile(event) {
    FOTO DE PERFIL
 ========================================= */
 
-async function changeProfilePhoto(event) {
+async function changeProfilePhoto(event){
 
   const file =
     event.target.files?.[0];
 
-
   event.target.value = "";
 
-
-  if (!file) {
+  if(!file){
     return;
   }
 
-
-  try {
+  try{
 
     profilePhotoStatus(
       "Preparando foto..."
     );
 
-
-    if (
+    if(
       ![
         "image/jpeg",
         "image/png",
         "image/webp"
       ].includes(file.type)
-    ) {
-
+    ){
       throw new Error(
         "Solo se permiten JPG, PNG o WebP."
       );
     }
 
-
-    if (file.size > MAX_SIZE) {
+    if(file.size > MAX_SIZE){
 
       throw new Error(
         "La foto no puede superar los 8 MB."
       );
     }
 
-
     const {
-      data:sessionData,
-      error:sessionError
+      data,
+      error
     } =
       await supabase.auth.getSession();
 
-
-    if (sessionError) {
-      throw sessionError;
+    if(error){
+      throw error;
     }
 
-
-    if (!sessionData?.session) {
+    if(!data?.session){
 
       throw new Error(
         "La sesión expiró. Iniciá sesión nuevamente."
       );
     }
 
-
     profilePhotoStatus(
-      "Subiendo foto de perfil..."
+      "Subiendo foto..."
     );
-
 
     const extension =
       file.type === "image/png"
@@ -405,10 +790,8 @@ async function changeProfilePhoto(event) {
           ? "webp"
           : "jpg";
 
-
     const path =
       `${user.id}/profile/${crypto.randomUUID()}.${extension}`;
-
 
     const {
       error:uploadError
@@ -420,17 +803,15 @@ async function changeProfilePhoto(event) {
           path,
           file,
           {
-            cacheControl: "3600",
-            upsert: false,
-            contentType: file.type
+            cacheControl:"3600",
+            upsert:false,
+            contentType:file.type
           }
         );
 
-
-    if (uploadError) {
+    if(uploadError){
       throw uploadError;
     }
-
 
     const {
       data:publicData
@@ -440,23 +821,19 @@ async function changeProfilePhoto(event) {
         .from("avatars")
         .getPublicUrl(path);
 
-
     const photoUrl =
       publicData?.publicUrl;
 
-
-    if (!photoUrl) {
+    if(!photoUrl){
 
       throw new Error(
         "No se pudo obtener la URL de la foto."
       );
     }
 
-
     profilePhotoStatus(
       "Guardando foto..."
     );
-
 
     const {
       error:updateError
@@ -464,12 +841,11 @@ async function changeProfilePhoto(event) {
       await supabase
         .from("profiles")
         .update({
-          foto_url: photoUrl
+          foto_url:photoUrl
         })
-        .eq("id", user.id);
+        .eq("id",user.id);
 
-
-    if (updateError) {
+    if(updateError){
 
       await supabase
         .storage
@@ -479,32 +855,26 @@ async function changeProfilePhoto(event) {
       throw updateError;
     }
 
-
     $("profilePhotoPreview").src =
       photoUrl;
-
 
     $("profilePhotoPreview").style.display =
       "block";
 
-
     $("profilePhotoPlaceholder").style.display =
       "none";
-
 
     profilePhotoStatus(
       "✓ Foto de perfil guardada correctamente.",
       "success"
     );
 
-
-  } catch (error) {
+  }catch(error){
 
     console.error(
       "Foto de perfil:",
       error
     );
-
 
     profilePhotoStatus(
       error.message ||
@@ -513,16 +883,19 @@ async function changeProfilePhoto(event) {
     );
   }
 }
-    
+
+
 /* =========================================
    CARGAR ÁLBUM
 ========================================= */
 
-async function loadAlbum() {
+async function loadAlbum(){
 
-  albumStatus("Cargando fotos...");
+  albumStatus(
+    "Cargando fotos..."
+  );
 
-  try {
+  try{
 
     const {
       data,
@@ -531,34 +904,41 @@ async function loadAlbum() {
       await supabase
         .from("profile_photos")
         .select(
-          "id,photo_url,created_at"
+          "id,photo_url,storage_path,is_primary,created_at"
         )
-        .eq("user_id", user.id)
+        .eq(
+          "user_id",
+          user.id
+        )
+        .order(
+          "is_primary",
+          {
+            ascending:false
+          }
+        )
         .order(
           "created_at",
           {
-            ascending: true
+            ascending:true
           }
         );
 
-
-    if (error) {
+    if(error){
       throw error;
     }
 
-
-    renderAlbum(data || []);
+    renderAlbum(
+      data || []
+    );
 
     albumStatus("");
 
-
-  } catch (error) {
+  }catch(error){
 
     console.error(
       "Cargar álbum:",
       error
     );
-
 
     albumStatus(
       error.message ||
@@ -573,21 +953,21 @@ async function loadAlbum() {
    MOSTRAR ÁLBUM
 ========================================= */
 
-function renderAlbum(photos) {
+function renderAlbum(photos){
+
+  $("albumCount").textContent =
+    `${photos.length} ${
+      photos.length === 1
+        ? "foto"
+        : "fotos"
+    }`;
 
   const grid =
     $("albumGrid");
 
-
-  if (!grid) {
-    return;
-  }
-
-
   grid.innerHTML = "";
 
-
-  if (!photos.length) {
+  if(!photos.length){
 
     grid.innerHTML = `
       <div class="empty-album">
@@ -600,8 +980,7 @@ function renderAlbum(photos) {
     return;
   }
 
-
-  for (const photo of photos) {
+  photos.forEach(photo => {
 
     const item =
       document.createElement("div");
@@ -609,473 +988,330 @@ function renderAlbum(photos) {
     item.className =
       "album-item";
 
-
     const img =
       document.createElement("img");
-
 
     img.src =
       photo.photo_url;
 
-
     img.alt =
       "Foto del álbum";
-
 
     img.loading =
       "lazy";
 
-
-    item.appendChild(img);
-
-
     const deleteButton =
       document.createElement("button");
-
 
     deleteButton.type =
       "button";
 
-
     deleteButton.className =
       "delete-photo";
-
 
     deleteButton.textContent =
       "🗑️";
 
-
     deleteButton.title =
       "Eliminar foto";
-
 
     deleteButton.addEventListener(
       "click",
       () => deletePhoto(photo)
     );
 
-
-    item.appendChild(
+    item.append(
+      img,
       deleteButton
     );
 
-
-    grid.appendChild(
-      item
-    );
-  }
+    grid.appendChild(item);
+  });
 }
 
 
 /* =========================================
-   SUBIR FOTOS AL ÁLBUM
+   SUBIR ÁLBUM
 ========================================= */
 
-async function uploadPhotos(files) {
+async function uploadPhotos(files){
 
-  const selected =
-    Array.from(files || []);
+const selected = Array.from(files || []);
 
+if (!selected.length) return;
 
-  if (!selected.length) {
-    return;
-  }
+try {
 
+albumStatus("Preparando fotos...");
 
-  try {
+const { data: existing, error: countError } =
+  await supabase
+    .from("profile_photos")
+    .select("id")
+    .eq("user_id", user.id);
 
-    albumStatus(
-      "Preparando fotos..."
-    );
+if (countError) throw countError;
 
+const current = existing?.length || 0;
 
-    /*
-     * Contar fotos actuales
-     */
-
-    const {
-      data:existing,
-      error:countError
-    } =
-      await supabase
-        .from("profile_photos")
-        .select("id")
-        .eq("user_id", user.id);
-
-
-    if (countError) {
-      throw countError;
-    }
-
-
-    const current =
-      existing?.length || 0;
-
-
-    if (current >= MAX_PHOTOS) {
-
-      throw new Error(
-        `Ya tenés el máximo de ${MAX_PHOTOS} fotos.`
-      );
-    }
-
-
-    const available =
-      MAX_PHOTOS - current;
-
-
-    const photosToUpload =
-      selected.slice(
-        0,
-        available
-      );
-
-
-    for (
-      let i = 0;
-      i < photosToUpload.length;
-      i++
-    ) {
-
-      const file =
-        photosToUpload[i];
-
-
-      /*
-       * Validar formato
-       */
-
-      if (
-        ![
-          "image/jpeg",
-          "image/png",
-          "image/webp"
-        ].includes(file.type)
-      ) {
-
-        throw new Error(
-          `${file.name}: solo JPG, PNG o WebP.`
-        );
-      }
-
-
-      /*
-       * Validar tamaño
-       */
-
-      if (file.size > MAX_SIZE) {
-
-        throw new Error(
-          `${file.name}: supera los 8 MB.`
-        );
-      }
-
-
-      albumStatus(
-        `Subiendo foto ${i + 1} de ${photosToUpload.length}...`
-      );
-
-
-      /*
-       * Extensión
-       */
-
-      const extension =
-        file.type === "image/png"
-          ? "png"
-          : file.type === "image/webp"
-            ? "webp"
-            : "jpg";
-
-
-      /*
-       * Ruta del álbum
-       */
-
-      const path =
-        `${user.id}/album/${crypto.randomUUID()}.${extension}`;
-
-
-      /*
-       * Subir a Storage
-       */
-
-      const {
-        error:uploadError
-      } =
-        await supabase
-          .storage
-          .from("avatars")
-          .upload(
-            path,
-            file,
-            {
-              cacheControl: "3600",
-              upsert: false,
-              contentType: file.type
-            }
-          );
-
-
-      if (uploadError) {
-        throw uploadError;
-      }
-
-
-      /*
-       * Obtener URL pública
-       */
-
-      const {
-        data:publicData
-      } =
-        supabase
-          .storage
-          .from("avatars")
-          .getPublicUrl(path);
-
-
-      const photoUrl =
-        publicData?.publicUrl;
-
-
-      if (!photoUrl) {
-
-        throw new Error(
-          "No se pudo obtener la URL pública de la foto."
-        );
-      }
-
-
-      /*
-       * Guardar solamente las columnas
-       * que existen en profile_photos.
-       */
-
-      const {
-        error:insertError
-      } =
-        await supabase
-          .from("profile_photos")
-          .insert({
-            user_id: user.id,
-            photo_url: photoUrl
-          });
-
-
-      if (insertError) {
-
-        /*
-         * Si falla la DB,
-         * borrar el archivo recién subido.
-         */
-
-        await supabase
-          .storage
-          .from("avatars")
-          .remove([
-            path
-          ]);
-
-
-        throw insertError;
-      }
-    }
-
-
-    albumStatus(
-      photosToUpload.length === 1
-        ? "✓ Foto agregada correctamente."
-        : `✓ ${photosToUpload.length} fotos agregadas correctamente.`,
-      "success"
-    );
-
-
-    await loadAlbum();
-
-
-  } catch (error) {
-
-    console.error(
-      "Subir álbum:",
-      error
-    );
-
-
-    albumStatus(
-      error.message ||
-      "No pudimos guardar las fotos.",
-      "error"
-    );
-  }
-
-
-  $("albumInput").value = "";
+if (current >= MAX_PHOTOS) {
+  throw new Error(
+    `Ya tenés el máximo de ${MAX_PHOTOS} fotos.`
+  );
 }
 
+const filesToUpload =
+  selected.slice(0, MAX_PHOTOS - current);
 
-/* =========================================
-   ELIMINAR FOTO
-========================================= */
+for (let i = 0; i < filesToUpload.length; i++) {
 
-async function deletePhoto(photo) {
+  const file = filesToUpload[i];
 
-  const confirmed =
-    confirm(
-      "¿Querés eliminar esta foto del álbum?"
+  if (
+    !["image/jpeg", "image/png", "image/webp"]
+      .includes(file.type)
+  ) {
+    throw new Error(
+      `${file.name}: solo JPG, PNG o WebP.`
     );
-
-
-  if (!confirmed) {
-    return;
   }
 
-
-  try {
-
-    albumStatus(
-      "Eliminando foto..."
+  if (file.size > MAX_SIZE) {
+    throw new Error(
+      `${file.name}: supera los 8 MB.`
     );
+  }
 
+  albumStatus(
+    `Subiendo foto ${i + 1} de ${filesToUpload.length}...`
+  );
 
-    /*
-     * Primero eliminar registro de DB.
-     *
-     * No intentamos eliminar Storage porque
-     * profile_photos ya no guarda storage_path.
-     */
+  const extension =
+    file.type === "image/png"
+      ? "png"
+      : file.type === "image/webp"
+        ? "webp"
+        : "jpg";
 
-    const {
-      error
-    } =
-      await supabase
-        .from("profile_photos")
-        .delete()
-        .eq(
-          "id",
-          photo.id
-        )
-        .eq(
-          "user_id",
-          user.id
-        );
+  const path =
+    `${user.id}/album/${crypto.randomUUID()}.${extension}`;
 
+  const { error: uploadError } =
+    await supabase
+      .storage
+      .from("avatars")
+      .upload(
+        path,
+        file,
+        {
+          cacheControl: "3600",
+          upsert: false,
+          contentType: file.type
+        }
+      );
 
-    if (error) {
-      throw error;
-    }
+  if (uploadError) {
+    throw uploadError;
+  }
 
+  const { data: publicData } =
+    supabase
+      .storage
+      .from("avatars")
+      .getPublicUrl(path);
 
-    albumStatus(
-      "✓ Foto eliminada correctamente.",
-      "success"
+  const photoUrl =
+    publicData?.publicUrl;
+
+  if (!photoUrl) {
+    throw new Error(
+      "No se pudo obtener la URL pública de la foto."
     );
+  }
 
+  const { error: insertError } =
+    await supabase
+      .from("profile_photos")
+      .insert({
+        user_id: user.id,
+        photo_url: photoUrl,
+        storage_path: path,
+        is_primary: false
+      });
 
-    await loadAlbum();
+  if (insertError) {
 
+    await supabase
+      .storage
+      .from("avatars")
+      .remove([path]);
 
-  } catch (error) {
-
-    console.error(
-      "Eliminar foto:",
-      error
-    );
-
-
-    albumStatus(
-      error.message ||
-      "No pudimos eliminar la foto.",
-      "error"
-    );
+    throw insertError;
   }
 }
 
+albumStatus(
+  filesToUpload.length === 1
+    ? "✓ Foto agregada correctamente."
+    : `✓ ${filesToUpload.length} fotos agregadas correctamente.`,
+  "success"
+);
+
+await loadAlbum();
+
+} catch (error) {
+
+console.error(
+  "Subir álbum:",
+  error
+);
+
+albumStatus(
+  error.message ||
+  "No pudimos guardar las fotos.",
+  "error"
+);
+
+} finally {
+
+$("albumInput").value = "";
+
+}
+}
 
 /* =========================================
-   EVENTOS
+ELIMINAR FOTO
 ========================================= */
 
-$("profileForm")
-  .addEventListener(
-    "submit",
-    saveProfile
-  );
+async function deletePhoto(photo){
 
+if (
+!confirm(
+"¿Querés eliminar esta foto del álbum?"
+)
+) {
+return;
+}
 
-$("profilePhotoInput")
-  .addEventListener(
-    "change",
-    changeProfilePhoto
-  );
+try {
 
+albumStatus("Eliminando foto...");
 
-$("albumInput")
-  .addEventListener(
-    "change",
-    event => {
+if (photo.storage_path) {
 
-      uploadPhotos(
-        event.target.files
-      );
+  await supabase
+    .storage
+    .from("avatars")
+    .remove([
+      photo.storage_path
+    ]);
+}
 
-    }
-  );
+const { error } =
+  await supabase
+    .from("profile_photos")
+    .delete()
+    .eq("id", photo.id)
+    .eq("user_id", user.id);
 
+if (error) {
+  throw error;
+}
 
-$("backButton")
-  .addEventListener(
-    "click",
-    () => {
+albumStatus(
+  "✓ Foto eliminada correctamente.",
+  "success"
+);
 
-      window.location.href =
-        "perfil.html";
+await loadAlbum();
 
-    }
-  );
+} catch (error) {
 
+console.error(
+  "Eliminar foto:",
+  error
+);
+
+albumStatus(
+  error.message ||
+  "No pudimos eliminar la foto.",
+  "error"
+);
+
+}
+}
 
 /* =========================================
-   INICIAR
+EVENTOS
 ========================================= */
 
-(async function start() {
+$("profileForm").addEventListener(
+"submit",
+saveProfile
+);
 
-  const connected =
-    await initSupabase();
+$("profilePhotoInput").addEventListener(
+"change",
+changeProfilePhoto
+);
 
+$("albumInput").addEventListener(
+"change",
+event => {
+uploadPhotos(
+event.target.files
+);
+}
+);
 
-  if (!connected) {
-    return;
-  }
+/* =========================================
+INICIO
+========================================= */
 
+(async function start(){
 
-  try {
+const connected =
+await initSupabase();
 
-    await loadProfile();
+if (!connected) {
 
-    await loadAlbum();
+$("loading").classList.add("hidden");
+$("editor").classList.remove("hidden");
 
-    showStatus("");
+return;
 
-  } catch (error) {
+}
 
-    console.error(
-      "Inicio editar perfil:",
-      error
-    );
+try {
 
+await loadProfile();
 
-    showStatus(
-      error.message ||
-      "No pudimos cargar tu perfil.",
-      "error"
-    );
-  }
+await loadAlbum();
+
+$("loading")
+  .classList
+  .add("hidden");
+
+$("editor")
+  .classList
+  .remove("hidden");
+
+} catch (error) {
+
+console.error(
+  "Inicio editar perfil:",
+  error
+);
+
+$("loading").innerHTML = `
+  <strong>No pudimos cargar tu perfil.</strong>
+  <br><br>
+  ${error.message || "Error desconocido"}
+`;
+
+}
 
 })();
 
-</script>
-
-</body>
+</script></body>
 </html>
