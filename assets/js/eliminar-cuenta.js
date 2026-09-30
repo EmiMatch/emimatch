@@ -1,90 +1,145 @@
 "use strict";
 
 /*
- * EmiMatch — Eliminación de cuenta
- * Este archivo corre en el navegador.
- * La eliminación administrativa ocurre únicamente
- * dentro de la Edge Function de Supabase.
+ * EmiMatch — Eliminación real de cuenta
+ * Archivo para el NAVEGADOR.
+ *
+ * La eliminación administrativa del usuario
+ * debe realizarse dentro de la Edge Function:
+ * delete-account
  */
 
-(() => {
-  function init() {
+(function () {
+  function iniciarEliminacion() {
     const config = window.EMIMATCH_CONFIG;
 
+    const boton = document.getElementById("deleteAccountButton");
+    const estado = document.getElementById("deleteStatus");
+
+    function mostrarEstado(mensaje, error = false) {
+      if (!estado) {
+        console[error ? "error" : "log"](
+          "EmiMatch:",
+          mensaje
+        );
+        return;
+      }
+
+      estado.hidden = false;
+      estado.textContent = mensaje;
+      estado.setAttribute(
+        "data-type",
+        error ? "error" : "success"
+      );
+    }
+
+    if (!boton) {
+      console.error(
+        "EmiMatch: no existe #deleteAccountButton."
+      );
+      return;
+    }
+
     if (!config) {
-      console.error("EmiMatch: falta EMIMATCH_CONFIG.");
+      mostrarEstado(
+        "❌ No se pudo cargar la configuración de EmiMatch.",
+        true
+      );
       return;
     }
 
-    if (!window.supabase) {
-      console.error("EmiMatch: Supabase JS no está disponible.");
+    if (
+      !config.supabaseUrl ||
+      !(config.supabaseKey || config.supabaseAnonKey)
+    ) {
+      mostrarEstado(
+        "❌ La configuración de Supabase está incompleta.",
+        true
+      );
       return;
     }
 
-    const button = document.getElementById("deleteAccountButton");
-    const status = document.getElementById("deleteStatus");
-
-    if (!button) {
-      console.error("EmiMatch: no se encontró #deleteAccountButton.");
+    if (
+      !window.supabase ||
+      typeof window.supabase.createClient !== "function"
+    ) {
+      mostrarEstado(
+        "❌ No se pudo cargar Supabase.",
+        true
+      );
       return;
     }
 
     const supabase = window.supabase.createClient(
       config.supabaseUrl,
-      config.supabaseKey || config.supabaseAnonKey
+      config.supabaseKey || config.supabaseAnonKey,
+      {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true
+        }
+      }
     );
 
-    let deleting = false;
+    let eliminando = false;
 
-    function showStatus(message, isError = false) {
-      if (!status) return;
+    async function eliminarCuenta() {
+      if (eliminando) {
+        return;
+      }
 
-      status.hidden = false;
-      status.textContent = message;
-      status.setAttribute(
-        "data-type",
-        isError ? "error" : "success"
-      );
-    }
-
-    async function deleteAccount() {
-      if (deleting) return;
-
-      const first = window.confirm(
+      const confirmar = window.confirm(
         "¿Seguro que querés eliminar tu cuenta de EmiMatch?\n\n" +
         "Esta acción es permanente."
       );
 
-      if (!first) return;
+      if (!confirmar) {
+        return;
+      }
 
-      const second = window.confirm(
+      const ultimaConfirmacion = window.confirm(
         "⚠️ ÚLTIMA CONFIRMACIÓN\n\n" +
-        "Se eliminará tu cuenta y sus datos relacionados.\n\n" +
+        "Se eliminará tu cuenta y los datos relacionados.\n\n" +
         "¿Querés continuar?"
       );
 
-      if (!second) return;
+      if (!ultimaConfirmacion) {
+        return;
+      }
 
-      deleting = true;
+      eliminando = true;
 
-      button.disabled = true;
-      button.textContent = "⏳ Eliminando cuenta...";
+      boton.disabled = true;
+      boton.textContent = "⏳ Eliminando cuenta...";
 
-      showStatus("⏳ Verificando sesión...");
+      mostrarEstado(
+        "⏳ Verificando tu sesión..."
+      );
 
       try {
+        /*
+         * 1. Obtener la sesión actual.
+         */
         let {
-          data: sessionData,
-          error: sessionError
+          data: sesionData,
+          error: sesionError
         } = await supabase.auth.getSession();
 
-        if (sessionError) {
-          throw new Error(sessionError.message);
+        if (sesionError) {
+          throw new Error(
+            sesionError.message ||
+            "No se pudo obtener la sesión."
+          );
         }
 
-        let session = sessionData?.session;
+        let sesion = sesionData?.session;
 
-        if (!session?.access_token) {
+        /*
+         * 2. Si no existe una sesión válida,
+         * intentar renovarla.
+         */
+        if (!sesion?.access_token) {
           const {
             data: refreshData,
             error: refreshError
@@ -96,120 +151,184 @@
             );
           }
 
-          session = refreshData?.session;
+          sesion = refreshData?.session;
         }
 
-        if (!session?.access_token) {
+        /*
+         * 3. Comprobar nuevamente el token.
+         */
+        if (!sesion?.access_token) {
           throw new Error(
             "No hay una sesión válida. Iniciá sesión nuevamente."
           );
         }
 
-        showStatus("⏳ Eliminando tu cuenta...");
-
-        const {
-          data,
-          error
-        } = await supabase.functions.invoke(
-          "delete-account",
-          {
-            method: "POST",
-            body: {}
-          }
+        mostrarEstado(
+          "⏳ Eliminando tu cuenta..."
         );
 
+        /*
+         * 4. Llamar a la Edge Function.
+         *
+         * Supabase JS envía automáticamente
+         * el token de la sesión autenticada.
+         */
+        const resultado =
+          await supabase.functions.invoke(
+            "delete-account",
+            {
+              method: "POST",
+              body: {}
+            }
+          );
+
+        const datos = resultado.data;
+        const error = resultado.error;
+
+        /*
+         * 5. Analizar respuesta de la Edge Function.
+         */
         if (error) {
           console.error(
-            "EmiMatch — delete-account:",
+            "EmiMatch — error delete-account:",
             error
           );
 
-          let message =
+          let mensaje =
             error.message ||
-            "No se pudo contactar con Supabase.";
+            "No se pudo ejecutar la eliminación de la cuenta.";
 
+          /*
+           * Intentar leer el JSON enviado
+           * por la Edge Function.
+           */
           if (error.context) {
             try {
-              const response = error.context;
+              const respuesta =
+                typeof error.context.clone === "function"
+                  ? error.context.clone()
+                  : error.context;
 
-              if (typeof response.clone === "function") {
-                const cloned = response.clone();
-                const responseData = await cloned.json();
+              if (
+                respuesta &&
+                typeof respuesta.json === "function"
+              ) {
+                const cuerpo =
+                  await respuesta.json();
 
-                if (responseData?.error) {
-                  message = responseData.error;
+                if (cuerpo?.error) {
+                  mensaje = cuerpo.error;
                 }
               }
-            } catch (_) {
-              // Conservamos el mensaje principal.
+            } catch (leerError) {
+              console.warn(
+                "EmiMatch: no se pudo leer la respuesta:",
+                leerError
+              );
             }
           }
 
-          throw new Error(message);
+          throw new Error(mensaje);
         }
 
-        if (!data?.success) {
+        /*
+         * 6. Comprobar respuesta lógica.
+         */
+        if (!datos || datos.success !== true) {
           throw new Error(
-            data?.error ||
+            datos?.error ||
             "La cuenta no pudo ser eliminada."
           );
         }
 
-        showStatus(
+        /*
+         * 7. Éxito.
+         */
+        mostrarEstado(
           "✅ Cuenta eliminada correctamente."
         );
 
-        button.disabled = true;
-        button.textContent =
+        boton.disabled = true;
+        boton.textContent =
           "✅ Cuenta eliminada";
 
+        /*
+         * 8. Limpiar sesión local.
+         */
         try {
           await supabase.auth.signOut();
-        } catch (signOutError) {
+        } catch (errorSalida) {
           console.warn(
-            "EmiMatch: no se pudo limpiar la sesión local:",
-            signOutError
+            "EmiMatch: no se pudo cerrar la sesión local:",
+            errorSalida
           );
         }
 
-        setTimeout(() => {
-          window.location.replace("index.html");
-        }, 1200);
+        /*
+         * 9. Volver al inicio.
+         */
+        window.setTimeout(function () {
+          window.location.replace(
+            "index.html"
+          );
+        }, 1500);
 
       } catch (error) {
         console.error(
-          "EmiMatch — error eliminando cuenta:",
+          "EmiMatch — eliminación de cuenta:",
           error
         );
 
-        deleting = false;
+        eliminando = false;
 
-        button.disabled = false;
-        button.textContent =
+        boton.disabled = false;
+        boton.textContent =
           "🗑️ Eliminar mi cuenta";
 
-        showStatus(
-          `❌ ${
+        mostrarEstado(
+          "❌ " +
+          (
             error?.message ||
             "No se pudo eliminar la cuenta."
-          }`,
+          ),
           true
         );
       }
     }
 
-    button.addEventListener(
+    /*
+     * Evitar registrar dos veces el evento.
+     */
+    if (
+      boton.dataset.emimatchDeleteReady === "true"
+    ) {
+      return;
+    }
+
+    boton.dataset.emimatchDeleteReady = "true";
+
+    boton.addEventListener(
       "click",
-      deleteAccount
+      eliminarCuenta
+    );
+
+    console.log(
+      "EmiMatch: eliminación de cuenta preparada correctamente."
     );
   }
 
-  if (document.readyState === "loading") {
+  /*
+   * Ejecutar cuando el DOM esté disponible.
+   */
+  if (
+    document.readyState === "loading"
+  ) {
     document.addEventListener(
       "DOMContentLoaded",
-      init
+      iniciarEliminacion,
+      { once: true }
     );
   } else {
-    init();
+    iniciarEliminacion();
   }
 })();
