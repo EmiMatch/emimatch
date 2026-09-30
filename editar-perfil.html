@@ -1,654 +1,341 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#10152f">
+<!-- =====================================================
+     EMI MATCH — MI ÁLBUM DE FOTOS
+     ===================================================== -->
 
-  <title>Editar perfil — EmiMatch</title>
+<section id="albumSection" class="album-section">
 
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="assets/css/app.css">
+  <div class="album-header">
 
-  <style>
-    :root {
-      --bg: #0b1024;
-      --card: rgba(255,255,255,.07);
-      --border: rgba(255,255,255,.12);
-      --text: #f7f8ff;
-      --muted: #aeb5d0;
-      --primary: #5865f2;
-      --primary-2: #7459e8;
-      --gold: #d9b45b;
-      --danger: #ff5c72;
-    }
+    <div>
+      <h2>📸 Mi álbum</h2>
 
-    * {
-      box-sizing: border-box;
-    }
+      <p>
+        Agregá fotos para mostrar más de vos.
+      </p>
+    </div>
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      padding: 18px 14px 40px;
-      background:
-        radial-gradient(
-          circle at top left,
-          rgba(88,101,242,.22),
-          transparent 35%
-        ),
-        radial-gradient(
-          circle at top right,
-          rgba(217,180,91,.13),
-          transparent 30%
-        ),
-        var(--bg);
-      color: var(--text);
-      font-family:
-        Inter,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
-    }
+    <span id="albumCount">
+      0 fotos
+    </span>
 
-    .page {
-      width: min(100%, 680px);
-      margin: 0 auto;
-    }
+  </div>
 
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 18px;
-    }
+  <!-- Selector de fotos -->
 
-    .topbar h1 {
-      margin: 0;
-      font-size: 24px;
-      font-weight: 800;
-    }
+  <label
+    for="albumInput"
+    class="album-upload-button"
+  >
+    ➕ Agregar fotos
+  </label>
 
-    .back {
-      color: var(--text);
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 700;
-    }
+  <input
+    id="albumInput"
+    type="file"
+    accept="image/jpeg,image/png,image/webp"
+    multiple
+    hidden
+  >
 
-    .card {
-      padding: 22px;
-      border: 1px solid var(--border);
-      border-radius: 26px;
-      background: var(--card);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      box-shadow: 0 20px 60px rgba(0,0,0,.28);
-    }
+  <!-- Estado de carga -->
 
-    .intro {
-      margin-bottom: 22px;
-    }
+  <div
+    id="albumStatus"
+    class="album-status"
+    aria-live="polite"
+  ></div>
 
-    .intro h2 {
-      margin: 0 0 7px;
-      font-size: 22px;
-    }
+  <!-- Galería -->
 
-    .intro p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.5;
-      font-size: 14px;
-    }
+  <div
+    id="albumGrid"
+    class="album-grid"
+  >
 
-    .field {
-      margin-bottom: 17px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 7px;
-      color: var(--text);
-      font-size: 14px;
-      font-weight: 800;
-    }
-
-    input,
-    textarea {
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 15px;
-      outline: none;
-      padding: 13px 14px;
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      font: inherit;
-    }
-
-    input:focus,
-    textarea:focus {
-      border-color: rgba(88,101,242,.8);
-      box-shadow: 0 0 0 3px rgba(88,101,242,.14);
-    }
-
-    textarea {
-      min-height: 130px;
-      resize: vertical;
-      line-height: 1.5;
-    }
-
-    input::placeholder,
-    textarea::placeholder {
-      color: #858dab;
-    }
-
-    .help {
-      margin-top: 6px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .actions {
-      display: grid;
-      gap: 10px;
-      margin-top: 24px;
-    }
-
-    button,
-    .button-link {
-      width: 100%;
-      min-height: 50px;
-      border: 0;
-      border-radius: 16px;
-      padding: 13px 16px;
-      font: inherit;
-      font-weight: 800;
-      cursor: pointer;
-      text-align: center;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .save {
-      color: white;
-      background:
-        linear-gradient(
-          135deg,
-          var(--primary),
-          var(--primary-2)
-        );
-    }
-
-    .save:disabled {
-      opacity: .6;
-      cursor: not-allowed;
-    }
-
-    .cancel {
-      color: var(--text);
-      background: rgba(255,255,255,.06);
-      border: 1px solid var(--border);
-    }
-
-    .status {
-      min-height: 24px;
-      margin-top: 15px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.45;
-    }
-
-    .status.success {
-      color: #9ee6bd;
-    }
-
-    .status.error {
-      color: #ffadb8;
-    }
-
-    .loading {
-      text-align: center;
-      color: var(--muted);
-      padding: 45px 10px;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    @media (max-width: 480px) {
-      .card {
-        padding: 18px;
-        border-radius: 22px;
-      }
-
-      .topbar h1 {
-        font-size: 21px;
-      }
-    }
-  </style>
-</head>
-
-<body>
-
-  <main class="page">
-
-    <header class="topbar">
-      <h1>Editar perfil</h1>
-
-      <a
-        class="back"
-        href="perfil.html"
-      >
-        ← Volver
-      </a>
-    </header>
-
-    <section id="loading" class="card loading">
-      Cargando tu perfil...
-    </section>
-
-    <section id="editor" class="card hidden">
-
-      <div class="intro">
-        <h2>Personalizá tu perfil</h2>
-
-        <p>
-          Actualizá la información que otras personas
-          podrán ver en EmiMatch.
-        </p>
+    <div
+      id="albumEmpty"
+      class="album-empty"
+    >
+      <div class="album-empty-icon">
+        🖼️
       </div>
 
-      <form id="profileForm">
+      <strong>
+        Tu álbum está vacío
+      </strong>
 
-        <div class="field">
-          <label for="nombre">
-            Nombre
-          </label>
+      <span>
+        Agregá algunas fotos para completar tu perfil.
+      </span>
+    </div>
 
-          <input
-            id="nombre"
-            name="nombre"
-            type="text"
-            maxlength="80"
-            autocomplete="name"
-            placeholder="Tu nombre"
-          >
-        </div>
+  </div>
 
-        <div class="field">
-          <label for="ciudad">
-            Ciudad
-          </label>
+</section>
 
-          <input
-            id="ciudad"
-            name="ciudad"
-            type="text"
-            maxlength="100"
-            autocomplete="address-level2"
-            placeholder="Buenos Aires"
-          >
-        </div>
 
-        <div class="field">
-          <label for="edad">
-            Edad
-          </label>
+<style>
 
-          <input
-            id="edad"
-            name="edad"
-            type="number"
-            min="18"
-            max="100"
-            inputmode="numeric"
-            placeholder="31"
-          >
+  .album-section {
+    margin-top: 28px;
+    padding: 20px;
 
-          <div class="help">
-            La edad debe estar entre 18 y 100 años.
-          </div>
-        </div>
+    border-radius: 22px;
 
-        <div class="field">
-          <label for="descripcion">
-            Descripción
-          </label>
+    background:
+      rgba(255,255,255,.06);
 
-          <textarea
-            id="descripcion"
-            name="descripcion"
-            maxlength="500"
-            placeholder="Contá algo sobre vos..."
-          ></textarea>
+    border:
+      1px solid rgba(255,255,255,.10);
 
-          <div class="help">
-            Máximo 500 caracteres.
-          </div>
-        </div>
+    box-shadow:
+      0 15px 45px rgba(0,0,0,.18);
+  }
 
-        <div class="actions">
 
-          <button
-            id="saveButton"
-            class="save"
-            type="submit"
-          >
-            Guardar cambios
-          </button>
+  .album-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-          <a
-            class="button-link cancel"
-            href="perfil.html"
-          >
-            Cancelar
-          </a>
+    gap: 16px;
 
-        </div>
+    margin-bottom: 16px;
+  }
 
-        <div
-          id="status"
-          class="status"
-          aria-live="polite"
-        ></div>
 
-      </form>
+  .album-header h2 {
+    margin: 0;
 
-    </section>
+    font-size: 20px;
+    font-weight: 800;
+  }
 
-  </main>
 
-  <script src="assets/js/config.js"></script>
+  .album-header p {
+    margin: 6px 0 0;
 
-  <script type="module">
+    color:
+      rgba(255,255,255,.65);
 
-    const loading = document.getElementById("loading");
-    const editor = document.getElementById("editor");
+    font-size: 13px;
+  }
 
-    const form = document.getElementById("profileForm");
-    const saveButton = document.getElementById("saveButton");
 
-    const nombreInput = document.getElementById("nombre");
-    const ciudadInput = document.getElementById("ciudad");
-    const edadInput = document.getElementById("edad");
-    const descripcionInput =
-      document.getElementById("descripcion");
+  #albumCount {
+    flex-shrink: 0;
 
-    const statusElement =
-      document.getElementById("status");
+    padding:
+      7px 10px;
 
-    let client = null;
-    let currentUser = null;
+    border-radius: 999px;
 
-    function setStatus(message, type = "") {
-      statusElement.textContent = message || "";
-      statusElement.className = `status ${type}`;
-    }
+    background:
+      rgba(255,255,255,.08);
 
-    function getConfig() {
+    color:
+      rgba(255,255,255,.75);
 
-      const config =
-        window.EMIMATCH_CONFIG || {};
+    font-size: 12px;
 
-      if (
-        !config.supabaseUrl ||
-        !config.supabaseAnonKey
-      ) {
-        throw new Error(
-          "Configuración de Supabase incompleta."
-        );
-      }
+    font-weight: 700;
+  }
 
-      return config;
-    }
 
-    async function createSupabaseClient() {
+  .album-upload-button {
+    display: flex;
 
-      const config = getConfig();
+    align-items: center;
+    justify-content: center;
 
-      const module = await import(
-        "https://esm.sh/@supabase/supabase-js@2"
+    min-height: 48px;
+
+    padding:
+      12px 16px;
+
+    border-radius: 15px;
+
+    cursor: pointer;
+
+    color: #fff;
+
+    font-weight: 800;
+
+    background:
+      linear-gradient(
+        135deg,
+        #7654d8,
+        #a14fbc
       );
 
-      return module.createClient(
-        config.supabaseUrl,
-        config.supabaseAnonKey
-      );
+    box-shadow:
+      0 10px 25px rgba(118,84,216,.20);
+
+    transition:
+      transform .15s ease,
+      opacity .15s ease;
+  }
+
+
+  .album-upload-button:active {
+    transform: scale(.98);
+  }
+
+
+  .album-status {
+    min-height: 22px;
+
+    margin:
+      12px 2px;
+
+    text-align: center;
+
+    color:
+      rgba(255,255,255,.72);
+
+    font-size: 13px;
+  }
+
+
+  .album-grid {
+    display: grid;
+
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+
+    gap: 9px;
+
+    margin-top: 14px;
+  }
+
+
+  .album-item {
+    position: relative;
+
+    overflow: hidden;
+
+    aspect-ratio: 1 / 1;
+
+    border-radius: 15px;
+
+    background:
+      rgba(255,255,255,.06);
+
+    border:
+      1px solid rgba(255,255,255,.08);
+  }
+
+
+  .album-item img {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+  }
+
+
+  .album-primary {
+    position: absolute;
+
+    left: 7px;
+    top: 7px;
+
+    padding:
+      5px 7px;
+
+    border-radius: 999px;
+
+    background:
+      rgba(0,0,0,.68);
+
+    color: #fff;
+
+    font-size: 10px;
+
+    font-weight: 800;
+  }
+
+
+  .album-delete {
+    position: absolute;
+
+    right: 7px;
+    bottom: 7px;
+
+    width: 34px;
+    height: 34px;
+
+    border: 0;
+
+    border-radius: 50%;
+
+    cursor: pointer;
+
+    background:
+      rgba(0,0,0,.72);
+
+    color: #fff;
+
+    font-size: 15px;
+  }
+
+
+  .album-empty {
+    grid-column: 1 / -1;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-direction: column;
+
+    gap: 7px;
+
+    min-height: 150px;
+
+    text-align: center;
+
+    color:
+      rgba(255,255,255,.65);
+  }
+
+
+  .album-empty-icon {
+    font-size: 38px;
+
+    margin-bottom: 3px;
+  }
+
+
+  .album-empty strong {
+    color: #fff;
+
+    font-size: 14px;
+  }
+
+
+  .album-empty span {
+    max-width: 280px;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+  }
+
+
+  @media (max-width: 420px) {
+
+    .album-section {
+      padding: 16px;
     }
 
-    async function loadProfile() {
-
-      try {
-
-        client =
-          await createSupabaseClient();
-
-        const {
-          data: {
-            user
-          },
-          error: userError
-        } = await client.auth.getUser();
-
-        if (userError) {
-          throw userError;
-        }
-
-        if (!user) {
-          window.location.href =
-            "index.html";
-          return;
-        }
-
-        currentUser = user;
-
-        const {
-          data: profile,
-          error: profileError
-        } = await client
-          .from("profiles")
-          .select("*")
-          .eq("id", user.id)
-          .maybeSingle();
-
-        if (profileError) {
-          throw profileError;
-        }
-
-        if (!profile) {
-          throw new Error(
-            "No encontramos tu perfil."
-          );
-        }
-
-        nombreInput.value =
-          profile.nombre ||
-          profile.name ||
-          user.user_metadata?.nombre ||
-          "";
-
-        ciudadInput.value =
-          profile.ciudad ||
-          profile.city ||
-          "";
-
-        const age =
-          profile.edad ??
-          profile.age ??
-          "";
-
-        edadInput.value =
-          age === null ||
-          age === undefined
-            ? ""
-            : String(age);
-
-        descripcionInput.value =
-          profile.descripcion ||
-          profile.bio ||
-          "";
-
-        loading.classList.add("hidden");
-        editor.classList.remove("hidden");
-
-      } catch (error) {
-
-        console.error(
-          "Error cargando editor:",
-          error
-        );
-
-        loading.innerHTML = `
-          <strong>No pudimos cargar tu perfil.</strong>
-          <br><br>
-          ${escapeHtml(
-            error?.message ||
-            "Error desconocido"
-          )}
-          <br><br>
-          <a
-            href="perfil.html"
-            style="color:#fff;"
-          >
-            Volver al perfil
-          </a>
-        `;
-
-      }
+    .album-grid {
+      gap: 7px;
     }
 
-    async function saveProfile(event) {
+  }
 
-      event.preventDefault();
-
-      if (!client || !currentUser) {
-        setStatus(
-          "La sesión todavía no está disponible.",
-          "error"
-        );
-        return;
-      }
-
-      const nombre =
-        nombreInput.value.trim();
-
-      const ciudad =
-        ciudadInput.value.trim();
-
-      const descripcion =
-        descripcionInput.value.trim();
-
-      const edadTexto =
-        edadInput.value.trim();
-
-      if (!nombre) {
-        setStatus(
-          "Ingresá tu nombre.",
-          "error"
-        );
-        nombreInput.focus();
-        return;
-      }
-
-      let edad = null;
-
-      if (edadTexto) {
-
-        edad = Number(edadTexto);
-
-        if (
-          !Number.isInteger(edad) ||
-          edad < 18 ||
-          edad > 100
-        ) {
-          setStatus(
-            "La edad debe estar entre 18 y 100 años.",
-            "error"
-          );
-          edadInput.focus();
-          return;
-        }
-      }
-
-      saveButton.disabled = true;
-      saveButton.textContent =
-        "Guardando...";
-
-      setStatus("");
-
-      try {
-
-        const {
-          error
-        } = await client
-          .from("profiles")
-          .update({
-            nombre,
-            ciudad,
-            edad,
-            descripcion
-          })
-          .eq("id", currentUser.id);
-
-        if (error) {
-          throw error;
-        }
-
-        setStatus(
-          "Perfil actualizado correctamente.",
-          "success"
-        );
-
-        setTimeout(() => {
-          window.location.href =
-            "perfil.html";
-        }, 700);
-
-      } catch (error) {
-
-        console.error(
-          "Error guardando perfil:",
-          error
-        );
-
-        setStatus(
-          error?.message ||
-          "No pudimos guardar los cambios.",
-          "error"
-        );
-
-        saveButton.disabled = false;
-        saveButton.textContent =
-          "Guardar cambios";
-      }
-    }
-
-    function escapeHtml(value) {
-
-      return String(value)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-
-    }
-
-    form.addEventListener(
-      "submit",
-      saveProfile
-    );
-
-    loadProfile();
-
-  </script>
-
-</body>
-  </html>
+</style>
