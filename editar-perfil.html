@@ -1,341 +1,681 @@
-<!-- =====================================================
-     EMI MATCH — MI ÁLBUM DE FOTOS
-     ===================================================== -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#10152f">
+<title>Editar perfil — EmiMatch</title>
+<link rel="stylesheet" href="assets/css/app.css">
 
-<section id="albumSection" class="album-section">
+<style>
+:root{
+--bg:#0b1024;--card:rgba(255,255,255,.07);
+--border:rgba(255,255,255,.12);--text:#fff;
+--muted:#aeb5d0;--primary:#5865f2;--primary2:#7459e8
+}
+*{box-sizing:border-box}
+body{
+margin:0;min-height:100vh;padding:18px 14px 40px;
+background:radial-gradient(circle at top left,rgba(88,101,242,.22),transparent 35%),var(--bg);
+color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif
+}
+.page{width:min(100%,680px);margin:auto}
+.topbar{
+display:flex;justify-content:space-between;align-items:center;
+margin-bottom:18px
+}
+.topbar h1{margin:0;font-size:24px}
+.back{color:#fff;text-decoration:none;font-weight:700}
+.card{
+padding:22px;border:1px solid var(--border);border-radius:26px;
+background:var(--card);backdrop-filter:blur(18px)
+}
+.hidden{display:none!important}
+.loading{text-align:center;color:var(--muted);padding:45px 10px}
+.intro{margin-bottom:22px}
+.intro h2{margin:0 0 7px}
+.intro p,.help{color:var(--muted);font-size:14px}
+.field{margin-bottom:17px}
+label{display:block;margin-bottom:7px;font-weight:800}
+input,textarea{
+width:100%;padding:13px 14px;border:1px solid var(--border);
+border-radius:15px;background:rgba(255,255,255,.06);
+color:#fff;font:inherit
+}
+textarea{min-height:130px;resize:vertical}
+.actions{display:grid;gap:10px;margin-top:24px}
+button,.button-link{
+width:100%;min-height:50px;border:0;border-radius:16px;
+padding:13px 16px;font:inherit;font-weight:800;
+display:flex;align-items:center;justify-content:center;
+text-align:center;text-decoration:none;cursor:pointer
+}
+.save{
+background:linear-gradient(135deg,var(--primary),var(--primary2));
+color:#fff
+}
+.cancel{
+background:rgba(255,255,255,.06);color:#fff;
+border:1px solid var(--border)
+}
+.status,.album-status{
+text-align:center;min-height:24px;margin-top:12px
+}
+.success{color:#9ee6bd}
+.error{color:#ffadb8}
 
-  <div class="album-header">
+/* ALBUM */
+.album{
+margin-top:28px;padding:20px;border-radius:22px;
+border:1px solid var(--border);
+background:rgba(255,255,255,.04)
+}
+.album-head{
+display:flex;justify-content:space-between;
+align-items:center;margin-bottom:15px
+}
+.album h2{margin:0;font-size:20px}
+.album p{
+margin:5px 0 0;color:var(--muted);font-size:13px
+}
+#albumCount{
+padding:7px 10px;border-radius:99px;
+background:rgba(255,255,255,.08);font-size:12px
+}
+.upload{
+width:100%;min-height:48px;padding:13px;border-radius:15px;
+display:flex;align-items:center;justify-content:center;
+background:linear-gradient(135deg,#7654d8,#a14fbc);
+color:#fff;font-weight:800;cursor:pointer
+}
+.album-grid{
+display:grid;grid-template-columns:repeat(3,1fr);
+gap:8px;margin-top:14px
+}
+.album-item{
+position:relative;aspect-ratio:1;overflow:hidden;
+border-radius:14px;background:rgba(255,255,255,.06)
+}
+.album-item img{
+width:100%;height:100%;object-fit:cover
+}
+.delete{
+position:absolute;right:6px;bottom:6px;
+width:34px;height:34px;border:0;border-radius:50%;
+background:rgba(0,0,0,.75);color:#fff
+}
+.empty{
+grid-column:1/-1;text-align:center;
+color:var(--muted);padding:30px 10px
+}
+@media(max-width:480px){
+.card,.album{padding:17px}
+}
+</style>
+</head>
 
-    <div>
-      <h2>📸 Mi álbum</h2>
+<body>
 
-      <p>
-        Agregá fotos para mostrar más de vos.
-      </p>
-    </div>
+<main class="page">
 
-    <span id="albumCount">
-      0 fotos
-    </span>
+<header class="topbar">
+<h1>Editar perfil</h1>
+<a class="back" href="perfil.html">← Volver</a>
+</header>
 
-  </div>
+<section id="loading" class="card loading">
+Cargando tu perfil...
+</section>
 
-  <!-- Selector de fotos -->
+<section id="editor" class="card hidden">
 
-  <label
-    for="albumInput"
-    class="album-upload-button"
-  >
-    ➕ Agregar fotos
-  </label>
+<div class="intro">
+<h2>Personalizá tu perfil</h2>
+<p>
+Actualizá la información que otras personas podrán ver en EmiMatch.
+</p>
+</div>
 
-  <input
-    id="albumInput"
-    type="file"
-    accept="image/jpeg,image/png,image/webp"
-    multiple
-    hidden
-  >
+<form id="profileForm">
 
-  <!-- Estado de carga -->
+<div class="field">
+<label for="nombre">Nombre</label>
+<input id="nombre" type="text" maxlength="80"
+placeholder="Tu nombre">
+</div>
 
-  <div
-    id="albumStatus"
-    class="album-status"
-    aria-live="polite"
-  ></div>
+<div class="field">
+<label for="ciudad">Ciudad</label>
+<input id="ciudad" type="text" maxlength="100"
+placeholder="Buenos Aires">
+</div>
 
-  <!-- Galería -->
+<div class="field">
+<label for="edad">Edad</label>
+<input id="edad" type="number" min="18" max="100"
+placeholder="31">
+<div class="help">
+La edad debe estar entre 18 y 100 años.
+</div>
+</div>
 
-  <div
-    id="albumGrid"
-    class="album-grid"
-  >
+<div class="field">
+<label for="descripcion">Descripción</label>
+<textarea id="descripcion" maxlength="500"
+placeholder="Contá algo sobre vos..."></textarea>
+<div class="help">
+Máximo 500 caracteres.
+</div>
+</div>
 
-    <div
-      id="albumEmpty"
-      class="album-empty"
-    >
-      <div class="album-empty-icon">
-        🖼️
-      </div>
+<div class="actions">
+<button id="saveButton" class="save" type="submit">
+Guardar cambios
+</button>
 
-      <strong>
-        Tu álbum está vacío
-      </strong>
+<a class="button-link cancel" href="perfil.html">
+Cancelar
+</a>
+</div>
 
-      <span>
-        Agregá algunas fotos para completar tu perfil.
-      </span>
-    </div>
+<div id="status" class="status"></div>
 
-  </div>
+</form>
+
+<section class="album">
+
+<div class="album-head">
+
+<div>
+<h2>📸 Mi álbum</h2>
+<p>Agregá fotos para mostrar más de vos.</p>
+</div>
+
+<span id="albumCount">0 fotos</span>
+
+</div>
+
+<label class="upload" for="albumInput">
+➕ Agregar fotos
+</label>
+
+<input
+id="albumInput"
+type="file"
+accept="image/jpeg,image/png,image/webp"
+multiple
+hidden
+>
+
+<div id="albumStatus" class="album-status"></div>
+
+<div id="albumGrid" class="album-grid">
+
+<div class="empty">
+🖼️<br>
+<strong>Tu álbum está vacío</strong>
+</div>
+
+</div>
 
 </section>
 
+</section>
 
-<style>
+</main>
 
-  .album-section {
-    margin-top: 28px;
-    padding: 20px;
+<script src="assets/js/config.js"></script>
 
-    border-radius: 22px;
+<script type="module">
 
-    background:
-      rgba(255,255,255,.06);
+const $=id=>document.getElementById(id);
 
-    border:
-      1px solid rgba(255,255,255,.10);
+let supabase;
+let user;
 
-    box-shadow:
-      0 15px 45px rgba(0,0,0,.18);
-  }
+const MAX_PHOTOS=20;
+const MAX_SIZE=8*1024*1024;
 
+function albumStatus(text,type=""){
+const el=$("albumStatus");
+if(!el)return;
+el.textContent=text;
+el.className="album-status "+type;
+}
 
-  .album-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+async function init(){
 
-    gap: 16px;
+try{
 
-    margin-bottom: 16px;
-  }
+const config=window.EMIMATCH_CONFIG;
 
+if(!config?.supabaseUrl||
+!config?.supabaseAnonKey){
 
-  .album-header h2 {
-    margin: 0;
+throw new Error(
+"Configuración de Supabase incompleta."
+);
 
-    font-size: 20px;
-    font-weight: 800;
-  }
+}
 
+const {createClient}=await import(
+"https://esm.sh/@supabase/supabase-js@2"
+);
 
-  .album-header p {
-    margin: 6px 0 0;
+supabase=createClient(
+config.supabaseUrl,
+config.supabaseAnonKey
+);
 
-    color:
-      rgba(255,255,255,.65);
+const {data,error}=
+await supabase.auth.getUser();
 
-    font-size: 13px;
-  }
+if(error)throw error;
 
+user=data.user;
 
-  #albumCount {
-    flex-shrink: 0;
+if(!user){
+location.href="index.html";
+return;
+}
 
-    padding:
-      7px 10px;
+const {data:profile,error:profileError}=
+await supabase
+.from("profiles")
+.select("*")
+.eq("id",user.id)
+.maybeSingle();
 
-    border-radius: 999px;
+if(profileError)throw profileError;
 
-    background:
-      rgba(255,255,255,.08);
+if(!profile){
+throw new Error("No encontramos tu perfil.");
+}
 
-    color:
-      rgba(255,255,255,.75);
+$("nombre").value=profile.nombre||"";
+$("ciudad").value=profile.ciudad||"";
+$("edad").value=profile.edad??"";
+$("descripcion").value=profile.descripcion||"";
 
-    font-size: 12px;
+$("loading").classList.add("hidden");
+$("editor").classList.remove("hidden");
 
-    font-weight: 700;
-  }
+await loadAlbum();
 
+}catch(error){
 
-  .album-upload-button {
-    display: flex;
+console.error(error);
 
-    align-items: center;
-    justify-content: center;
+$("loading").innerHTML=
+"<strong>No pudimos cargar tu perfil.</strong><br><br>"+
+(error.message||"Error desconocido");
 
-    min-height: 48px;
+}
 
-    padding:
-      12px 16px;
+}
 
-    border-radius: 15px;
+async function saveProfile(event){
 
-    cursor: pointer;
+event.preventDefault();
 
-    color: #fff;
+const nombre=$("nombre").value.trim();
+const ciudad=$("ciudad").value.trim();
+const descripcion=$("descripcion").value.trim();
+const edadText=$("edad").value.trim();
 
-    font-weight: 800;
+if(!nombre){
+$("status").textContent="Ingresá tu nombre.";
+return;
+}
 
-    background:
-      linear-gradient(
-        135deg,
-        #7654d8,
-        #a14fbc
-      );
+let edad=null;
 
-    box-shadow:
-      0 10px 25px rgba(118,84,216,.20);
+if(edadText){
 
-    transition:
-      transform .15s ease,
-      opacity .15s ease;
-  }
+edad=Number(edadText);
 
+if(!Number.isInteger(edad)||
+edad<18||edad>100){
 
-  .album-upload-button:active {
-    transform: scale(.98);
-  }
+$("status").textContent=
+"La edad debe estar entre 18 y 100 años.";
 
+return;
+}
 
-  .album-status {
-    min-height: 22px;
+}
 
-    margin:
-      12px 2px;
+$("saveButton").disabled=true;
+$("saveButton").textContent="Guardando...";
 
-    text-align: center;
+try{
 
-    color:
-      rgba(255,255,255,.72);
+const {error}=await supabase
+.from("profiles")
+.update({
+nombre,
+ciudad,
+edad,
+descripcion
+})
+.eq("id",user.id);
 
-    font-size: 13px;
-  }
+if(error)throw error;
 
+$("status").textContent=
+"Perfil actualizado correctamente.";
 
-  .album-grid {
-    display: grid;
+setTimeout(
+()=>location.href="perfil.html",
+700
+);
 
-    grid-template-columns:
-      repeat(3, minmax(0, 1fr));
+}catch(error){
 
-    gap: 9px;
+$("status").textContent=
+error.message||
+"No pudimos guardar los cambios.";
 
-    margin-top: 14px;
-  }
+$("saveButton").disabled=false;
+$("saveButton").textContent=
+"Guardar cambios";
 
+}
 
-  .album-item {
-    position: relative;
+}
 
-    overflow: hidden;
+async function loadAlbum(){
 
-    aspect-ratio: 1 / 1;
+albumStatus("Cargando fotos...");
 
-    border-radius: 15px;
+try{
 
-    background:
-      rgba(255,255,255,.06);
+const {data,error}=await supabase
+.from("profile_photos")
+.select(
+"id,photo_url,storage_path,is_primary,created_at"
+)
+.eq("user_id",user.id)
+.order("is_primary",{ascending:false})
+.order("created_at",{ascending:true});
 
-    border:
-      1px solid rgba(255,255,255,.08);
-  }
+if(error)throw error;
 
+renderAlbum(data||[]);
 
-  .album-item img {
-    width: 100%;
-    height: 100%;
+albumStatus("");
 
-    display: block;
+}catch(error){
 
-    object-fit: cover;
-  }
+console.error("Álbum:",error);
 
+albumStatus(
+error.message||
+"No pudimos cargar las fotos.",
+"error"
+);
 
-  .album-primary {
-    position: absolute;
+}
 
-    left: 7px;
-    top: 7px;
+}
 
-    padding:
-      5px 7px;
+function renderAlbum(photos){
 
-    border-radius: 999px;
+$("albumCount").textContent=
+`${photos.length} ${
+photos.length===1?"foto":"fotos"
+}`;
 
-    background:
-      rgba(0,0,0,.68);
+const grid=$("albumGrid");
 
-    color: #fff;
+grid.innerHTML="";
 
-    font-size: 10px;
+if(!photos.length){
 
-    font-weight: 800;
-  }
+grid.innerHTML=
+`<div class="empty">
+🖼️<br>
+<strong>Tu álbum está vacío</strong>
+</div>`;
 
+return;
+}
 
-  .album-delete {
-    position: absolute;
+photos.forEach(photo=>{
 
-    right: 7px;
-    bottom: 7px;
+const item=
+document.createElement("div");
 
-    width: 34px;
-    height: 34px;
+item.className="album-item";
 
-    border: 0;
+const img=
+document.createElement("img");
 
-    border-radius: 50%;
+img.src=photo.photo_url;
+img.alt="Foto del álbum";
+img.loading="lazy";
 
-    cursor: pointer;
+const del=
+document.createElement("button");
 
-    background:
-      rgba(0,0,0,.72);
+del.className="delete";
+del.type="button";
+del.textContent="🗑️";
 
-    color: #fff;
+del.onclick=
+()=>deletePhoto(photo);
 
-    font-size: 15px;
-  }
+item.append(img,del);
 
+grid.appendChild(item);
 
-  .album-empty {
-    grid-column: 1 / -1;
+});
 
-    display: flex;
+}
+     $("albumInput").addEventListener("change",async e=>{
 
-    align-items: center;
-    justify-content: center;
+const files=[...e.target.files];
 
-    flex-direction: column;
+if(!files.length)return;
 
-    gap: 7px;
+await uploadPhotos(files);
 
-    min-height: 150px;
+e.target.value="";
 
-    text-align: center;
+});
 
-    color:
-      rgba(255,255,255,.65);
-  }
+async function uploadPhotos(files){
 
+try{
 
-  .album-empty-icon {
-    font-size: 38px;
+const {data:existing,error}=await supabase
+.from("profile_photos")
+.select("id")
+.eq("user_id",user.id);
 
-    margin-bottom: 3px;
-  }
+if(error)throw error;
 
+const current=existing?.length||0;
 
-  .album-empty strong {
-    color: #fff;
+if(current>=MAX_PHOTOS){
 
-    font-size: 14px;
-  }
+albumStatus(
+`Máximo ${MAX_PHOTOS} fotos.`,
+"error"
+);
 
+return;
+}
 
-  .album-empty span {
-    max-width: 280px;
+files=files.slice(
+0,
+MAX_PHOTOS-current
+);
 
-    font-size: 12px;
+for(let i=0;i<files.length;i++){
 
-    line-height: 1.5;
-  }
+const file=files[i];
 
+if(![
+"image/jpeg",
+"image/png",
+"image/webp"
+].includes(file.type)){
 
-  @media (max-width: 420px) {
+throw new Error(
+"Solo se permiten JPG, PNG o WebP."
+);
 
-    .album-section {
-      padding: 16px;
-    }
+}
 
-    .album-grid {
-      gap: 7px;
-    }
+if(file.size>MAX_SIZE){
 
-  }
+throw new Error(
+`${file.name} supera los 8 MB.`
+);
 
-</style>
+}
+
+albumStatus(
+`Subiendo foto ${i+1} de ${files.length}...`
+);
+
+const ext=
+file.type==="image/png"
+?"png":
+file.type==="image/webp"
+?"webp":
+"jpg";
+
+const path=
+`${user.id}/album/${crypto.randomUUID()}.${ext}`;
+
+const {error:uploadError}=
+await supabase
+.storage
+.from("avatars")
+.upload(
+path,
+file,
+{
+cacheControl:"3600",
+upsert:false,
+contentType:file.type
+}
+);
+
+if(uploadError)throw uploadError;
+
+const {data:publicData}=
+supabase
+.storage
+.from("avatars")
+.getPublicUrl(path);
+
+const {error:insertError}=
+await supabase
+.from("profile_photos")
+.insert({
+user_id:user.id,
+photo_url:publicData.publicUrl,
+storage_path:path,
+is_primary:false
+});
+
+if(insertError){
+
+await supabase
+.storage
+.from("avatars")
+.remove([path]);
+
+throw insertError;
+
+}
+
+}
+
+albumStatus(
+files.length===1
+?"Foto agregada correctamente."
+:`${files.length} fotos agregadas correctamente.`,
+"success"
+);
+
+await loadAlbum();
+
+}catch(error){
+
+console.error("Upload:",error);
+
+albumStatus(
+error.message||
+"No pudimos subir la foto.",
+"error"
+);
+
+}
+
+}
+
+async function deletePhoto(photo){
+
+if(!confirm(
+"¿Querés eliminar esta foto del álbum?"
+))return;
+
+try{
+
+albumStatus("Eliminando foto...");
+
+if(photo.storage_path){
+
+await supabase
+.storage
+.from("avatars")
+.remove([
+photo.storage_path
+]);
+
+}
+
+const {error}=await supabase
+.from("profile_photos")
+.delete()
+.eq("id",photo.id)
+.eq("user_id",user.id);
+
+if(error)throw error;
+
+albumStatus(
+"Foto eliminada correctamente.",
+"success"
+);
+
+await loadAlbum();
+
+}catch(error){
+
+console.error("Delete:",error);
+
+albumStatus(
+error.message||
+"No pudimos eliminar la foto.",
+"error"
+);
+
+}
+
+}
+
+$("profileForm").addEventListener(
+"submit",
+saveProfile
+);
+
+init();
+
+</script>
+
+</body>
+</html>
