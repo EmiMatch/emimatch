@@ -509,7 +509,7 @@
 
   </main>
 
-  <script src="assets/js/config.js"></script>
+    <script src="assets/js/config.js"></script>
 
   <script type="module">
 
@@ -552,7 +552,7 @@
     const statusElement =
       document.getElementById("status");
 
-    let client = null;
+    let supabase = null;
     let currentUser = null;
     let currentPhotoUrl = "";
 
@@ -565,7 +565,10 @@
       "image/webp"
     ];
 
-    function setStatus(message, type = "") {
+    function setStatus(
+      message,
+      type = ""
+    ) {
 
       statusElement.textContent =
         message || "";
@@ -584,15 +587,17 @@
         !config.supabaseUrl ||
         !config.supabaseAnonKey
       ) {
+
         throw new Error(
           "Configuración de Supabase incompleta."
         );
+
       }
 
       return config;
     }
 
-    async function createSupabaseClient() {
+    async function createClient() {
 
       const config =
         getConfig();
@@ -610,24 +615,32 @@
 
     function getInitials(name) {
 
-      return String(name || "EM")
+      return String(
+        name || "EM"
+      )
         .trim()
         .split(/\s+/)
         .slice(0, 2)
         .map(
           word =>
-            word.charAt(0)
+            word
+              .charAt(0)
         )
         .join("")
         .toUpperCase() || "EM";
 
     }
 
-    function showPhoto(url, name) {
+    function showPhoto(
+      url,
+      name
+    ) {
 
       if (url) {
 
-        fotoPreview.src = url;
+        fotoPreview.src =
+          url;
+
         fotoPreview.alt =
           `Foto de ${name || "perfil"}`;
 
@@ -638,18 +651,6 @@
         fotoPlaceholder.classList.add(
           "hidden"
         );
-
-        fotoPreview.onerror = () => {
-
-          fotoPreview.classList.add(
-            "hidden"
-          );
-
-          fotoPlaceholder.classList.remove(
-            "hidden"
-          );
-
-        };
 
         return;
       }
@@ -667,30 +668,17 @@
 
     }
 
-    function getFileExtension(file) {
-
-      const type =
-        String(file?.type || "")
-          .toLowerCase();
-
-      if (type === "image/png") {
-        return "png";
-      }
-
-      if (type === "image/webp") {
-        return "webp";
-      }
-
-      return "jpg";
-    }
-
-    async function uploadProfilePhoto(file) {
+    function validateImage(file) {
 
       if (!file) {
-        return currentPhotoUrl;
+        return;
       }
 
-      if (!ALLOWED_TYPES.includes(file.type)) {
+      if (
+        !ALLOWED_TYPES.includes(
+          file.type
+        )
+      ) {
 
         throw new Error(
           "La foto debe ser JPG, PNG o WebP."
@@ -698,7 +686,9 @@
 
       }
 
-      if (file.size > MAX_FILE_SIZE) {
+      if (
+        file.size > MAX_FILE_SIZE
+      ) {
 
         throw new Error(
           "La foto no puede superar los 5 MB."
@@ -706,22 +696,50 @@
 
       }
 
-      const extension =
-        getFileExtension(file);
+    }
 
-      const fileName =
-        `${currentUser.id}_${Date.now()}.${extension}`;
+    function getExtension(file) {
+
+      switch (file.type) {
+
+        case "image/png":
+          return "png";
+
+        case "image/webp":
+          return "webp";
+
+        case "image/jpeg":
+        default:
+          return "jpg";
+
+      }
+
+    }
+
+    async function uploadPhoto(file) {
+
+      validateImage(file);
+
+      const extension =
+        getExtension(file);
+
+      /*
+       * El nombre conserva el UUID del usuario.
+       * Ejemplo:
+       * UUID_1750000000000.jpg
+       */
 
       const filePath =
-        fileName;
+        `${currentUser.id}_${Date.now()}.${extension}`;
 
       setStatus(
-        "Subiendo tu foto..."
+        "Subiendo foto..."
       );
 
       const {
         error: uploadError
-      } = await client.storage
+      } = await supabase
+        .storage
         .from("avatars")
         .upload(
           filePath,
@@ -738,20 +756,21 @@
       }
 
       const {
-        data: publicData
-      } = client.storage
+        data
+      } = supabase
+        .storage
         .from("avatars")
         .getPublicUrl(
           filePath
         );
 
       const publicUrl =
-        publicData?.publicUrl || "";
+        data?.publicUrl || "";
 
       if (!publicUrl) {
 
         throw new Error(
-          "No pudimos obtener la URL de la foto."
+          "No se pudo obtener la URL pública de la foto."
         );
 
       }
@@ -763,15 +782,16 @@
 
       try {
 
-        client =
-          await createSupabaseClient();
+        supabase =
+          await createClient();
 
         const {
           data: {
             user
           },
           error: userError
-        } = await client.auth.getUser();
+        } =
+          await supabase.auth.getUser();
 
         if (userError) {
           throw userError;
@@ -783,18 +803,24 @@
             "index.html";
 
           return;
+
         }
 
-        currentUser = user;
+        currentUser =
+          user;
 
         const {
           data: profile,
           error: profileError
-        } = await client
-          .from("profiles")
-          .select("*")
-          .eq("id", user.id)
-          .maybeSingle();
+        } =
+          await supabase
+            .from("profiles")
+            .select("*")
+            .eq(
+              "id",
+              user.id
+            )
+            .maybeSingle();
 
         if (profileError) {
           throw profileError;
@@ -819,16 +845,10 @@
           profile.city ||
           "";
 
-        const age =
+        edadInput.value =
           profile.edad ??
           profile.age ??
           "";
-
-        edadInput.value =
-          age === null ||
-          age === undefined
-            ? ""
-            : String(age);
 
         descripcionInput.value =
           profile.descripcion ||
@@ -856,7 +876,7 @@
       } catch (error) {
 
         console.error(
-          "Error cargando editor:",
+          "Error cargando perfil:",
           error
         );
 
@@ -902,41 +922,34 @@
           return;
         }
 
-        if (
-          !ALLOWED_TYPES.includes(
-            file.type
-          )
-        ) {
+        try {
 
-          fotoInput.value = "";
+          validateImage(file);
+
+        } catch (error) {
+
+          fotoInput.value =
+            "";
+
+          fotoName.textContent =
+            "No seleccionaste una foto nueva.";
 
           setStatus(
-            "Elegí una imagen JPG, PNG o WebP.",
+            error.message,
             "error"
           );
 
           return;
-        }
 
-        if (
-          file.size > MAX_FILE_SIZE
-        ) {
-
-          fotoInput.value = "";
-
-          setStatus(
-            "La foto no puede superar los 5 MB.",
-            "error"
-          );
-
-          return;
         }
 
         fotoName.textContent =
           file.name;
 
         const previewUrl =
-          URL.createObjectURL(file);
+          URL.createObjectURL(
+            file
+          );
 
         fotoPreview.src =
           previewUrl;
@@ -957,163 +970,220 @@
       }
     );
 
-    async function saveProfile(event) {
+    form.addEventListener(
+      "submit",
+      async event => {
 
-      event.preventDefault();
-
-      if (!client || !currentUser) {
-
-        setStatus(
-          "La sesión todavía no está disponible.",
-          "error"
-        );
-
-        return;
-      }
-
-      const nombre =
-        nombreInput.value.trim();
-
-      const ciudad =
-        ciudadInput.value.trim();
-
-      const descripcion =
-        descripcionInput.value.trim();
-
-      const edadTexto =
-        edadInput.value.trim();
-
-      if (!nombre) {
-
-        setStatus(
-          "Ingresá tu nombre.",
-          "error"
-        );
-
-        nombreInput.focus();
-
-        return;
-      }
-
-      let edad = null;
-
-      if (edadTexto) {
-
-        edad =
-          Number(edadTexto);
+        event.preventDefault();
 
         if (
-          !Number.isInteger(edad) ||
-          edad < 18 ||
-          edad > 100
+          !supabase ||
+          !currentUser
         ) {
 
           setStatus(
-            "La edad debe estar entre 18 y 100 años.",
+            "La sesión todavía no está disponible.",
             "error"
           );
 
-          edadInput.focus();
-
           return;
-        }
-
-      }
-
-      saveButton.disabled = true;
-
-      saveButton.textContent =
-        "Guardando...";
-
-      setStatus("");
-
-      try {
-
-        let photoUrl =
-          currentPhotoUrl;
-
-        const selectedFile =
-          fotoInput.files?.[0];
-
-        if (selectedFile) {
-
-          photoUrl =
-            await uploadProfilePhoto(
-              selectedFile
-            );
 
         }
 
-        setStatus(
-          "Guardando perfil..."
-        );
+        const nombre =
+          nombreInput.value.trim();
 
-        const updateData = {
-          nombre,
-          ciudad,
-          edad,
-          descripcion,
-          foto_url: photoUrl || null
-        };
+        const ciudad =
+          ciudadInput.value.trim();
 
-        const {
-          error
-        } = await client
-          .from("profiles")
-          .update(updateData)
-          .eq(
-            "id",
-            currentUser.id
+        const descripcion =
+          descripcionInput.value.trim();
+
+        const edadTexto =
+          edadInput.value.trim();
+
+        if (!nombre) {
+
+          setStatus(
+            "Ingresá tu nombre.",
+            "error"
           );
 
-        if (error) {
-          throw error;
+          nombreInput.focus();
+
+          return;
+
         }
 
-        currentPhotoUrl =
-          photoUrl;
+        let edad =
+          null;
 
-        setStatus(
-          "Perfil actualizado correctamente.",
-          "success"
-        );
+        if (edadTexto) {
 
-        setTimeout(() => {
+          edad =
+            Number(
+              edadTexto
+            );
 
-          window.location.href =
-            "perfil.html";
+          if (
+            !Number.isInteger(edad) ||
+            edad < 18 ||
+            edad > 100
+          ) {
 
-        }, 700);
+            setStatus(
+              "La edad debe estar entre 18 y 100 años.",
+              "error"
+            );
 
-      } catch (error) {
+            edadInput.focus();
 
-        console.error(
-          "Error guardando perfil:",
-          error
-        );
+            return;
 
-        setStatus(
-          error?.message ||
-          "No pudimos guardar los cambios.",
-          "error"
-        );
+          }
+
+        }
 
         saveButton.disabled =
-          false;
+          true;
 
-      saveButton. textContent =
-        "Guardar cambios";
+        saveButton.textContent =
+          "Guardando...";
+
+        setStatus("");
+
+        try {
+
+          let photoUrl =
+            currentPhotoUrl;
+
+          const file =
+            fotoInput.files?.[0];
+
+          /*
+           * Si el usuario eligió una foto,
+           * primero la subimos.
+           */
+
+          if (file) {
+
+            photoUrl =
+              await uploadPhoto(
+                file
+              );
+
+          }
+
+          setStatus(
+            "Guardando perfil..."
+          );
+
+          const updateData = {
+            nombre: nombre,
+            ciudad: ciudad,
+            edad: edad,
+            descripcion: descripcion,
+            foto_url:
+              photoUrl || null
+          };
+
+          const {
+            error: updateError
+          } =
+            await supabase
+              .from("profiles")
+              .update(
+                updateData
+              )
+              .eq(
+                "id",
+                currentUser.id
+              );
+
+          if (updateError) {
+            throw updateError;
+          }
+
+          currentPhotoUrl =
+            photoUrl;
+
+          setStatus(
+            "Perfil guardado correctamente.",
+            "success"
+          );
+
+          /*
+           * Esperamos un momento para que
+           * el usuario pueda ver el mensaje.
+           */
+
+          setTimeout(
+            () => {
+
+              window.location.href =
+                "perfil.html";
+
+            },
+            800
+          );
+
+        } catch (error) {
+
+          console.error(
+            "Error guardando perfil:",
+            error
+          );
+
+          setStatus(
+            error?.message ||
+            "No pudimos guardar los cambios.",
+            "error"
+          );
+
+          saveButton.disabled =
+            false;
+
+          saveButton.textContent =
+            "Guardar cambios";
+
+        }
 
       }
-
-   }
+    );
 
     function escapeHtml(value) {
 
-      return String( value )
+      return String(
+        value
+      )
         .replaceAll(
           "&",
+          "&amp;"
         )
-        .repla
+        .replaceAll(
+          "<",
+          "&lt;"
+        )
+        .replaceAll(
+          ">",
+          "&gt;"
+        )
+        .replaceAll(
+          '"',
+          "&quot;"
+        )
+        .replaceAll(
+          "'",
+          "&#039;"
+        );
+
+    }
+
+    loadProfile();
+
+  </script>
+
+</body>
+</html>
 
   
