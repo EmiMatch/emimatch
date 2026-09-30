@@ -143,6 +143,11 @@
       border-color: rgba(255,100,130,.18);
     }
 
+    .profile-actions button:disabled {
+      opacity: .55;
+      cursor: wait;
+    }
+
     .status {
       min-height: 22px;
       margin: 14px 4px;
@@ -159,6 +164,15 @@
 
     .hidden {
       display: none !important;
+    }
+
+    .error-message {
+      color: #ffb8c4;
+      line-height: 1.5;
+    }
+
+    .error-message a {
+      color: #fff;
     }
   </style>
 </head>
@@ -257,269 +271,434 @@
       id="errorState"
       class="profile-card hidden"
     >
-      <div class="loading">
+      <div class="loading error-message">
+
         <strong>No pudimos cargar tu perfil.</strong>
+
         <br><br>
-        <a href="index.html">Volver al inicio</a>
+
+        <span id="errorDetails">
+          Revisá tu sesión e intentá nuevamente.
+        </span>
+
+        <br><br>
+
+        <a href="index.html">
+          Volver al inicio
+        </a>
+
       </div>
     </section>
 
   </main>
 
+  <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Configuración EmiMatch -->
   <script src="assets/js/config.js"></script>
 
   <script>
     "use strict";
 
-    const config = window.EMIMATCH_CONFIG;
+    (async function () {
 
-    if (!config || !config.supabaseUrl || !config.supabaseKey) {
-      throw new Error("Configuración de Supabase incompleta.");
-    }
+      const loadingState =
+        document.getElementById("loadingState");
 
-    const supabase = window.supabase.createClient(
-      config.supabaseUrl,
-      config.supabaseKey
-    );
+      const profileContent =
+        document.getElementById("profileContent");
 
-    const loadingState =
-      document.getElementById("loadingState");
+      const errorState =
+        document.getElementById("errorState");
 
-    const profileContent =
-      document.getElementById("profileContent");
+      const errorDetails =
+        document.getElementById("errorDetails");
 
-    const errorState =
-      document.getElementById("errorState");
+      const profilePhoto =
+        document.getElementById("profilePhoto");
 
-    const profilePhoto =
-      document.getElementById("profilePhoto");
+      const photoPlaceholder =
+        document.getElementById("photoPlaceholder");
 
-    const photoPlaceholder =
-      document.getElementById("photoPlaceholder");
+      const profileName =
+        document.getElementById("profileName");
 
-    const profileName =
-      document.getElementById("profileName");
+      const profileMeta =
+        document.getElementById("profileMeta");
 
-    const profileMeta =
-      document.getElementById("profileMeta");
+      const profileDescription =
+        document.getElementById("profileDescription");
 
-    const profileDescription =
-      document.getElementById("profileDescription");
+      const deleteButton =
+        document.getElementById("deleteAccountButton");
 
-    function escapeHtml(value) {
-      return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-    }
+      const deleteStatus =
+        document.getElementById("deleteStatus");
 
-    function showError() {
-      loadingState.classList.add("hidden");
-      profileContent.classList.add("hidden");
-      errorState.classList.remove("hidden");
-    }
+      function showError(message) {
 
-    function showProfile() {
-      loadingState.classList.add("hidden");
-      errorState.classList.add("hidden");
-      profileContent.classList.remove("hidden");
-    }
-
-    async function loadProfile() {
-
-      const {
-        data: { user },
-        error: userError
-      } = await supabase.auth.getUser();
-
-      if (userError || !user) {
-        window.location.href = "index.html";
-        return;
-      }
-
-      const {
-        data: profile,
-        error: profileError
-      } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .maybeSingle();
-
-      if (profileError) {
         console.error(
-          "Error cargando perfil:",
-          profileError
+          "EmiMatch — Error de perfil:",
+          message
         );
 
-        showError();
-        return;
+        loadingState.classList.add("hidden");
+        profileContent.classList.add("hidden");
+        errorState.classList.remove("hidden");
+
+        if (errorDetails && message) {
+          errorDetails.textContent = message;
+        }
       }
 
-      const name =
-        profile?.nombre ||
-        profile?.name ||
-        "Mi perfil";
+      function showProfile() {
 
-      const age =
-        profile?.edad ??
-        profile?.age ??
-        "";
-
-      const city =
-        profile?.ciudad ||
-        profile?.city ||
-        "";
-
-      const description =
-        profile?.descripcion ||
-        profile?.description ||
-        "";
-
-      const photoUrl =
-        profile?.foto_url ||
-        profile?.photo_url ||
-        "";
-
-      profileName.textContent = name;
-
-      const metaParts = [];
-
-      if (age !== "") {
-        metaParts.push(`${age} años`);
+        loadingState.classList.add("hidden");
+        errorState.classList.add("hidden");
+        profileContent.classList.remove("hidden");
       }
-
-      if (city) {
-        metaParts.push(city);
-      }
-
-      profileMeta.textContent =
-        metaParts.join(" · ");
-
-      profileDescription.textContent =
-        description ||
-        "Todavía no agregaste una descripción.";
-
-      if (photoUrl) {
-        profilePhoto.src = photoUrl;
-        profilePhoto.classList.remove("hidden");
-        photoPlaceholder.classList.add("hidden");
-
-        profilePhoto.onerror = () => {
-          profilePhoto.classList.add("hidden");
-          photoPlaceholder.classList.remove("hidden");
-        };
-      }
-
-      showProfile();
-    }
-
-    loadProfile();
-  <script>
-  "use strict";
-
-  const deleteButton =
-    document.getElementById("deleteAccountButton");
-
-  const deleteStatus =
-    document.getElementById("deleteStatus");
-
-  if (deleteButton) {
-    deleteButton.addEventListener("click", async () => {
-
-      const firstConfirmation = confirm(
-        "¿Seguro que querés eliminar tu cuenta de EmiMatch?\n\n" +
-        "Esta acción eliminará tu cuenta y sus datos."
-      );
-
-      if (!firstConfirmation) {
-        return;
-      }
-
-      const finalConfirmation = confirm(
-        "ÚLTIMA CONFIRMACIÓN\n\n" +
-        "La eliminación de la cuenta es permanente.\n\n" +
-        "¿Querés continuar?"
-      );
-
-      if (!finalConfirmation) {
-        return;
-      }
-
-      deleteButton.disabled = true;
-      deleteStatus.textContent =
-        "Eliminando tu cuenta...";
 
       try {
 
+        /* =========================
+           CONFIGURACIÓN
+        ========================= */
+
+        const config =
+          window.EMIMATCH_CONFIG;
+
+        if (
+          !config ||
+          !config.supabaseUrl ||
+          !config.supabaseKey
+        ) {
+          showError(
+            "Configuración de Supabase incompleta."
+          );
+          return;
+        }
+
+        if (
+          !window.supabase ||
+          typeof window.supabase.createClient !== "function"
+        ) {
+          showError(
+            "No se pudo cargar el cliente de Supabase."
+          );
+          return;
+        }
+
+        const supabase =
+          window.supabase.createClient(
+            config.supabaseUrl,
+            config.supabaseKey
+          );
+
+        /* =========================
+           SESIÓN
+        ========================= */
+
         const {
-          data: { session },
+          data: sessionData,
           error: sessionError
         } = await supabase.auth.getSession();
 
-        if (sessionError || !session) {
-          throw new Error(
-            "Tu sesión expiró. Volvé a iniciar sesión."
+        if (sessionError) {
+
+          console.error(
+            "Error obteniendo sesión:",
+            sessionError
           );
+
+          showError(
+            "No se pudo verificar tu sesión."
+          );
+
+          return;
         }
 
-        const {
-          data,
-          error
-        } = await supabase.functions.invoke(
-          "delete-account",
-          {
-            method: "POST",
-            body: {}
-          }
+        const session =
+          sessionData?.session;
+
+        if (!session?.user?.id) {
+
+          window.location.replace(
+            "index.html"
+          );
+
+          return;
+        }
+
+        const userId =
+          session.user.id;
+
+        console.log(
+          "EmiMatch — sesión válida:",
+          userId
         );
 
-        if (error) {
+        /* =========================
+           PERFIL
+        ========================= */
+
+        const {
+          data: profile,
+          error: profileError
+        } = await supabase
+          .from("profiles")
+          .select(
+            "id,nombre,edad,ciudad,descripcion,foto_url,intereses"
+          )
+          .eq("id", userId)
+          .maybeSingle();
+
+        if (profileError) {
+
           console.error(
-            "Error eliminando cuenta:",
-            error
+            "Error cargando profiles:",
+            profileError
           );
 
-          throw new Error(
-            error.message ||
-            "No se pudo eliminar la cuenta."
+          showError(
+            "No pudimos cargar los datos de tu perfil."
+          );
+
+          return;
+        }
+
+        if (!profile) {
+
+          showError(
+            "Tu cuenta no tiene un perfil creado todavía."
+          );
+
+          return;
+        }
+
+        /* =========================
+           DATOS
+        ========================= */
+
+        const name =
+          profile.nombre ||
+          "Mi perfil";
+
+        const age =
+          profile.edad ?? "";
+
+        const city =
+          profile.ciudad ||
+          "";
+
+        const description =
+          profile.descripcion ||
+          "";
+
+        const photoUrl =
+          profile.foto_url ||
+          "";
+
+        profileName.textContent =
+          name;
+
+        const metaParts = [];
+
+        if (age !== "") {
+          metaParts.push(
+            `${age} años`
           );
         }
 
-        if (data && data.success === false) {
-          throw new Error(
-            data.error ||
-            "No se pudo eliminar la cuenta."
+        if (city) {
+          metaParts.push(city);
+        }
+
+        profileMeta.textContent =
+          metaParts.join(" · ");
+
+        profileDescription.textContent =
+          description ||
+          "Todavía no agregaste una descripción.";
+
+        /* =========================
+           FOTO
+        ========================= */
+
+        if (photoUrl) {
+
+          profilePhoto.src =
+            photoUrl;
+
+          profilePhoto.classList.remove(
+            "hidden"
+          );
+
+          photoPlaceholder.classList.add(
+            "hidden"
+          );
+
+          profilePhoto.onerror = function () {
+
+            profilePhoto.classList.add(
+              "hidden"
+            );
+
+            photoPlaceholder.classList.remove(
+              "hidden"
+            );
+          };
+
+        } else {
+
+          profilePhoto.classList.add(
+            "hidden"
+          );
+
+          photoPlaceholder.classList.remove(
+            "hidden"
           );
         }
 
-        deleteStatus.textContent =
-          "Cuenta eliminada correctamente.";
+        showProfile();
 
-        await supabase.auth.signOut();
+        /* =========================
+           ELIMINAR CUENTA
+        ========================= */
 
-        setTimeout(() => {
-          window.location.href = "index.html";
-        }, 1200);
+        if (deleteButton) {
+
+          deleteButton.addEventListener(
+            "click",
+            async function () {
+
+              const firstConfirmation =
+                window.confirm(
+                  "¿Seguro que querés eliminar tu cuenta de EmiMatch?\n\n" +
+                  "Esta acción eliminará tu cuenta y sus datos."
+                );
+
+              if (!firstConfirmation) {
+                return;
+              }
+
+              const finalConfirmation =
+                window.confirm(
+                  "ÚLTIMA CONFIRMACIÓN\n\n" +
+                  "La eliminación de la cuenta es permanente.\n\n" +
+                  "¿Querés continuar?"
+                );
+
+              if (!finalConfirmation) {
+                return;
+              }
+
+              deleteButton.disabled = true;
+
+              deleteStatus.textContent =
+                "Eliminando tu cuenta...";
+
+              try {
+
+                const {
+                  data: currentSessionData,
+                  error: currentSessionError
+                } = await supabase.auth.getSession();
+
+                if (
+                  currentSessionError ||
+                  !currentSessionData?.session
+                ) {
+
+                  throw new Error(
+                    "Tu sesión expiró. Volvé a iniciar sesión."
+                  );
+                }
+
+                const {
+                  data,
+                  error
+                } = await supabase.functions.invoke(
+                  "delete-account",
+                  {
+                    method: "POST",
+                    body: {}
+                  }
+                );
+
+                if (error) {
+
+                  console.error(
+                    "Error Edge Function:",
+                    error
+                  );
+
+                  throw new Error(
+                    error.message ||
+                    "No se pudo eliminar la cuenta."
+                  );
+                }
+
+                if (
+                  data &&
+                  data.success === false
+                ) {
+
+                  throw new Error(
+                    data.error ||
+                    "No se pudo eliminar la cuenta."
+                  );
+                }
+
+                deleteStatus.textContent =
+                  "Cuenta eliminada correctamente.";
+
+                await supabase.auth.signOut();
+
+                setTimeout(
+                  function () {
+                    window.location.replace(
+                      "index.html"
+                    );
+                  },
+                  1200
+                );
+
+              } catch (deleteError) {
+
+                console.error(
+                  "Eliminación de cuenta:",
+                  deleteError
+                );
+
+                deleteStatus.textContent =
+                  deleteError.message ||
+                  "No se pudo eliminar la cuenta.";
+
+                deleteButton.disabled = false;
+              }
+            }
+          );
+        }
 
       } catch (error) {
 
         console.error(
-          "Eliminación de cuenta:",
+          "EmiMatch — error inesperado:",
           error
         );
 
-        deleteStatus.textContent =
+        showError(
           error.message ||
-          "No se pudo eliminar la cuenta.";
-
-        deleteButton.disabled = false;
+          "Ocurrió un error inesperado."
+        );
       }
-    });
-  }
-</script>
+
+    })();
+  </script>
+
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/components.js"></script>
+
 </body>
-            </html>
+      </html>
