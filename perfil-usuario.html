@@ -1,158 +1,1234 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>EmiMatch - Perfil</title>
-<link rel="stylesheet" href="assets/css/app.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</head>
-<body>
-<main class="em-container" style="padding-top:24px">
-  <div class="em-card" id="loading">Cargando perfil...</div>
-  <div class="em-alert em-alert-danger" id="error" hidden></div>
-  <section id="profile" hidden>
-    <div class="em-card" style="overflow:hidden;padding:0">
-      <img id="heroPhoto" alt="Foto de perfil" style="width:100%;height:min(65vw,430px);object-fit:cover;background:#101a3d">
-      <div style="padding:22px">
-        <div class="em-badge">❤️ PERFIL</div>
-        <h1 id="name" style="margin:8px 0 4px"></h1>
-        <p id="location" class="em-muted"></p>
-      </div>
-    </div>
+  <meta charset="UTF-8">
 
-    <div class="em-grid em-grid-2" style="margin-top:18px">
-      <div>
-        <article class="em-card"><h2>💫 Sobre mí</h2><p id="description" style="white-space:pre-wrap;line-height:1.7"></p></article>
-        <article class="em-card" style="margin-top:18px"><h2>✨ Intereses</h2><div id="interests" class="em-flex"></div></article>
-        <article class="em-card" style="margin-top:18px"><h2>📸 Fotos</h2><div id="gallery" class="em-grid em-grid-3"></div></article>
-      </div>
-      <aside>
-        <article class="em-card"><h2>💜 Conexión</h2>
-          <div style="display:grid;gap:10px">
-            <button id="chatBtn" class="em-button em-button-primary">💬 Enviar mensaje</button>
-            <a href="matches.html" class="em-button" style="text-align:center">❤️ Mis Matches</a>
-            <button id="blockBtn" class="em-button">🚫 Bloquear usuario</button>
-            <button id="reportBtn" class="em-button">🚨 Reportar usuario</button>
-          </div>
-        </article>
-      </aside>
-    </div>
-  </section>
-</main>
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1.0"
+  >
 
-<div id="reportModal" class="em-modal" hidden>
-  <div class="em-card" style="width:min(100%,520px);margin:18px">
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
-      <h2>🚨 Reportar usuario</h2><button id="closeReport" class="em-button" type="button">×</button>
-    </div>
-    <p class="em-muted">Ayudanos a mantener EmiMatch seguro.</p>
-    <label>Motivo<select id="reason" class="em-input" style="width:100%;margin-top:7px">
-      <option value="">Seleccioná un motivo</option><option value="spam">Spam</option><option value="perfil_falso">Perfil falso</option><option value="acoso">Acoso</option><option value="contenido_inapropiado">Contenido inapropiado</option><option value="comportamiento_sospechoso">Comportamiento sospechoso</option><option value="otro">Otro</option>
-    </select></label>
-    <label style="display:block;margin-top:14px">Detalles<textarea id="details" class="em-input" maxlength="1000" rows="5" style="width:100%;margin-top:7px" placeholder="Información adicional (opcional)"></textarea></label>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px"><button id="cancelReport" class="em-button" type="button">Cancelar</button><button id="sendReport" class="em-button em-button-primary" type="button">🚨 Enviar reporte</button></div>
-  </div>
-</div>
-<div id="toast" class="em-alert" hidden style="position:fixed;left:50%;bottom:25px;transform:translateX(-50%);z-index:9999;width:min(92%,460px)"></div>
+  <meta
+    name="theme-color"
+    content="#10152f"
+  >
 
-<script src="assets/js/config.js"></script>
-<script>
-(() => {
-'use strict';
-const config=window.EMIMATCH_CONFIG;
-if(!config){document.getElementById('error').textContent='No se pudo cargar la configuración de EmiMatch.';document.getElementById('error').hidden=false;return;}
-const supabase=window.supabase.createClient(config.supabaseUrl,config.supabaseKey);
-let currentUser=null,viewedUser=null,isBlocked=false;
-const $=id=>document.getElementById(id);
-function toast(msg,type=''){const el=$('toast');el.textContent=msg;el.className='em-alert '+(type?'em-alert-'+type:'');el.hidden=false;clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.hidden=true,2800)}
-function fail(msg){$('loading').hidden=true;$('error').textContent=msg;$('error').hidden=false}
-function viewedId(){return new URLSearchParams(location.search).get('id')||new URLSearchParams(location.search).get('user')}
-async function session(){const {data,error}=await supabase.auth.getSession();if(error)throw error;if(!data.session){location.href='index.html';return false}currentUser=data.session.user;return true}
-async function loadProfile(){const id=viewedId();if(!id)throw new Error('No se especificó el usuario.');if(id===currentUser.id){location.href='perfil.html';return}
-const {data,error}=await supabase.from('profiles').select('id,nombre,edad,ciudad,descripcion,foto_url,intereses').eq('id',id).maybeSingle();if(error)throw error;if(!data)throw new Error('El perfil no existe.');viewedUser=data;
-$('name').textContent=(data.nombre||'Usuario')+(data.edad?', '+data.edad:'');$('location').textContent=data.ciudad?'📍 '+data.ciudad:'📍 Ubicación no indicada';$('description').textContent=data.descripcion||'Esta persona todavía no agregó una descripción.';$('heroPhoto').src=data.foto_url||'https://placehold.co/900x600/101a3d/ffffff?text=💕+EmiMatch';
-const interests=(data.intereses||'').split(',').map(x=>x.trim()).filter(Boolean);$('interests').innerHTML=interests.length?interests.map(x=>`<span class="em-badge">${escapeHtml(x)}</span>`).join(''):'<span class="em-muted">Sin intereses indicados</span>';
-await Promise.all([checkBlock(),loadGallery(id)]);$('profile').hidden=false;$('loading').hidden=true;updateBlock();}
-function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
-async function checkBlock(){const {data,error}=await supabase.from('user_blocks').select('id').eq('blocker_id',currentUser.id).eq('blocked_id',viewedUser.id).maybeSingle();if(error)throw error;isBlocked=!!data}
-function updateBlock(){$('blockBtn').textContent=isBlocked?'🔓 Desbloquear usuario':'🚫 Bloquear usuario';$('chatBtn').disabled=isBlocked}
-async function toggleBlock() {
-  const btn = $('blockBtn');
-  btn.disabled = true;
+  <title>EmiMatch - Perfil</title>
 
-  try {
-    if (isBlocked) {
-      const { error } = await supabase
-        .from('user_blocks')
-        .delete()
-        .eq('blocker_id', currentUser.id)
-        .eq('blocked_id', viewedUser.id);
+  <link
+    rel="stylesheet"
+    href="assets/css/app.css"
+  >
 
-      if (error) throw error;
-
-      isBlocked = false;
-      toast('Usuario desbloqueado correctamente.', 'success');
-
-    } else {
-      const { error } = await supabase
-        .from('user_blocks')
-        .insert({
-          blocker_id: currentUser.id,
-          blocked_id: viewedUser.id
-        });
-
-      if (error) throw error;
-
-      isBlocked = true;
-      toast('Usuario bloqueado correctamente.', 'success');
+  <style>
+    :root {
+      --bg: #0b1024;
+      --card: rgba(255,255,255,.07);
+      --border: rgba(255,255,255,.12);
+      --text: #f7f8ff;
+      --muted: #aeb5d0;
+      --primary: #5865f2;
+      --primary-2: #7459e8;
+      --gold: #d9b45b;
+      --danger: #ff5c72;
+      --success: #9ee6bd;
     }
 
-    updateBlock();
+    * {
+      box-sizing: border-box;
+    }
 
-  } catch (e) {
-    console.error(
-      'Error real de Supabase al actualizar user_blocks:',
-      e
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 18px 14px 40px;
+
+      background:
+        radial-gradient(
+          circle at top left,
+          rgba(88,101,242,.22),
+          transparent 35%
+        ),
+        radial-gradient(
+          circle at top right,
+          rgba(217,180,91,.13),
+          transparent 30%
+        ),
+        var(--bg);
+
+      color: var(--text);
+
+      font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+    }
+
+    .page {
+      width: min(100%, 900px);
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .topbar h1 {
+      margin: 0;
+      font-size: 23px;
+      font-weight: 800;
+    }
+
+    .back {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      background: var(--card);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: 0 20px 60px rgba(0,0,0,.28);
+      overflow: hidden;
+    }
+
+    .loading {
+      padding: 45px 20px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .profile-hero {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-photo {
+      width: 100%;
+      height: min(72vw, 500px);
+      min-height: 300px;
+      display: block;
+
+      object-fit: cover;
+
+      background:
+        linear-gradient(
+          135deg,
+          #101a3d,
+          #20265c
+        );
+    }
+
+    .hero-content {
+      padding: 22px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+
+      padding: 7px 11px;
+
+      border-radius: 999px;
+
+      background: rgba(217,180,91,.13);
+      border: 1px solid rgba(217,180,91,.25);
+
+      color: #f0d58d;
+
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .profile-name {
+      margin: 9px 0 4px;
+      font-size: clamp(26px, 7vw, 38px);
+      line-height: 1.1;
+    }
+
+    .location {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 300px;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .section-card {
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+
+    .section-card h2 {
+      margin: 0 0 13px;
+      font-size: 20px;
+    }
+
+    .description {
+      margin: 0;
+      color: #e9ebf8;
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+
+    .interests {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .interest {
+      display: inline-flex;
+      align-items: center;
+
+      padding: 8px 11px;
+
+      border-radius: 999px;
+
+      background: rgba(88,101,242,.14);
+      border: 1px solid rgba(88,101,242,.22);
+
+      color: #dfe3ff;
+
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    /* ÁLBUM */
+
+    .album-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    .album-header h2 {
+      margin: 0;
+    }
+
+    .album-count {
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+      gap: 9px;
+    }
+
+    .gallery-item {
+      position: relative;
+      aspect-ratio: 1;
+      overflow: hidden;
+      border-radius: 15px;
+      background: #151b3d;
+      cursor: pointer;
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+
+      transition:
+        transform .2s ease,
+        opacity .2s ease;
+    }
+
+    .gallery-item:hover img {
+      transform: scale(1.04);
+      opacity: .92;
+    }
+
+    .primary-label {
+      position: absolute;
+      left: 7px;
+      bottom: 7px;
+
+      padding: 5px 8px;
+
+      border-radius: 999px;
+
+      background: rgba(0,0,0,.72);
+      color: #f5d98d;
+
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .empty-gallery {
+      grid-column: 1 / -1;
+
+      padding: 28px 15px;
+
+      text-align: center;
+
+      color: var(--muted);
+
+      border: 1px dashed var(--border);
+      border-radius: 16px;
+    }
+
+    /* ACCIONES */
+
+    .actions {
+      display: grid;
+      gap: 10px;
+    }
+
+    .button {
+      width: 100%;
+      min-height: 48px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border: 0;
+      border-radius: 15px;
+
+      padding: 12px 15px;
+
+      color: var(--text);
+      background: rgba(255,255,255,.06);
+
+      border: 1px solid var(--border);
+
+      font: inherit;
+      font-weight: 800;
+
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .button-primary {
+      background:
+        linear-gradient(
+          135deg,
+          var(--primary),
+          var(--primary-2)
+        );
+
+      border: 0;
+    }
+
+    .button-danger {
+      color: #ffd8dd;
+    }
+
+    .button:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+
+    /* MODAL */
+
+    .modal {
+      position: fixed;
+      inset: 0;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 15px;
+
+      background: rgba(4,7,20,.86);
+
+      z-index: 9999;
+    }
+
+    .modal.hidden {
+      display: none;
+    }
+
+    .modal-content {
+      width: min(100%, 900px);
+      max-height: 92vh;
+
+      position: relative;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-image {
+      max-width: 100%;
+      max-height: 88vh;
+
+      display: block;
+
+      border-radius: 18px;
+
+      object-fit: contain;
+
+      box-shadow:
+        0 25px 80px rgba(0,0,0,.5);
+    }
+
+    .modal-close {
+      position: absolute;
+
+      top: -10px;
+      right: -5px;
+
+      width: 42px;
+      height: 42px;
+
+      border: 0;
+      border-radius: 50%;
+
+      background: rgba(0,0,0,.75);
+      color: white;
+
+      font-size: 25px;
+      line-height: 1;
+
+      cursor: pointer;
+
+      z-index: 2;
+    }
+
+    .alert {
+      margin-top: 15px;
+      padding: 13px 15px;
+
+      border-radius: 14px;
+
+      font-size: 14px;
+      line-height: 1.45;
+
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--border);
+    }
+
+    .alert-danger {
+      color: #ffadb8;
+    }
+
+    .alert-success {
+      color: var(--success);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 720px) {
+
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-photo {
+        height: 105vw;
+        max-height: 500px;
+      }
+
+    }
+
+    @media (max-width: 420px) {
+
+      body {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .hero-content,
+      .section-card {
+        padding: 17px;
+      }
+
+      .gallery {
+        gap: 6px;
+      }
+
+      .gallery-item {
+        border-radius: 11px;
+      }
+
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="page">
+
+    <header class="topbar">
+
+      <h1>Perfil</h1>
+
+      <a
+        class="back"
+        href="descubrir.html"
+      >
+        ← Volver
+      </a>
+
+    </header>
+
+    <section
+      id="loading"
+      class="card loading"
+    >
+      Cargando perfil...
+    </section>
+
+    <div
+      id="error"
+      class="alert alert-danger hidden"
+    ></div>
+
+    <section
+      id="profile"
+      class="hidden"
+    >
+
+      <!-- PERFIL PRINCIPAL -->
+
+      <article class="card profile-hero">
+
+        <img
+          id="heroPhoto"
+          class="hero-photo"
+          alt="Foto de perfil"
+        >
+
+        <div class="hero-content">
+
+          <span class="badge">
+            💕 PERFIL EMI MATCH
+          </span>
+
+          <h2
+            id="name"
+            class="profile-name"
+          ></h2>
+
+          <p
+            id="location"
+            class="location"
+          ></p>
+
+        </div>
+
+      </article>
+
+      <div class="content-grid">
+
+        <div>
+
+          <!-- SOBRE MÍ -->
+
+          <article class="card section-card">
+
+            <h2>💫 Sobre mí</h2>
+
+            <p
+              id="description"
+              class="description"
+            ></p>
+
+          </article>
+
+          <!-- INTERESES -->
+
+          <article class="card section-card">
+
+            <h2>✨ Intereses</h2>
+
+            <div
+              id="interests"
+              class="interests"
+            ></div>
+
+          </article>
+
+          <!-- ÁLBUM -->
+
+          <article class="card section-card">
+
+            <div class="album-header">
+
+              <h2>📸 Fotos</h2>
+
+              <span
+                id="albumCount"
+                class="album-count"
+              >
+                0 fotos
+              </span>
+
+            </div>
+
+            <div
+              id="gallery"
+              class="gallery"
+            ></div>
+
+          </article>
+
+        </div>
+
+        <!-- CONEXIÓN -->
+
+        <aside>
+
+          <article class="card section-card">
+
+            <h2>💜 Conexión</h2>
+
+            <div class="actions">
+
+              <button
+                id="chatBtn"
+                class="button button-primary"
+                type="button"
+              >
+                💬 Enviar mensaje
+              </button>
+
+              <a
+                href="matches.html"
+                class="button"
+              >
+                ❤️ Mis Matches
+              </a>
+
+              <button
+                id="blockBtn"
+                class="button"
+                type="button"
+              >
+                🚫 Bloquear usuario
+              </button>
+
+              <button
+                id="reportBtn"
+                class="button button-danger"
+                type="button"
+              >
+                🚨 Reportar usuario
+              </button>
+
+            </div>
+
+          </article>
+
+        </aside>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- VISOR DE FOTO -->
+
+  <div
+    id="photoModal"
+    class="modal hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Foto"
+  >
+
+    <div class="modal-content">
+
+      <button
+        id="closePhotoModal"
+        class="modal-close"
+        type="button"
+        aria-label="Cerrar"
+      >
+        ×
+      </button>
+
+      <img
+        id="modalImage"
+        class="modal-image"
+        alt="Foto ampliada"
+      >
+
+    </div>
+
+  </div>
+    <!-- REPORTE -->
+
+  <div
+    id="reportModal"
+    class="modal hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Reportar usuario"
+  >
+
+    <div
+      class="card section-card"
+      style="width:min(100%,520px);margin:15px"
+    >
+
+      <div
+        style="
+          display:flex;
+          align-items:center;
+          justify-content:space-between;
+          gap:12px;
+        "
+      >
+
+        <h2 style="margin:0">
+          🚨 Reportar usuario
+        </h2>
+
+        <button
+          id="closeReport"
+          class="button"
+          type="button"
+          style="width:44px;padding:0"
+        >
+          ×
+        </button>
+
+      </div>
+
+      <p class="location" style="margin-top:10px">
+        Ayudanos a mantener EmiMatch seguro.
+      </p>
+
+      <label>
+        Motivo
+
+        <select
+          id="reason"
+          class="button"
+          style="
+            margin-top:8px;
+            appearance:auto;
+            text-align:left;
+          "
+        >
+
+          <option value="">
+            Seleccioná un motivo
+          </option>
+
+          <option value="spam">
+            Spam
+          </option>
+
+          <option value="perfil_falso">
+            Perfil falso
+          </option>
+
+          <option value="acoso">
+            Acoso
+          </option>
+
+          <option value="contenido_inapropiado">
+            Contenido inapropiado
+          </option>
+
+          <option value="comportamiento_sospechoso">
+            Comportamiento sospechoso
+          </option>
+
+          <option value="otro">
+            Otro
+          </option>
+
+        </select>
+
+      </label>
+
+      <label style="display:block;margin-top:14px">
+
+        Detalles
+
+        <textarea
+          id="details"
+          maxlength="1000"
+          rows="5"
+          placeholder="Información adicional (opcional)"
+          style="
+            width:100%;
+            margin-top:8px;
+            padding:12px;
+            border-radius:14px;
+            border:1px solid var(--border);
+            background:rgba(255,255,255,.06);
+            color:white;
+            resize:vertical;
+            font:inherit;
+          "
+        ></textarea>
+
+      </label>
+
+      <div
+        style="
+          display:grid;
+          grid-template-columns:1fr 1fr;
+          gap:10px;
+          margin-top:14px;
+        "
+      >
+
+        <button
+          id="cancelReport"
+          class="button"
+          type="button"
+        >
+          Cancelar
+        </button>
+
+        <button
+          id="sendReport"
+          class="button button-primary"
+          type="button"
+        >
+          🚨 Enviar
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+    <!-- NOTIFICACIÓN -->
+
+  <div id="toast" class="alert hidden"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/config.js"></script>
+
+  <script>
+  (() => {
+    "use strict";
+
+    const config = window.EMIMATCH_CONFIG;
+
+    if (!config) {
+      document.getElementById("loading").classList.add("hidden");
+      const error = document.getElementById("error");
+      error.textContent = "No se pudo cargar la configuración de EmiMatch.";
+      error.classList.remove("hidden");
+      return;
+    }
+
+    const supabase = window.supabase.createClient(
+      config.supabaseUrl,
+      config.supabaseKey
     );
 
-    const msg =
-      e?.message ||
-      e?.details ||
-      e?.hint ||
-      e?.code ||
-      String(e);
+    let currentUser = null;
+    let viewedUser = null;
+    let isBlocked = false;
 
-    toast('ERROR SUPABASE: ' + msg, 'danger');
+    const $ = id => document.getElementById(id);
 
-    alert(
-      'Error real de Supabase\n\n' +
-      msg +
-      (e?.details ? '\n\nDetalles: ' + e.details : '') +
-      (e?.hint ? '\n\nSugerencia: ' + e.hint : '') +
-      (e?.code ? '\n\nCódigo: ' + e.code : '')
-    );
+    function toast(message, type = "") {
+      const el = $("toast");
+      el.textContent = message;
+      el.className = "alert " + (type ? "alert-" + type : "");
+      el.classList.remove("hidden");
 
-  } finally {
-    btn.disabled = false;
-  }
-}
-async function loadGallery(id){const box=$('gallery');box.innerHTML='';const {data,error}=await supabase.storage.from('profile-photos').list(id,{limit:20,sortBy:{column:'created_at',order:'asc'}});if(error){console.warn('Galería:',error);return}const files=(data||[]).filter(x=>x.name);if(!files.length){box.innerHTML='<span class="em-muted">No hay fotos adicionales.</span>';return}files.forEach(file=>{const {data:u}=supabase.storage.from('profile-photos').getPublicUrl(`${id}/${file.name}`);if(!u?.publicUrl)return;const img=document.createElement('img');img.src=u.publicUrl;img.alt='Foto de perfil';img.loading='lazy';img.style='width:100%;aspect-ratio:1;object-fit:cover;border-radius:14px;cursor:pointer';img.onclick=()=>window.open(u.publicUrl,'_blank');box.appendChild(img)})}
-async function openChat(){
-  if(!viewedUser || isBlocked) return;
+      clearTimeout(window.__emiToast);
 
-  location.href =
-    'conversacion.html?user=' +
-    encodeURIComponent(viewedUser.id);
-}
-function openReport(){$('reason').value='';$('details').value='';$('reportModal').hidden=false}
-function closeReport(){$('reportModal').hidden=true}
-async function sendReport(){const reason=$('reason').value.trim(),details=$('details').value.trim();if(!reason){toast('Seleccioná un motivo para el reporte.','danger');return}const btn=$('sendReport');btn.disabled=true;try{const {error}=await supabase.from('reports').insert({reporter_id:currentUser.id,reported_id:viewedUser.id,reason,details:details||null});if(error)throw error;closeReport();toast('Reporte enviado correctamente.','success')}catch(e){console.error(e);toast('No se pudo enviar el reporte. Verificá la configuración de reportes.','danger')}finally{btn.disabled=false}}
-$('chatBtn').onclick=openChat;$('blockBtn').onclick=toggleBlock;$('reportBtn').onclick=openReport;$('closeReport').onclick=closeReport;$('cancelReport').onclick=closeReport;$('sendReport').onclick=sendReport;$('reportModal').onclick=e=>{if(e.target===$('reportModal'))closeReport()};document.addEventListener('keydown',e=>{if(e.key==='Escape')closeReport()});
-(async()=>{try{if(await session())await loadProfile()}catch(e){console.error(e);fail(e.message||'No se pudo cargar el perfil.')}})();
-})();
-</script>
-<script src="assets/js/app.js"></script>
-<script src="assets/js/components.js"></script>
+      window.__emiToast = setTimeout(() => {
+        el.classList.add("hidden");
+      }, 3000);
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[char]));
+    }
+
+    function showError(message) {
+      $("loading").classList.add("hidden");
+      $("error").textContent = message;
+      $("error").classList.remove("hidden");
+    }
+
+    function getViewedId() {
+      const params = new URLSearchParams(location.search);
+      return params.get("id") || params.get("user");
+    }
+
+    async function loadSession() {
+      const { data, error } = await supabase.auth.getSession();
+
+      if (error) throw error;
+
+      if (!data.session) {
+        location.href = "index.html";
+        return false;
+      }
+
+      currentUser = data.session.user;
+      return true;
+    }
+
+    async function loadProfile() {
+      const id = getViewedId();
+
+      if (!id) {
+        throw new Error("No se especificó el usuario.");
+      }
+
+      if (id === currentUser.id) {
+        location.href = "perfil.html";
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id,nombre,edad,ciudad,descripcion,foto_url,intereses")
+        .eq("id", id)
+        .maybeSingle();
+
+      if (error) throw error;
+      if (!data) throw new Error("El perfil no existe.");
+
+      viewedUser = data;
+
+      $("name").textContent =
+        (data.nombre || "Usuario") +
+        (data.edad ? ", " + data.edad : "");
+
+      $("location").textContent =
+        data.ciudad
+          ? "📍 " + data.ciudad
+          : "📍 Ubicación no indicada";
+
+      $("description").textContent =
+        data.descripcion ||
+        "Esta persona todavía no agregó una descripción.";
+
+      $("heroPhoto").src =
+        data.foto_url ||
+        "https://placehold.co/900x600/101a3d/ffffff?text=EmiMatch";
+
+      renderInterests(data.intereses);
+
+      await Promise.all([
+        checkBlock(),
+        loadGallery(id)
+      ]);
+
+      updateBlock();
+
+      $("loading").classList.add("hidden");
+      $("profile").classList.remove("hidden");
+    }
+
+    function renderInterests(value) {
+      const list = String(value || "")
+        .split(",")
+        .map(x => x.trim())
+        .filter(Boolean);
+
+      $("interests").innerHTML = list.length
+        ? list.map(x =>
+            `<span class="interest">${escapeHtml(x)}</span>`
+          ).join("")
+        : '<span class="location">Sin intereses indicados.</span>';
+    }
+
+    async function loadGallery(userId) {
+      const gallery = $("gallery");
+
+      gallery.innerHTML =
+        '<div class="empty-gallery">Cargando fotos...</div>';
+
+      const { data, error } = await supabase
+        .from("profile_photos")
+        .select(
+          "id,photo_url,storage_path,is_primary,created_at"
+        )
+        .eq("user_id", userId)
+        .order("is_primary", { ascending: false })
+        .order("created_at", { ascending: true });
+
+      if (error) {
+        console.error("profile_photos:", error);
+        gallery.innerHTML =
+          '<div class="empty-gallery">No se pudieron cargar las fotos.</div>';
+        $("albumCount").textContent = "0 fotos";
+        return;
+      }
+
+      const photos = data || [];
+
+      $("albumCount").textContent =
+        photos.length +
+        (photos.length === 1 ? " foto" : " fotos");
+
+      if (!photos.length) {
+        gallery.innerHTML =
+          '<div class="empty-gallery">📸 Todavía no hay fotos en el álbum.</div>';
+        return;
+      }
+
+      gallery.innerHTML = "";
+
+      photos.forEach(photo => {
+        let url = photo.photo_url || "";
+
+        if (!url && photo.storage_path) {
+          const result = supabase.storage
+            .from("avatars")
+            .getPublicUrl(photo.storage_path);
+
+          url = result?.data?.publicUrl || "";
+        }
+
+        if (!url) return;
+
+        const item = document.createElement("div");
+        item.className = "gallery-item";
+
+        const img = document.createElement("img");
+        img.src = url;
+        img.alt = "Foto del álbum";
+        img.loading = "lazy";
+
+        img.onclick = () => {
+          $("modalImage").src = url;
+          $("photoModal").classList.remove("hidden");
+        };
+
+        item.appendChild(img);
+
+        if (photo.is_primary) {
+          const label = document.createElement("span");
+          label.className = "primary-label";
+          label.textContent = "⭐ Principal";
+          item.appendChild(label);
+        }
+
+        gallery.appendChild(item);
+      });
+
+      if (!gallery.children.length) {
+        gallery.innerHTML =
+          '<div class="empty-gallery">No hay fotos disponibles.</div>';
+      }
+    }
+
+    async function checkBlock() {
+      const { data, error } = await supabase
+        .from("user_blocks")
+        .select("id")
+        .eq("blocker_id", currentUser.id)
+        .eq("blocked_id", viewedUser.id)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      isBlocked = !!data;
+    }
+
+    function updateBlock() {
+      $("blockBtn").textContent =
+        isBlocked
+          ? "🔓 Desbloquear usuario"
+          : "🚫 Bloquear usuario";
+
+      $("chatBtn").disabled = isBlocked;
+    }
+
+    async function toggleBlock() {
+      const button = $("blockBtn");
+      button.disabled = true;
+
+      try {
+        if (isBlocked) {
+          const { error } = await supabase
+            .from("user_blocks")
+            .delete()
+            .eq("blocker_id", currentUser.id)
+            .eq("blocked_id", viewedUser.id);
+
+          if (error) throw error;
+
+          isBlocked = false;
+          toast("Usuario desbloqueado correctamente.", "success");
+
+        } else {
+          const { error } = await supabase
+            .from("user_blocks")
+            .insert({
+              blocker_id: currentUser.id,
+              blocked_id: viewedUser.id
+            });
+
+          if (error) throw error;
+
+          isBlocked = true;
+          toast("Usuario bloqueado correctamente.", "success");
+        }
+
+        updateBlock();
+
+      } catch (error) {
+        console.error(error);
+        toast(
+          "No se pudo actualizar el bloqueo: " +
+          (error.message || "Error desconocido"),
+          "danger"
+        );
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    function openChat() {
+      if (!viewedUser || isBlocked) return;
+
+      location.href =
+        "conversacion.html?user=" +
+        encodeURIComponent(viewedUser.id);
+    }
+
+    function openReport() {
+      $("reason").value = "";
+      $("details").value = "";
+      $("reportModal").classList.remove("hidden");
+    }
+
+    function closeReport() {
+      $("reportModal").classList.add("hidden");
+    }
+
+    async function sendReport() {
+      const reason = $("reason").value.trim();
+      const details = $("details").value.trim();
+
+      if (!reason) {
+        toast("Seleccioná un motivo.", "danger");
+        return;
+      }
+
+      const button = $("sendReport");
+      button.disabled = true;
+
+      try {
+        const { error } = await supabase
+          .from("reports")
+          .insert({
+            reporter_id: currentUser.id,
+            reported_id: viewedUser.id,
+            reason,
+            details: details || null
+          });
+
+        if (error) throw error;
+
+        closeReport();
+        toast("Reporte enviado correctamente.", "success");
+
+      } catch (error) {
+        console.error(error);
+        toast(
+          "No se pudo enviar el reporte: " +
+          (error.message || "Error desconocido"),
+          "danger"
+        );
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    $("chatBtn").onclick = openChat;
+    $("blockBtn").onclick = toggleBlock;
+    $("reportBtn").onclick = openReport;
+
+    $("closeReport").onclick = closeReport;
+    $("cancelReport").onclick = closeReport;
+    $("sendReport").onclick = sendReport;
+
+    $("closePhotoModal").onclick = () => {
+      $("photoModal").classList.add("hidden");
+      $("modalImage").src = "";
+    };
+
+    $("photoModal").onclick = event => {
+      if (event.target === $("photoModal")) {
+        $("photoModal").classList.add("hidden");
+        $("modalImage").src = "";
+      }
+    };
+
+    $("reportModal").onclick = event => {
+      if (event.target === $("reportModal")) {
+        closeReport();
+      }
+    };
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") {
+        $("photoModal").classList.add("hidden");
+        $("reportModal").classList.add("hidden");
+        $("modalImage").src = "";
+      }
+    });
+
+    (async () => {
+      try {
+        if (await loadSession()) {
+          await loadProfile();
+        }
+      } catch (error) {
+        console.error("EmiMatch:", error);
+        showError(
+          error.message ||
+          "No se pudo cargar el perfil."
+        );
+      }
+    })();
+
+  })();
+  </script>
+
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/components.js"></script>
+
 </body>
 </html>
+
+  
+
+      
