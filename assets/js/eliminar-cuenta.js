@@ -1,259 +1,215 @@
-import { createClient } from "npm:@supabase/supabase-js@2";
-import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
+"use strict";
 
-const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+/*
+ * EmiMatch — Eliminación de cuenta
+ * Este archivo corre en el navegador.
+ * La eliminación administrativa ocurre únicamente
+ * dentro de la Edge Function de Supabase.
+ */
 
-// Compatibilidad con claves antiguas y nuevas de Supabase.
-const SUPABASE_ADMIN_KEY =
-  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ||
-  Deno.env.get("SUPABASE_SECRET_KEY");
+(() => {
+  function init() {
+    const config = window.EMIMATCH_CONFIG;
 
-const SUPABASE_ANON_KEY =
-  Deno.env.get("SUPABASE_ANON_KEY") ||
-  Deno.env.get("SUPABASE_PUBLISHABLE_KEY");
-
-function jsonResponse(
-  body: Record<string, unknown>,
-  status = 200
-) {
-  return new Response(
-    JSON.stringify(body),
-    {
-      status,
-      headers: {
-        ...corsHeaders,
-        "Content-Type": "application/json",
-      },
+    if (!config) {
+      console.error("EmiMatch: falta EMIMATCH_CONFIG.");
+      return;
     }
-  );
-}
 
-Deno.serve(async (req: Request) => {
-  /*
-   * CORS / navegador
-   */
-  if (req.method === "OPTIONS") {
-    return new Response("ok", {
-      status: 204,
-      headers: corsHeaders,
-    });
-  }
+    if (!window.supabase) {
+      console.error("EmiMatch: Supabase JS no está disponible.");
+      return;
+    }
 
-  /*
-   * Solo POST
-   */
-  if (req.method !== "POST") {
-    return jsonResponse(
-      {
-        success: false,
-        error: "Método no permitido.",
-      },
-      405
+    const button = document.getElementById("deleteAccountButton");
+    const status = document.getElementById("deleteStatus");
+
+    if (!button) {
+      console.error("EmiMatch: no se encontró #deleteAccountButton.");
+      return;
+    }
+
+    const supabase = window.supabase.createClient(
+      config.supabaseUrl,
+      config.supabaseKey || config.supabaseAnonKey
     );
-  }
 
-  try {
-    /*
-     * Comprobaciones de configuración.
-     */
-    if (!SUPABASE_URL) {
-      console.error("Falta SUPABASE_URL.");
-      return jsonResponse(
-        {
-          success: false,
-          error: "Configuración de Supabase incompleta.",
-        },
-        500
+    let deleting = false;
+
+    function showStatus(message, isError = false) {
+      if (!status) return;
+
+      status.hidden = false;
+      status.textContent = message;
+      status.setAttribute(
+        "data-type",
+        isError ? "error" : "success"
       );
     }
 
-    if (!SUPABASE_ANON_KEY) {
-      console.error("Falta SUPABASE_ANON_KEY/PUBLISHABLE_KEY.");
-      return jsonResponse(
-        {
-          success: false,
-          error: "Clave pública de Supabase no configurada.",
-        },
-        500
-      );
-    }
+    async function deleteAccount() {
+      if (deleting) return;
 
-    if (!SUPABASE_ADMIN_KEY) {
-      console.error(
-        "Falta SUPABASE_SERVICE_ROLE_KEY/SUPABASE_SECRET_KEY."
+      const first = window.confirm(
+        "¿Seguro que querés eliminar tu cuenta de EmiMatch?\n\n" +
+        "Esta acción es permanente."
       );
 
-      return jsonResponse(
-        {
-          success: false,
-          error:
-            "Clave administrativa de Supabase no configurada.",
-        },
-        500
+      if (!first) return;
+
+      const second = window.confirm(
+        "⚠️ ÚLTIMA CONFIRMACIÓN\n\n" +
+        "Se eliminará tu cuenta y sus datos relacionados.\n\n" +
+        "¿Querés continuar?"
       );
-    }
 
-    /*
-     * Obtener Authorization.
-     */
-    const authorization =
-      req.headers.get("Authorization") ||
-      req.headers.get("authorization");
+      if (!second) return;
 
-    if (!authorization) {
-      return jsonResponse(
-        {
-          success: false,
-          error: "Falta autorización.",
-        },
-        401
-      );
-    }
+      deleting = true;
 
-    /*
-     * Debe ser:
-     * Authorization: Bearer <JWT>
-     */
-    if (!authorization.startsWith("Bearer ")) {
-      return jsonResponse(
-        {
-          success: false,
-          error: "Formato de autorización inválido.",
-        },
-        401
-      );
-    }
+      button.disabled = true;
+      button.textContent = "⏳ Eliminando cuenta...";
 
-    const accessToken =
-      authorization.substring("Bearer ".length).trim();
+      showStatus("⏳ Verificando sesión...");
 
-    if (!accessToken) {
-      return jsonResponse(
-        {
-          success: false,
-          error: "Token de sesión vacío.",
-        },
-        401
-      );
-    }
+      try {
+        let {
+          data: sessionData,
+          error: sessionError
+        } = await supabase.auth.getSession();
 
-    /*
-     * Cliente para identificar al usuario autenticado.
-     */
-    const userClient = createClient(
-      SUPABASE_URL,
-      SUPABASE_ANON_KEY,
-      {
-        auth: {
-          persistSession: false,
-          autoRefreshToken: false,
-        },
-        global: {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
+        if (sessionError) {
+          throw new Error(sessionError.message);
+        }
+
+        let session = sessionData?.session;
+
+        if (!session?.access_token) {
+          const {
+            data: refreshData,
+            error: refreshError
+          } = await supabase.auth.refreshSession();
+
+          if (refreshError) {
+            throw new Error(
+              "Tu sesión expiró. Iniciá sesión nuevamente."
+            );
+          }
+
+          session = refreshData?.session;
+        }
+
+        if (!session?.access_token) {
+          throw new Error(
+            "No hay una sesión válida. Iniciá sesión nuevamente."
+          );
+        }
+
+        showStatus("⏳ Eliminando tu cuenta...");
+
+        const {
+          data,
+          error
+        } = await supabase.functions.invoke(
+          "delete-account",
+          {
+            method: "POST",
+            body: {}
+          }
+        );
+
+        if (error) {
+          console.error(
+            "EmiMatch — delete-account:",
+            error
+          );
+
+          let message =
+            error.message ||
+            "No se pudo contactar con Supabase.";
+
+          if (error.context) {
+            try {
+              const response = error.context;
+
+              if (typeof response.clone === "function") {
+                const cloned = response.clone();
+                const responseData = await cloned.json();
+
+                if (responseData?.error) {
+                  message = responseData.error;
+                }
+              }
+            } catch (_) {
+              // Conservamos el mensaje principal.
+            }
+          }
+
+          throw new Error(message);
+        }
+
+        if (!data?.success) {
+          throw new Error(
+            data?.error ||
+            "La cuenta no pudo ser eliminada."
+          );
+        }
+
+        showStatus(
+          "✅ Cuenta eliminada correctamente."
+        );
+
+        button.disabled = true;
+        button.textContent =
+          "✅ Cuenta eliminada";
+
+        try {
+          await supabase.auth.signOut();
+        } catch (signOutError) {
+          console.warn(
+            "EmiMatch: no se pudo limpiar la sesión local:",
+            signOutError
+          );
+        }
+
+        setTimeout(() => {
+          window.location.replace("index.html");
+        }, 1200);
+
+      } catch (error) {
+        console.error(
+          "EmiMatch — error eliminando cuenta:",
+          error
+        );
+
+        deleting = false;
+
+        button.disabled = false;
+        button.textContent =
+          "🗑️ Eliminar mi cuenta";
+
+        showStatus(
+          `❌ ${
+            error?.message ||
+            "No se pudo eliminar la cuenta."
+          }`,
+          true
+        );
       }
-    );
-
-    /*
-     * Validar JWT y obtener usuario real.
-     */
-    const {
-      data: userData,
-      error: userError,
-    } = await userClient.auth.getUser(accessToken);
-
-    if (userError || !userData?.user) {
-      console.error(
-        "JWT inválido:",
-        userError?.message
-      );
-
-      return jsonResponse(
-        {
-          success: false,
-          error:
-            "La sesión no es válida o expiró. Iniciá sesión nuevamente.",
-        },
-        401
-      );
     }
 
-    const userId = userData.user.id;
-
-    /*
-     * Cliente ADMINISTRATIVO.
-     * Esta clave solamente existe dentro de la Edge Function.
-     */
-    const adminClient = createClient(
-      SUPABASE_URL,
-      SUPABASE_ADMIN_KEY,
-      {
-        auth: {
-          persistSession: false,
-          autoRefreshToken: false,
-        },
-      }
-    );
-
-    /*
-     * Eliminación definitiva del usuario.
-     *
-     * Supabase invalida las sesiones/refresh tokens
-     * asociados al usuario al eliminarlo.
-     */
-    const {
-      error: deleteError,
-    } = await adminClient.auth.admin.deleteUser(
-      userId,
-      false
-    );
-
-    if (deleteError) {
-      console.error(
-        "Error eliminando usuario:",
-        deleteError
-      );
-
-      return jsonResponse(
-        {
-          success: false,
-          error:
-            deleteError.message ||
-            "No se pudo eliminar la cuenta.",
-        },
-        500
-      );
-    }
-
-    /*
-     * ÉXITO REAL.
-     */
-    console.log(
-      `EmiMatch: cuenta eliminada correctamente. user_id=${userId}`
-    );
-
-    return jsonResponse({
-      success: true,
-      message: "Cuenta eliminada correctamente.",
-    });
-
-  } catch (error) {
-    console.error(
-      "delete-account error:",
-      error
-    );
-
-    return jsonResponse(
-      {
-        success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Error interno al eliminar la cuenta.",
-      },
-      500
+    button.addEventListener(
+      "click",
+      deleteAccount
     );
   }
-});
+
+  if (document.readyState === "loading") {
+    document.addEventListener(
+      "DOMContentLoaded",
+      init
+    );
+  } else {
+    init();
+  }
+})();
