@@ -2,676 +2,1341 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#10152f">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Editar perfil — EmiMatch</title>
-<link rel="stylesheet" href="assets/css/app.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-:root{
---bg:#0b1024;--card:rgba(255,255,255,.07);
---border:rgba(255,255,255,.12);--text:#fff;
---muted:#aeb5d0;--primary:#5865f2;--primary2:#7459e8
+*{
+  box-sizing:border-box;
 }
-*{box-sizing:border-box}
-body{
-margin:0;min-height:100vh;padding:18px 14px 40px;
-background:radial-gradient(circle at top left,rgba(88,101,242,.22),transparent 35%),var(--bg);
-color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif
-}
-.page{width:min(100%,680px);margin:auto}
-.topbar{
-display:flex;justify-content:space-between;align-items:center;
-margin-bottom:18px
-}
-.topbar h1{margin:0;font-size:24px}
-.back{color:#fff;text-decoration:none;font-weight:700}
-.card{
-padding:22px;border:1px solid var(--border);border-radius:26px;
-background:var(--card);backdrop-filter:blur(18px)
-}
-.hidden{display:none!important}
-.loading{text-align:center;color:var(--muted);padding:45px 10px}
-.intro{margin-bottom:22px}
-.intro h2{margin:0 0 7px}
-.intro p,.help{color:var(--muted);font-size:14px}
-.field{margin-bottom:17px}
-label{display:block;margin-bottom:7px;font-weight:800}
-input,textarea{
-width:100%;padding:13px 14px;border:1px solid var(--border);
-border-radius:15px;background:rgba(255,255,255,.06);
-color:#fff;font:inherit
-}
-textarea{min-height:130px;resize:vertical}
-.actions{display:grid;gap:10px;margin-top:24px}
-button,.button-link{
-width:100%;min-height:50px;border:0;border-radius:16px;
-padding:13px 16px;font:inherit;font-weight:800;
-display:flex;align-items:center;justify-content:center;
-text-align:center;text-decoration:none;cursor:pointer
-}
-.save{
-background:linear-gradient(135deg,var(--primary),var(--primary2));
-color:#fff
-}
-.cancel{
-background:rgba(255,255,255,.06);color:#fff;
-border:1px solid var(--border)
-}
-.status,.album-status{
-text-align:center;min-height:24px;margin-top:12px
-}
-.success{color:#9ee6bd}
-.error{color:#ffadb8}
 
-/* ALBUM */
-.album{
-margin-top:28px;padding:20px;border-radius:22px;
-border:1px solid var(--border);
-background:rgba(255,255,255,.04)
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:Arial,Helvetica,sans-serif;
+  background:
+    radial-gradient(circle at top,#24205a 0,#11152f 45%,#080b18 100%);
+  color:#fff;
 }
-.album-head{
-display:flex;justify-content:space-between;
-align-items:center;margin-bottom:15px
+
+.container{
+  width:min(720px,94%);
+  margin:0 auto;
+  padding:28px 0 50px;
 }
-.album h2{margin:0;font-size:20px}
-.album p{
-margin:5px 0 0;color:var(--muted);font-size:13px
+
+.card{
+  background:rgba(18,22,48,.92);
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:24px;
+  padding:24px;
+  box-shadow:0 20px 60px rgba(0,0,0,.35);
+  backdrop-filter:blur(12px);
 }
-#albumCount{
-padding:7px 10px;border-radius:99px;
-background:rgba(255,255,255,.08);font-size:12px
+
+h1{
+  margin:0 0 8px;
+  text-align:center;
+  font-size:28px;
 }
+
+.subtitle{
+  text-align:center;
+  color:#bfc3dc;
+  margin-bottom:26px;
+}
+
+.field{
+  margin-bottom:18px;
+}
+
+.field label{
+  display:block;
+  margin-bottom:8px;
+  font-weight:700;
+}
+
+input,
+textarea{
+  width:100%;
+  border:1px solid rgba(255,255,255,.13);
+  background:rgba(255,255,255,.06);
+  color:#fff;
+  border-radius:14px;
+  padding:13px 14px;
+  font-size:16px;
+  outline:none;
+}
+
+input:focus,
+textarea:focus{
+  border-color:#b995ff;
+  box-shadow:0 0 0 3px rgba(185,149,255,.12);
+}
+
+textarea{
+  min-height:130px;
+  resize:vertical;
+}
+
+.help{
+  margin-top:6px;
+  color:#9fa5c4;
+  font-size:13px;
+}
+
+.actions{
+  display:flex;
+  gap:12px;
+  margin-top:22px;
+}
+
+button,
 .upload{
-width:100%;min-height:48px;padding:13px;border-radius:15px;
-display:flex;align-items:center;justify-content:center;
-background:linear-gradient(135deg,#7654d8,#a14fbc);
-color:#fff;font-weight:800;cursor:pointer
+  border:0;
+  border-radius:14px;
+  padding:13px 16px;
+  font-size:15px;
+  font-weight:700;
+  cursor:pointer;
+  text-align:center;
 }
+
+.save{
+  flex:1;
+  color:#fff;
+  background:linear-gradient(135deg,#7957ff,#b45cff);
+}
+
+.back{
+  flex:1;
+  color:#fff;
+  background:rgba(255,255,255,.08);
+}
+
+button:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
+.upload{
+  display:block;
+  width:100%;
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  border:1px solid rgba(255,255,255,.12);
+}
+
+.status{
+  min-height:22px;
+  margin-top:14px;
+  text-align:center;
+  font-size:14px;
+  color:#cfd3ea;
+}
+
+.profile-photo-box{
+  text-align:center;
+  margin:12px 0 14px;
+}
+
+#profilePhotoPreview{
+  width:140px;
+  height:140px;
+  object-fit:cover;
+  border-radius:50%;
+  border:3px solid rgba(255,255,255,.18);
+  display:none;
+  margin:auto;
+  background:#171a35;
+}
+
+.profile-photo-placeholder{
+  width:140px;
+  height:140px;
+  margin:auto;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(255,255,255,.06);
+  border:3px solid rgba(255,255,255,.12);
+  color:#aeb3d0;
+  font-size:42px;
+}
+
+.album{
+  margin-top:30px;
+  padding-top:24px;
+  border-top:1px solid rgba(255,255,255,.10);
+}
+
+.album h2{
+  margin:0 0 6px;
+  font-size:21px;
+}
+
+.album-description{
+  color:#aeb3d0;
+  font-size:14px;
+  margin-bottom:16px;
+}
+
 .album-grid{
-display:grid;grid-template-columns:repeat(3,1fr);
-gap:8px;margin-top:14px
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:16px;
 }
+
 .album-item{
-position:relative;aspect-ratio:1;overflow:hidden;
-border-radius:14px;background:rgba(255,255,255,.06)
+  position:relative;
+  aspect-ratio:1/1;
+  border-radius:14px;
+  overflow:hidden;
+  background:#151936;
+  border:1px solid rgba(255,255,255,.08);
 }
+
 .album-item img{
-width:100%;height:100%;object-fit:cover
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
 }
-.delete{
-position:absolute;right:6px;bottom:6px;
-width:34px;height:34px;border:0;border-radius:50%;
-background:rgba(0,0,0,.75);color:#fff
+
+.delete-photo{
+  position:absolute;
+  top:7px;
+  right:7px;
+  width:32px;
+  height:32px;
+  padding:0;
+  border-radius:50%;
+  background:rgba(0,0,0,.7);
+  color:#fff;
+  font-size:16px;
 }
-.empty{
-grid-column:1/-1;text-align:center;
-color:var(--muted);padding:30px 10px
+
+.album-status{
+  min-height:22px;
+  margin-top:10px;
+  color:#bfc3dc;
+  font-size:14px;
 }
-@media(max-width:480px){
-.card,.album{padding:17px}
+
+.empty-album{
+  grid-column:1/-1;
+  padding:25px;
+  text-align:center;
+  color:#969bb8;
+  border:1px dashed rgba(255,255,255,.14);
+  border-radius:16px;
+}
+
+@media(max-width:520px){
+  .container{
+    width:94%;
+    padding-top:18px;
+  }
+
+  .card{
+    padding:18px;
+    border-radius:20px;
+  }
+
+  .actions{
+    flex-direction:column;
+  }
+
+  .album-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
 }
 </style>
 </head>
 
 <body>
 
-<main class="page">
+<div class="container">
 
-<header class="topbar">
-<h1>Editar perfil</h1>
-<a class="back" href="perfil.html">← Volver</a>
-</header>
+  <div class="card">
 
-<section id="loading" class="card loading">
-Cargando tu perfil...
-</section>
+    <h1>Editar perfil</h1>
 
-<section id="editor" class="card hidden">
+    <div class="subtitle">
+      Actualizá tu información y tus fotos.
+    </div>
 
-<div class="intro">
-<h2>Personalizá tu perfil</h2>
-<p>
-Actualizá la información que otras personas podrán ver en EmiMatch.
-</p>
+    <form id="profileForm">
+
+      <div class="field">
+        <label for="nombre">Nombre</label>
+
+        <input
+          id="nombre"
+          type="text"
+          maxlength="80"
+          autocomplete="name"
+          required
+          placeholder="Tu nombre"
+        >
+      </div>
+
+      <div class="field">
+        <label for="ciudad">Ciudad</label>
+
+        <input
+          id="ciudad"
+          type="text"
+          maxlength="100"
+          placeholder="Tu ciudad"
+        >
+      </div>
+
+      <div class="field">
+        <label for="edad">Edad</label>
+
+        <input
+          id="edad"
+          type="number"
+          min="18"
+          max="100"
+          inputmode="numeric"
+          placeholder="Tu edad"
+        >
+      </div>
+
+      <div class="field">
+        <label for="descripcion">Descripción</label>
+
+        <textarea
+          id="descripcion"
+          maxlength="500"
+          placeholder="Contá algo sobre vos..."
+        ></textarea>
+
+        <div class="help">
+          Máximo 500 caracteres.
+        </div>
+      </div>
+
+
+      <!-- ========================= -->
+      <!-- FOTO DE PERFIL PRINCIPAL -->
+      <!-- ========================= -->
+
+      <div class="field">
+
+        <label>📷 Foto de perfil</label>
+
+        <div class="profile-photo-box">
+
+          <div
+            id="profilePhotoPlaceholder"
+            class="profile-photo-placeholder"
+          >
+            👤
+          </div>
+
+          <img
+            id="profilePhotoPreview"
+            src=""
+            alt="Foto de perfil"
+          >
+
+        </div>
+
+        <label
+          for="profilePhotoInput"
+          class="upload"
+        >
+          📷 Cambiar foto de perfil
+        </label>
+
+        <input
+          id="profilePhotoInput"
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          hidden
+        >
+
+        <div
+          id="profilePhotoStatus"
+          class="album-status"
+        ></div>
+
+      </div>
+
+
+      <div class="actions">
+
+        <button
+          id="saveButton"
+          class="save"
+          type="submit"
+        >
+          Guardar cambios
+        </button>
+
+        <button
+          id="backButton"
+          class="back"
+          type="button"
+        >
+          Volver
+        </button>
+
+      </div>
+
+      <div
+        id="status"
+        class="status"
+      ></div>
+
+    </form>
+
+
+    <!-- ========================= -->
+    <!-- ÁLBUM -->
+    <!-- ========================= -->
+
+    <section class="album">
+
+      <h2>📸 Mi álbum</h2>
+
+      <div class="album-description">
+        Agregá hasta 20 fotos para mostrar más de vos.
+        Máximo 8 MB por foto.
+      </div>
+
+      <label
+        for="albumInput"
+        class="upload"
+      >
+        ➕ Agregar fotos al álbum
+      </label>
+
+      <input
+        id="albumInput"
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        multiple
+        hidden
+      >
+
+      <div
+        id="albumStatus"
+        class="album-status"
+      ></div>
+
+      <div
+        id="albumGrid"
+        class="album-grid"
+      ></div>
+
+    </section>
+
+  </div>
+
 </div>
 
-<form id="profileForm">
 
-<div class="field">
-<label for="nombre">Nombre</label>
-<input id="nombre" type="text" maxlength="80"
-placeholder="Tu nombre">
-</div>
+<script>
 
-<div class="field">
-<label for="ciudad">Ciudad</label>
-<input id="ciudad" type="text" maxlength="100"
-placeholder="Buenos Aires">
-</div>
+"use strict";
 
-<div class="field">
-<label for="edad">Edad</label>
-<input id="edad" type="number" min="18" max="100"
-placeholder="31">
-<div class="help">
-La edad debe estar entre 18 y 100 años.
-</div>
-</div>
 
-<div class="field">
-<label for="descripcion">Descripción</label>
-<textarea id="descripcion" maxlength="500"
-placeholder="Contá algo sobre vos..."></textarea>
-<div class="help">
-Máximo 500 caracteres.
-</div>
-</div>
+/* =========================================
+   CONFIGURACIÓN
+========================================= */
 
-<div class="actions">
-<button id="saveButton" class="save" type="submit">
-Guardar cambios
-</button>
+const config = window.EMIMATCH_CONFIG || {
+  supabaseUrl:
+    "https://kngiadwaesdbmvwivdev.supabase.co",
 
-<a class="button-link cancel" href="perfil.html">
-Cancelar
-</a>
-</div>
+  supabaseKey:
+    "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m"
+};
 
-<div id="status" class="status"></div>
 
-</form>
+/* =========================================
+   SUPABASE
+========================================= */
 
-<section class="album">
+const supabase = window.supabase.createClient(
+  config.supabaseUrl,
+  config.supabaseKey
+);
 
-<div class="album-head">
 
-<div>
-<h2>📸 Mi álbum</h2>
-<p>Agregá fotos para mostrar más de vos.</p>
-</div>
+/* =========================================
+   ELEMENTOS
+========================================= */
 
-<span id="albumCount">0 fotos</span>
+const $ = id => document.getElementById(id);
 
-</div>
+let user = null;
 
-<label class="upload" for="albumInput">
-➕ Agregar fotos
-</label>
+const MAX_PHOTOS = 20;
+const MAX_SIZE = 8 * 1024 * 1024;
 
-<input
-id="albumInput"
-type="file"
-accept="image/jpeg,image/png,image/webp"
-multiple
-hidden
->
 
-<div id="albumStatus" class="album-status"></div>
-
-<div id="albumGrid" class="album-grid">
-
-<div class="empty">
-🖼️<br>
-<strong>Tu álbum está vacío</strong>
-</div>
-
-</div>
-
-</section>
-
-</section>
-
-</main>
-
-<script src="assets/js/config.js"></script>
-
-<script type="module">
-
-const $=id=>document.getElementById(id);
-
-let supabase;
-let user;
-
-const MAX_PHOTOS=20;
-const MAX_SIZE=8*1024*1024;
-
-function albumStatus(text,type=""){
-const el=$("albumStatus");
-if(!el)return;
-el.textContent=text;
-el.className="album-status "+type;
-}
+/* =========================================
+   INICIO
+========================================= */
 
 async function init(){
 
-try{
+  $("status").textContent = "Cargando perfil...";
 
-const config=window.EMIMATCH_CONFIG;
+  try{
 
-if(!config?.supabaseUrl||
-!config?.supabaseAnonKey){
+    const {
+      data,
+      error
+    } = await supabase.auth.getSession();
 
-throw new Error(
-"Configuración de Supabase incompleta."
-);
+    if(error){
+      throw error;
+    }
 
-}
+    user = data?.session?.user || null;
 
-const {createClient}=await import(
-"https://esm.sh/@supabase/supabase-js@2"
-);
+    if(!user){
 
-supabase=createClient(
-config.supabaseUrl,
-config.supabaseAnonKey
-);
+      $("status").textContent =
+        "No hay una sesión activa.";
 
-const {data,error}=
-await supabase.auth.getUser();
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 1200);
 
-if(error)throw error;
+      return;
+    }
 
-user=data.user;
+    await loadProfile();
 
-if(!user){
-location.href="index.html";
-return;
-}
+    await loadAlbum();
 
-const {data:profile,error:profileError}=
-await supabase
-.from("profiles")
-.select("*")
-.eq("id",user.id)
-.maybeSingle();
+    $("status").textContent = "";
 
-if(profileError)throw profileError;
+  }catch(error){
 
-if(!profile){
-throw new Error("No encontramos tu perfil.");
-}
+    console.error(error);
 
-$("nombre").value=profile.nombre||"";
-$("ciudad").value=profile.ciudad||"";
-$("edad").value=profile.edad??"";
-$("descripcion").value=profile.descripcion||"";
+    $("status").textContent =
+      "No pudimos cargar tu perfil.";
 
-$("loading").classList.add("hidden");
-$("editor").classList.remove("hidden");
-
-await loadAlbum();
-
-}catch(error){
-
-console.error(error);
-
-$("loading").innerHTML=
-"<strong>No pudimos cargar tu perfil.</strong><br><br>"+
-(error.message||"Error desconocido");
+  }
 
 }
 
+
+/* =========================================
+   CARGAR PERFIL
+========================================= */
+
+async function loadProfile(){
+
+  const {
+    data,
+    error
+  } = await supabase
+    .from("profiles")
+    .select(
+      "id,nombre,edad,ciudad,descripcion,foto_url"
+    )
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if(error){
+    throw error;
+  }
+
+  if(!data){
+    return;
+  }
+
+  $("nombre").value =
+    data.nombre || "";
+
+  $("ciudad").value =
+    data.ciudad || "";
+
+  $("edad").value =
+    data.edad || "";
+
+  $("descripcion").value =
+    data.descripcion || "";
+
+
+  /* Foto principal */
+
+  if(data.foto_url){
+
+    $("profilePhotoPreview").src =
+      data.foto_url;
+
+    $("profilePhotoPreview").style.display =
+      "block";
+
+    $("profilePhotoPlaceholder").style.display =
+      "none";
+
+  }else{
+
+    $("profilePhotoPreview").style.display =
+      "none";
+
+    $("profilePhotoPlaceholder").style.display =
+      "flex";
+
+  }
+
 }
+
+
+/* =========================================
+   GUARDAR PERFIL
+========================================= */
 
 async function saveProfile(event){
 
-event.preventDefault();
+  event.preventDefault();
 
-const nombre=$("nombre").value.trim();
-const ciudad=$("ciudad").value.trim();
-const descripcion=$("descripcion").value.trim();
-const edadText=$("edad").value.trim();
+  const button = $("saveButton");
 
-if(!nombre){
-$("status").textContent="Ingresá tu nombre.";
-return;
+  button.disabled = true;
+
+  $("status").textContent =
+    "Guardando cambios...";
+
+  try{
+
+    const nombre =
+      $("nombre").value.trim();
+
+    const ciudad =
+      $("ciudad").value.trim();
+
+    const edadValue =
+      $("edad").value.trim();
+
+    const descripcion =
+      $("descripcion").value.trim();
+
+    if(!nombre){
+
+      throw new Error(
+        "El nombre es obligatorio."
+      );
+
+    }
+
+    let edad = null;
+
+    if(edadValue){
+
+      edad = Number(edadValue);
+
+      if(
+        !Number.isInteger(edad) ||
+        edad < 18 ||
+        edad > 100
+      ){
+
+        throw new Error(
+          "La edad debe estar entre 18 y 100."
+        );
+
+      }
+
+    }
+
+
+    const {
+      error
+    } = await supabase
+      .from("profiles")
+      .update({
+        nombre,
+        ciudad,
+        edad,
+        descripcion
+      })
+      .eq("id", user.id);
+
+
+    if(error){
+      throw error;
+    }
+
+
+    $("status").textContent =
+      "✓ Perfil actualizado correctamente.";
+
+  }catch(error){
+
+    console.error(error);
+
+    $("status").textContent =
+      error.message ||
+      "No pudimos guardar los cambios.";
+
+  }finally{
+
+    button.disabled = false;
+
+  }
+
 }
 
-let edad=null;
 
-if(edadText){
+/* =========================================
+   CAMBIAR FOTO DE PERFIL
+========================================= */
 
-edad=Number(edadText);
+async function changeProfilePhoto(event){
 
-if(!Number.isInteger(edad)||
-edad<18||edad>100){
+  const file =
+    event.target.files?.[0];
 
-$("status").textContent=
-"La edad debe estar entre 18 y 100 años.";
+  if(!file){
+    return;
+  }
 
-return;
+  const status =
+    $("profilePhotoStatus");
+
+  try{
+
+    /* Validar formato */
+
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/webp"
+    ];
+
+    if(!allowedTypes.includes(file.type)){
+
+      throw new Error(
+        "Solo se permiten JPG, PNG o WebP."
+      );
+
+    }
+
+
+    /* Validar tamaño */
+
+    if(file.size > MAX_SIZE){
+
+      throw new Error(
+        "La foto no puede superar los 8 MB."
+      );
+
+    }
+
+
+    status.textContent =
+      "Subiendo foto de perfil...";
+
+
+    /* Obtener sesión */
+
+    const {
+      data:sessionData,
+      error:sessionError
+    } = await supabase.auth.getSession();
+
+    if(sessionError){
+      throw sessionError;
+    }
+
+    const currentUser =
+      sessionData?.session?.user;
+
+    if(!currentUser){
+
+      throw new Error(
+        "La sesión expiró. Volvé a iniciar sesión."
+      );
+
+    }
+
+
+    /*
+     * Nombre único.
+     * Se mantiene separado del álbum.
+     */
+
+    const ext =
+      file.name
+        .split(".")
+        .pop()
+        .toLowerCase();
+
+    const path =
+      `${currentUser.id}/profile/${crypto.randomUUID()}.${ext}`;
+
+
+    /* Subir a avatars */
+
+    const {
+      error:uploadError
+    } = await supabase
+      .storage
+      .from("avatars")
+      .upload(
+        path,
+        file,
+        {
+          cacheControl:"3600",
+          upsert:false,
+          contentType:file.type
+        }
+      );
+
+
+    if(uploadError){
+      throw uploadError;
+    }
+
+
+    /* Obtener URL pública */
+
+    const {
+      data:publicData
+    } = supabase
+      .storage
+      .from("avatars")
+      .getPublicUrl(path);
+
+
+    const publicUrl =
+      publicData?.publicUrl;
+
+
+    if(!publicUrl){
+
+      throw new Error(
+        "No se pudo obtener la URL de la foto."
+      );
+
+    }
+
+
+    /* Actualizar profiles.foto_url */
+
+    const {
+      error:updateError
+    } = await supabase
+      .from("profiles")
+      .update({
+        foto_url:publicUrl
+      })
+      .eq("id", currentUser.id);
+
+
+    if(updateError){
+      throw updateError;
+    }
+
+
+    /* Mostrar inmediatamente */
+
+    $("profilePhotoPreview").src =
+      publicUrl;
+
+    $("profilePhotoPreview").style.display =
+      "block";
+
+    $("profilePhotoPlaceholder").style.display =
+      "none";
+
+
+    status.textContent =
+      "✓ Foto de perfil actualizada.";
+
+  }catch(error){
+
+    console.error(
+      "Error cambiando foto de perfil:",
+      error
+    );
+
+    status.textContent =
+      error.message ||
+      "No se pudo actualizar la foto.";
+
+  }finally{
+
+    event.target.value = "";
+
+  }
+
 }
 
-}
 
-$("saveButton").disabled=true;
-$("saveButton").textContent="Guardando...";
-
-try{
-
-const {error}=await supabase
-.from("profiles")
-.update({
-nombre,
-ciudad,
-edad,
-descripcion
-})
-.eq("id",user.id);
-
-if(error)throw error;
-
-$("status").textContent=
-"Perfil actualizado correctamente.";
-
-setTimeout(
-()=>location.href="perfil.html",
-700
-);
-
-}catch(error){
-
-$("status").textContent=
-error.message||
-"No pudimos guardar los cambios.";
-
-$("saveButton").disabled=false;
-$("saveButton").textContent=
-"Guardar cambios";
-
-}
-
-}
+/* =========================================
+   CARGAR ÁLBUM
+========================================= */
 
 async function loadAlbum(){
 
-albumStatus("Cargando fotos...");
+  const grid =
+    $("albumGrid");
 
-try{
+  grid.innerHTML = "";
 
-const {data,error}=await supabase
-.from("profile_photos")
-.select(
-"id,photo_url,storage_path,is_primary,created_at"
-)
-.eq("user_id",user.id)
-.order("is_primary",{ascending:false})
-.order("created_at",{ascending:true});
+  const {
+    data,
+    error
+  } = await supabase
+    .from("profile_photos")
+    .select(
+      "id,photo_url,storage_path,is_primary,created_at"
+    )
+    .eq("user_id", user.id)
+    .order(
+      "is_primary",
+      {
+        ascending:false
+      }
+    )
+    .order(
+      "created_at",
+      {
+        ascending:true
+      }
+    );
 
-if(error)throw error;
 
-renderAlbum(data||[]);
+  if(error){
+    throw error;
+  }
 
-albumStatus("");
 
-}catch(error){
+  if(!data || data.length === 0){
 
-console.error("Álbum:",error);
+    grid.innerHTML = `
+      <div class="empty-album">
+        Todavía no tenés fotos en tu álbum.
+      </div>
+    `;
 
-albumStatus(
-error.message||
-"No pudimos cargar las fotos.",
-"error"
-);
+    return;
+  }
+
+
+  for(const photo of data){
+
+    const item =
+      document.createElement("div");
+
+    item.className =
+      "album-item";
+
+
+    let url =
+      photo.photo_url || "";
+
+
+    if(
+      !url &&
+      photo.storage_path
+    ){
+
+      const {
+        data:publicData
+      } = supabase
+        .storage
+        .from("avatars")
+        .getPublicUrl(
+          photo.storage_path
+        );
+
+      url =
+        publicData?.publicUrl || "";
+
+    }
+
+
+    const img =
+      document.createElement("img");
+
+    img.src = url;
+
+    img.alt =
+      "Foto del álbum";
+
+
+    const deleteButton =
+      document.createElement("button");
+
+    deleteButton.type =
+      "button";
+
+    deleteButton.className =
+      "delete-photo";
+
+    deleteButton.textContent =
+      "✕";
+
+    deleteButton.title =
+      "Eliminar foto";
+
+
+    deleteButton.addEventListener(
+      "click",
+      () => deletePhoto(photo)
+    );
+
+
+    item.appendChild(img);
+
+    item.appendChild(deleteButton);
+
+    grid.appendChild(item);
+
+  }
 
 }
 
-}
 
-function renderAlbum(photos){
-
-$("albumCount").textContent=
-`${photos.length} ${
-photos.length===1?"foto":"fotos"
-}`;
-
-const grid=$("albumGrid");
-
-grid.innerHTML="";
-
-if(!photos.length){
-
-grid.innerHTML=
-`<div class="empty">
-🖼️<br>
-<strong>Tu álbum está vacío</strong>
-</div>`;
-
-return;
-}
-
-photos.forEach(photo=>{
-
-const item=
-document.createElement("div");
-
-item.className="album-item";
-
-const img=
-document.createElement("img");
-
-img.src=photo.photo_url;
-img.alt="Foto del álbum";
-img.loading="lazy";
-
-const del=
-document.createElement("button");
-
-del.className="delete";
-del.type="button";
-del.textContent="🗑️";
-
-del.onclick=
-()=>deletePhoto(photo);
-
-item.append(img,del);
-
-grid.appendChild(item);
-
-});
-
-}
-     $("albumInput").addEventListener("change",async e=>{
-
-const files=[...e.target.files];
-
-if(!files.length)return;
-
-await uploadPhotos(files);
-
-e.target.value="";
-
-});
+/* =========================================
+   SUBIR FOTOS AL ÁLBUM
+========================================= */
 
 async function uploadPhotos(files){
 
-try{
+  const selected =
+    Array.from(files || []);
 
-const {data:existing,error}=await supabase
-.from("profile_photos")
-.select("id")
-.eq("user_id",user.id);
+  if(selected.length === 0){
+    return;
+  }
 
-if(error)throw error;
 
-const current=existing?.length||0;
+  $("albumStatus").textContent =
+    "Preparando fotos...";
 
-if(current>=MAX_PHOTOS){
 
-albumStatus(
-`Máximo ${MAX_PHOTOS} fotos.`,
-"error"
-);
+  try{
 
-return;
+    /* Contar fotos existentes */
+
+    const {
+      count,
+      error:countError
+    } = await supabase
+      .from("profile_photos")
+      .select(
+        "id",
+        {
+          count:"exact",
+          head:true
+        }
+      )
+      .eq("user_id", user.id);
+
+
+    if(countError){
+      throw countError;
+    }
+
+
+    if(
+      (count || 0) +
+      selected.length >
+      MAX_PHOTOS
+    ){
+
+      throw new Error(
+        `Podés tener como máximo ${MAX_PHOTOS} fotos en el álbum.`
+      );
+
+    }
+
+
+    let uploaded = 0;
+
+
+    for(const file of selected){
+
+      if(file.size > MAX_SIZE){
+
+        throw new Error(
+          `"${file.name}" supera los 8 MB.`
+        );
+
+      }
+
+
+      const allowedTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+      ];
+
+
+      if(!allowedTypes.includes(file.type)){
+
+        throw new Error(
+          `"${file.name}" no es JPG, PNG ni WebP.`
+        );
+
+      }
+
+
+      const ext =
+        file.name
+          .split(".")
+          .pop()
+          .toLowerCase();
+
+
+      const path =
+        `${user.id}/album/${crypto.randomUUID()}.${ext}`;
+
+
+      /* Subir archivo */
+
+      const {
+        error:uploadError
+      } = await supabase
+        .storage
+        .from("avatars")
+        .upload(
+          path,
+          file,
+          {
+            cacheControl:"3600",
+            upsert:false,
+            contentType:file.type
+          }
+        );
+
+
+      if(uploadError){
+        throw uploadError;
+      }
+
+
+      /* URL pública */
+
+      const {
+        data:publicData
+      } = supabase
+        .storage
+        .from("avatars")
+        .getPublicUrl(path);
+
+
+      const publicUrl =
+        publicData?.publicUrl;
+
+
+      if(!publicUrl){
+
+        throw new Error(
+          "No se pudo obtener la URL pública."
+        );
+
+      }
+
+
+      /* Guardar registro */
+
+      const {
+        error:insertError
+      } = await supabase
+        .from("profile_photos")
+        .insert({
+          user_id:user.id,
+          photo_url:publicUrl,
+          storage_path:path,
+          is_primary:false
+        });
+
+
+      if(insertError){
+
+        /*
+         * Si falla el registro de DB,
+         * intentamos borrar el archivo.
+         */
+
+        await supabase
+          .storage
+          .from("avatars")
+          .remove([path]);
+
+        throw insertError;
+
+      }
+
+
+      uploaded++;
+
+      $("albumStatus").textContent =
+        `Subiendo ${uploaded}/${selected.length}...`;
+
+    }
+
+
+    $("albumStatus").textContent =
+      `✓ ${uploaded} foto(s) agregada(s) correctamente.`;
+
+    await loadAlbum();
+
+
+  }catch(error){
+
+    console.error(
+      "Error subiendo álbum:",
+      error
+    );
+
+    $("albumStatus").textContent =
+      error.message ||
+      "No se pudieron subir las fotos.";
+
+  }finally{
+
+    $("albumInput").value = "";
+
+  }
+
 }
 
-files=files.slice(
-0,
-MAX_PHOTOS-current
-);
 
-for(let i=0;i<files.length;i++){
-
-const file=files[i];
-
-if(![
-"image/jpeg",
-"image/png",
-"image/webp"
-].includes(file.type)){
-
-throw new Error(
-"Solo se permiten JPG, PNG o WebP."
-);
-
-}
-
-if(file.size>MAX_SIZE){
-
-throw new Error(
-`${file.name} supera los 8 MB.`
-);
-
-}
-
-albumStatus(
-`Subiendo foto ${i+1} de ${files.length}...`
-);
-
-const ext=
-file.type==="image/png"
-?"png":
-file.type==="image/webp"
-?"webp":
-"jpg";
-
-const path=
-`${user.id}/album/${crypto.randomUUID()}.${ext}`;
-
-const {error:uploadError}=
-await supabase
-.storage
-.from("avatars")
-.upload(
-path,
-file,
-{
-cacheControl:"3600",
-upsert:false,
-contentType:file.type
-}
-);
-
-if(uploadError)throw uploadError;
-
-const {data:publicData}=
-supabase
-.storage
-.from("avatars")
-.getPublicUrl(path);
-
-const {error:insertError}=
-await supabase
-.from("profile_photos")
-.insert({
-user_id:user.id,
-photo_url:publicData.publicUrl,
-storage_path:path,
-is_primary:false
-});
-
-if(insertError){
-
-await supabase
-.storage
-.from("avatars")
-.remove([path]);
-
-throw insertError;
-
-}
-
-}
-
-albumStatus(
-files.length===1
-?"Foto agregada correctamente."
-:`${files.length} fotos agregadas correctamente.`,
-"success"
-);
-
-await loadAlbum();
-
-}catch(error){
-
-console.error("Upload:",error);
-
-albumStatus(
-error.message||
-"No pudimos subir la foto.",
-"error"
-);
-
-}
-
-}
+/* =========================================
+   ELIMINAR FOTO DEL ÁLBUM
+========================================= */
 
 async function deletePhoto(photo){
 
-if(!confirm(
-"¿Querés eliminar esta foto del álbum?"
-))return;
+  const confirmed =
+    confirm(
+      "¿Querés eliminar esta foto del álbum?"
+    );
 
-try{
+  if(!confirmed){
+    return;
+  }
 
-albumStatus("Eliminando foto...");
 
-if(photo.storage_path){
+  $("albumStatus").textContent =
+    "Eliminando foto...";
 
-await supabase
-.storage
-.from("avatars")
-.remove([
-photo.storage_path
-]);
+
+  try{
+
+    /* Eliminar archivo de Storage */
+
+    if(photo.storage_path){
+
+      const {
+        error:storageError
+      } = await supabase
+        .storage
+        .from("avatars")
+        .remove([
+          photo.storage_path
+        ]);
+
+
+      if(storageError){
+        throw storageError;
+      }
+
+    }
+
+
+    /* Eliminar registro */
+
+    const {
+      error:deleteError
+    } = await supabase
+      .from("profile_photos")
+      .delete()
+      .eq("id", photo.id)
+      .eq("user_id", user.id);
+
+
+    if(deleteError){
+      throw deleteError;
+    }
+
+
+    $("albumStatus").textContent =
+      "✓ Foto eliminada correctamente.";
+
+
+    await loadAlbum();
+
+
+  }catch(error){
+
+    console.error(
+      "Error eliminando foto:",
+      error
+    );
+
+    $("albumStatus").textContent =
+      error.message ||
+      "No se pudo eliminar la foto.";
+
+  }
 
 }
 
-const {error}=await supabase
-.from("profile_photos")
-.delete()
-.eq("id",photo.id)
-.eq("user_id",user.id);
 
-if(error)throw error;
+/* =========================================
+   EVENTOS
+========================================= */
 
-albumStatus(
-"Foto eliminada correctamente.",
-"success"
-);
+$("profileForm")
+  .addEventListener(
+    "submit",
+    saveProfile
+  );
 
-await loadAlbum();
 
-}catch(error){
+$("profilePhotoInput")
+  .addEventListener(
+    "change",
+    changeProfilePhoto
+  );
 
-console.error("Delete:",error);
 
-albumStatus(
-error.message||
-"No pudimos eliminar la foto.",
-"error"
-);
+$("albumInput")
+  .addEventListener(
+    "change",
+    event => {
+      uploadPhotos(event.target.files);
+    }
+  );
 
-}
 
-}
+$("backButton")
+  .addEventListener(
+    "click",
+    () => {
+      window.location.href =
+        "perfil.html";
+    }
+  );
 
-$("profileForm").addEventListener(
-"submit",
-saveProfile
-);
+
+/* =========================================
+   ARRANCAR
+========================================= */
 
 init();
 
@@ -679,3 +1344,6 @@ init();
 
 </body>
 </html>
+   
+
+
