@@ -418,6 +418,108 @@
     }
 
     loadProfile();
-  </script>
+  <script>
+  "use strict";
+
+  const deleteButton =
+    document.getElementById("deleteAccountButton");
+
+  const deleteStatus =
+    document.getElementById("deleteStatus");
+
+  if (deleteButton) {
+    deleteButton.addEventListener("click", async () => {
+
+      const firstConfirmation = confirm(
+        "¿Seguro que querés eliminar tu cuenta de EmiMatch?\n\n" +
+        "Esta acción eliminará tu cuenta y sus datos."
+      );
+
+      if (!firstConfirmation) {
+        return;
+      }
+
+      const finalConfirmation = confirm(
+        "ÚLTIMA CONFIRMACIÓN\n\n" +
+        "La eliminación de la cuenta es permanente.\n\n" +
+        "¿Querés continuar?"
+      );
+
+      if (!finalConfirmation) {
+        return;
+      }
+
+      deleteButton.disabled = true;
+      deleteStatus.textContent =
+        "Eliminando tu cuenta...";
+
+      try {
+
+        const {
+          data: { session },
+          error: sessionError
+        } = await supabase.auth.getSession();
+
+        if (sessionError || !session) {
+          throw new Error(
+            "Tu sesión expiró. Volvé a iniciar sesión."
+          );
+        }
+
+        const {
+          data,
+          error
+        } = await supabase.functions.invoke(
+          "delete-account",
+          {
+            method: "POST",
+            body: {}
+          }
+        );
+
+        if (error) {
+          console.error(
+            "Error eliminando cuenta:",
+            error
+          );
+
+          throw new Error(
+            error.message ||
+            "No se pudo eliminar la cuenta."
+          );
+        }
+
+        if (data && data.success === false) {
+          throw new Error(
+            data.error ||
+            "No se pudo eliminar la cuenta."
+          );
+        }
+
+        deleteStatus.textContent =
+          "Cuenta eliminada correctamente.";
+
+        await supabase.auth.signOut();
+
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 1200);
+
+      } catch (error) {
+
+        console.error(
+          "Eliminación de cuenta:",
+          error
+        );
+
+        deleteStatus.textContent =
+          error.message ||
+          "No se pudo eliminar la cuenta.";
+
+        deleteButton.disabled = false;
+      }
+    });
+  }
+</script>
 </body>
             </html>
