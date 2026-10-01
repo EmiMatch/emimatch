@@ -967,74 +967,52 @@ async function saveProfile(event){
 
 async function changeProfilePhoto(event){
 
-  const input =
-    event.target;
-
-  const file =
-    input?.files?.[0];
-
+  const input = event.target;
+  const file = input?.files?.[0];
 
   if(input){
     input.value = "";
   }
 
-
-  if(!file){
-    return;
-  }
-
+  if(!file) return;
 
   try{
 
-    profilePhotoStatus(
-      "Preparando foto..."
-    );
+    profilePhotoStatus("Preparando foto...");
 
-
-    if(
-      !ALLOWED_TYPES.includes(
-        file.type
-      )
-    ){
-
+    if(!ALLOWED_TYPES.includes(file.type)){
       throw new Error(
         "Solo se permiten JPG, PNG o WebP."
       );
     }
 
-
     if(file.size > MAX_SIZE){
-
       throw new Error(
         "La foto no puede superar los 8 MB."
       );
     }
 
-
     const {
-      data:sessionData,
-      error:sessionError
-    } =
-      await supabase.auth.getSession();
-
+      data: sessionData,
+      error: sessionError
+    } = await supabase.auth.getSession();
 
     if(sessionError){
       throw sessionError;
     }
 
-
-    if(!sessionData?.session){
-
+    if(!sessionData?.session?.user?.id){
       throw new Error(
-        "La sesión expiró. Iniciá sesión nuevamente."
+        "Tu sesión expiró. Iniciá sesión nuevamente."
       );
     }
 
+    const currentUserId =
+      sessionData.session.user.id;
 
     profilePhotoStatus(
       "Subiendo foto..."
     );
-
 
     const extension =
       file.type === "image/png"
@@ -1043,80 +1021,69 @@ async function changeProfilePhoto(event){
           ? "webp"
           : "jpg";
 
-
     const path =
-      `${user.id}/profile/${crypto.randomUUID()}.${extension}`;
-
+      `${currentUserId}/profile/${crypto.randomUUID()}.${extension}`;
 
     const {
-      error:uploadError
-    } =
-      await supabase
-        .storage
-        .from("avatars")
-        .upload(
-          path,
-          file,
-          {
-            cacheControl:"3600",
-            upsert:false,
-            contentType:file.type
-          }
-        );
-
+      error: uploadError
+    } = await supabase
+      .storage
+      .from("avatars")
+      .upload(
+        path,
+        file,
+        {
+          cacheControl: "3600",
+          upsert: false,
+          contentType: file.type
+        }
+      );
 
     if(uploadError){
       throw uploadError;
     }
 
-
     const {
-      data:publicData
-    } =
-      supabase
-        .storage
-        .from("avatars")
-        .getPublicUrl(
-          path
-        );
+      data: publicData
+    } = supabase
+      .storage
+      .from("avatars")
+      .getPublicUrl(path);
 
-
-    const photoUrl =
-      publicData?.publicUrl;
-
-
-    if(!photoUrl){
+    if(!publicData?.publicUrl){
 
       await supabase
         .storage
         .from("avatars")
         .remove([path]);
 
-
       throw new Error(
-        "No se pudo obtener la URL de la foto."
+        "Supabase no devolvió la URL pública de la foto."
       );
     }
 
+    /*
+     * Evita que el navegador muestre
+     * una foto anterior desde caché.
+     */
+    const photoUrl =
+      `${publicData.publicUrl}?v=${Date.now()}`;
 
     profilePhotoStatus(
-      "Guardando foto..."
+      "Guardando foto en tu perfil..."
     );
 
-
     const {
-      error:updateError
-    } =
-      await supabase
-        .from("profiles")
-        .update({
-          foto_url:photoUrl
-        })
-        .eq(
-          "id",
-          user.id
-        );
-
+      error: updateError
+    } = await supabase
+      .from("profiles")
+      .update({
+        foto_url: photoUrl
+      })
+      .eq(
+        "id",
+        currentUserId
+      );
 
     if(updateError){
 
@@ -1128,24 +1095,47 @@ async function changeProfilePhoto(event){
       throw updateError;
     }
 
-
     const preview =
       $("profilePhotoPreview");
 
     const placeholder =
       $("profilePhotoPlaceholder");
 
-
     if(preview){
 
-      preview.src =
-        photoUrl;
+      preview.onerror = function(){
+
+        console.error(
+          "La imagen no pudo cargarse:",
+          photoUrl
+        );
+
+        profilePhotoStatus(
+          "La foto se guardó, pero el navegador no pudo mostrarla.",
+          "error"
+        );
+
+        preview.classList.add("hidden");
+
+        if(placeholder){
+          placeholder.classList.remove("hidden");
+        }
+      };
+
+      preview.onload = function(){
+
+        profilePhotoStatus(
+          "✓ Foto de perfil guardada correctamente.",
+          "success"
+        );
+      };
+
+      preview.src = photoUrl;
 
       preview.classList.remove(
         "hidden"
       );
     }
-
 
     if(placeholder){
 
@@ -1154,20 +1144,12 @@ async function changeProfilePhoto(event){
       );
     }
 
-
-    profilePhotoStatus(
-      "✓ Foto de perfil guardada correctamente.",
-      "success"
-    );
-
-
   }catch(error){
 
     console.error(
-      "Foto de perfil:",
+      "Error guardando foto de perfil:",
       error
     );
-
 
     profilePhotoStatus(
       error.message ||
@@ -1175,7 +1157,8 @@ async function changeProfilePhoto(event){
       "error"
     );
   }
-}
+  }
+
 
 
 /* =========================================
