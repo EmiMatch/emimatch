@@ -117,6 +117,7 @@
       margin-top: 18px;
       color: #c9c5d9;
       font-size: 14px;
+      line-height: 1.4;
     }
 
     .back {
@@ -171,14 +172,92 @@
     </section>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <script>
+    "use strict";
+
     const button = document.getElementById("premiumButton");
     const status = document.getElementById("premiumStatus");
 
-    button.addEventListener("click", function () {
-      status.textContent =
-        "La activación del pago Premium se conectará próximamente.";
-    });
+    const SUPABASE_URL =
+      "https://kngiadwaesdbmvwivdev.supabase.co";
+
+    const SUPABASE_KEY =
+      "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
+
+    const supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+    async function iniciarPremium() {
+      button.disabled = true;
+      status.textContent = "Comprobando tu cuenta...";
+
+      try {
+        const {
+          data: sessionData,
+          error: sessionError
+        } = await supabaseClient.auth.getSession();
+
+        if (sessionError) {
+          throw sessionError;
+        }
+
+        const session = sessionData?.session;
+
+        if (!session) {
+          status.textContent =
+            "Necesitás iniciar sesión en EmiMatch para continuar.";
+
+          button.disabled = false;
+          return;
+        }
+
+        status.textContent =
+          "Preparando tu membresía Premium...";
+
+        const {
+          data,
+          error
+        } = await supabaseClient.rpc(
+          "prepare_premium_subscription"
+        );
+
+        if (error) {
+          throw error;
+        }
+
+        if (!data || data.success !== true) {
+          throw new Error(
+            data?.error ||
+            "No se pudo preparar la membresía."
+          );
+        }
+
+        status.textContent =
+          "Membresía Premium preparada correctamente. El pago todavía no se ha realizado.";
+
+      } catch (error) {
+        console.error(
+          "Error Premium:",
+          error
+        );
+
+        status.textContent =
+          "No se pudo preparar Premium. Intentá nuevamente.";
+
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    button.addEventListener(
+      "click",
+      iniciarPremium
+    );
   </script>
 
 </body>
