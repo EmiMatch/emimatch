@@ -118,6 +118,8 @@
       color: #c9c5d9;
       font-size: 14px;
       line-height: 1.4;
+      white-space: pre-wrap;
+      word-break: break-word;
     }
 
     .back {
@@ -194,6 +196,7 @@
 
     async function iniciarPremium() {
       button.disabled = true;
+
       status.textContent =
         "Comprobando tu cuenta...";
 
@@ -229,29 +232,87 @@
               headers: {
                 "Authorization":
                   `Bearer ${session.access_token}`,
+
                 "apikey":
                   SUPABASE_KEY,
+
                 "Content-Type":
                   "application/json"
               },
+
               body: JSON.stringify({})
             }
           );
 
+        /*
+         * CAMBIO ÚNICO:
+         * Leemos primero el cuerpo como texto para poder
+         * mostrar exactamente qué devuelve premium-create.
+         */
+
+        const responseText =
+          await response.text();
+
         let data = null;
 
-        try {
-          data = await response.json();
-        } catch (_) {
-          data = null;
+        if (responseText.trim()) {
+          try {
+            data =
+              JSON.parse(responseText);
+          } catch (_) {
+            data = null;
+          }
         }
 
-        if (!response.ok || !data?.success) {
+        /*
+         * Error HTTP real
+         */
+
+        if (!response.ok) {
           throw new Error(
             data?.error ||
+            responseText ||
             `Error HTTP ${response.status}`
           );
         }
+
+        /*
+         * HTTP 200 pero respuesta inesperada.
+         * Mostramos el contenido real recibido.
+         */
+
+        if (!data?.success) {
+          const details =
+            data
+              ? JSON.stringify(data, null, 2)
+              : (
+                  responseText ||
+                  "Respuesta vacía."
+                );
+
+          status.textContent =
+            `Respuesta inesperada (HTTP ${response.status}):\n${details}`;
+
+          console.error(
+            "Respuesta inesperada de premium-create:",
+            {
+              status: response.status,
+              statusText: response.statusText,
+              headers:
+                Object.fromEntries(
+                  response.headers.entries()
+                ),
+              body: responseText,
+              data: data
+            }
+          );
+
+          return;
+        }
+
+        /*
+         * Mercado Pago - producción
+         */
 
         if (data.init_point) {
           status.textContent =
@@ -263,6 +324,10 @@
           return;
         }
 
+        /*
+         * Mercado Pago - sandbox/pruebas
+         */
+
         if (data.sandbox_init_point) {
           status.textContent =
             "Suscripción de prueba preparada. Redirigiendo a Mercado Pago...";
@@ -273,10 +338,15 @@
           return;
         }
 
+        /*
+         * Respuesta correcta pero sin enlace de pago.
+         */
+
         status.textContent =
           "Suscripción Premium preparada. Mercado Pago todavía no confirmó el pago.";
 
       } catch (error) {
+
         console.error(
           "Error Premium:",
           error
@@ -285,8 +355,11 @@
         status.textContent =
           error?.message ||
           "No se pudo preparar Premium. Intentá nuevamente.";
+
       } finally {
+
         button.disabled = false;
+
       }
     }
 
@@ -294,6 +367,7 @@
       "click",
       iniciarPremium
     );
+
   </script>
 
 </body>
