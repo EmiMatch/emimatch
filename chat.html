@@ -2,11 +2,17 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>EmiMatch - Chat</title>
 
-  <link rel="stylesheet" href="assets/css/app.css">
+  <link
+    rel="stylesheet"
+    href="assets/css/app.css"
+  >
 
   <style>
     body {
@@ -163,7 +169,135 @@
       color: #ff8b8b;
     }
 
+    /* PREMIUM */
+
+    .premium-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-sizing: border-box;
+      background: rgba(3, 10, 24, .78);
+      backdrop-filter: blur(8px);
+    }
+
+    .premium-card {
+      width: 100%;
+      max-width: 390px;
+      position: relative;
+      box-sizing: border-box;
+      padding: 30px 24px 24px;
+      text-align: center;
+      border-radius: 26px;
+      background:
+        linear-gradient(
+          145deg,
+          #10213a,
+          #182442
+        );
+      border: 1px solid rgba(212,175,55,.35);
+      box-shadow:
+        0 25px 70px rgba(0,0,0,.45);
+    }
+
+    .premium-close {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      width: 36px;
+      height: 36px;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(255,255,255,.08);
+      color: #fff;
+      font-size: 25px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .premium-icon {
+      width: 68px;
+      height: 68px;
+      margin: 0 auto 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: rgba(212,175,55,.12);
+      border: 1px solid rgba(212,175,55,.35);
+      font-size: 32px;
+    }
+
+    .premium-card h2 {
+      margin: 0 0 10px;
+      color: #fff;
+      font-size: 25px;
+    }
+
+    .premium-subtitle {
+      margin: 0 auto 10px;
+      color: #fff;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .premium-text {
+      margin: 0 auto 18px;
+      color: #aebbd0;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .premium-benefits {
+      display: grid;
+      gap: 9px;
+      margin-bottom: 20px;
+      text-align: left;
+      color: #fff;
+      font-size: 14px;
+    }
+
+    .premium-price {
+      margin-bottom: 18px;
+    }
+
+    .premium-price strong {
+      display: block;
+      color: #d4af37;
+      font-size: 24px;
+    }
+
+    .premium-price span {
+      color: #9aa8bb;
+      font-size: 12px;
+    }
+
+    .premium-button {
+      width: 100%;
+      min-height: 48px;
+      border: 0;
+      border-radius: 15px;
+      background: #d4af37;
+      color: #071426;
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .premium-later {
+      margin-top: 12px;
+      border: 0;
+      background: transparent;
+      color: #9aa8bb;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
     @media (max-width: 480px) {
+
       .chat-page {
         padding: 12px 10px;
       }
@@ -174,6 +308,10 @@
 
       .composer button {
         padding: 0 14px;
+      }
+
+      .premium-card {
+        padding: 28px 20px 22px;
       }
     }
   </style>
@@ -199,6 +337,7 @@
       >
 
       <div class="chat-user">
+
         <strong id="userName">
           Cargando...
         </strong>
@@ -206,6 +345,7 @@
         <span id="userStatus">
           Conversación
         </span>
+
       </div>
 
     </header>
@@ -248,6 +388,7 @@
 
   <script>
     (() => {
+
       "use strict";
 
       const config =
@@ -267,39 +408,25 @@
         );
 
       const messagesBox =
-        document.getElementById(
-          "messages"
-        );
+        document.getElementById("messages");
 
       const input =
-        document.getElementById(
-          "messageInput"
-        );
+        document.getElementById("messageInput");
 
       const sendButton =
-        document.getElementById(
-          "sendButton"
-        );
+        document.getElementById("sendButton");
 
       const userName =
-        document.getElementById(
-          "userName"
-        );
+        document.getElementById("userName");
 
       const userAvatar =
-        document.getElementById(
-          "userAvatar"
-        );
+        document.getElementById("userAvatar");
 
       const userStatus =
-        document.getElementById(
-          "userStatus"
-        );
+        document.getElementById("userStatus");
 
       const composer =
-        document.getElementById(
-          "composer"
-        );
+        document.getElementById("composer");
 
       let currentUser = null;
       let otherUserId = null;
@@ -324,9 +451,7 @@
       }
 
       function formatTime(date) {
-        return new Date(
-          date
-        ).toLocaleTimeString(
+        return new Date(date).toLocaleTimeString(
           "es-AR",
           {
             hour: "2-digit",
@@ -363,7 +488,6 @@
             "Todavía no hay mensajes.<br>" +
             "¡Comenzá la conversación! 🫰" +
             "</div>";
-
           return;
         }
 
@@ -380,6 +504,7 @@
                 data-message-id="${escapeHTML(message.id)}"
               >
                 ${escapeHTML(message.content)}
+
                 <small>
                   ${formatTime(message.created_at)}
                 </small>
@@ -407,8 +532,9 @@
           )
           .maybeSingle();
 
-        if (error)
+        if (error) {
           throw error;
+        }
 
         if (data) {
 
@@ -460,11 +586,13 @@
 
         ]);
 
-        if (first.error)
+        if (first.error) {
           throw first.error;
+        }
 
-        if (second.error)
+        if (second.error) {
           throw second.error;
+        }
 
         const match =
           first.data ||
@@ -501,23 +629,35 @@
             }
           );
 
-        if (error)
+        if (error) {
           throw error;
+        }
 
         renderMessages(
           data || []
         );
       }
+      /*
+       * =========================
+       * DETECTAR LÍMITE PREMIUM
+       * =========================
+       */
 
       function isFreeMessageLimitError(error) {
 
-        const message =
-          String(
-            error?.message ||
-            error?.details ||
-            error?.hint ||
-            ""
-          ).toLowerCase();
+        const values = [
+          error?.message,
+          error?.details,
+          error?.hint,
+          error?.error,
+          error?.statusText
+        ];
+
+        const text =
+          values
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase();
 
         const code =
           String(
@@ -525,50 +665,169 @@
           ).toUpperCase();
 
         return (
-          message.includes(
-            "free_message_limit"
-          ) ||
-          message.includes(
-            "free message limit"
-          ) ||
-          message.includes(
-            "límite de 5 mensajes"
-          ) ||
-          message.includes(
-            "limite de 5 mensajes"
-          ) ||
+          text.includes("free_message_limit") ||
+          text.includes("free message limit") ||
+          text.includes("free-message-limit") ||
+          text.includes("límite de 5 mensajes") ||
+          text.includes("limite de 5 mensajes") ||
+          text.includes("alcanzaste el límite") ||
+          text.includes("alcanzaste el limite") ||
           code === "P0001"
         );
       }
 
+      /*
+       * =========================
+       * INVITACIÓN PREMIUM
+       * =========================
+       */
+
       function showPremiumLimitPrompt() {
 
-  const continuar = confirm(
-    "🫰 Llegaste al límite de mensajes gratuitos de hoy.\n\n" +
-    "Tu conversación puede seguir con EmiMatch Premium.\n\n" +
-    "Mensajes ilimitados por $10.000 ARS/mes.\n\n" +
-    "✨ ¿Querés conocer EmiMatch Premium?"
-  );
+        const overlay =
+          document.createElement("div");
 
-  if (continuar) {
-    window.location.href =
-      "membresia/membresia.html";
-  }
+        overlay.className =
+          "premium-overlay";
+
+        overlay.innerHTML = `
+
+          <div
+            class="premium-card"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="premiumTitle"
+          >
+
+            <button
+              type="button"
+              class="premium-close"
+              id="premiumClose"
+              aria-label="Cerrar"
+            >
+              ×
+            </button>
+
+            <div class="premium-icon">
+              🫰
+            </div>
+
+            <h2 id="premiumTitle">
+              Seguí conectando
+            </h2>
+
+            <p class="premium-subtitle">
+              Llegaste al límite de mensajes gratuitos de hoy.
+            </p>
+
+            <p class="premium-text">
+              Tu conversación puede seguir con
+              <strong>EmiMatch Premium</strong>.
+            </p>
+
+            <div class="premium-benefits">
+
+              <div>
+                🫰 Mensajes ilimitados
+              </div>
+
+              <div>
+                ✨ Más oportunidades de conectar
+              </div>
+
+              <div>
+                💎 Experiencia Premium
+              </div>
+
+            </div>
+
+            <div class="premium-price">
+
+              <strong>
+                $10.000 ARS
+              </strong>
+
+              <span>
+                por mes
+              </span>
+
+            </div>
+
+            <button
+              type="button"
+              class="premium-button"
+              id="goPremiumButton"
+            >
+              ✨ Conocer EmiMatch Premium
+            </button>
+
+            <button
+              type="button"
+              class="premium-later"
+              id="closePremiumButton"
+            >
+              Ahora no
+            </button>
+
+          </div>
+        `;
+
+        document.body.appendChild(
+          overlay
+        );
+
+        const close = () => {
+
+          overlay.remove();
+
+          input.focus();
+        };
+
+        overlay
+          .querySelector("#premiumClose")
+          .addEventListener(
+            "click",
+            close
+          );
+
+        overlay
+          .querySelector("#closePremiumButton")
+          .addEventListener(
+            "click",
+            close
+          );
+
+        overlay
+          .querySelector("#goPremiumButton")
+          .addEventListener(
+            "click",
+            () => {
+
+              window.location.href =
+                "membresia/membresia.html";
+
+            }
+          );
+
+        overlay.addEventListener(
+          "click",
+          event => {
+
+            if (
+              event.target === overlay
+            ) {
+              close();
+            }
+
+          }
+        );
       }
 
-        
-          
-            
-            
-            
-          
-
-        
-
-          
-            
-        
-      
+      /*
+       * =========================
+       * ENVIAR MENSAJE
+       * =========================
+       */
 
       async function sendMessage() {
 
@@ -582,9 +841,15 @@
           return;
         }
 
-        sendButton.disabled = true;
+        sendButton.disabled =
+          true;
 
         try {
+
+          /*
+           * Comprobamos primero
+           * el límite gratuito.
+           */
 
           const {
             data: limitData,
@@ -596,9 +861,20 @@
           if (limitError) {
 
             console.error(
-              "EmiMatch Premium - límite:",
+              "EmiMatch - error de límite:",
               limitError
             );
+
+            if (
+              isFreeMessageLimitError(
+                limitError
+              )
+            ) {
+
+              showPremiumLimitPrompt();
+
+              return;
+            }
 
             alert(
               "No se pudo comprobar el límite de mensajes. Intentá nuevamente."
@@ -606,6 +882,10 @@
 
             return;
           }
+
+          /*
+           * Sesión no autenticada.
+           */
 
           if (
             limitData?.reason ===
@@ -622,12 +902,22 @@
             return;
           }
 
-          if (!limitData?.allowed) {
+          /*
+           * Límite de mensajes alcanzado.
+           */
+
+          if (
+            !limitData?.allowed
+          ) {
 
             showPremiumLimitPrompt();
 
             return;
           }
+
+          /*
+           * Enviar mensaje normalmente.
+           */
 
           const {
             data,
@@ -635,6 +925,7 @@
           } = await supabase
             .from("messages")
             .insert({
+
               match_id:
                 matchId,
 
@@ -643,6 +934,7 @@
 
               content:
                 content
+
             })
             .select()
             .single();
@@ -653,6 +945,12 @@
               "EmiMatch Chat:",
               error
             );
+
+            /*
+             * Protección adicional:
+             * nunca mostrar
+             * free_message_limit.
+             */
 
             if (
               isFreeMessageLimitError(
@@ -672,7 +970,17 @@
             return;
           }
 
-          input.value = "";
+          /*
+           * Limpiar campo.
+           */
+
+          input.value =
+            "";
+
+          /*
+           * Mostrar inmediatamente
+           * el mensaje enviado.
+           */
 
           if (data) {
 
@@ -719,19 +1027,21 @@
               messagesBox.appendChild(
                 div
               );
+
+              scrollToBottom();
             }
-
-            scrollToBottom();
           }
-
-          input.focus();
 
         } catch (error) {
 
           console.error(
-            "EmiMatch Chat:",
+            "EmiMatch Chat - error:",
             error
           );
+
+          /*
+           * Última protección.
+           */
 
           if (
             isFreeMessageLimitError(
@@ -752,15 +1062,32 @@
 
           sendButton.disabled =
             false;
+
         }
       }
 
+      /*
+       * =========================
+       * REALTIME
+       * =========================
+       */
+
       function startRealtime() {
+
+        if (
+          realtimeChannel
+        ) {
+
+          supabase.removeChannel(
+            realtimeChannel
+          );
+        }
 
         realtimeChannel =
           supabase
             .channel(
-              "chat-" + matchId
+              "chat-" +
+              matchId
             )
             .on(
               "postgres_changes",
@@ -779,8 +1106,7 @@
 
                 if (
                   !message ||
-                  message.sender_id ===
-                    currentUser.id
+                  !message.id
                 ) {
                   return;
                 }
@@ -802,6 +1128,7 @@
                   );
 
                 if (empty) {
+
                   messagesBox.innerHTML =
                     "";
                 }
@@ -811,8 +1138,17 @@
                     "div"
                   );
 
+                const mine =
+                  message.sender_id ===
+                  currentUser.id;
+
                 div.className =
-                  "message theirs";
+                  "message " +
+                  (
+                    mine
+                      ? "mine"
+                      : "theirs"
+                  );
 
                 div.dataset.messageId =
                   message.id;
@@ -837,58 +1173,41 @@
             .subscribe();
       }
 
+      /*
+       * =========================
+       * FORMULARIO
+       * =========================
+       */
+
       composer.addEventListener(
         "submit",
-        event => {
+        async event => {
 
           event.preventDefault();
 
-          sendMessage();
+          await sendMessage();
+
         }
       );
 
-      input.addEventListener(
-        "keydown",
-        event => {
+      /*
+       * =========================
+       * INICIO DEL CHAT
+       * =========================
+       */
 
-          if (
-            event.key === "Enter" &&
-            !event.shiftKey
-          ) {
-
-            event.preventDefault();
-
-            sendMessage();
-          }
-        }
-      );
-
-      window.addEventListener(
-        "beforeunload",
-        () => {
-
-          if (realtimeChannel) {
-
-            supabase.removeChannel(
-              realtimeChannel
-            );
-          }
-        }
-      );
-
-      async function init() {
+      async function initializeChat() {
 
         try {
 
-          if (!otherUserId) {
+          if (
+            !otherUserId
+          ) {
 
             showStatus(
               "No se indicó el usuario de la conversación.",
               true
             );
-
-            composer.style.display =
-              "none";
 
             return;
           }
@@ -896,8 +1215,7 @@
           const {
             data: sessionData,
             error: sessionError
-          } =
-            await supabase.auth.getSession();
+          } = await supabase.auth.getSession();
 
           if (sessionError) {
             throw sessionError;
@@ -908,6 +1226,10 @@
             null;
 
           if (!currentUser) {
+
+            alert(
+              "Tu sesión expiró. Iniciá sesión nuevamente."
+            );
 
             window.location.href =
               "index.html";
@@ -921,19 +1243,19 @@
           ) {
 
             showStatus(
-              "No podés abrir una conversación contigo mismo.",
+              "No podés iniciar una conversación con tu propia cuenta.",
               true
             );
-
-            composer.style.display =
-              "none";
 
             return;
           }
 
           await Promise.all([
+
             loadProfile(),
+
             findMatch()
+
           ]);
 
           await loadMessages();
@@ -945,28 +1267,29 @@
         } catch (error) {
 
           console.error(
-            "EmiMatch Chat:",
+            "EmiMatch Chat - inicialización:",
             error
           );
 
           showStatus(
-            error.message ||
+            error?.message ||
             "No se pudo cargar la conversación.",
             true
           );
 
-          composer.style.display =
-            "none";
         }
       }
 
-      init();
+      /*
+       * =========================
+       * INICIAR CHAT
+       * =========================
+       */
+
+      initializeChat();
 
     })();
   </script>
 
-  <script src="assets/js/app.js"></script>
-  <script src="assets/js/components.js"></script>
-
 </body>
-  </html>
+</html>
