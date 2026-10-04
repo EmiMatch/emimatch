@@ -13,8 +13,12 @@
 <body>
 <main class="em-container em-section">
 <section class="em-shell">
+
 <div class="em-card">
-<div class="em-brand"><span class="em-brand-mark">💕</span><span>EmiMatch</span></div>
+<div class="em-brand">
+<span class="em-brand-mark">💕</span>
+<span>EmiMatch</span>
+</div>
 <h1>☰ Menú</h1>
 <p class="em-muted">Todo lo que necesitás para administrar tu experiencia.</p>
 </div>
@@ -28,6 +32,16 @@
 </div>
 
 <div class="em-card">
+<h2>👑 EmiMatch Premium</h2>
+<p class="em-muted">
+Más posibilidades para conectar, conversar y conocer personas.
+</p>
+<a class="em-button em-button-primary" href="membresia/membresia.html">
+👑 Obtener Premium
+</a>
+</div>
+
+<div class="em-card">
 <h2>👤 Mi cuenta</h2>
 <a class="em-button" href="perfil.html">👤 Mi perfil</a>
 <a class="em-button" href="perfil-usuario.html">🔗 Ver perfil público</a>
@@ -37,24 +51,42 @@
 
 <div class="em-card">
 <h2>🛡️ Seguridad</h2>
-<p class="em-muted">Administrá tu cuenta y mantené una experiencia segura dentro de EmiMatch.</p>
+<p class="em-muted">
+Administrá tu cuenta y mantené una experiencia segura dentro de EmiMatch.
+</p>
 <a class="em-button" href="configuracion.html">🔐 Seguridad y cuenta</a>
 </div>
 
 <div id="message" class="em-alert" hidden></div>
+
 </section>
 </main>
+
 <script>
 (()=>{
 "use strict";
+
 const c=window.EMIMATCH_CONFIG;
-if(!c){location.replace('index.html');return;}
-const db=window.supabase.createClient(c.supabaseUrl,c.supabaseKey);
+
+if(!c){
+location.replace('index.html');
+return;
+}
+
+const db=window.supabase.createClient(
+c.supabaseUrl,
+c.supabaseKey
+);
+
 (async()=>{
- const {data,error}=await db.auth.getSession();
- if(error||!data.session){location.replace('index.html');}
+const {data,error}=await db.auth.getSession();
+
+if(error||!data.session){
+location.replace('index.html');
+}
 })();
 })();
 </script>
+
 </body>
 </html>
