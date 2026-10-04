@@ -1,566 +1,125 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EmiMatch - Chat</title>
+async function sendMessage() {
+  const content = input.value.trim();
 
-  <link rel="stylesheet" href="assets/css/app.css">
+  if (!content || !matchId) return;
 
-  <style>
-    body {
-      margin: 0;
-      background: var(--em-bg, #071426);
-      color: var(--em-text, #fff);
+  sendButton.disabled = true;
+
+  try {
+    /*
+     * Verificar límite Premium antes de enviar.
+     * Gratis: 5 mensajes diarios.
+     * Premium: ilimitados.
+     */
+    const {
+      data: limitData,
+      error: limitError
+    } = await supabase.rpc("can_send_message");
+
+    if (limitError) {
+      console.error(
+        "EmiMatch Premium - límite de mensajes:",
+        limitError
+      );
+
+      alert(
+        "No se pudo comprobar el límite de mensajes. Intentá nuevamente."
+      );
+
+      return;
     }
 
-    .chat-page {
-      max-width: 760px;
-      margin: 0 auto;
-      min-height: calc(100vh - 90px);
-      display: flex;
-      flex-direction: column;
-      padding: 20px 14px;
-      box-sizing: border-box;
-    }
+    if (!limitData?.allowed) {
+      if (limitData?.reason === "not_authenticated") {
+        alert(
+          "Tu sesión expiró. Iniciá sesión nuevamente."
+        );
 
-    .chat-top {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px;
-      border-radius: 18px;
-      background: var(--em-surface, #10213a);
-      margin-bottom: 12px;
-    }
-
-    .back-btn {
-      text-decoration: none;
-      font-size: 22px;
-      color: inherit;
-    }
-
-    .chat-avatar {
-      width: 46px;
-      height: 46px;
-      border-radius: 50%;
-      object-fit: cover;
-      background: #1d3150;
-    }
-
-    .chat-user {
-      min-width: 0;
-      flex: 1;
-    }
-
-    .chat-user strong {
-      display: block;
-      font-size: 16px;
-    }
-
-    .chat-user span {
-      display: block;
-      margin-top: 3px;
-      font-size: 12px;
-      color: var(--em-muted, #9aa8bb);
-    }
-
-    .messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 8px 4px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      min-height: 55vh;
-    }
-
-    .message {
-      max-width: 78%;
-      padding: 10px 13px;
-      border-radius: 16px;
-      word-break: break-word;
-      line-height: 1.4;
-      font-size: 14px;
-    }
-
-    .message.mine {
-      align-self: flex-end;
-      background: var(--em-primary, #d4af37);
-      color: #071426;
-      border-bottom-right-radius: 5px;
-    }
-
-    .message.theirs {
-      align-self: flex-start;
-      background: var(--em-surface, #10213a);
-      color: var(--em-text, #fff);
-      border-bottom-left-radius: 5px;
-    }
-
-    .message small {
-      display: block;
-      margin-top: 4px;
-      font-size: 10px;
-      opacity: .65;
-      text-align: right;
-    }
-
-    .empty {
-      margin: auto;
-      text-align: center;
-      color: var(--em-muted, #9aa8bb);
-      padding: 30px 10px;
-    }
-
-    .composer {
-      display: flex;
-      gap: 8px;
-      padding: 10px;
-      border-radius: 18px;
-      background: var(--em-surface, #10213a);
-    }
-
-    .composer textarea {
-      flex: 1;
-      min-height: 42px;
-      max-height: 120px;
-      resize: none;
-      border: 0;
-      outline: 0;
-      border-radius: 13px;
-      padding: 11px 12px;
-      box-sizing: border-box;
-      background: rgba(255,255,255,.08);
-      color: #fff;
-      font: inherit;
-    }
-
-    .composer button {
-      border: 0;
-      border-radius: 13px;
-      padding: 0 17px;
-      cursor: pointer;
-      background: var(--em-primary, #d4af37);
-      color: #071426;
-      font-weight: 700;
-    }
-
-    .composer button:disabled {
-      opacity: .5;
-      cursor: not-allowed;
-    }
-
-    .status {
-      text-align: center;
-      color: var(--em-muted, #9aa8bb);
-      font-size: 13px;
-      padding: 20px;
-    }
-
-    .error {
-      color: #ff8b8b;
-    }
-  </style>
-</head>
-
-<body>
-
-  <main class="chat-page">
-
-    <header class="chat-top">
-      <a href="chat.html" class="back-btn" aria-label="Volver">←</a>
-
-      <img
-        id="userAvatar"
-        class="chat-avatar"
-        src="https://placehold.co/100x100?text=💕"
-        alt="Foto de perfil"
-      >
-
-      <div class="chat-user">
-        <strong id="userName">Cargando...</strong>
-        <span id="userStatus">Conversación</span>
-      </div>
-    </header>
-
-    <section id="messages" class="messages">
-      <div class="status">Cargando conversación...</div>
-    </section>
-
-    <form id="composer" class="composer">
-      <textarea
-        id="messageInput"
-        placeholder="Escribí un mensaje..."
-        maxlength="1000"
-        autocomplete="off"
-      ></textarea>
-
-      <button id="sendButton" type="submit">
-        Enviar
-      </button>
-    </form>
-
-  </main>
-
-  <!-- Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <!-- Configuración central -->
-  <script src="assets/js/config.js"></script>
-
-  <script>
-    (() => {
-      "use strict";
-
-      const config = window.EMIMATCH_CONFIG;
-
-      if (!config) {
-        console.error("EmiMatch: falta config.js");
+        window.location.href = "index.html";
         return;
       }
 
-      const supabase = window.supabase.createClient(
-        config.supabaseUrl,
-        config.supabaseKey
+      const remaining =
+        Number(limitData?.remaining ?? 0);
+
+      alert(
+        "Llegaste al límite de 5 mensajes diarios.\n\n" +
+        "Pasate a EmiMatch Premium para continuar conversando sin límites."
       );
 
-      const messagesBox = document.getElementById("messages");
-      const input = document.getElementById("messageInput");
-      const sendButton = document.getElementById("sendButton");
-      const userName = document.getElementById("userName");
-      const userAvatar = document.getElementById("userAvatar");
-      const userStatus = document.getElementById("userStatus");
-      const composer = document.getElementById("composer");
+      return;
+    }
 
-      let currentUser = null;
-      let otherUserId = null;
-      let matchId = null;
-      let realtimeChannel = null;
+    /*
+     * El límite está permitido.
+     * Se mantiene exactamente el INSERT existente.
+     */
+    const {
+      data,
+      error
+    } = await supabase
+      .from("messages")
+      .insert({
+        match_id: matchId,
+        sender_id: currentUser.id,
+        content: content
+      })
+      .select()
+      .single();
 
-      const params = new URLSearchParams(window.location.search);
-      otherUserId = params.get("user");
+    if (error) {
+      console.error(error);
 
-      function escapeHTML(value) {
-        return String(value || "")
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;")
-          .replace(/'/g, "&#039;");
+      alert(
+        "No se pudo enviar el mensaje."
+      );
+
+      return;
+    }
+
+    input.value = "";
+
+    if (data) {
+      const empty =
+        messagesBox.querySelector(".empty");
+
+      if (empty) {
+        messagesBox.innerHTML = "";
       }
 
-      function formatTime(date) {
-        return new Date(date).toLocaleTimeString("es-AR", {
-          hour: "2-digit",
-          minute: "2-digit"
-        });
-      }
+      const div =
+        document.createElement("div");
 
-      function showStatus(text, isError = false) {
-        messagesBox.innerHTML =
-          '<div class="status ' +
-          (isError ? "error" : "") +
-          '">' +
-          escapeHTML(text) +
-          "</div>";
-      }
+      div.className = "message mine";
+      div.dataset.messageId = data.id;
 
-      function scrollToBottom() {
-        messagesBox.scrollTop = messagesBox.scrollHeight;
-      }
+      div.innerHTML =
+        escapeHTML(data.content) +
+        "<small>" +
+        formatTime(data.created_at) +
+        "</small>";
 
-      function renderMessages(messages) {
-        if (!messages || messages.length === 0) {
-          messagesBox.innerHTML =
-            '<div class="empty">' +
-            "Todavía no hay mensajes.<br>" +
-            "¡Comenzá la conversación! 💕" +
-            "</div>";
-          return;
-        }
+      messagesBox.appendChild(div);
 
-        messagesBox.innerHTML = messages.map(message => {
-          const mine = message.sender_id === currentUser.id;
+      scrollToBottom();
+    }
 
-          return `
-            <div class="message ${mine ? "mine" : "theirs"}"
-                 data-message-id="${escapeHTML(message.id)}">
-              ${escapeHTML(message.content)}
-              <small>${formatTime(message.created_at)}</small>
-            </div>
-          `;
-        }).join("");
+    input.focus();
 
-        scrollToBottom();
-      }
+  } catch (error) {
 
-      async function loadProfile() {
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("id,nombre,foto_url")
-          .eq("id", otherUserId)
-          .maybeSingle();
+    console.error(
+      "EmiMatch Chat:",
+      error
+    );
 
-        if (error) throw error;
+    alert(
+      "No se pudo enviar el mensaje. Intentá nuevamente."
+    );
 
-        if (data) {
-          userName.textContent = data.nombre || "Usuario";
-          userAvatar.src =
-            data.foto_url ||
-            "https://placehold.co/100x100?text=💕";
-          userStatus.textContent = "Conectados en EmiMatch";
-        }
-      }
+  } finally {
 
-      async function findMatch() {
-        const [first, second] = await Promise.all([
-          supabase
-            .from("matches")
-            .select("id")
-            .eq("user1_id", currentUser.id)
-            .eq("user2_id", otherUserId)
-            .maybeSingle(),
+    sendButton.disabled = false;
 
-          supabase
-            .from("matches")
-            .select("id")
-            .eq("user1_id", otherUserId)
-            .eq("user2_id", currentUser.id)
-            .maybeSingle()
-        ]);
-
-        if (first.error) throw first.error;
-        if (second.error) throw second.error;
-
-        const match = first.data || second.data;
-
-        if (!match) {
-          throw new Error(
-            "No existe un match válido con este usuario."
-          );
-        }
-
-        matchId = match.id;
-      }
-
-      async function loadMessages() {
-        const { data, error } = await supabase
-          .from("messages")
-          .select(
-            "id,match_id,sender_id,content,created_at"
-          )
-          .eq("match_id", matchId)
-          .order("created_at", {
-            ascending: true
-          });
-
-        if (error) throw error;
-
-        renderMessages(data || []);
-      }
-
-      async function sendMessage() {
-        const content = input.value.trim();
-
-        if (!content || !matchId) return;
-
-        sendButton.disabled = true;
-
-        const { data, error } = await supabase
-          .from("messages")
-          .insert({
-            match_id: matchId,
-            sender_id: currentUser.id,
-            content: content
-          })
-          .select()
-          .single();
-
-        if (error) {
-          console.error(error);
-          alert("No se pudo enviar el mensaje.");
-          sendButton.disabled = false;
-          return;
-        }
-
-        input.value = "";
-
-        if (data) {
-          const empty = messagesBox.querySelector(".empty");
-
-          if (empty) {
-            messagesBox.innerHTML = "";
-          }
-
-          const div = document.createElement("div");
-
-          div.className = "message mine";
-          div.dataset.messageId = data.id;
-
-          div.innerHTML =
-            escapeHTML(data.content) +
-            "<small>" +
-            formatTime(data.created_at) +
-            "</small>";
-
-          messagesBox.appendChild(div);
-          scrollToBottom();
-        }
-
-        sendButton.disabled = false;
-        input.focus();
-      }
-
-      function startRealtime() {
-        realtimeChannel = supabase
-          .channel("chat-" + matchId)
-          .on(
-            "postgres_changes",
-            {
-              event: "INSERT",
-              schema: "public",
-              table: "messages",
-              filter: "match_id=eq." + matchId
-            },
-            payload => {
-
-              const message = payload.new;
-
-              if (
-                !message ||
-                message.sender_id === currentUser.id
-              ) {
-                return;
-              }
-
-              const existing =
-                messagesBox.querySelector(
-                  '[data-message-id="' +
-                  message.id +
-                  '"]'
-                );
-
-              if (existing) return;
-
-              const empty =
-                messagesBox.querySelector(".empty");
-
-              if (empty) {
-                messagesBox.innerHTML = "";
-              }
-
-              const div =
-                document.createElement("div");
-
-              div.className = "message theirs";
-              div.dataset.messageId = message.id;
-
-              div.innerHTML =
-                escapeHTML(message.content) +
-                "<small>" +
-                formatTime(message.created_at) +
-                "</small>";
-
-              messagesBox.appendChild(div);
-
-              scrollToBottom();
-            }
-          )
-          .subscribe();
-      }
-
-      composer.addEventListener("submit", event => {
-        event.preventDefault();
-        sendMessage();
-      });
-
-      input.addEventListener("keydown", event => {
-        if (
-          event.key === "Enter" &&
-          !event.shiftKey
-        ) {
-          event.preventDefault();
-          sendMessage();
-        }
-      });
-
-      window.addEventListener("beforeunload", () => {
-        if (realtimeChannel) {
-          supabase.removeChannel(realtimeChannel);
-        }
-      });
-
-      async function init() {
-        try {
-          if (!otherUserId) {
-            showStatus(
-              "No se indicó el usuario de la conversación.",
-              true
-            );
-            composer.style.display = "none";
-            return;
-          }
-
-          const {
-            data: sessionData,
-            error: sessionError
-          } = await supabase.auth.getSession();
-
-          if (sessionError) throw sessionError;
-
-          currentUser =
-            sessionData.session?.user || null;
-
-          if (!currentUser) {
-            window.location.href = "index.html";
-            return;
-          }
-
-          if (currentUser.id === otherUserId) {
-            showStatus(
-              "No podés abrir una conversación contigo mismo.",
-              true
-            );
-            composer.style.display = "none";
-            return;
-          }
-
-          await Promise.all([
-            loadProfile(),
-            findMatch()
-          ]);
-
-          await loadMessages();
-
-          startRealtime();
-
-          input.focus();
-
-        } catch (error) {
-          console.error(
-            "EmiMatch Chat:",
-            error
-          );
-
-          showStatus(
-            error.message ||
-            "No se pudo cargar la conversación.",
-            true
-          );
-
-          composer.style.display = "none";
-        }
-      }
-
-      init();
-
-    })();
-  </script>
-
-  <!-- Núcleo EmiMatch -->
-  <script src="assets/js/app.js"></script>
-  <script src="assets/js/components.js"></script>
-
-</body>
-</html>
+  }
+}
