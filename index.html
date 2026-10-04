@@ -1,42 +1,75 @@
-<!DOCTYPE html>
-<html lang="es">
+<!DOCTYPE html><html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#07111f">
 <meta name="description" content="EmiMatch — Conocé. Conectá. Compartí.">
-<title>EmiMatch</title>
+<title>EmiMatch</title><link rel="stylesheet" href="assets/css/app.css"><style>
+:root{
+  --em-bg:#050914;
+  --em-bg-2:#0a1222;
+  --em-panel:#0d1829;
+  --em-panel-2:#111e32;
+  --em-gold:#f5c451;
+  --em-gold-light:#ffe7a3;
+  --em-purple:#7c5cff;
+  --em-purple-soft:#a78bfa;
+  --em-text:#f8fafc;
+  --em-muted:#9aa8bc;
+  --em-border:rgba(255,255,255,.10);
+  --em-border-gold:rgba(245,196,81,.28);
+}
 
-<link rel="stylesheet" href="assets/css/app.css">
+*{box-sizing:border-box}
 
-<style>
+html{scroll-behavior:smooth}
+
 body{
   margin:0;
   min-height:100vh;
   background:
-    radial-gradient(circle at 10% 10%,#36236b55,transparent 30%),
-    radial-gradient(circle at 90% 30%,#7b285544,transparent 30%),
-    linear-gradient(145deg,#050b16,#0b1729);
-  color:#fff;
+    radial-gradient(circle at 8% 8%,rgba(124,92,255,.18),transparent 28%),
+    radial-gradient(circle at 92% 18%,rgba(245,196,81,.10),transparent 25%),
+    radial-gradient(circle at 50% 100%,rgba(92,54,170,.14),transparent 35%),
+    linear-gradient(145deg,#030712 0%,#07111f 48%,#0a1020 100%);
+  color:var(--em-text);
   font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  overflow-x:hidden;
 }
 
-*{box-sizing:border-box}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(90deg,transparent 49.8%,rgba(255,255,255,.015) 50%,transparent 50.2%);
+  opacity:.35;
+}
 
 a{text-decoration:none;color:inherit}
 
 button,input{font:inherit}
 
+button{-webkit-tap-highlight-color:transparent}
+
 .home{
   min-height:100vh;
+  position:relative;
+  z-index:1;
 }
 
 .header{
-  height:70px;
-  border-bottom:1px solid #ffffff10;
-  background:#050b16dd;
+  height:72px;
+  border-bottom:1px solid rgba(255,255,255,.07);
+  background:rgba(4,9,19,.82);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
   display:flex;
   align-items:center;
+  position:sticky;
+  top:0;
+  z-index:20;
 }
 
 .header-inner{
@@ -50,34 +83,50 @@ button,input{font:inherit}
 .logo{
   display:flex;
   align-items:center;
-  gap:10px;
+  gap:11px;
   font-size:1.25rem;
   font-weight:900;
+  letter-spacing:-.02em;
 }
 
 .logo-mark{
-  width:40px;
-  height:40px;
-  border-radius:13px;
+  width:42px;
+  height:42px;
+  border-radius:14px;
   display:grid;
   place-items:center;
-  background:linear-gradient(135deg,#ffe39a,#f5c451);
-  color:#201506;
+  background:
+    linear-gradient(145deg,#fff1bd 0%,#f5c451 55%,#c89528 100%);
+  color:#211705;
+  box-shadow:
+    0 8px 25px rgba(245,196,81,.18),
+    inset 0 1px 0 rgba(255,255,255,.65);
+  font-size:1.35rem;
+  line-height:1;
 }
 
 .logo-name{
-  background:linear-gradient(90deg,#fff,#ffe39a);
+  background:linear-gradient(90deg,#ffffff 0%,#ffe7a3 48%,#f5c451 100%);
   -webkit-background-clip:text;
   background-clip:text;
   color:transparent;
 }
 
 .header-link{
-  border:1px solid #ffffff18;
+  border:1px solid rgba(245,196,81,.24);
   border-radius:999px;
-  padding:9px 16px;
+  padding:9px 17px;
   font-size:.85rem;
   font-weight:800;
+  color:#f9e7b3;
+  background:rgba(245,196,81,.05);
+  transition:.2s ease;
+}
+
+.header-link:hover{
+  border-color:rgba(245,196,81,.48);
+  background:rgba(245,196,81,.10);
+  transform:translateY(-1px);
 }
 
 .main{
@@ -86,90 +135,156 @@ button,input{font:inherit}
 }
 
 .hero{
-  min-height:calc(100vh - 70px);
+  min-height:calc(100vh - 72px);
   display:grid;
   grid-template-columns:1fr 410px;
   gap:60px;
   align-items:center;
-  padding:50px 0;
+  padding:54px 0 62px;
 }
 
 .badge{
-  display:inline-block;
-  padding:8px 13px;
-  border:1px solid #f5c45144;
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:8px 14px;
+  border:1px solid rgba(245,196,81,.25);
   border-radius:999px;
-  background:#f5c45112;
-  color:#ffe39a;
+  background:
+    linear-gradient(135deg,rgba(245,196,81,.09),rgba(124,92,255,.06));
+  color:#ffe7a3;
   font-size:.78rem;
   font-weight:800;
+  box-shadow:0 8px 30px rgba(0,0,0,.12);
 }
 
 h1{
   margin:22px 0 0;
   font-size:clamp(3rem,7vw,5.5rem);
   line-height:.95;
-  letter-spacing:-.06em;
+  letter-spacing:-.065em;
 }
 
 .gold{
-  background:linear-gradient(100deg,#ffe39a,#f5c451,#fff);
+  background:linear-gradient(
+    100deg,
+    #fff4ce 0%,
+    #ffe39a 28%,
+    #f5c451 62%,
+    #fff 100%
+  );
   -webkit-background-clip:text;
   background-clip:text;
   color:transparent;
+  filter:drop-shadow(0 8px 30px rgba(245,196,81,.08));
 }
 
 .description{
   max-width:600px;
-  margin:24px 0 0;
-  color:#aab6c8;
+  margin:25px 0 0;
+  color:#aeb9c9;
   font-size:1.05rem;
-  line-height:1.7;
+  line-height:1.75;
 }
 
 .chips{
   display:flex;
   flex-wrap:wrap;
-  gap:8px;
-  margin-top:23px;
+  gap:9px;
+  margin-top:24px;
 }
 
 .chip{
-  padding:8px 11px;
+  padding:8px 12px;
   border-radius:999px;
-  background:#ffffff08;
-  border:1px solid #ffffff12;
-  color:#dbe4f0;
+  background:rgba(255,255,255,.035);
+  border:1px solid rgba(255,255,255,.09);
+  color:#dce5f1;
   font-size:.76rem;
   font-weight:700;
+  transition:.2s ease;
+}
+
+.chip:hover{
+  border-color:rgba(245,196,81,.22);
+  background:rgba(245,196,81,.06);
 }
 
 .trust{
   display:flex;
   flex-wrap:wrap;
   gap:16px;
-  margin-top:25px;
-  color:#8190a5;
+  margin-top:26px;
+  color:#8290a4;
   font-size:.74rem;
 }
 
+.trust span{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+}
+
 .card{
-  padding:26px;
-  border-radius:25px;
-  border:1px solid #ffffff12;
-  background:linear-gradient(145deg,#14233af5,#08111ff5);
-  box-shadow:0 30px 70px #0008;
+  padding:27px;
+  border-radius:27px;
+  border:1px solid rgba(255,255,255,.10);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(19,34,57,.96),
+      rgba(6,14,27,.98)
+    );
+  box-shadow:
+    0 35px 90px rgba(0,0,0,.45),
+    0 0 0 1px rgba(124,92,255,.035),
+    inset 0 1px 0 rgba(255,255,255,.035);
+  position:relative;
+  overflow:hidden;
+}
+
+.card::before{
+  content:"";
+  position:absolute;
+  width:180px;
+  height:180px;
+  top:-100px;
+  right:-80px;
+  border-radius:50%;
+  background:rgba(124,92,255,.14);
+  filter:blur(35px);
+  pointer-events:none;
+}
+
+.card::after{
+  content:"";
+  position:absolute;
+  width:160px;
+  height:160px;
+  bottom:-120px;
+  left:-90px;
+  border-radius:50%;
+  background:rgba(245,196,81,.08);
+  filter:blur(30px);
+  pointer-events:none;
+}
+
+.card > *{
+  position:relative;
+  z-index:1;
 }
 
 .card h2{
   margin:0;
-  font-size:1.45rem;
+  font-size:1.48rem;
+  letter-spacing:-.025em;
 }
 
 .card p{
-  margin:7px 0 20px;
+  margin:8px 0 20px;
   color:#aab6c8;
   font-size:.84rem;
+  line-height:1.55;
 }
 
 .tabs{
@@ -177,33 +292,34 @@ h1{
   grid-template-columns:1fr 1fr;
   gap:4px;
   padding:4px;
-  background:#ffffff08;
-  border-radius:13px;
+  background:rgba(255,255,255,.045);
+  border:1px solid rgba(255,255,255,.055);
+  border-radius:14px;
   margin-bottom:20px;
 }
 
 .tab{
   border:0;
   border-radius:10px;
-  min-height:42px;
+  min-height:43px;
   background:transparent;
   color:#9eabc0;
   cursor:pointer;
   font-weight:800;
+  transition:.2s ease;
 }
+
+.tab:hover{color:#e8edf5}
 
 .tab.active{
   background:linear-gradient(135deg,#ffe39a,#f5c451);
   color:#201506;
+  box-shadow:0 5px 18px rgba(245,196,81,.12);
 }
 
-.panel{
-  display:none;
-}
+.panel{display:none}
 
-.panel.active{
-  display:block;
-}
+.panel.active{display:block}
 
 .form{
   display:grid;
@@ -227,45 +343,83 @@ h1{
 
 .input{
   width:100%;
-  height:49px;
+  height:50px;
   padding:0 45px 0 14px;
-  border-radius:12px;
-  border:1px solid #ffffff14;
+  border-radius:13px;
+  border:1px solid rgba(255,255,255,.10);
   outline:none;
-  background:#020913aa;
+  background:rgba(2,9,19,.72);
   color:#fff;
+  transition:.2s ease;
+}
+
+.input::placeholder{color:#65748a}
+
+.input:hover{
+  border-color:rgba(255,255,255,.16);
 }
 
 .input:focus{
-  border-color:#f5c451aa;
-  box-shadow:0 0 0 4px #f5c45112;
+  border-color:rgba(245,196,81,.65);
+  box-shadow:
+    0 0 0 4px rgba(245,196,81,.08),
+    0 8px 25px rgba(0,0,0,.12);
 }
 
 .eye{
   position:absolute;
   right:6px;
   top:6px;
-  width:37px;
-  height:37px;
+  width:38px;
+  height:38px;
   border:0;
+  border-radius:9px;
   background:transparent;
   color:#8b98ab;
   cursor:pointer;
+  transition:.2s ease;
+}
+
+.eye:hover{
+  background:rgba(255,255,255,.05);
+  color:#ffe39a;
 }
 
 .submit{
   width:100%;
-  min-height:50px;
+  min-height:51px;
   border:0;
   border-radius:13px;
-  background:linear-gradient(135deg,#ffe39a,#f5c451);
+  background:
+    linear-gradient(
+      135deg,
+      #fff0bb 0%,
+      #ffe39a 28%,
+      #f5c451 72%,
+      #dba938 100%
+    );
   color:#201506;
   cursor:pointer;
   font-weight:900;
+  box-shadow:
+    0 10px 28px rgba(245,196,81,.13),
+    inset 0 1px 0 rgba(255,255,255,.7);
+  transition:.2s ease;
 }
+
+.submit:hover{
+  transform:translateY(-1px);
+  box-shadow:
+    0 13px 32px rgba(245,196,81,.20),
+    inset 0 1px 0 rgba(255,255,255,.75);
+}
+
+.submit:active{transform:translateY(0)}
 
 .submit:disabled{
   opacity:.6;
+  cursor:not-allowed;
+  transform:none;
 }
 
 .forgot,
@@ -283,15 +437,26 @@ h1{
   text-align:center;
 }
 
+.forgot:hover,
+.back:hover{
+  color:#fff3c9;
+}
+
 .secondary{
   width:100%;
   min-height:44px;
-  border:1px solid #ffffff14;
+  border:1px solid rgba(255,255,255,.11);
   border-radius:12px;
-  background:#ffffff08;
+  background:rgba(255,255,255,.045);
   color:#fff;
   cursor:pointer;
   font-weight:800;
+  transition:.2s ease;
+}
+
+.secondary:hover{
+  border-color:rgba(255,255,255,.20);
+  background:rgba(255,255,255,.07);
 }
 
 .message{
@@ -300,40 +465,40 @@ h1{
   padding:11px 13px;
   border-radius:11px;
   font-size:.78rem;
+  line-height:1.45;
 }
 
-.message.show{
-  display:block;
-}
+.message.show{display:block}
 
 .success{
   color:#a7f3d0;
-  background:#34d39915;
-  border:1px solid #34d39930;
+  background:rgba(52,211,153,.08);
+  border:1px solid rgba(52,211,153,.18);
 }
 
 .error{
   color:#fecdd3;
-  background:#fb718515;
-  border:1px solid #fb718530;
+  background:rgba(251,113,133,.08);
+  border:1px solid rgba(251,113,133,.18);
 }
 
 .info{
   color:#bfdbfe;
-  background:#60a5fa15;
-  border:1px solid #60a5fa30;
+  background:rgba(96,165,250,.08);
+  border:1px solid rgba(96,165,250,.18);
 }
 
 .legal{
   color:#68768b;
   font-size:.68rem;
-  line-height:1.5;
+  line-height:1.55;
   text-align:center;
 }
 
 .footer{
-  border-top:1px solid #ffffff0d;
+  border-top:1px solid rgba(255,255,255,.07);
   padding:22px 0;
+  background:rgba(3,8,17,.45);
 }
 
 .footer-inner{
@@ -355,10 +520,15 @@ h1{
   gap:15px;
 }
 
+.footer a{transition:.2s ease}
+
+.footer a:hover{color:#ffe39a}
+
 @media(max-width:850px){
   .hero{
     grid-template-columns:1fr;
     gap:40px;
+    min-height:auto;
   }
 
   .card{
@@ -369,8 +539,29 @@ h1{
 }
 
 @media(max-width:600px){
+
+  .header{height:68px}
+
+  .logo{
+    gap:9px;
+    font-size:1.12rem;
+  }
+
+  .logo-mark{
+    width:39px;
+    height:39px;
+    border-radius:12px;
+    font-size:1.2rem;
+  }
+
+  .header-link{
+    padding:8px 13px;
+    font-size:.78rem;
+  }
+
   .hero{
     padding:35px 0 45px;
+    gap:36px;
   }
 
   h1{
@@ -379,363 +570,296 @@ h1{
 
   .description{
     font-size:.94rem;
+    line-height:1.65;
+  }
+
+  .chips{gap:7px}
+
+  .chip{
+    padding:7px 10px;
+    font-size:.72rem;
+  }
+
+  .trust{
+    gap:10px 14px;
+    font-size:.7rem;
   }
 
   .card{
-    padding:20px 16px;
+    padding:21px 16px;
+    border-radius:23px;
   }
 
-  .footer-inner{
-    flex-direction:column;
-  }
+  .card h2{font-size:1.35rem}
+
+  .footer-inner{flex-direction:column}
+
+  .footer-links{flex-wrap:wrap}
 }
-</style>
-</head>
+</style></head><body><div class="home"><header class="header">
+  <div class="header-inner"><a href="index.html" class="logo">
+  <span class="logo-mark">🫰</span>
+  <span class="logo-name">EmiMatch</span>
+</a>
 
-<body>
-
-<div class="home">
-
-<header class="header">
-  <div class="header-inner">
-
-    <a href="index.html" class="logo">
-      <span class="logo-mark">♥</span>
-      <span class="logo-name">EmiMatch</span>
-    </a>
-
-    <a href="#acceso" class="header-link">
-      Ingresar
-    </a>
+<a href="#acceso" class="header-link">
+  Ingresar
+</a>
 
   </div>
-</header>
-
-<main class="main">
-
-<section class="hero" id="acceso">
-
-<div>
-
-  <span class="badge">
+</header><main class="main"><section class="hero" id="acceso"><div>  <span class="badge">
     ✨ Una nueva forma de conectar
-  </span>
-
-  <h1>
+  </span>  <h1>
     Conocé.<br>
     <span class="gold">Conectá. Compartí.</span>
-  </h1>
-
-  <p class="description">
+  </h1>  <p class="description">
     Conocé personas, descubrí nuevas conexiones y
     compartí nuevas historias en EmiMatch.
-  </p>
-
-  <div class="chips">
-    <span class="chip">💕 Conexiones</span>
+  </p>  <div class="chips">
+    <span class="chip">🫰 Conexiones</span>
     <span class="chip">✨ Perfiles</span>
     <span class="chip">💬 Conversaciones</span>
     <span class="chip">🔒 Privacidad</span>
-  </div>
-
-  <div class="trust">
+  </div>  <div class="trust">
     <span>✓ Experiencia simple</span>
-    <span>♥ Nuevas conexiones</span>
+    <span>🫰 Nuevas conexiones</span>
     <span>🔐 Cuenta segura</span>
-  </div>
-
-</div>
-
-<div class="card">
-
-  <h2>Empezá con EmiMatch</h2>
-
-  <p>
+  </div></div><div class="card">  <h2>Empezá con EmiMatch</h2>  <p>
     Iniciá sesión o creá tu cuenta para comenzar.
-  </p>
-
-  <div
+  </p>  <div
     id="authMessage"
     class="message"
     role="alert">
-  </div>
+  </div>  <div class="tabs"><button
+  type="button"
+  id="loginTab"
+  class="tab active">
+  Iniciar sesión
+</button>
 
-  <div class="tabs">
+<button
+  type="button"
+  id="registerTab"
+  class="tab">
+  Crear cuenta
+</button>
 
-    <button
-      type="button"
-      id="loginTab"
-      class="tab active">
-      Iniciar sesión
-    </button>
-
-    <button
-      type="button"
-      id="registerTab"
-      class="tab">
-      Crear cuenta
-    </button>
-
-  </div>
-
-  <!-- LOGIN -->
-
-  <section
+  </div>  <section
     id="loginPanel"
-    class="panel active">
+    class="panel active"><form id="loginForm" class="form">
 
-    <form id="loginForm" class="form">
+  <div class="field">
 
-      <div class="field">
+    <label for="loginEmail">
+      Correo electrónico
+    </label>
 
-        <label for="loginEmail">
-          Correo electrónico
-        </label>
+    <input
+      id="loginEmail"
+      class="input"
+      type="email"
+      autocomplete="email"
+      placeholder="tu@email.com"
+      required>
 
-        <input
-          id="loginEmail"
-          class="input"
-          type="email"
-          autocomplete="email"
-          placeholder="tu@email.com"
-          required>
+  </div>
 
-      </div>
+  <div class="field">
 
-      <div class="field">
+    <label for="loginPassword">
+      Contraseña
+    </label>
 
-        <label for="loginPassword">
-          Contraseña
-        </label>
+    <div class="input-wrap">
 
-        <div class="input-wrap">
-
-          <input
-            id="loginPassword"
-            class="input"
-            type="password"
-            autocomplete="current-password"
-            placeholder="Tu contraseña"
-            required>
-
-          <button
-            type="button"
-            class="eye"
-            data-target="loginPassword">
-            👁
-          </button>
-
-        </div>
-
-      </div>
-
-      <button
-        type="submit"
-        id="loginButton"
-        class="submit">
-        Iniciar sesión
-      </button>
+      <input
+        id="loginPassword"
+        class="input"
+        type="password"
+        autocomplete="current-password"
+        placeholder="Tu contraseña"
+        required>
 
       <button
         type="button"
-        id="forgotPassword"
-        class="forgot">
-        ¿Olvidaste tu contraseña?
+        class="eye"
+        data-target="loginPassword">
+        👁
       </button>
 
-    </form>
+    </div>
 
-    <p class="legal">
-      Utilizá EmiMatch de forma responsable y respetuosa.
-    </p>
+  </div>
 
-  </section>
+  <button
+    type="submit"
+    id="loginButton"
+    class="submit">
+    Iniciar sesión
+  </button>
 
-  <!-- REGISTRO -->
+  <button
+    type="button"
+    id="forgotPassword"
+    class="forgot">
+    ¿Olvidaste tu contraseña?
+  </button>
 
-  <section
+</form>
+
+<p class="legal">
+  Utilizá EmiMatch de forma responsable y respetuosa.
+</p>
+
+  </section>  <section
     id="registerPanel"
-    class="panel">
+    class="panel"><form id="registerForm" class="form">
 
-    <form id="registerForm" class="form">
+  <div class="field">
 
-      <div class="field">
+    <label for="registerEmail">
+      Correo electrónico
+    </label>
 
-        <label for="registerEmail">
-          Correo electrónico
-        </label>
+    <input
+      id="registerEmail"
+      class="input"
+      type="email"
+      autocomplete="email"
+      placeholder="tu@email.com"
+      required>
 
-        <input
-          id="registerEmail"
-          class="input"
-          type="email"
-          autocomplete="email"
-          placeholder="tu@email.com"
-          required>
+  </div>
 
-      </div>
+  <div class="field">
 
-      <div class="field">
+    <label for="registerPassword">
+      Contraseña
+    </label>
 
-        <label for="registerPassword">
-          Contraseña
-        </label>
+    <div class="input-wrap">
 
-        <div class="input-wrap">
-
-          <input
-            id="registerPassword"
-            class="input"
-            type="password"
-            autocomplete="new-password"
-            placeholder="Mínimo 6 caracteres"
-            minlength="6"
-            required>
-
-          <button
-            type="button"
-            class="eye"
-            data-target="registerPassword">
-            👁
-          </button>
-
-        </div>
-
-      </div>
-
-      <div class="field">
-
-        <label for="registerConfirm">
-          Repetir contraseña
-        </label>
-
-        <div class="input-wrap">
-
-          <input
-            id="registerConfirm"
-            class="input"
-            type="password"
-            autocomplete="new-password"
-            placeholder="Repetí tu contraseña"
-            minlength="6"
-            required>
-
-          <button
-            type="button"
-            class="eye"
-            data-target="registerConfirm">
-            👁
-          </button>
-
-        </div>
-
-      </div>
-
-      <button
-        type="submit"
-        id="registerButton"
-        class="submit">
-        Crear mi cuenta
-      </button>
-
-    </form>
-
-    <p class="legal">
-      Al crear una cuenta aceptás utilizar EmiMatch
-      de manera responsable.
-    </p>
-
-  </section>
-
-  <!-- RECUPERACIÓN -->
-
-  <section
-    id="recoveryPanel"
-    class="panel">
-
-    <button
-      type="button"
-      id="recoveryBack"
-      class="back">
-      ← Volver al acceso
-    </button>
-
-    <p>
-      <strong>🔐 Recuperar contraseña</strong>
-    </p>
-
-    <p>
-      Escribí tu correo y te enviaremos un enlace
-      para crear una nueva contraseña.
-    </p>
-
-    <form id="recoveryForm" class="form">
-
-      <div class="field">
-
-        <label for="recoveryEmail">
-          Correo electrónico
-        </label>
-
-        <input
-          id="recoveryEmail"
-          class="input"
-          type="email"
-          autocomplete="email"
-          placeholder="tu@email.com"
-          required>
-
-      </div>
-
-      <button
-        type="submit"
-        id="recoveryButton"
-        class="submit">
-        Enviar enlace
-      </button>
+      <input
+        id="registerPassword"
+        class="input"
+        type="password"
+        autocomplete="new-password"
+        placeholder="Mínimo 6 caracteres"
+        minlength="6"
+        required>
 
       <button
         type="button"
-        id="recoveryCancel"
-        class="secondary">
-        Cancelar
+        class="eye"
+        data-target="registerPassword">
+        👁
       </button>
 
-    </form>
+    </div>
 
-  </section>
+  </div>
 
-</div>
+  <div class="field">
 
-</section>
+    <label for="registerConfirm">
+      Repetir contraseña
+    </label>
 
-</main>
+    <div class="input-wrap">
 
-<footer class="footer">
+      <input
+        id="registerConfirm"
+        class="input"
+        type="password"
+        autocomplete="new-password"
+        placeholder="Repetí tu contraseña"
+        minlength="6"
+        required>
 
-<div class="footer-inner">
+      <button
+        type="button"
+        class="eye"
+        data-target="registerConfirm">
+        👁
+      </button>
 
-<small>
+    </div>
+
+  </div>
+
+  <button
+    type="submit"
+    id="registerButton"
+    class="submit">
+    Crear mi cuenta
+  </button>
+
+</form>
+
+<p class="legal">
+  Al crear una cuenta aceptás utilizar EmiMatch
+  de manera responsable.
+</p>
+
+  </section>  <section
+    id="recoveryPanel"
+    class="panel"><button
+  type="button"
+  id="recoveryBack"
+  class="back">
+  ← Volver al acceso
+</button>
+
+<p>
+  <strong>🔐 Recuperar contraseña</strong>
+</p>
+
+<p>
+  Escribí tu correo y te enviaremos un enlace
+  para crear una nueva contraseña.
+</p>
+
+<form id="recoveryForm" class="form">
+
+  <div class="field">
+
+    <label for="recoveryEmail">
+      Correo electrónico
+    </label>
+
+    <input
+      id="recoveryEmail"
+      class="input"
+      type="email"
+      autocomplete="email"
+      placeholder="tu@email.com"
+      required>
+
+  </div>
+
+  <button
+    type="submit"
+    id="recoveryButton"
+    class="submit">
+    Enviar enlace
+  </button>
+
+  <button
+    type="button"
+    id="recoveryCancel"
+    class="secondary">
+    Cancelar
+  </button>
+
+</form>
+
+  </section></div></section></main><footer class="footer"><div class="footer-inner"><small>
 © 2026 EmiMatch. Todos los derechos reservados.
-</small>
-
-<div class="footer-links">
+</small><div class="footer-links">
 <a href="menu.html">Ayuda</a>
 <a href="configuracion.html">Privacidad</a>
 <a href="configuracion.html">Configuración</a>
-</div>
-
-</div>
-
-</footer>
-
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script src="assets/js/config.js"></script>
-
-<script>
+</div></div></footer></div> <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="assets/js/config.js"></script><script>
 (() => {
 "use strict";
 
@@ -1077,10 +1201,5 @@ $("recoveryForm").addEventListener("submit",async event => {
 });
 
 })();
-</script>
-
-<script src="assets/js/app.js"></script>
-<script src="assets/js/components.js"></script>
-
-</body>
+</script><script src="assets/js/app.js"></script><script src="assets/js/components.js"></script></body>
 </html>
