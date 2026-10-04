@@ -509,6 +509,54 @@
         );
       }
 
+      function isFreeMessageLimitError(error) {
+
+        const message =
+          String(
+            error?.message ||
+            error?.details ||
+            error?.hint ||
+            ""
+          ).toLowerCase();
+
+        const code =
+          String(
+            error?.code || ""
+          ).toUpperCase();
+
+        return (
+          message.includes(
+            "free_message_limit"
+          ) ||
+          message.includes(
+            "free message limit"
+          ) ||
+          message.includes(
+            "límite de 5 mensajes"
+          ) ||
+          message.includes(
+            "limite de 5 mensajes"
+          ) ||
+          code === "P0001"
+        );
+      }
+
+      function showPremiumLimitPrompt() {
+
+        const continuar =
+          confirm(
+            "Llegaste al límite de 5 mensajes gratuitos por hoy.\n\n" +
+            "🫰 EmiMatch Premium te permite seguir conversando sin límites.\n\n" +
+            "¿Querés conocer Premium?"
+          );
+
+        if (continuar) {
+
+          window.location.href =
+            "membresia/membresia.html";
+        }
+      }
+
       async function sendMessage() {
 
         const content =
@@ -563,18 +611,7 @@
 
           if (!limitData?.allowed) {
 
-            const continuar =
-              confirm(
-                "Llegaste al límite de 5 mensajes gratuitos por hoy.\n\n" +
-                "🫰 EmiMatch Premium te permite seguir conversando sin límites.\n\n" +
-                "¿Querés conocer Premium?"
-              );
-
-            if (continuar) {
-
-              window.location.href =
-                "membresia/membresia.html";
-            }
+            showPremiumLimitPrompt();
 
             return;
           }
@@ -605,23 +642,12 @@
             );
 
             if (
-              error.message ===
-                "free_message_limit" ||
-              error.code === "P0001"
+              isFreeMessageLimitError(
+                error
+              )
             ) {
 
-              const continuar =
-                confirm(
-                  "Llegaste al límite de 5 mensajes gratuitos por hoy.\n\n" +
-                  "🫰 Con EmiMatch Premium podés seguir conversando sin límites.\n\n" +
-                  "¿Querés conocer Premium?"
-                );
-
-              if (continuar) {
-
-                window.location.href =
-                  "membresia/membresia.html";
-              }
+              showPremiumLimitPrompt();
 
               return;
             }
@@ -695,23 +721,12 @@
           );
 
           if (
-            error?.message ===
-              "free_message_limit" ||
-            error?.code === "P0001"
+            isFreeMessageLimitError(
+              error
+            )
           ) {
 
-            const continuar =
-              confirm(
-                "Llegaste al límite de 5 mensajes gratuitos por hoy.\n\n" +
-                "🫰 Con EmiMatch Premium podés seguir conversando sin límites.\n\n" +
-                "¿Querés conocer Premium?"
-              );
-
-            if (continuar) {
-
-              window.location.href =
-                "membresia/membresia.html";
-            }
+            showPremiumLimitPrompt();
 
             return;
           }
@@ -726,7 +741,8 @@
             false;
         }
       }
-            function startRealtime() {
+
+      function startRealtime() {
 
         realtimeChannel =
           supabase
@@ -940,4 +956,4 @@
   <script src="assets/js/components.js"></script>
 
 </body>
-</html>
+  </html>
