@@ -321,7 +321,7 @@ function mostrarPremiumLimitPrompt() {
 
     btnPremium.addEventListener(
       "click",
-      () => {
+      function () {
 
         window.location.href =
           "membresia/membresia.html";
@@ -335,7 +335,7 @@ function mostrarPremiumLimitPrompt() {
 
     btnCerrar.addEventListener(
       "click",
-      () => {
+      function () {
 
         modal.remove();
 
@@ -346,10 +346,11 @@ function mostrarPremiumLimitPrompt() {
 
   modal.addEventListener(
     "click",
-    (event) => {
+    function (event) {
 
       if (
-        event.target === modal.firstElementChild
+        event.target ===
+        modal.firstElementChild
       ) {
         modal.remove();
       }
