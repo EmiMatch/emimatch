@@ -543,19 +543,32 @@
 
       function showPremiumLimitPrompt() {
 
-        const continuar =
-          confirm(
-            "Llegaste al límite de 5 mensajes gratuitos por hoy.\n\n" +
-            "🫰 EmiMatch Premium te permite seguir conversando sin límites.\n\n" +
-            "¿Querés conocer Premium?"
-          );
+  const continuar = confirm(
+    "🫰 Llegaste al límite de mensajes gratuitos de hoy.\n\n" +
+    "Tu conversación puede seguir con EmiMatch Premium.\n\n" +
+    "Mensajes ilimitados por $10.000 ARS/mes.\n\n" +
+    "✨ ¿Querés conocer EmiMatch Premium?"
+  );
 
-        if (continuar) {
-
-          window.location.href =
-            "membresia/membresia.html";
-        }
+  if (continuar) {
+    window.location.href =
+      "membresia/membresia.html";
+  }
       }
+
+        
+          
+            
+            
+            
+          
+
+        
+
+          
+            
+        
+      
 
       async function sendMessage() {
 
