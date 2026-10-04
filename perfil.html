@@ -4,57 +4,152 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <meta name="theme-color" content="#080b18">
+  <meta name="description" content="Mi perfil en EmiMatch">
+
   <title>Mi perfil — EmiMatch</title>
 
   <link rel="stylesheet" href="assets/css/app.css">
 
   <style>
+    :root {
+      --premium-gold: #f5d58a;
+      --premium-gold-soft: #d9b96f;
+      --premium-purple: #8d6cff;
+      --premium-purple-2: #b36cff;
+      --premium-bg: #070a16;
+      --premium-card: rgba(18, 21, 43, .78);
+      --premium-border: rgba(255,255,255,.11);
+      --premium-text: #ffffff;
+      --premium-muted: rgba(255,255,255,.68);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
+      color: var(--premium-text);
       background:
-        radial-gradient(circle at top, rgba(91, 67, 160, .28), transparent 45%),
-        #090b18;
-      color: #fff;
+        radial-gradient(
+          circle at 15% 0%,
+          rgba(126, 92, 255, .24),
+          transparent 34%
+        ),
+        radial-gradient(
+          circle at 90% 15%,
+          rgba(218, 177, 91, .13),
+          transparent 30%
+        ),
+        radial-gradient(
+          circle at 50% 100%,
+          rgba(93, 57, 170, .18),
+          transparent 38%
+        ),
+        var(--premium-bg);
+      font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
     }
 
     .profile-page {
       width: min(720px, 100%);
       margin: 0 auto;
-      padding: 24px 16px 110px;
-      box-sizing: border-box;
+      padding: 28px 16px 110px;
     }
 
     .profile-header {
       text-align: center;
-      margin-bottom: 22px;
+      margin-bottom: 24px;
     }
 
     .profile-header h1 {
       margin: 0;
-      font-size: 28px;
+      font-size: clamp(27px, 7vw, 34px);
+      line-height: 1.1;
+      font-weight: 800;
+      letter-spacing: -.6px;
+      background:
+        linear-gradient(
+          135deg,
+          #ffffff 10%,
+          #f5d58a 48%,
+          #b995ff 100%
+        );
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
 
     .profile-header p {
-      margin: 7px 0 0;
-      opacity: .72;
+      margin: 9px 0 0;
+      color: var(--premium-muted);
       font-size: 14px;
+      letter-spacing: .2px;
     }
 
     .profile-card {
+      position: relative;
       overflow: hidden;
-      border-radius: 26px;
-      background: rgba(255,255,255,.07);
-      border: 1px solid rgba(255,255,255,.10);
-      box-shadow: 0 20px 60px rgba(0,0,0,.28);
+      border-radius: 28px;
+      background:
+        linear-gradient(
+          145deg,
+          rgba(28, 30, 58, .86),
+          rgba(10, 13, 29, .88)
+        );
+      border: 1px solid var(--premium-border);
+      box-shadow:
+        0 28px 80px rgba(0,0,0,.40),
+        0 0 50px rgba(105,75,200,.08);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .profile-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(
+          135deg,
+          rgba(255,255,255,.06),
+          transparent 30%
+        );
     }
 
     .profile-photo-wrap {
       position: relative;
       width: 100%;
       aspect-ratio: 1 / 1;
-      max-height: 520px;
-      background: rgba(255,255,255,.04);
+      max-height: 540px;
+      overflow: hidden;
+      background:
+        linear-gradient(
+          145deg,
+          #161936,
+          #0c1024
+        );
+    }
+
+    .profile-photo-wrap::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(
+          to top,
+          rgba(5,7,17,.48),
+          transparent 32%
+        );
     }
 
     .profile-photo {
@@ -62,6 +157,11 @@
       height: 100%;
       display: block;
       object-fit: cover;
+      transition: transform .35s ease;
+    }
+
+    .profile-photo:hover {
+      transform: scale(1.015);
     }
 
     .photo-placeholder {
@@ -71,95 +171,166 @@
       align-items: center;
       justify-content: center;
       flex-direction: column;
-      gap: 8px;
-      font-size: 60px;
+      gap: 12px;
+      font-size: 68px;
       background:
-        linear-gradient(145deg, rgba(91,67,160,.45), rgba(20,24,55,.8));
+        radial-gradient(
+          circle at 50% 25%,
+          rgba(145,107,255,.30),
+          transparent 35%
+        ),
+        linear-gradient(
+          145deg,
+          #171a3d,
+          #090d20
+        );
     }
 
     .photo-placeholder span {
-      font-size: 14px;
-      opacity: .65;
+      padding: 8px 14px;
+      border-radius: 999px;
+      color: rgba(255,255,255,.68);
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.08);
+      font-size: 13px;
+      letter-spacing: .1px;
     }
 
     .profile-info {
-      padding: 22px;
+      position: relative;
+      padding: 25px 22px 24px;
     }
 
     .profile-name {
       margin: 0;
-      font-size: 28px;
+      font-size: clamp(27px, 7vw, 34px);
       line-height: 1.15;
+      font-weight: 800;
+      letter-spacing: -.5px;
     }
 
     .profile-meta {
-      margin-top: 8px;
-      color: rgba(255,255,255,.72);
-      font-size: 15px;
+      display: inline-flex;
+      margin-top: 10px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      color: rgba(255,255,255,.76);
+      background: rgba(255,255,255,.055);
+      border: 1px solid rgba(255,255,255,.08);
+      font-size: 14px;
     }
 
     .profile-description {
-      margin: 18px 0 0;
-      line-height: 1.6;
-      color: rgba(255,255,255,.86);
+      margin: 19px 0 0;
+      line-height: 1.65;
+      color: rgba(255,255,255,.84);
       white-space: pre-wrap;
+      font-size: 15px;
     }
 
     .profile-actions {
       display: grid;
       gap: 11px;
-      margin-top: 22px;
+      margin-top: 25px;
     }
 
     .profile-actions a,
     .profile-actions button {
+      position: relative;
       width: 100%;
-      min-height: 50px;
-      border: 0;
-      border-radius: 15px;
-      padding: 13px 16px;
+      min-height: 52px;
+      border-radius: 16px;
+      padding: 14px 16px;
+      border: 1px solid rgba(255,255,255,.10);
       box-sizing: border-box;
       font-size: 15px;
-      font-weight: 700;
+      font-weight: 750;
       text-decoration: none;
       cursor: pointer;
       text-align: center;
       color: #fff;
-      background: rgba(255,255,255,.09);
-      border: 1px solid rgba(255,255,255,.10);
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255,255,255,.095),
+          rgba(255,255,255,.045)
+        );
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.05);
+      transition:
+        transform .18s ease,
+        border-color .18s ease,
+        background .18s ease,
+        box-shadow .18s ease;
+    }
+
+    .profile-actions a:hover,
+    .profile-actions button:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,.17);
+      box-shadow:
+        0 10px 26px rgba(0,0,0,.18);
+    }
+
+    .profile-actions a:active,
+    .profile-actions button:active {
+      transform: translateY(0);
     }
 
     .profile-actions .primary {
-      background: linear-gradient(135deg, #7654d8, #9a5bcf);
+      color: #0c0d16;
+      border-color: rgba(245,213,138,.42);
+      background:
+        linear-gradient(
+          135deg,
+          #f5d58a,
+          #d8ae61
+        );
+      box-shadow:
+        0 10px 30px rgba(218,177,91,.16);
     }
 
     .profile-actions .discover {
-      background: linear-gradient(135deg, #6b4ac9, #b34e9d);
+      border-color: rgba(143,108,255,.30);
+      background:
+        linear-gradient(
+          135deg,
+          rgba(111,82,218,.86),
+          rgba(151,89,218,.80)
+        );
+      box-shadow:
+        0 10px 30px rgba(105,76,210,.16);
     }
 
     .profile-actions .danger {
-      color: #ffb8c4;
-      background: rgba(190,45,75,.12);
-      border-color: rgba(255,100,130,.18);
+      color: #ffbdc9;
+      background:
+        linear-gradient(
+          145deg,
+          rgba(190,45,75,.13),
+          rgba(110,24,48,.10)
+        );
+      border-color: rgba(255,100,130,.20);
     }
 
     .profile-actions button:disabled {
       opacity: .55;
       cursor: wait;
+      transform: none;
     }
 
     .status {
       min-height: 22px;
-      margin: 14px 4px;
+      margin: 15px 4px 2px;
       text-align: center;
       font-size: 14px;
-      opacity: .82;
+      color: rgba(255,255,255,.72);
     }
 
     .loading {
-      padding: 60px 20px;
+      padding: 70px 22px;
       text-align: center;
-      opacity: .7;
+      color: rgba(255,255,255,.70);
     }
 
     .hidden {
@@ -168,11 +339,48 @@
 
     .error-message {
       color: #ffb8c4;
-      line-height: 1.5;
+      line-height: 1.55;
     }
 
     .error-message a {
-      color: #fff;
+      color: #f5d58a;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    @media (max-width: 480px) {
+
+      .profile-page {
+        padding:
+          22px
+          12px
+          90px;
+      }
+
+      .profile-card {
+        border-radius: 23px;
+      }
+
+      .profile-info {
+        padding: 22px 17px 20px;
+      }
+
+      .profile-header {
+        margin-bottom: 19px;
+      }
+
+      .profile-photo-wrap {
+        max-height: none;
+      }
+
+      .profile-actions {
+        gap: 10px;
+      }
+
+      .profile-actions a,
+      .profile-actions button {
+        min-height: 51px;
+      }
     }
   </style>
 </head>
@@ -182,7 +390,7 @@
   <main class="profile-page">
 
     <header class="profile-header">
-      <h1>Mi perfil 💜</h1>
+      <h1>Mi perfil 🫰</h1>
       <p>Tu espacio en EmiMatch</p>
     </header>
 
@@ -203,7 +411,7 @@
         >
 
         <div id="photoPlaceholder" class="photo-placeholder">
-          💕
+          🫰
           <span>Agregá una foto a tu perfil</span>
         </div>
 
@@ -232,11 +440,11 @@
             class="discover"
             href="descubrir.html"
           >
-            💜 Seguir descubriendo
+            🫰 Seguir descubriendo
           </a>
 
           <a href="matches.html">
-            ❤️ Mis matches
+            🫰 Mis matches
           </a>
 
           <a href="notificaciones.html">
