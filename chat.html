@@ -114,35 +114,6 @@
       padding: 30px 10px;
     }
 
-    .message-limit {
-      margin: 0 4px 8px;
-      padding: 9px 12px;
-      border-radius: 12px;
-      text-align: center;
-      font-size: 12px;
-      color: var(--em-muted, #9aa8bb);
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.06);
-    }
-
-    .message-limit.premium {
-      color: #e7c86a;
-      border-color: rgba(231,200,106,.18);
-      background: rgba(231,200,106,.06);
-    }
-
-    .message-limit.warning {
-      color: #f0d77b;
-      border-color: rgba(240,215,123,.20);
-      background: rgba(240,215,123,.06);
-    }
-
-    .message-limit.locked {
-      color: #ffb0b0;
-      border-color: rgba(255,120,120,.18);
-      background: rgba(255,120,120,.05);
-    }
-
     .composer {
       display: flex;
       gap: 8px;
@@ -228,7 +199,9 @@
       >
 
       <div class="chat-user">
-        <strong id="userName">Cargando...</strong>
+        <strong id="userName">
+          Cargando...
+        </strong>
 
         <span id="userStatus">
           Conversación
@@ -236,13 +209,6 @@
       </div>
 
     </header>
-
-    <div
-      id="messageLimit"
-      class="message-limit"
-    >
-      Comprobando mensajes disponibles...
-    </div>
 
     <section
       id="messages"
@@ -335,11 +301,6 @@
           "composer"
         );
 
-      const messageLimit =
-        document.getElementById(
-          "messageLimit"
-        );
-
       let currentUser = null;
       let otherUserId = null;
       let matchId = null;
@@ -430,114 +391,6 @@
         scrollToBottom();
       }
 
-      async function updateMessageLimit() {
-
-        if (!currentUser)
-          return;
-
-        const {
-          data,
-          error
-        } = await supabase.rpc(
-          "can_send_message"
-        );
-
-        if (error) {
-
-          console.error(
-            "EmiMatch - contador Premium:",
-            error
-          );
-
-          messageLimit.textContent =
-            "Mensajes disponibles";
-
-          messageLimit.className =
-            "message-limit";
-
-          return;
-        }
-
-        if (
-          data?.is_premium === true
-        ) {
-
-          messageLimit.textContent =
-            "💎 Premium · Mensajes ilimitados";
-
-          messageLimit.className =
-            "message-limit premium";
-
-          sendButton.disabled =
-            false;
-
-          return;
-        }
-
-        if (
-          data?.reason ===
-          "not_authenticated"
-        ) {
-
-          messageLimit.textContent =
-            "Necesitás iniciar sesión.";
-
-          messageLimit.className =
-            "message-limit locked";
-
-          return;
-        }
-
-        const remaining =
-          Number(
-            data?.remaining ?? 0
-          );
-
-        const limit =
-          Number(
-            data?.limit ?? 5
-          );
-
-        if (remaining <= 0) {
-
-          messageLimit.innerHTML =
-            "🔒 Llegaste al límite de " +
-            limit +
-            " mensajes de hoy.<br>" +
-            "💎 Pasate a EmiMatch Premium " +
-            "para continuar sin límites.";
-
-          messageLimit.className =
-            "message-limit locked";
-
-          return;
-        }
-
-        if (remaining <= 2) {
-
-          messageLimit.textContent =
-            "⚠️ Te quedan " +
-            remaining +
-            " de " +
-            limit +
-            " mensajes gratuitos hoy.";
-
-          messageLimit.className =
-            "message-limit warning";
-
-          return;
-        }
-
-        messageLimit.textContent =
-          "🫰 Te quedan " +
-          remaining +
-          " de " +
-          limit +
-          " mensajes gratuitos hoy.";
-
-        messageLimit.className =
-          "message-limit";
-      }
       async function loadProfile() {
 
         const {
@@ -545,8 +398,13 @@
           error
         } = await supabase
           .from("profiles")
-          .select("id,nombre,foto_url")
-          .eq("id", otherUserId)
+          .select(
+            "id,nombre,foto_url"
+          )
+          .eq(
+            "id",
+            otherUserId
+          )
           .maybeSingle();
 
         if (error)
@@ -577,15 +435,27 @@
           supabase
             .from("matches")
             .select("id")
-            .eq("user1_id", currentUser.id)
-            .eq("user2_id", otherUserId)
+            .eq(
+              "user1_id",
+              currentUser.id
+            )
+            .eq(
+              "user2_id",
+              otherUserId
+            )
             .maybeSingle(),
 
           supabase
             .from("matches")
             .select("id")
-            .eq("user1_id", otherUserId)
-            .eq("user2_id", currentUser.id)
+            .eq(
+              "user1_id",
+              otherUserId
+            )
+            .eq(
+              "user2_id",
+              currentUser.id
+            )
             .maybeSingle()
 
         ]);
@@ -606,9 +476,9 @@
           );
         }
 
-        matchId = match.id;
+        matchId =
+          match.id;
       }
-
       async function loadMessages() {
 
         const {
@@ -619,7 +489,10 @@
           .select(
             "id,match_id,sender_id,content,created_at"
           )
-          .eq("match_id", matchId)
+          .eq(
+            "match_id",
+            matchId
+          )
           .order(
             "created_at",
             {
@@ -630,7 +503,9 @@
         if (error)
           throw error;
 
-        renderMessages(data || []);
+        renderMessages(
+          data || []
+        );
       }
 
       async function sendMessage() {
@@ -638,13 +513,27 @@
         const content =
           input.value.trim();
 
-        if (!content || !matchId)
+        if (
+          !content ||
+          !matchId
+        ) {
           return;
+        }
 
         sendButton.disabled = true;
 
         try {
 
+          /*
+           * Comprueba el límite real
+           * directamente en Supabase.
+           *
+           * Free:
+           * máximo 5 mensajes por día.
+           *
+           * Premium:
+           * mensajes ilimitados.
+           */
           const {
             data: limitData,
             error: limitError
@@ -681,35 +570,58 @@
             return;
           }
 
+          /*
+           * Cuando ya se enviaron los 5 mensajes,
+           * se bloquea el siguiente envío.
+           *
+           * NO mostramos contador.
+           */
           if (!limitData?.allowed) {
 
-            alert(
-              "Llegaste al límite de 5 mensajes diarios.\n\n" +
-              "💎 Pasate a EmiMatch Premium " +
-              "para continuar conversando sin límites."
-            );
+            const continuar =
+              confirm(
+                "Llegaste al límite de 5 mensajes gratuitos por hoy.\n\n" +
+                "💎 EmiMatch Premium te permite seguir conversando sin límites.\n\n" +
+                "¿Querés conocer Premium?"
+              );
 
-            await updateMessageLimit();
+            if (continuar) {
+
+              window.location.href =
+                "membresia/membresia.html";
+            }
 
             return;
           }
 
+          /*
+           * Envío normal del mensaje.
+           * No se modifica la estructura existente.
+           */
           const {
             data,
             error
           } = await supabase
             .from("messages")
             .insert({
-              match_id: matchId,
-              sender_id: currentUser.id,
-              content: content
+              match_id:
+                matchId,
+
+              sender_id:
+                currentUser.id,
+
+              content:
+                content
             })
             .select()
             .single();
 
           if (error) {
 
-            console.error(error);
+            console.error(
+              "EmiMatch Chat:",
+              error
+            );
 
             alert(
               "No se pudo enviar el mensaje."
@@ -720,6 +632,10 @@
 
           input.value = "";
 
+          /*
+           * Agregamos inmediatamente
+           * el mensaje enviado.
+           */
           if (data) {
 
             const empty =
@@ -728,7 +644,8 @@
               );
 
             if (empty) {
-              messagesBox.innerHTML = "";
+              messagesBox.innerHTML =
+                "";
             }
 
             const existing =
@@ -741,7 +658,9 @@
             if (!existing) {
 
               const div =
-                document.createElement("div");
+                document.createElement(
+                  "div"
+                );
 
               div.className =
                 "message mine";
@@ -750,18 +669,22 @@
                 data.id;
 
               div.innerHTML =
-                escapeHTML(data.content) +
+                escapeHTML(
+                  data.content
+                ) +
                 "<small>" +
-                formatTime(data.created_at) +
+                formatTime(
+                  data.created_at
+                ) +
                 "</small>";
 
-              messagesBox.appendChild(div);
+              messagesBox.appendChild(
+                div
+              );
             }
 
             scrollToBottom();
           }
-
-          await updateMessageLimit();
 
           input.focus();
 
@@ -778,7 +701,8 @@
 
         } finally {
 
-          sendButton.disabled = false;
+          sendButton.disabled =
+            false;
         }
       }
 
@@ -786,7 +710,9 @@
 
         realtimeChannel =
           supabase
-            .channel("chat-" + matchId)
+            .channel(
+              "chat-" + matchId
+            )
             .on(
               "postgres_changes",
               {
@@ -794,13 +720,18 @@
                 schema: "public",
                 table: "messages",
                 filter:
-                  "match_id=eq." + matchId
+                  "match_id=eq." +
+                  matchId
               },
               payload => {
 
                 const message =
                   payload.new;
 
+                /*
+                 * El mensaje propio ya fue
+                 * agregado localmente.
+                 */
                 if (
                   !message ||
                   message.sender_id ===
@@ -816,8 +747,9 @@
                     '"]'
                   );
 
-                if (existing)
+                if (existing) {
                   return;
+                }
 
                 const empty =
                   messagesBox.querySelector(
@@ -825,11 +757,14 @@
                   );
 
                 if (empty) {
-                  messagesBox.innerHTML = "";
+                  messagesBox.innerHTML =
+                    "";
                 }
 
                 const div =
-                  document.createElement("div");
+                  document.createElement(
+                    "div"
+                  );
 
                 div.className =
                   "message theirs";
@@ -838,12 +773,18 @@
                   message.id;
 
                 div.innerHTML =
-                  escapeHTML(message.content) +
+                  escapeHTML(
+                    message.content
+                  ) +
                   "<small>" +
-                  formatTime(message.created_at) +
+                  formatTime(
+                    message.created_at
+                  ) +
                   "</small>";
 
-                messagesBox.appendChild(div);
+                messagesBox.appendChild(
+                  div
+                );
 
                 scrollToBottom();
               }
@@ -854,7 +795,9 @@
       composer.addEventListener(
         "submit",
         event => {
+
           event.preventDefault();
+
           sendMessage();
         }
       );
@@ -902,9 +845,6 @@
             composer.style.display =
               "none";
 
-            messageLimit.style.display =
-              "none";
-
             return;
           }
 
@@ -914,8 +854,9 @@
           } =
             await supabase.auth.getSession();
 
-          if (sessionError)
+          if (sessionError) {
             throw sessionError;
+          }
 
           currentUser =
             sessionData.session?.user ||
@@ -942,21 +883,25 @@
             composer.style.display =
               "none";
 
-            messageLimit.style.display =
-              "none";
-
             return;
           }
 
+          /*
+           * Cargamos perfil y match.
+           */
           await Promise.all([
             loadProfile(),
             findMatch()
           ]);
 
+          /*
+           * Cargamos mensajes existentes.
+           */
           await loadMessages();
 
-          await updateMessageLimit();
-
+          /*
+           * Activamos mensajes en tiempo real.
+           */
           startRealtime();
 
           input.focus();
@@ -975,9 +920,6 @@
           );
 
           composer.style.display =
-            "none";
-
-          messageLimit.style.display =
             "none";
         }
       }
