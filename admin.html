@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EmiMatch — Panel Admin</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0b1020;
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: min(1100px, 94%);
+      margin: 0 auto;
+      padding: 24px 0 50px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 26px;
+    }
+
+    .badge {
+      padding: 7px 12px;
+      border-radius: 20px;
+      background: rgba(180, 140, 255, 0.15);
+      border: 1px solid rgba(180, 140, 255, 0.35);
+      color: #d9c7ff;
+      font-size: 13px;
+    }
+
+    .card {
+      background: #141b31;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .status {
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      color: #dbe2ff;
+      margin-bottom: 20px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .error {
+      color: #ffb4b4;
+      background: rgba(180, 30, 30, 0.15);
+      border: 1px solid rgba(255, 100, 100, 0.2);
+    }
+
+    .success {
+      color: #baf7d0;
+      background: rgba(30, 160, 80, 0.12);
+      border: 1px solid rgba(100, 255, 150, 0.15);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+    }
+
+    .metric {
+      background: #10172a;
+      border-radius: 14px;
+      padding: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .metric-title {
+      font-size: 13px;
+      color: #aeb8d4;
+      margin-bottom: 9px;
+    }
+
+    .metric-value {
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 11px 16px;
+      cursor: pointer;
+      background: #7557d9;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .logout {
+      background: #292f45;
+    }
+
+    .small {
+      font-size: 13px;
+      color: #9da8c5;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      h1 {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="container">
+
+    <header>
+      <div>
+        <h1>EmiMatch — Panel de Observación</h1>
+        <div class="small">
+          Área administrativa de solo lectura
+        </div>
+      </div>
+
+      <div class="badge">
+        ADMIN
+      </div>
+    </header>
+
+    <div id="status" class="status">
+      Verificando acceso...
+    </div>
+
+    <section id="loginRequired" class="card hidden">
+      <h2>Acceso requerido</h2>
+      <p class="small">
+        Debés iniciar sesión con una cuenta de EmiMatch autorizada como administrador.
+      </p>
+    </section>
+
+    <section id="notAdmin" class="card hidden">
+      <h2>Acceso denegado</h2>
+      <p class="small">
+        Esta cuenta no tiene permisos administrativos.
+      </p>
+    </section>
+
+    <section id="adminPanel" class="hidden">
+
+      <div class="card">
+        <h2>Resumen</h2>
+
+        <div class="grid">
+
+          <div class="metric">
+            <div class="metric-title">Usuarios</div>
+            <div id="usersCount" class="metric-value">—</div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-title">Matches</div>
+            <div id="matchesCount" class="metric-value">—</div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-title">Swipes</div>
+            <div id="swipesCount" class="metric-value">—</div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-title">Mensajes</div>
+            <div id="messagesCount" class="metric-value">—</div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-title">Reportes</div>
+            <div id="reportsCount" class="metric-value">—</div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-title">Bloqueos</div>
+            <div id="blocksCount" class="metric-value">—</div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Estado del sistema</h2>
+
+        <p class="small">
+          Este panel muestra únicamente estadísticas generales.
+          No muestra conversaciones ni contenido privado de los usuarios.
+        </p>
+
+        <button id="refreshButton">
+          Actualizar estadísticas
+        </button>
+
+        <button id="logoutButton" class="logout">
+          Cerrar sesión
+        </button>
+      </div>
+
+    </section>
+
+  </main>
+
+  <script>
+    "use strict";
+
+    /*
+     * EmiMatch — Panel administrativo
+     * Archivo independiente.
+     *
+     * IMPORTANTE:
+     * No contiene claves secretas.
+     * No modifica datos.
+     */
+
+    const SUPABASE_URL =
+      "https://kngiadwaesdbmvwivdev.supabase.co";
+
+    const SUPABASE_ANON_KEY =
+      "PEGAR_AQUI_LA_ANON_KEY";
+
+    const ADMIN_CHECK_URL =
+      SUPABASE_URL + "/functions/v1/admin-check";
+
+    const statusElement =
+      document.getElementById("status");
+
+    const loginRequired =
+      document.getElementById("loginRequired");
+
+    const notAdmin =
+      document.getElementById("notAdmin");
+
+    const adminPanel =
+      document.getElementById("adminPanel");
+
+    const refreshButton =
+      document.getElementById("refreshButton");
+
+    const logoutButton =
+      document.getElementById("logoutButton");
+
+    const usersCount =
+      document.getElementById("usersCount");
+
+    const matchesCount =
+      document.getElementById("matchesCount");
+
+    const swipesCount =
+      document.getElementById("swipesCount");
+
+    const messagesCount =
+      document.getElementById("messagesCount");
+
+    const reportsCount =
+      document.getElementById("reportsCount");
+
+    const blocksCount =
+      document.getElementById("blocksCount");
+
+    const supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+      );
+
+    function setStatus(message, type = "") {
+      statusElement.textContent = message;
+      statusElement.className = "status";
+
+      if (type) {
+        statusElement.classList.add(type);
+      }
+    }
+
+    async function verifyAdmin() {
+      try {
+        setStatus("Verificando sesión...");
+
+        const {
+          data: sessionData,
+          error: sessionError
+        } = await supabaseClient.auth.getSession();
+
+        if (sessionError) {
+          throw sessionError;
+        }
+
+        const session = sessionData?.session;
+
+        if (!session) {
+          loginRequired.classList.remove("hidden");
+          setStatus("No hay una sesión iniciada.", "error");
+          return false;
+        }
+
+        setStatus("Verificando permisos administrativos...");
+
+        const response = await fetch(
+          ADMIN_CHECK_URL,
+          {
+            method: "POST",
+            headers: {
+              "Authorization":
+                "Bearer " + session.access_token,
+              "apikey":
+                SUPABASE_ANON_KEY,
+              "Content-Type":
+                "application/json"
+            },
+            body: "{}"
+          }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          throw new Error(
+            result.error || "No se pudo verificar el administrador."
+          );
+        }
+
+        if (!result.isAdmin) {
+          notAdmin.classList.remove("hidden");
+          setStatus("Acceso denegado.", "error");
+          return false;
+        }
+
+        adminPanel.classList.remove("hidden");
+        setStatus(
+          "Administrador verificado correctamente.",
+          "success"
+        );
+
+        return true;
+
+      } catch (error) {
+        console.error(
+          "Error verificando administrador:",
+          error
+        );
+
+        setStatus(
+          "No se pudo verificar el acceso administrativo.",
+          "error"
+        );
+
+        return false;
+      }
+    }
+
+    async function loadStatistics() {
+      /*
+       * Esta función queda preparada.
+       *
+       * NO consulta todavía las tablas reales.
+       * Primero verificamos correctamente el acceso administrativo.
+       */
+
+      usersCount.textContent = "—";
+      matchesCount.textContent = "—";
+      swipesCount.textContent = "—";
+      messagesCount.textContent = "—";
+      reportsCount.textContent = "—";
+      blocksCount.textContent = "—";
+    }
+
+    refreshButton.addEventListener(
+      "click",
+      loadStatistics
+    );
+
+    logoutButton.addEventListener(
+      "click",
+      async () => {
+        await supabaseClient.auth.signOut();
+        window.location.reload();
+      }
+    );
+
+    (async () => {
+      const isAdmin = await verifyAdmin();
+
+      if (isAdmin) {
+        await loadStatistics();
+      }
+    })();
+  </script>
+
+</body>
+                                             </html>
