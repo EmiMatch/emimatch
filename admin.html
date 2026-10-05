@@ -2,13 +2,9 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>EmiMatch — Panel de Observación</title>
+  <title>EmiMatch — Administración</title>
 
   <style>
     * {
@@ -20,127 +16,190 @@
       min-height: 100vh;
       font-family: Arial, Helvetica, sans-serif;
       background:
-        radial-gradient(circle at top, #27205c 0%, #101329 45%, #080b18 100%);
+        radial-gradient(circle at top, #25215a 0%, #11142d 45%, #090b18 100%);
       color: #ffffff;
-      padding: 24px;
     }
 
     .container {
-      width: 100%;
-      max-width: 1050px;
+      width: min(1100px, 92%);
       margin: 0 auto;
+      padding: 30px 0 50px;
     }
 
-    .header {
-      background: rgba(20, 24, 50, 0.88);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 22px;
-      padding: 24px;
-      margin-bottom: 20px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
     }
 
-    .title-row {
+    .brand {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .brand-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #6d4aff, #b58cff);
+      box-shadow: 0 8px 30px rgba(109, 74, 255, 0.35);
+      font-size: 25px;
     }
 
     h1 {
       margin: 0;
-      font-size: 28px;
+      font-size: 26px;
     }
 
     .subtitle {
-      margin: 8px 0 0;
-      color: #b8bdd7;
+      margin-top: 5px;
+      color: #aaaed0;
       font-size: 14px;
     }
 
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 7px 12px;
-      border-radius: 999px;
-      background: #d7a84d;
-      color: #17120a;
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.08em;
+    .header-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 17px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      opacity: 0.94;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #7357ff, #9d72ff);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.08);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .btn-danger {
+      background: rgba(255, 80, 100, 0.13);
+      color: #ff9aa8;
+      border: 1px solid rgba(255, 80, 100, 0.2);
     }
 
     .status {
-      margin-top: 18px;
-      padding: 13px 15px;
-      border-radius: 13px;
+      display: none;
+      padding: 15px 18px;
+      margin-bottom: 22px;
+      border-radius: 14px;
       background: rgba(255,255,255,0.06);
-      color: #dfe3f7;
-      font-size: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #dcdcf0;
     }
 
     .status.success {
-      background: rgba(47, 180, 115, 0.15);
-      color: #7ff0b3;
+      display: block;
+      border-color: rgba(90, 220, 150, 0.3);
+      background: rgba(90, 220, 150, 0.08);
+      color: #9cf0bd;
     }
 
     .status.error {
-      background: rgba(220, 70, 90, 0.15);
-      color: #ff9aa9;
+      display: block;
+      border-color: rgba(255, 90, 110, 0.3);
+      background: rgba(255, 90, 110, 0.08);
+      color: #ffabb6;
     }
 
-    .status.warning {
-      background: rgba(215, 168, 77, 0.14);
-      color: #f3d58c;
+    .status.info {
+      display: block;
+      border-color: rgba(120, 150, 255, 0.25);
+      background: rgba(120, 150, 255, 0.08);
+      color: #b8c8ff;
+    }
+
+    .card {
+      background: rgba(20, 23, 50, 0.78);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 22px;
+      padding: 24px;
+      box-shadow: 0 15px 45px rgba(0,0,0,0.22);
+      backdrop-filter: blur(12px);
+    }
+
+    .login-card {
+      max-width: 600px;
+      margin: 60px auto;
+      text-align: center;
+    }
+
+    .login-card h2 {
+      margin-top: 0;
+    }
+
+    .login-card p {
+      color: #aeb2cf;
+      line-height: 1.6;
     }
 
     .hidden {
       display: none !important;
     }
 
-    .card {
-      background: rgba(20, 24, 50, 0.88);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 22px;
-      padding: 22px;
-      margin-bottom: 20px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.20);
+    .section-title {
+      margin: 0 0 7px;
+      font-size: 21px;
     }
 
-    .login-message,
-    .denied-message {
-      text-align: center;
-      padding: 30px 15px;
-    }
-
-    .login-message h2,
-    .denied-message h2 {
-      margin-top: 0;
-    }
-
-    .login-message p,
-    .denied-message p {
-      color: #b8bdd7;
-      line-height: 1.6;
+    .section-description {
+      margin: 0 0 22px;
+      color: #aeb2cf;
+      font-size: 14px;
     }
 
     .metrics {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
+      gap: 16px;
     }
 
     .metric {
-      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      padding: 21px;
       border-radius: 18px;
-      background: rgba(255,255,255,0.055);
+      background: rgba(255,255,255,0.045);
       border: 1px solid rgba(255,255,255,0.07);
     }
 
+    .metric::after {
+      content: "";
+      position: absolute;
+      width: 90px;
+      height: 90px;
+      right: -35px;
+      top: -35px;
+      border-radius: 50%;
+      background: rgba(181,140,255,0.08);
+    }
+
     .metric-label {
-      color: #aeb4d0;
+      color: #aeb2cf;
       font-size: 13px;
       margin-bottom: 10px;
     }
@@ -150,61 +209,61 @@
       font-weight: 800;
     }
 
-    .actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 20px;
+    .metric-note {
+      margin-top: 7px;
+      color: #858aa9;
+      font-size: 12px;
     }
 
-    button {
-      border: 0;
-      border-radius: 13px;
-      padding: 12px 17px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .primary {
-      background: #d7a84d;
-      color: #17120a;
-    }
-
-    .secondary {
-      background: rgba(255,255,255,0.08);
-      color: #ffffff;
-    }
-
-    button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .info {
-      color: #9fa6c5;
+    .admin-info {
+      margin-top: 22px;
+      padding: 16px;
+      border-radius: 15px;
+      background: rgba(181,140,255,0.06);
+      border: 1px solid rgba(181,140,255,0.12);
+      color: #c8c7e7;
       font-size: 13px;
       line-height: 1.6;
-      margin-top: 18px;
     }
 
-    @media (max-width: 760px) {
-      body {
-        padding: 14px;
-      }
+    .footer-note {
+      margin-top: 28px;
+      text-align: center;
+      color: #777c9a;
+      font-size: 12px;
+    }
 
-      h1 {
-        font-size: 23px;
-      }
-
+    @media (max-width: 800px) {
       .metrics {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(2, 1fr);
       }
     }
 
-    @media (max-width: 480px) {
+    @media (max-width: 520px) {
+      .container {
+        width: 94%;
+        padding-top: 20px;
+      }
+
+      header {
+        align-items: flex-start;
+      }
+
       .metrics {
         grid-template-columns: 1fr;
+      }
+
+      .header-actions {
+        width: 100%;
+      }
+
+      .header-actions button {
+        flex: 1;
+      }
+
+      .card {
+        padding: 18px;
+        border-radius: 18px;
       }
     }
   </style>
@@ -212,67 +271,110 @@
 
 <body>
 
-  <main class="container">
+  <div class="container">
 
-    <section class="header">
-      <div class="title-row">
+    <header>
+      <div class="brand">
+        <div class="brand-icon">💜</div>
+
         <div>
-          <h1>EmiMatch — Panel de Observación</h1>
-          <p class="subtitle">
-            Área administrativa de solo lectura
-          </p>
-        </div>
-
-        <div class="badge">
-          ADMIN
+          <h1>EmiMatch Administración</h1>
+          <div class="subtitle">
+            Panel privado de observación
+          </div>
         </div>
       </div>
 
-      <div id="status" class="status">
-        Verificando acceso...
-      </div>
-    </section>
-
-
-    <!-- LOGIN REQUERIDO -->
-    <section id="loginRequired" class="card hidden">
-      <div class="login-message">
-        <h2>🔐 Iniciar sesión requerido</h2>
-
-        <p>
-          Para acceder al panel administrativo primero
-          tenés que iniciar sesión en EmiMatch.
-        </p>
-
+      <div
+        id="headerActions"
+        class="header-actions hidden"
+      >
         <button
-          class="primary"
-          id="goHomeButton"
+          id="refreshButton"
+          class="btn-primary"
           type="button"
         >
-          Ir a EmiMatch
+          ↻ Actualizar
+        </button>
+
+        <button
+          id="logoutButton"
+          class="btn-danger"
+          type="button"
+        >
+          Cerrar sesión
         </button>
       </div>
+    </header>
+
+    <div
+      id="status"
+      class="status"
+    ></div>
+
+    <!-- LOGIN REQUIRED -->
+
+    <section
+      id="loginRequired"
+      class="card login-card"
+    >
+      <h2>🔐 Acceso administrativo</h2>
+
+      <p>
+        Para acceder al panel de administración
+        primero tenés que iniciar sesión en EmiMatch
+        con una cuenta autorizada.
+      </p>
+
+      <button
+        id="goLoginButton"
+        class="btn-primary"
+        type="button"
+      >
+        Ir a EmiMatch
+      </button>
     </section>
 
+    <!-- ACCESS DENIED -->
 
-    <!-- ACCESO DENEGADO -->
-    <section id="accessDenied" class="card hidden">
-      <div class="denied-message">
-        <h2>⛔ Acceso denegado</h2>
+    <section
+      id="accessDenied"
+      class="card login-card hidden"
+    >
+      <h2>⛔ Acceso denegado</h2>
 
-        <p id="deniedText">
-          Tu cuenta no tiene permisos administrativos.
-        </p>
-      </div>
+      <p>
+        Esta cuenta no tiene permisos de administrador
+        para acceder al panel de EmiMatch.
+      </p>
+
+      <button
+        id="backButton"
+        class="btn-secondary"
+        type="button"
+      >
+        Volver a EmiMatch
+      </button>
     </section>
 
+    <!-- ADMIN PANEL -->
 
-    <!-- PANEL ADMIN -->
-    <section id="adminPanel" class="hidden">
+    <main
+      id="adminPanel"
+      class="hidden"
+    >
 
       <section class="card">
 
-        <h2>📊 Estadísticas</h2>
+        <h2 class="section-title">
+          📊 Estadísticas generales
+        </h2>
+
+        <p class="section-description">
+          Información agregada de EmiMatch.
+          Este panel no muestra conversaciones privadas
+          ni contenido de mensajes.
+        </p>
 
         <div class="metrics">
 
@@ -287,8 +389,11 @@
             >
               —
             </div>
-          </div>
 
+            <div class="metric-note">
+              Perfiles registrados
+            </div>
+          </div>
 
           <div class="metric">
             <div class="metric-label">
@@ -301,8 +406,11 @@
             >
               —
             </div>
-          </div>
 
+            <div class="metric-note">
+              Conexiones creadas
+            </div>
+          </div>
 
           <div class="metric">
             <div class="metric-label">
@@ -315,8 +423,11 @@
             >
               —
             </div>
-          </div>
 
+            <div class="metric-note">
+              Interacciones
+            </div>
+          </div>
 
           <div class="metric">
             <div class="metric-label">
@@ -329,8 +440,11 @@
             >
               —
             </div>
-          </div>
 
+            <div class="metric-note">
+              Cantidad total
+            </div>
+          </div>
 
           <div class="metric">
             <div class="metric-label">
@@ -343,8 +457,11 @@
             >
               —
             </div>
-          </div>
 
+            <div class="metric-note">
+              Reportes registrados
+            </div>
+          </div>
 
           <div class="metric">
             <div class="metric-label">
@@ -357,83 +474,59 @@
             >
               —
             </div>
+
+            <div class="metric-note">
+              Bloqueos registrados
+            </div>
           </div>
 
         </div>
 
-
-        <div class="actions">
-
-          <button
-            id="refreshButton"
-            class="primary"
-            type="button"
-          >
-            Actualizar estadísticas
-          </button>
-
-          <button
-            id="logoutButton"
-            class="secondary"
-            type="button"
-          >
-            Cerrar sesión
-          </button>
-
+        <div class="admin-info">
+          <strong>🔒 Modo seguro:</strong><br>
+          Este panel solamente consulta estadísticas
+          agregadas mediante funciones protegidas.
+          No contiene la clave service_role y no permite
+          modificar usuarios, mensajes, matches ni otros
+          datos de la aplicación.
         </div>
-
-        <p class="info">
-          Este panel es de solo lectura.
-          No modifica perfiles, matches, swipes, mensajes,
-          reportes, cuentas ni configuraciones de EmiMatch.
-        </p>
 
       </section>
 
-    </section>
+      <div class="footer-note">
+        EmiMatch · Panel de administración · Solo lectura
+      </div>
 
-  </main>
+    </main>
 
+  </div>
 
-  <!-- SUPABASE -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 
   <script>
     "use strict";
 
-
-    /*
-     * ==========================================================
-     * CONFIGURACIÓN
-     * ==========================================================
-     */
+    /* ==========================================
+       CONFIGURACIÓN
+       ========================================== */
 
     const SUPABASE_URL =
       "https://kngiadwaesdbmvwivdev.supabase.co";
 
-
-    /*
-     * IMPORTANTE:
-     * Acá tiene que estar TU Publishable key.
-     *
-     * NO colocar service_role.
-     * NO colocar secret key.
-     */
-
     const SUPABASE_ANON_KEY =
       "PEGAR_AQUI_LA_ANON_KEY";
 
-
     const ADMIN_CHECK_URL =
-      SUPABASE_URL + "/functions/v1/admin-check";
+      SUPABASE_URL +
+      "/functions/v1/admin-check";
 
+    const ADMIN_STATS_URL =
+      SUPABASE_URL +
+      "/functions/v1/admin-stats";
 
-    /*
-     * ==========================================================
-     * SUPABASE CLIENT
-     * ==========================================================
-     */
+    /* ==========================================
+       SUPABASE
+       ========================================== */
 
     const supabaseClient =
       window.supabase.createClient(
@@ -441,12 +534,9 @@
         SUPABASE_ANON_KEY
       );
 
-
-    /*
-     * ==========================================================
-     * ELEMENTOS
-     * ==========================================================
-     */
+    /* ==========================================
+       ELEMENTOS
+       ========================================== */
 
     const statusElement =
       document.getElementById("status");
@@ -457,14 +547,11 @@
     const accessDenied =
       document.getElementById("accessDenied");
 
-    const deniedText =
-      document.getElementById("deniedText");
-
     const adminPanel =
       document.getElementById("adminPanel");
 
-    const goHomeButton =
-      document.getElementById("goHomeButton");
+    const headerActions =
+      document.getElementById("headerActions");
 
     const refreshButton =
       document.getElementById("refreshButton");
@@ -472,148 +559,166 @@
     const logoutButton =
       document.getElementById("logoutButton");
 
+    const goLoginButton =
+      document.getElementById("goLoginButton");
 
-    /*
-     * ==========================================================
-     * ESTADO
-     * ==========================================================
-     */
+    const backButton =
+      document.getElementById("backButton");
 
-    let currentSession = null;
+    /* ==========================================
+       UTILIDADES
+       ========================================== */
 
-
-    /*
-     * ==========================================================
-     * STATUS
-     * ==========================================================
-     */
-
-    function setStatus(message, type) {
-
+    function showStatus(message, type = "info") {
       statusElement.textContent = message;
+      statusElement.className =
+        "status " + type;
+    }
 
+    function hideStatus() {
+      statusElement.textContent = "";
       statusElement.className = "status";
-
-      if (type) {
-        statusElement.classList.add(type);
-      }
     }
 
+    function formatNumber(value) {
+      return Number(value || 0)
+        .toLocaleString("es-AR");
+    }
 
-    /*
-     * ==========================================================
-     * OCULTAR TODO
-     * ==========================================================
-     */
-
-    function hideAllPanels() {
-
+    function hideAllSections() {
       loginRequired.classList.add("hidden");
-
       accessDenied.classList.add("hidden");
-
       adminPanel.classList.add("hidden");
+      headerActions.classList.add("hidden");
     }
 
+    /* ==========================================
+       CARGAR ESTADÍSTICAS
+       ========================================== */
 
-    /*
-     * ==========================================================
-     * IR A EMI MATCH
-     * ==========================================================
-     */
+    async function loadStatistics(accessToken) {
+      const response =
+        await fetch(
+          ADMIN_STATS_URL,
+          {
+            method: "POST",
 
-    goHomeButton.addEventListener(
-      "click",
-      function () {
+            headers: {
+              "Authorization":
+                "Bearer " + accessToken,
 
-        window.location.href =
-          "./index.html";
+              "apikey":
+                SUPABASE_ANON_KEY,
 
-      }
-    );
+              "Content-Type":
+                "application/json",
 
+              "Accept":
+                "application/json"
+            },
 
-    /*
-     * ==========================================================
-     * VERIFICAR ADMIN
-     * ==========================================================
-     */
+            body: JSON.stringify({})
+          }
+        );
 
-    async function verifyAdmin() {
-
-      hideAllPanels();
-
-      setStatus(
-        "Verificando acceso...",
-        "warning"
-      );
-
+      let data = null;
 
       try {
+        data = await response.json();
+      } catch (error) {
+        throw new Error(
+          "La respuesta de admin-stats no es válida."
+        );
+      }
 
-        /*
-         * Obtener sesión actual
-         */
+      if (!response.ok) {
+        throw new Error(
+          data?.error ||
+          "No se pudieron obtener las estadísticas."
+        );
+      }
 
+      if (!data?.success) {
+        throw new Error(
+          data?.error ||
+          "admin-stats devolvió un error."
+        );
+      }
+
+      const statistics =
+        data.statistics || {};
+
+      document.getElementById(
+        "usersCount"
+      ).textContent =
+        formatNumber(statistics.users);
+
+      document.getElementById(
+        "matchesCount"
+      ).textContent =
+        formatNumber(statistics.matches);
+
+      document.getElementById(
+        "swipesCount"
+      ).textContent =
+        formatNumber(statistics.swipes);
+
+      document.getElementById(
+        "messagesCount"
+      ).textContent =
+        formatNumber(statistics.messages);
+
+      document.getElementById(
+        "reportsCount"
+      ).textContent =
+        formatNumber(statistics.reports);
+
+      document.getElementById(
+        "blocksCount"
+      ).textContent =
+        formatNumber(statistics.blocks);
+    }
+
+    /* ==========================================
+       VERIFICAR ADMINISTRADOR
+       ========================================== */
+
+    async function verifyAdmin() {
+      hideAllSections();
+
+      showStatus(
+        "Verificando acceso administrativo...",
+        "info"
+      );
+
+      try {
         const {
           data: sessionData,
           error: sessionError
-        } = await supabaseClient.auth.getSession();
-
+        } =
+          await supabaseClient.auth.getSession();
 
         if (sessionError) {
-
-          console.error(
-            "Error obteniendo sesión:",
-            sessionError
-          );
-
-          throw new Error(
-            "No se pudo obtener la sesión."
-          );
+          throw sessionError;
         }
-
 
         const session =
           sessionData?.session;
 
-
-        currentSession = session;
-
-
-        /*
-         * No hay sesión
-         */
-
-        if (
-          !session ||
-          !session.access_token
-        ) {
-
-          setStatus(
-            "Necesitás iniciar sesión en EmiMatch.",
-            "warning"
-          );
+        if (!session?.access_token) {
+          hideAllSections();
 
           loginRequired.classList.remove(
             "hidden"
           );
 
+          showStatus(
+            "Necesitás iniciar sesión en EmiMatch.",
+            "info"
+          );
+
           return;
         }
-
-
-        /*
-         * Token
-         */
-
-        const accessToken =
-          session.access_token;
-
-
-        /*
-         * Llamada EXPLÍCITA POST
-         */
 
         const response =
           await fetch(
@@ -623,7 +728,8 @@
 
               headers: {
                 "Authorization":
-                  "Bearer " + accessToken,
+                  "Bearer " +
+                  session.access_token,
 
                 "apikey":
                   SUPABASE_ANON_KEY,
@@ -639,103 +745,63 @@
             }
           );
 
-
-        /*
-         * Intentar leer respuesta
-         */
-
-        let result = null;
+        let data = null;
 
         try {
-
-          result =
-            await response.json();
-
-        } catch (jsonError) {
-
-          console.error(
-            "Respuesta no JSON:",
-            jsonError
-          );
-
+          data = await response.json();
+        } catch (error) {
           throw new Error(
-            "La función devolvió una respuesta inválida."
+            "La respuesta de admin-check no es válida."
           );
         }
-
-
-        console.log(
-          "admin-check:",
-          response.status,
-          result
-        );
-
-
-        /*
-         * HTTP error
-         */
 
         if (!response.ok) {
-
-          const errorMessage =
-            result?.error ||
-            (
-              "La verificación devolvió HTTP " +
-              response.status
-            );
-
           throw new Error(
-            errorMessage
+            data?.error ||
+            "No se pudo verificar el acceso."
           );
         }
 
-
-        /*
-         * No es administrador
-         */
-
-        if (
-          result?.success !== true ||
-          result?.isAdmin !== true
-        ) {
-
-          setStatus(
-            "Acceso denegado.",
-            "error"
+        if (!data?.success) {
+          throw new Error(
+            data?.error ||
+            "No se pudo verificar el administrador."
           );
+        }
 
-          deniedText.textContent =
-            result?.error ||
-            "Esta cuenta no tiene permisos administrativos.";
+        if (!data.isAdmin) {
+          hideAllSections();
 
           accessDenied.classList.remove(
             "hidden"
           );
 
+          showStatus(
+            "La cuenta actual no tiene permisos de administrador.",
+            "error"
+          );
+
           return;
         }
 
-
-        /*
-         * ADMIN CONFIRMADO
-         */
-
-        setStatus(
-          "Administrador verificado correctamente.",
-          "success"
-        );
+        hideAllSections();
 
         adminPanel.classList.remove(
           "hidden"
         );
 
+        headerActions.classList.remove(
+          "hidden"
+        );
 
-        /*
-         * Estadísticas todavía no conectadas.
-         * Se mantienen como —
-         */
+        showStatus(
+          "Administrador verificado correctamente.",
+          "success"
+        );
 
-        await loadStatistics();
+        await loadStatistics(
+          session.access_token
+        );
 
       } catch (error) {
 
@@ -744,78 +810,22 @@
           error
         );
 
+        hideAllSections();
 
-        setStatus(
-          "No se pudo verificar el acceso: " +
-          (
-            error?.message ||
-            "Error desconocido."
-          ),
-          "error"
-        );
-
-
-        accessDenied.classList.remove(
+        loginRequired.classList.remove(
           "hidden"
         );
 
-
-        deniedText.textContent =
+        showStatus(
           error?.message ||
-          "Error desconocido al verificar el acceso.";
+          "No se pudo verificar el acceso.",
+          "error"
+        );
       }
     }
-
-
-    /*
-     * ==========================================================
-     * ESTADÍSTICAS
-     * ==========================================================
-     *
-     * IMPORTANTE:
-     * Esta primera versión NO consulta todavía las tablas.
-     *
-     * Primero comprobamos que el acceso administrativo
-     * funcione correctamente.
-     *
-     * Después crearemos admin-stats por separado.
-     *
-     * ==========================================================
-     */
-
-    async function loadStatistics() {
-
-      document.getElementById(
-        "usersCount"
-      ).textContent = "—";
-
-      document.getElementById(
-        "matchesCount"
-      ).textContent = "—";
-
-      document.getElementById(
-        "swipesCount"
-      ).textContent = "—";
-
-      document.getElementById(
-        "messagesCount"
-      ).textContent = "—";
-
-      document.getElementById(
-        "reportsCount"
-      ).textContent = "—";
-
-      document.getElementById(
-        "blocksCount"
-      ).textContent = "—";
-    }
-
-
-    /*
-     * ==========================================================
-     * ACTUALIZAR
-     * ==========================================================
-     */
+        /* ==========================================
+       BOTÓN ACTUALIZAR
+       ========================================== */
 
     refreshButton.addEventListener(
       "click",
@@ -823,32 +833,94 @@
 
         refreshButton.disabled = true;
 
+        refreshButton.textContent =
+          "Actualizando...";
+
         try {
 
-          await verifyAdmin();
+          const {
+            data: sessionData,
+            error: sessionError
+          } =
+            await supabaseClient.auth.getSession();
+
+          if (sessionError) {
+            throw sessionError;
+          }
+
+          const session =
+            sessionData?.session;
+
+          if (!session?.access_token) {
+            throw new Error(
+              "La sesión de EmiMatch expiró."
+            );
+          }
+
+          await loadStatistics(
+            session.access_token
+          );
+
+          showStatus(
+            "Estadísticas actualizadas correctamente.",
+            "success"
+          );
+
+        } catch (error) {
+
+          console.error(
+            "Error actualizando estadísticas:",
+            error
+          );
+
+          showStatus(
+            error?.message ||
+            "No se pudieron actualizar las estadísticas.",
+            "error"
+          );
 
         } finally {
 
           refreshButton.disabled = false;
 
+          refreshButton.textContent =
+            "↻ Actualizar";
         }
       }
     );
 
 
-    /*
-     * ==========================================================
-     * CERRAR SESIÓN
-     * ==========================================================
-     */
+    /* ==========================================
+       CERRAR SESIÓN
+       ========================================== */
 
     logoutButton.addEventListener(
       "click",
       async function () {
 
+        logoutButton.disabled = true;
+
         try {
 
-          await supabaseClient.auth.signOut();
+          const {
+            error
+          } =
+            await supabaseClient.auth.signOut();
+
+          if (error) {
+            throw error;
+          }
+
+          hideAllSections();
+
+          loginRequired.classList.remove(
+            "hidden"
+          );
+
+          showStatus(
+            "Sesión cerrada correctamente.",
+            "success"
+          );
 
         } catch (error) {
 
@@ -857,25 +929,91 @@
             error
           );
 
+          showStatus(
+            error?.message ||
+            "No se pudo cerrar la sesión.",
+            "error"
+          );
+
         } finally {
 
-          window.location.href =
-            "./index.html";
-
+          logoutButton.disabled = false;
         }
       }
     );
 
 
-    /*
-     * ==========================================================
-     * INICIO
-     * ==========================================================
-     */
+    /* ==========================================
+       IR A EMIMATCH
+       ========================================== */
 
-    verifyAdmin();
+    goLoginButton.addEventListener(
+      "click",
+      function () {
+
+        window.location.href =
+          "./index.html";
+      }
+    );
+
+
+    /* ==========================================
+       VOLVER A EMIMATCH
+       ========================================== */
+
+    backButton.addEventListener(
+      "click",
+      function () {
+
+        window.location.href =
+          "./index.html";
+      }
+    );
+
+
+    /* ==========================================
+       DETECTAR CAMBIOS DE SESIÓN
+       ========================================== */
+
+    supabaseClient.auth.onAuthStateChange(
+      function (event, session) {
+
+        console.log(
+          "Cambio de autenticación:",
+          event
+        );
+
+        if (!session) {
+
+          hideAllSections();
+
+          loginRequired.classList.remove(
+            "hidden"
+          );
+
+          showStatus(
+            "Necesitás iniciar sesión en EmiMatch.",
+            "info"
+          );
+        }
+      }
+    );
+
+
+    /* ==========================================
+       INICIO
+       ========================================== */
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      function () {
+
+        verifyAdmin();
+
+      }
+    );
 
   </script>
 
 </body>
-              </html>
+</html>
