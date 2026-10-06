@@ -13,16 +13,14 @@
 :root{
   --em-bg:#050914;
   --em-bg-2:#0a1222;
-  --em-panel:#0d1829;
-  --em-panel-2:#111e32;
   --em-gold:#f5c451;
   --em-gold-light:#ffe7a3;
   --em-purple:#7c5cff;
   --em-purple-soft:#a78bfa;
+  --em-pink:#ec4899;
   --em-text:#f8fafc;
-  --em-muted:#9aa8bc;
-  --em-border:rgba(255,255,255,.10);
-  --em-border-gold:rgba(245,196,81,.28);
+  --em-muted:#b7c1d0;
+  --em-border:rgba(255,255,255,.12);
 }
 
 *{box-sizing:border-box}
@@ -32,19 +30,53 @@ html{scroll-behavior:smooth}
 body{
   margin:0;
   min-height:100vh;
+  color:var(--em-text);
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  background:#050914;
+  overflow-x:hidden;
+}
+
+.home{
+  min-height:100vh;
+  position:relative;
+  isolation:isolate;
+}
+
+.home::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-3;
+
+  background-image:
+    url("assets/images/30b24a3315bceb7c1bdcbd36949010ad.jpg");
+
+  background-size:cover;
+  background-position:center center;
+  background-repeat:no-repeat;
+}
+
+.home::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-2;
+
   background:
     linear-gradient(
       90deg,
-      rgba(3,7,18,.84),
-      rgba(3,7,18,.52)
-    ),
-    url("assets/images/30b24a3315bceb7c1bdcbd36949010ad.jpg");
-  background-size:cover;
-  background-position:center;
-  background-attachment:fixed;
-  color:var(--em-text);
-  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  overflow-x:hidden;
+      rgba(3,7,18,.76) 0%,
+      rgba(3,7,18,.42) 38%,
+      rgba(3,7,18,.18) 70%,
+      rgba(3,7,18,.34) 100%
+    );
+
+  pointer-events:none;
 }
 
 body::before{
@@ -52,32 +84,44 @@ body::before{
   position:fixed;
   inset:0;
   pointer-events:none;
+  z-index:-1;
+
   background:
-    radial-gradient(circle at 8% 8%,rgba(124,92,255,.18),transparent 28%),
-    radial-gradient(circle at 92% 18%,rgba(245,196,81,.10),transparent 25%),
-    linear-gradient(
-      90deg,
-      transparent 49.8%,
-      rgba(255,255,255,.015) 50%,
-      transparent 50.2%
+    radial-gradient(
+      circle at 10% 15%,
+      rgba(124,92,255,.20),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 88% 12%,
+      rgba(245,196,81,.12),
+      transparent 25%
+    ),
+    radial-gradient(
+      circle at 72% 82%,
+      rgba(236,72,153,.08),
+      transparent 30%
     );
-  opacity:.48;
 }
 
-a{text-decoration:none;color:inherit}
-button,input{font:inherit}
-button{-webkit-tap-highlight-color:transparent}
+a{
+  text-decoration:none;
+  color:inherit;
+}
 
-.home{
-  min-height:100vh;
-  position:relative;
-  z-index:1;
+button,
+input{
+  font:inherit;
+}
+
+button{
+  -webkit-tap-highlight-color:transparent;
 }
 
 .header{
   height:72px;
-  border-bottom:1px solid rgba(255,255,255,.07);
-  background:rgba(4,9,19,.78);
+  border-bottom:1px solid rgba(255,255,255,.10);
+  background:rgba(4,9,19,.48);
   backdrop-filter:blur(18px);
   -webkit-backdrop-filter:blur(18px);
   display:flex;
@@ -88,7 +132,7 @@ button{-webkit-tap-highlight-color:transparent}
 }
 
 .header-inner{
-  width:min(1100px,calc(100% - 28px));
+  width:min(1120px,calc(100% - 32px));
   margin:auto;
   display:flex;
   justify-content:space-between;
@@ -110,111 +154,153 @@ button{-webkit-tap-highlight-color:transparent}
   border-radius:14px;
   display:grid;
   place-items:center;
-  background:linear-gradient(
-    145deg,
-    #fff1bd 0%,
-    #f5c451 55%,
-    #c89528 100%
-  );
+
+  background:
+    linear-gradient(
+      145deg,
+      #fff1bd 0%,
+      #f5c451 55%,
+      #c89528 100%
+    );
+
   color:#211705;
+
   box-shadow:
-    0 8px 25px rgba(245,196,81,.18),
+    0 8px 25px rgba(245,196,81,.20),
     inset 0 1px 0 rgba(255,255,255,.65);
+
   font-size:1.35rem;
   line-height:1;
 }
 
 .logo-name{
-  background:linear-gradient(
-    90deg,
-    #ffffff 0%,
-    #ffe7a3 48%,
-    #f5c451 100%
-  );
+  background:
+    linear-gradient(
+      90deg,
+      #ffffff 0%,
+      #ffe7a3 48%,
+      #f5c451 100%
+    );
+
   -webkit-background-clip:text;
   background-clip:text;
   color:transparent;
 }
 
 .header-link{
-  border:1px solid rgba(245,196,81,.24);
+  border:1px solid rgba(245,196,81,.30);
   border-radius:999px;
   padding:9px 17px;
   font-size:.85rem;
   font-weight:800;
   color:#f9e7b3;
-  background:rgba(245,196,81,.05);
+
+  background:
+    rgba(8,12,23,.38);
+
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+
   transition:.2s ease;
 }
 
 .header-link:hover{
-  border-color:rgba(245,196,81,.48);
+  border-color:rgba(245,196,81,.60);
   background:rgba(245,196,81,.10);
   transform:translateY(-1px);
 }
 
 .main{
-  width:min(1100px,calc(100% - 28px));
+  width:min(1120px,calc(100% - 32px));
   margin:auto;
 }
 
 .hero{
   min-height:calc(100vh - 72px);
+
   display:grid;
-  grid-template-columns:1fr 410px;
-  gap:60px;
+
+  grid-template-columns:
+    minmax(0,1fr)
+    350px;
+
+  gap:72px;
+
   align-items:center;
-  padding:54px 0 62px;
+
+  padding:54px 0 70px;
 }
 
 .badge{
   display:inline-flex;
   align-items:center;
   gap:7px;
+
   padding:8px 14px;
-  border:1px solid rgba(245,196,81,.25);
+
+  border:1px solid rgba(245,196,81,.30);
   border-radius:999px;
-  background:linear-gradient(
-    135deg,
-    rgba(245,196,81,.09),
-    rgba(124,92,255,.06)
-  );
+
+  background:rgba(5,10,20,.38);
+
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+
   color:#ffe7a3;
+
   font-size:.78rem;
   font-weight:800;
-  box-shadow:0 8px 30px rgba(0,0,0,.12);
+
+  box-shadow:
+    0 8px 30px rgba(0,0,0,.16);
 }
 
 h1{
   margin:22px 0 0;
-  font-size:clamp(3rem,7vw,5.5rem);
-  line-height:.95;
+
+  font-size:
+    clamp(3.2rem,7vw,5.7rem);
+
+  line-height:.94;
   letter-spacing:-.065em;
+
+  text-shadow:
+    0 8px 35px rgba(0,0,0,.35);
 }
 
 .gold{
-  background:linear-gradient(
-    100deg,
-    #fff4ce 0%,
-    #ffe39a 28%,
-    #f5c451 62%,
-    #fff 100%
-  );
+  background:
+    linear-gradient(
+      100deg,
+      #fff4ce 0%,
+      #ffe39a 28%,
+      #f5c451 62%,
+      #fff 100%
+    );
+
   -webkit-background-clip:text;
   background-clip:text;
+
   color:transparent;
-  filter:drop-shadow(
-    0 8px 30px rgba(245,196,81,.08)
-  );
+
+  filter:
+    drop-shadow(
+      0 8px 30px rgba(245,196,81,.10)
+    );
 }
 
 .description{
-  max-width:600px;
+  max-width:590px;
+
   margin:25px 0 0;
-  color:#d0d8e5;
-  font-size:1.05rem;
+
+  color:#edf2f8;
+
+  font-size:1.06rem;
   line-height:1.75;
-  text-shadow:0 2px 15px rgba(0,0,0,.45);
+
+  text-shadow:
+    0 3px 18px rgba(0,0,0,.60);
 }
 
 .chips{
@@ -227,17 +313,28 @@ h1{
 .chip{
   padding:8px 12px;
   border-radius:999px;
-  background:rgba(3,8,18,.50);
-  border:1px solid rgba(255,255,255,.12);
-  color:#e7edf6;
+
+  background:
+    rgba(3,8,18,.38);
+
+  border:
+    1px solid rgba(255,255,255,.15);
+
+  color:#f0f4fa;
+
   font-size:.76rem;
   font-weight:700;
-  backdrop-filter:blur(8px);
+
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+
+  transition:.2s ease;
 }
 
 .chip:hover{
-  border-color:rgba(245,196,81,.30);
-  background:rgba(245,196,81,.08);
+  border-color:rgba(245,196,81,.38);
+  background:rgba(245,196,81,.10);
+  transform:translateY(-1px);
 }
 
 .trust{
@@ -245,8 +342,12 @@ h1{
   flex-wrap:wrap;
   gap:16px;
   margin-top:26px;
-  color:#c0cad8;
+
+  color:#e1e7ef;
   font-size:.74rem;
+
+  text-shadow:
+    0 2px 10px rgba(0,0,0,.50);
 }
 
 .trust span{
@@ -256,47 +357,72 @@ h1{
 }
 
 .card{
-  padding:27px;
-  border-radius:27px;
-  border:1px solid rgba(255,255,255,.12);
-  background:linear-gradient(
-    145deg,
-    rgba(19,34,57,.95),
-    rgba(6,14,27,.96)
-  );
+  width:100%;
+
+  padding:23px;
+
+  border-radius:25px;
+
+  border:
+    1px solid rgba(255,255,255,.16);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(13,24,41,.72),
+      rgba(5,12,24,.70)
+    );
+
   box-shadow:
-    0 35px 90px rgba(0,0,0,.55),
-    0 0 0 1px rgba(124,92,255,.035),
-    inset 0 1px 0 rgba(255,255,255,.05);
+    0 30px 70px rgba(0,0,0,.42),
+    inset 0 1px 0 rgba(255,255,255,.08);
+
   position:relative;
   overflow:hidden;
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
+
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
 }
 
 .card::before{
   content:"";
+
   position:absolute;
+
   width:180px;
   height:180px;
+
   top:-100px;
   right:-80px;
+
   border-radius:50%;
-  background:rgba(124,92,255,.14);
+
+  background:
+    rgba(124,92,255,.17);
+
   filter:blur(35px);
+
   pointer-events:none;
 }
 
 .card::after{
   content:"";
+
   position:absolute;
+
   width:160px;
   height:160px;
+
   bottom:-120px;
   left:-90px;
+
   border-radius:50%;
-  background:rgba(245,196,81,.08);
+
+  background:
+    rgba(245,196,81,.09);
+
   filter:blur(30px);
+
   pointer-events:none;
 }
 
@@ -307,15 +433,20 @@ h1{
 
 .card h2{
   margin:0;
-  font-size:1.48rem;
+  font-size:1.38rem;
   letter-spacing:-.025em;
+
+  text-shadow:
+    0 3px 15px rgba(0,0,0,.35);
 }
 
 .card p{
-  margin:8px 0 20px;
-  color:#aab6c8;
-  font-size:.84rem;
-  line-height:1.55;
+  margin:8px 0 18px;
+
+  color:#d2dbe7;
+
+  font-size:.82rem;
+  line-height:1.5;
 }
 
 .tabs{
@@ -323,51 +454,72 @@ h1{
   grid-template-columns:1fr 1fr;
   gap:4px;
   padding:4px;
-  background:rgba(255,255,255,.045);
-  border:1px solid rgba(255,255,255,.055);
+
+  background:rgba(255,255,255,.055);
+
+  border:
+    1px solid rgba(255,255,255,.07);
+
   border-radius:14px;
-  margin-bottom:20px;
+
+  margin-bottom:18px;
 }
 
 .tab{
   border:0;
   border-radius:10px;
-  min-height:43px;
+  min-height:41px;
+
   background:transparent;
-  color:#9eabc0;
+
+  color:#aeb9ca;
+
   cursor:pointer;
+
   font-weight:800;
+
   transition:.2s ease;
 }
 
-.tab:hover{color:#e8edf5}
-
-.tab.active{
-  background:linear-gradient(
-    135deg,
-    #ffe39a,
-    #f5c451
-  );
-  color:#201506;
-  box-shadow:0 5px 18px rgba(245,196,81,.12);
+.tab:hover{
+  color:#f0f4fa;
 }
 
-.panel{display:none}
-.panel.active{display:block}
+.tab.active{
+  background:
+    linear-gradient(
+      135deg,
+      #ffe39a,
+      #f5c451
+    );
+
+  color:#201506;
+
+  box-shadow:
+    0 5px 18px rgba(245,196,81,.12);
+}
+
+.panel{
+  display:none;
+}
+
+.panel.active{
+  display:block;
+}
 
 .form{
   display:grid;
-  gap:14px;
+  gap:12px;
 }
 
 .field{
   display:grid;
-  gap:7px;
+  gap:6px;
 }
 
 .field label{
-  color:#dce4ef;
-  font-size:.78rem;
+  color:#e4eaf2;
+  font-size:.76rem;
   font-weight:800;
 }
 
@@ -377,24 +529,39 @@ h1{
 
 .input{
   width:100%;
-  height:50px;
-  padding:0 45px 0 14px;
-  border-radius:13px;
-  border:1px solid rgba(255,255,255,.10);
+  height:47px;
+
+  padding:
+    0 45px 0 13px;
+
+  border-radius:12px;
+
+  border:
+    1px solid rgba(255,255,255,.12);
+
   outline:none;
-  background:rgba(2,9,19,.72);
+
+  background:
+    rgba(2,9,19,.52);
+
   color:#fff;
+
   transition:.2s ease;
 }
 
-.input::placeholder{color:#65748a}
+.input::placeholder{
+  color:#758398;
+}
 
 .input:hover{
-  border-color:rgba(255,255,255,.16);
+  border-color:
+    rgba(255,255,255,.18);
 }
 
 .input:focus{
-  border-color:rgba(245,196,81,.65);
+  border-color:
+    rgba(245,196,81,.65);
+
   box-shadow:
     0 0 0 4px rgba(245,196,81,.08),
     0 8px 25px rgba(0,0,0,.12);
@@ -402,52 +569,72 @@ h1{
 
 .eye{
   position:absolute;
-  right:6px;
-  top:6px;
-  width:38px;
-  height:38px;
+
+  right:5px;
+  top:5px;
+
+  width:37px;
+  height:37px;
+
   border:0;
   border-radius:9px;
+
   background:transparent;
-  color:#8b98ab;
+
+  color:#9aa8bc;
+
   cursor:pointer;
+
   transition:.2s ease;
 }
 
 .eye:hover{
-  background:rgba(255,255,255,.05);
+  background:
+    rgba(255,255,255,.06);
+
   color:#ffe39a;
 }
 
 .submit{
   width:100%;
-  min-height:51px;
+  min-height:49px;
+
   border:0;
-  border-radius:13px;
-  background:linear-gradient(
-    135deg,
-    #fff0bb 0%,
-    #ffe39a 28%,
-    #f5c451 72%,
-    #dba938 100%
-  );
+  border-radius:12px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #fff0bb 0%,
+      #ffe39a 28%,
+      #f5c451 72%,
+      #dba938 100%
+    );
+
   color:#201506;
+
   cursor:pointer;
+
   font-weight:900;
+
   box-shadow:
     0 10px 28px rgba(245,196,81,.13),
     inset 0 1px 0 rgba(255,255,255,.7);
+
   transition:.2s ease;
 }
 
 .submit:hover{
   transform:translateY(-1px);
+
   box-shadow:
     0 13px 32px rgba(245,196,81,.20),
     inset 0 1px 0 rgba(255,255,255,.75);
 }
 
-.submit:active{transform:translateY(0)}
+.submit:active{
+  transform:translateY(0);
+}
 
 .submit:disabled{
   opacity:.6;
@@ -459,9 +646,12 @@ h1{
 .back{
   border:0;
   background:transparent;
+
   color:#ffe39a;
+
   cursor:pointer;
-  font-size:.78rem;
+
+  font-size:.76rem;
   font-weight:800;
 }
 
@@ -477,77 +667,119 @@ h1{
 
 .secondary{
   width:100%;
-  min-height:44px;
-  border:1px solid rgba(255,255,255,.11);
+  min-height:42px;
+
+  border:
+    1px solid rgba(255,255,255,.12);
+
   border-radius:12px;
-  background:rgba(255,255,255,.045);
+
+  background:
+    rgba(255,255,255,.045);
+
   color:#fff;
+
   cursor:pointer;
+
   font-weight:800;
+
   transition:.2s ease;
 }
 
 .secondary:hover{
-  border-color:rgba(255,255,255,.20);
-  background:rgba(255,255,255,.07);
+  border-color:
+    rgba(255,255,255,.22);
+
+  background:
+    rgba(255,255,255,.08);
 }
 
 .message{
   display:none;
-  margin-bottom:14px;
-  padding:11px 13px;
+
+  margin-bottom:13px;
+
+  padding:10px 12px;
+
   border-radius:11px;
-  font-size:.78rem;
+
+  font-size:.76rem;
   line-height:1.45;
 }
 
-.message.show{display:block}
+.message.show{
+  display:block;
+}
 
 .success{
   color:#a7f3d0;
-  background:rgba(52,211,153,.08);
-  border:1px solid rgba(52,211,153,.18);
+
+  background:
+    rgba(52,211,153,.08);
+
+  border:
+    1px solid rgba(52,211,153,.18);
 }
 
 .error{
   color:#fecdd3;
-  background:rgba(251,113,133,.08);
-  border:1px solid rgba(251,113,133,.18);
+
+  background:
+    rgba(251,113,133,.08);
+
+  border:
+    1px solid rgba(251,113,133,.18);
 }
 
 .info{
   color:#bfdbfe;
-  background:rgba(96,165,250,.08);
-  border:1px solid rgba(96,165,250,.18);
+
+  background:
+    rgba(96,165,250,.08);
+
+  border:
+    1px solid rgba(96,165,250,.18);
 }
 
 .legal{
-  color:#7f8da1;
-  font-size:.68rem;
-  line-height:1.55;
+  color:#aeb9c9;
+
+  font-size:.66rem;
+  line-height:1.5;
+
   text-align:center;
+
+  margin-top:14px;
 }
 
 .footer{
-  border-top:1px solid rgba(255,255,255,.07);
-  padding:22px 0;
-  background:rgba(3,8,17,.55);
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
+  border-top:
+    1px solid rgba(255,255,255,.09);
+
+  padding:20px 0;
+
+  background:
+    rgba(3,8,17,.48);
+
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
 }
 
 .footer-inner{
-  width:min(1100px,calc(100% - 28px));
+  width:min(1120px,calc(100% - 32px));
   margin:auto;
+
   display:flex;
+
   justify-content:space-between;
+
   gap:15px;
 }
 
 .footer small,
 .footer a{
-  color:#8793a5;
-  font-size:.72rem;
+  color:#a1adbd;
+  font-size:.70rem;
 }
 
 .footer-links{
@@ -555,20 +787,27 @@ h1{
   gap:15px;
 }
 
-.footer a{transition:.2s ease}
+.footer a{
+  transition:.2s ease;
+}
 
-.footer a:hover{color:#ffe39a}
+.footer a:hover{
+  color:#ffe39a;
+}
 
-@media(max-width:850px){
+@media(max-width:900px){
 
   .hero{
     grid-template-columns:1fr;
-    gap:40px;
+    gap:42px;
+
     min-height:auto;
+
+    padding-top:45px;
   }
 
   .card{
-    max-width:500px;
+    max-width:430px;
     width:100%;
     margin:auto;
   }
@@ -576,62 +815,113 @@ h1{
 
 @media(max-width:600px){
 
-  body{
+  .home::before{
+    position:fixed;
+
     background-position:center top;
-    background-attachment:scroll;
+
+    background-size:auto 72vh;
   }
 
-  .header{height:68px}
+  .home::after{
+    background:
+      linear-gradient(
+        180deg,
+        rgba(3,7,18,.20) 0%,
+        rgba(3,7,18,.28) 25%,
+        rgba(3,7,18,.72) 52%,
+        rgba(3,7,18,.96) 78%,
+        rgba(3,7,18,1) 100%
+      );
+  }
+
+  .header{
+    height:66px;
+    background:rgba(4,9,19,.42);
+  }
+
+  .header-inner{
+    width:calc(100% - 24px);
+  }
 
   .logo{
-    gap:9px;
-    font-size:1.12rem;
+    gap:8px;
+    font-size:1.08rem;
   }
 
   .logo-mark{
-    width:39px;
-    height:39px;
+    width:38px;
+    height:38px;
     border-radius:12px;
-    font-size:1.2rem;
+    font-size:1.18rem;
   }
 
   .header-link{
     padding:8px 13px;
-    font-size:.78rem;
+    font-size:.77rem;
+  }
+
+  .main{
+    width:calc(100% - 24px);
   }
 
   .hero{
-    padding:35px 0 45px;
-    gap:36px;
+    padding:34px 0 45px;
+    gap:32px;
   }
 
   h1{
-    font-size:clamp(2.8rem,14vw,4rem);
+    font-size:clamp(2.75rem,14vw,4rem);
+    line-height:.95;
+  }
+
+  .badge{
+    font-size:.70rem;
+    padding:7px 11px;
   }
 
   .description{
-    font-size:.94rem;
+    font-size:.92rem;
     line-height:1.65;
+    max-width:100%;
   }
 
-  .chips{gap:7px}
+  .chips{
+    gap:7px;
+    margin-top:20px;
+  }
 
   .chip{
     padding:7px 10px;
-    font-size:.72rem;
+    font-size:.70rem;
   }
 
   .trust{
-    gap:10px 14px;
-    font-size:.7rem;
+    gap:9px 13px;
+    margin-top:20px;
+    font-size:.68rem;
   }
 
   .card{
-    padding:21px 16px;
-    border-radius:23px;
+    max-width:none;
+    padding:20px 15px;
+    border-radius:22px;
+
+    background:
+      linear-gradient(
+        145deg,
+        rgba(13,24,41,.76),
+        rgba(5,12,24,.78)
+      );
   }
 
-  .card h2{font-size:1.35rem}
+  .card h2{
+    font-size:1.28rem;
+  }
+
+  .input{
+    height:48px;
+  }
 
   .footer-inner{
     flex-direction:column;
@@ -639,6 +929,31 @@ h1{
 
   .footer-links{
     flex-wrap:wrap;
+  }
+}
+
+@media(max-width:380px){
+
+  h1{
+    font-size:2.55rem;
+  }
+
+  .card{
+    padding:18px 13px;
+  }
+
+  .tabs{
+    margin-bottom:15px;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+
+  *,
+  *::before,
+  *::after{
+    scroll-behavior:auto !important;
+    transition:none !important;
   }
 }
 </style>
@@ -902,97 +1217,68 @@ h1{
     </p>
 
   </section>
+      <section class="auth-panel" id="recoveryPanel" hidden>
 
-  <section
-    id="recoveryPanel"
-    class="panel">
+      <div class="auth-heading">
+        <span class="eyebrow">Recuperar acceso</span>
+        <h2>Restablecé tu contraseña</h2>
+        <p>
+          Te enviaremos un enlace para recuperar el acceso a tu cuenta.
+        </p>
+      </div>
 
-    <button
-      type="button"
-      id="recoveryBack"
-      class="back">
-      ← Volver al acceso
-    </button>
+      <form id="recoveryForm">
 
-    <p>
-      <strong>🔐 Recuperar contraseña</strong>
-    </p>
-
-    <p>
-      Escribí tu correo y te enviaremos un enlace
-      para crear una nueva contraseña.
-    </p>
-
-    <form
-      id="recoveryForm"
-      class="form">
-
-      <div class="field">
-
-        <label for="recoveryEmail">
-          Correo electrónico
-        </label>
+        <label for="recoveryEmail">Correo electrónico</label>
 
         <input
           id="recoveryEmail"
-          class="input"
           type="email"
           autocomplete="email"
           placeholder="tu@email.com"
-          required>
+          required
+        >
 
+        <button
+          id="recoveryButton"
+          type="submit"
+          class="primary-btn"
+        >
+          Enviar enlace
+        </button>
+
+      </form>
+
+      <div class="recovery-actions">
+        <button
+          id="recoveryBack"
+          type="button"
+          class="text-btn"
+        >
+          Volver a ingresar
+        </button>
+
+        <button
+          id="recoveryCancel"
+          type="button"
+          class="text-btn"
+        >
+          Cancelar
+        </button>
       </div>
 
-      <button
-        type="submit"
-        id="recoveryButton"
-        class="submit">
-        Enviar enlace
-      </button>
-
-      <button
-        type="button"
-        id="recoveryCancel"
-        class="secondary">
-        Cancelar
-      </button>
-
-    </form>
-
-  </section>
-
-</div>
-
-</section>
-
-</main>
-
-<footer class="footer">
-
-  <div class="footer-inner">
-
-    <small>
-      © 2026 EmiMatch. Todos los derechos reservados.
-    </small>
-
-    <div class="footer-links">
-
-      <a href="menu.html">
-        Ayuda
-      </a>
-
-      <a href="configuracion.html">
-        Privacidad
-      </a>
-
-      <a href="configuracion.html">
-        Configuración
-      </a>
-
-    </div>
+    </section>
 
   </div>
+</main>
 
+<footer class="site-footer">
+  <div>
+    <strong>🫰 EmiMatch</strong>
+    <span>Conexiones que empiezan de verdad.</span>
+  </div>
+
+  <span>© 2026 EmiMatch</span>
 </footer>
 
 </div>
@@ -1002,483 +1288,538 @@ h1{
 <script src="assets/js/config.js"></script>
 
 <script>
-(() => {
+(function () {
+  "use strict";
 
-"use strict";
+  const config = window.EMIMATCH_CONFIG || {};
 
-const config = window.EMIMATCH_CONFIG;
+  const supabaseKey =
+    config.supabaseKey ||
+    config.supabaseAnonKey;
 
-if (!config || !window.supabase) {
-
-  console.error(
-    "EmiMatch: configuración o Supabase no disponible."
-  );
-
-  return;
-}
-
-const client = window.supabase.createClient(
-  config.supabaseUrl,
-  config.supabaseKey
-);
-
-const $ = id =>
-  document.getElementById(id);
-
-const message =
-  $("authMessage");
-
-function showMessage(text,type){
-
-  message.textContent = text;
-
-  message.className =
-    "message show " + type;
-}
-
-function clearMessage(){
-
-  message.textContent = "";
-
-  message.className =
-    "message";
-}
-
-function panel(name){
-
-  $("loginPanel")
-    .classList.remove("active");
-
-  $("registerPanel")
-    .classList.remove("active");
-
-  $("recoveryPanel")
-    .classList.remove("active");
-
-  $("loginTab")
-    .classList.remove("active");
-
-  $("registerTab")
-    .classList.remove("active");
-
-  if(name === "login"){
-
-    $("loginPanel")
-      .classList.add("active");
-
-    $("loginTab")
-      .classList.add("active");
+  if (!config.supabaseUrl || !supabaseKey) {
+    console.error(
+      "EmiMatch: faltan las credenciales de Supabase."
+    );
+    return;
   }
 
-  if(name === "register"){
+  const client =
+    window.supabase.createClient(
+      config.supabaseUrl,
+      supabaseKey
+    );
 
-    $("registerPanel")
-      .classList.add("active");
+  const $ = (selector) =>
+    document.querySelector(selector);
 
-    $("registerTab")
-      .classList.add("active");
+  const authMessage =
+    $("#authMessage");
+
+  function showMessage(message, type = "info") {
+    if (!authMessage) return;
+
+    authMessage.textContent = message;
+    authMessage.className =
+      "auth-message " + type;
+    authMessage.hidden = false;
   }
 
-  if(name === "recovery"){
+  function clearMessage() {
+    if (!authMessage) return;
 
-    $("recoveryPanel")
-      .classList.add("active");
+    authMessage.textContent = "";
+    authMessage.hidden = true;
+    authMessage.className = "auth-message";
   }
 
-  clearMessage();
-}
+  function panel(name) {
+    const panels = {
+      login: $("#loginPanel"),
+      register: $("#registerPanel"),
+      recovery: $("#recoveryPanel")
+    };
 
-$("loginTab").onclick =
-  () => panel("login");
+    Object.entries(panels).forEach(
+      ([key, element]) => {
+        if (!element) return;
 
-$("registerTab").onclick =
-  () => panel("register");
+        element.hidden = key !== name;
+      }
+    );
 
-$("forgotPassword").onclick = () => {
+    document
+      .querySelectorAll(".auth-tab")
+      .forEach((tab) => {
+        tab.classList.toggle(
+          "active",
+          tab.dataset.panel === name
+        );
+      });
 
-  const email =
-    $("loginEmail").value.trim();
-
-  if(email){
-
-    $("recoveryEmail").value =
-      email;
+    clearMessage();
   }
 
-  panel("recovery");
-};
+  /*
+   * =========================
+   * CAMBIO LOGIN / REGISTRO
+   * =========================
+   */
 
-$("recoveryBack").onclick =
-  () => panel("login");
+  document
+    .querySelectorAll(".auth-tab")
+    .forEach((tab) => {
 
-$("recoveryCancel").onclick =
-  () => panel("login");
+      tab.addEventListener("click", () => {
+        panel(tab.dataset.panel);
+      });
 
+    });
 
-/* MOSTRAR CONTRASEÑA */
+  /*
+   * =========================
+   * RECUPERAR CONTRASEÑA
+   * =========================
+   */
 
-document
-  .querySelectorAll(".eye")
-  .forEach(button => {
+  const forgotPassword =
+    $("#forgotPassword");
 
-    button.addEventListener(
+  if (forgotPassword) {
+
+    forgotPassword.addEventListener(
       "click",
       () => {
+        panel("recovery");
+      }
+    );
 
-        const input =
-          $(button.dataset.target);
+  }
 
-        if(!input){
+  const recoveryBack =
+    $("#recoveryBack");
+
+  if (recoveryBack) {
+
+    recoveryBack.addEventListener(
+      "click",
+      () => {
+        panel("login");
+      }
+    );
+
+  }
+
+  const recoveryCancel =
+    $("#recoveryCancel");
+
+  if (recoveryCancel) {
+
+    recoveryCancel.addEventListener(
+      "click",
+      () => {
+        panel("login");
+      }
+    );
+
+  }
+
+  /*
+   * =========================
+   * MOSTRAR / OCULTAR CLAVE
+   * =========================
+   */
+
+  document
+    .querySelectorAll("[data-target]")
+    .forEach((button) => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const targetId =
+            button.dataset.target;
+
+          const input =
+            document.getElementById(
+              targetId
+            );
+
+          if (!input) return;
+
+          const isPassword =
+            input.type === "password";
+
+          input.type =
+            isPassword
+              ? "text"
+              : "password";
+
+          button.textContent =
+            isPassword
+              ? "Ocultar"
+              : "Mostrar";
+
+        }
+      );
+
+    });
+
+  /*
+   * =========================
+   * LOGIN
+   * =========================
+   */
+
+  const loginForm =
+    $("#loginForm");
+
+  if (loginForm) {
+
+    loginForm.addEventListener(
+      "submit",
+      async (event) => {
+
+        event.preventDefault();
+
+        clearMessage();
+
+        const email =
+          $("#loginEmail")?.value
+            .trim();
+
+        const password =
+          $("#loginPassword")?.value;
+
+        const button =
+          $("#loginButton");
+
+        if (!email || !password) {
+
+          showMessage(
+            "Completá tu correo y contraseña.",
+            "error"
+          );
+
           return;
         }
 
-        if(input.type === "password"){
-
-          input.type = "text";
-
+        if (button) {
+          button.disabled = true;
           button.textContent =
-            "🙈";
+            "Ingresando...";
+        }
 
-        }else{
+        try {
 
-          input.type =
-            "password";
+          const {
+            error
+          } =
+            await client.auth.signInWithPassword({
+              email,
+              password
+            });
 
-          button.textContent =
-            "👁";
+          if (error) {
+            throw error;
+          }
+
+          showMessage(
+            "Ingresando a EmiMatch...",
+            "success"
+          );
+
+          window.location.href =
+            "perfil.html";
+
+        } catch (error) {
+
+          console.error(
+            "Error de inicio de sesión:",
+            error
+          );
+
+          showMessage(
+            error?.message ||
+            "No pudimos iniciar sesión.",
+            "error"
+          );
+
+        } finally {
+
+          if (button) {
+            button.disabled = false;
+            button.textContent =
+              "Ingresar";
+          }
+
         }
 
       }
     );
 
-  });
+  }
 
+  /*
+   * =========================
+   * REGISTRO
+   * =========================
+   */
 
-/* LOGIN */
+  const registerForm =
+    $("#registerForm");
 
-$("loginForm")
-  .addEventListener(
-    "submit",
-    async event => {
+  if (registerForm) {
 
-      event.preventDefault();
+    registerForm.addEventListener(
+      "submit",
+      async (event) => {
 
-      const email =
-        $("loginEmail")
-          .value
-          .trim();
+        event.preventDefault();
 
-      const password =
-        $("loginPassword")
-          .value;
+        clearMessage();
 
-      if(!email || !password){
+        const email =
+          $("#registerEmail")?.value
+            .trim();
 
-        showMessage(
-          "Completá tu correo y contraseña.",
-          "error"
-        );
+        const password =
+          $("#registerPassword")?.value;
 
-        return;
-      }
+        const confirmPassword =
+          $("#registerConfirm")?.value;
 
-      const button =
-        $("loginButton");
+        const button =
+          $("#registerButton");
 
-      button.disabled =
-        true;
+        if (
+          !email ||
+          !password ||
+          !confirmPassword
+        ) {
 
-      button.textContent =
-        "Ingresando...";
+          showMessage(
+            "Completá todos los campos.",
+            "error"
+          );
 
-      try{
+          return;
+        }
 
-        const {
-          data,
-          error
-        } =
-          await client.auth
-            .signInWithPassword({
+        if (password.length < 6) {
+
+          showMessage(
+            "La contraseña debe tener al menos 6 caracteres.",
+            "error"
+          );
+
+          return;
+        }
+
+        if (
+          password !== confirmPassword
+        ) {
+
+          showMessage(
+            "Las contraseñas no coinciden.",
+            "error"
+          );
+
+          return;
+        }
+
+        if (button) {
+          button.disabled = true;
+          button.textContent =
+            "Creando cuenta...";
+        }
+
+        try {
+
+          const {
+            data,
+            error
+          } =
+            await client.auth.signUp({
               email,
-              password
+              password,
+              options: {
+                emailRedirectTo:
+                  window.location.origin +
+                  window.location.pathname
+                    .replace(
+                      /index\.html$/,
+                      ""
+                    ) +
+                  "perfil.html"
+              }
             });
 
-        if(error){
-          throw error;
-        }
+          if (error) {
+            throw error;
+          }
 
-        if(!data.session){
+          /*
+           * Si Supabase devuelve una sesión,
+           * podemos llevar directamente
+           * al perfil.
+           */
 
-          throw new Error(
-            "No se pudo crear la sesión."
-          );
-        }
+          if (data?.session) {
 
-        showMessage(
-          "¡Bienvenido a EmiMatch!",
-          "success"
-        );
-
-        setTimeout(
-          () => {
+            showMessage(
+              "Cuenta creada. Ingresando...",
+              "success"
+            );
 
             window.location.href =
               "perfil.html";
 
-          },
-          500
-        );
+            return;
+          }
 
-      }catch(error){
+          /*
+           * Si está activada la confirmación
+           * de correo electrónico, mostramos
+           * el aviso correspondiente.
+           */
 
-        console.error(error);
+          showMessage(
+            "Cuenta creada correctamente. Revisá tu correo para confirmar tu cuenta.",
+            "success"
+          );
 
-        showMessage(
-          error.message ||
-          "No se pudo iniciar sesión.",
-          "error"
-        );
+          registerForm.reset();
 
-        button.disabled =
-          false;
+        } catch (error) {
 
-        button.textContent =
-          "Iniciar sesión";
-      }
+          console.error(
+            "Error de registro:",
+            error
+          );
 
-    }
-  );
+          showMessage(
+            error?.message ||
+            "No pudimos crear tu cuenta.",
+            "error"
+          );
 
+        } finally {
 
-/* REGISTRO */
+          if (button) {
+            button.disabled = false;
+            button.textContent =
+              "Crear mi cuenta";
+          }
 
-$("registerForm")
-  .addEventListener(
-    "submit",
-    async event => {
-
-      event.preventDefault();
-
-      const email =
-        $("registerEmail")
-          .value
-          .trim();
-
-      const password =
-        $("registerPassword")
-          .value;
-
-      const confirm =
-        $("registerConfirm")
-          .value;
-
-      if(
-        !email ||
-        !password ||
-        !confirm
-      ){
-
-        showMessage(
-          "Completá todos los campos.",
-          "error"
-        );
-
-        return;
-      }
-
-      if(password.length < 6){
-
-        showMessage(
-          "La contraseña debe tener al menos 6 caracteres.",
-          "error"
-        );
-
-        return;
-      }
-
-      if(password !== confirm){
-
-        showMessage(
-          "Las contraseñas no coinciden.",
-          "error"
-        );
-
-        return;
-      }
-
-      const button =
-        $("registerButton");
-
-      button.disabled =
-        true;
-
-      button.textContent =
-        "Creando cuenta...";
-
-      try{
-
-        const redirectUrl =
-          new URL(
-            "perfil.html",
-            window.location.href
-          ).href;
-
-        const {
-          data,
-          error
-        } =
-          await client.auth
-            .signUp({
-
-              email,
-              password,
-
-              options:{
-                emailRedirectTo:
-                  redirectUrl
-              }
-
-            });
-
-        if(error){
-          throw error;
         }
 
-        if(data.session){
+      }
+    );
+
+  }
+
+  /*
+   * =========================
+   * RECUPERACIÓN
+   * =========================
+   */
+
+  const recoveryForm =
+    $("#recoveryForm");
+
+  if (recoveryForm) {
+
+    recoveryForm.addEventListener(
+      "submit",
+      async (event) => {
+
+        event.preventDefault();
+
+        clearMessage();
+
+        const email =
+          $("#recoveryEmail")?.value
+            .trim();
+
+        const button =
+          $("#recoveryButton");
+
+        if (!email) {
 
           showMessage(
-            "Cuenta creada. Entrando...",
-            "success"
+            "Ingresá tu correo electrónico.",
+            "error"
           );
 
-          setTimeout(
-            () => {
+          return;
+        }
 
-              window.location.href =
-                "perfil.html";
-
-            },
-            700
-          );
-
-        }else{
-
-          showMessage(
-            "Cuenta creada. Revisá tu correo para confirmar la cuenta.",
-            "success"
-          );
-
-          button.disabled =
-            false;
-
+        if (button) {
+          button.disabled = true;
           button.textContent =
-            "Crear mi cuenta";
+            "Enviando...";
         }
 
-      }catch(error){
+        try {
 
-        console.error(error);
+          const {
+            error
+          } =
+            await client.auth
+              .resetPasswordForEmail(
+                email,
+                {
+                  redirectTo:
+                    window.location.origin +
+                    window.location.pathname
+                      .replace(
+                        /index\.html$/,
+                        ""
+                      ) +
+                    "restablecer.html"
+                }
+              );
 
-        showMessage(
-          error.message ||
-          "No se pudo crear la cuenta.",
-          "error"
-        );
+          if (error) {
+            throw error;
+          }
 
-        button.disabled =
-          false;
+          showMessage(
+            "Si el correo existe, recibirás un enlace para restablecer tu contraseña.",
+            "success"
+          );
 
-        button.textContent =
-          "Crear mi cuenta";
-      }
+          recoveryForm.reset();
 
-    }
-  );
+        } catch (error) {
 
+          console.error(
+            "Error de recuperación:",
+            error
+          );
 
-/* RECUPERAR CONTRASEÑA */
+          showMessage(
+            error?.message ||
+            "No pudimos enviar el enlace de recuperación.",
+            "error"
+          );
 
-$("recoveryForm")
-  .addEventListener(
-    "submit",
-    async event => {
+        } finally {
 
-      event.preventDefault();
+          if (button) {
+            button.disabled = false;
+            button.textContent =
+              "Enviar enlace";
+          }
 
-      const email =
-        $("recoveryEmail")
-          .value
-          .trim();
-
-      if(!email){
-
-        showMessage(
-          "Ingresá tu correo electrónico.",
-          "error"
-        );
-
-        return;
-      }
-
-      const button =
-        $("recoveryButton");
-
-      button.disabled =
-        true;
-
-      button.textContent =
-        "Enviando...";
-
-      try{
-
-        const redirectUrl =
-          new URL(
-            "restablecer.html",
-            window.location.href
-          ).href;
-
-        const {
-          error
-        } =
-          await client.auth
-            .resetPasswordForEmail(
-              email,
-              {
-                redirectTo:
-                  redirectUrl
-              }
-            );
-
-        if(error){
-          throw error;
         }
 
-        showMessage(
-          "Listo. Revisá tu correo para continuar.",
-          "success"
-        );
-
-      }catch(error){
-
-        console.error(error);
-
-        showMessage(
-          error.message ||
-          "No se pudo enviar el enlace.",
-          "error"
-        );
-
-      }finally{
-
-        button.disabled =
-          false;
-
-        button.textContent =
-          "Enviar enlace";
       }
+    );
 
-    }
-  );
+  }
 
 })();
 </script>
