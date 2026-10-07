@@ -2,63 +2,40 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0">
-
-  <meta
-    name="theme-color"
-    content="#050711">
-
-  <meta
-    name="description"
-    content="EmiMatch — Conexiones que empiezan de verdad.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>EmiMatch — Conexiones que empiezan de verdad</title>
 
-  <link
-    rel="stylesheet"
-    href="assets/css/app.css">
+  <meta
+    name="description"
+    content="EmiMatch: conocé personas, conectá y encontrá nuevas historias."
+  >
+
+  <meta name="theme-color" content="#090b20">
+
+  <link rel="icon" href="favicon.svg">
 
   <link
     rel="preconnect"
-    href="https://fonts.googleapis.com">
+    href="https://fonts.googleapis.com"
+  >
 
   <link
     rel="preconnect"
     href="https://fonts.gstatic.com"
-    crossorigin>
+    crossorigin
+  >
 
   <link
-    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap"
-    rel="stylesheet">
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
 
   <style>
-
-    :root {
-      --bg: #050711;
-      --bg2: #090d1b;
-      --panel: rgba(15, 20, 39, .80);
-      --panel2: rgba(9, 13, 27, .94);
-
-      --text: #f8f8ff;
-      --muted: #a3abc0;
-
-      --purple: #8b6cff;
-      --purple2: #6846ed;
-
-      --gold: #f5c95c;
-      --gold2: #ffe8a2;
-
-      --border: rgba(255,255,255,.10);
-
-      --shadow:
-        0 35px 90px rgba(0,0,0,.45);
-    }
-
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     html {
@@ -66,60 +43,22 @@
     }
 
     body {
-      margin: 0;
       min-height: 100vh;
+      font-family: "Inter", sans-serif;
+      color: #ffffff;
+      background:
+        radial-gradient(
+          circle at 50% -10%,
+          rgba(111, 78, 255, 0.25),
+          transparent 38%
+        ),
+        linear-gradient(
+          180deg,
+          #080a1d 0%,
+          #0c1028 50%,
+          #080a18 100%
+        );
       overflow-x: hidden;
-
-      color: var(--text);
-
-      font-family:
-        "DM Sans",
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        sans-serif;
-
-      background:
-        radial-gradient(
-          circle at 8% 5%,
-          rgba(117,79,255,.20),
-          transparent 30%
-        ),
-        radial-gradient(
-          circle at 92% 12%,
-          rgba(245,201,92,.10),
-          transparent 25%
-        ),
-        radial-gradient(
-          circle at 50% 100%,
-          rgba(92,58,190,.16),
-          transparent 35%
-        ),
-        linear-gradient(
-          145deg,
-          #03040a,
-          #070b18 48%,
-          #0a0d1b
-        );
-    }
-
-    body::before {
-      content: "";
-
-      position: fixed;
-      inset: 0;
-
-      pointer-events: none;
-
-      z-index: 0;
-
-      background:
-        linear-gradient(
-          90deg,
-          transparent 49.8%,
-          rgba(255,255,255,.012) 50%,
-          transparent 50.2%
-        );
     }
 
     button,
@@ -128,7 +67,7 @@
     }
 
     button {
-      -webkit-tap-highlight-color: transparent;
+      cursor: pointer;
     }
 
     a {
@@ -137,1698 +76,1137 @@
     }
 
     .page {
-      position: relative;
-      z-index: 1;
-
+      width: 100%;
       min-height: 100vh;
     }
 
-    /* =====================================
+    /* =========================
        HEADER
-       ===================================== */
+    ========================= */
 
     .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-
-      height: 74px;
-
-      border-bottom:
-        1px solid rgba(255,255,255,.07);
-
-      background:
-        rgba(4,6,14,.78);
-
-      backdrop-filter: blur(22px);
-      -webkit-backdrop-filter: blur(22px);
+      width: 100%;
+      padding: 20px 22px;
+      position: relative;
+      z-index: 20;
     }
 
     .topbar-inner {
-      width:
-        min(1160px, calc(100% - 32px));
-
-      height: 100%;
-
-      margin: auto;
+      max-width: 1180px;
+      margin: 0 auto;
 
       display: flex;
-
       align-items: center;
-
       justify-content: space-between;
     }
 
     .brand {
-      display: flex;
-
+      display: inline-flex;
       align-items: center;
+      gap: 10px;
 
-      gap: 11px;
-
-      font-family:
-        "Manrope",
-        sans-serif;
-
+      font-size: 22px;
       font-weight: 800;
-
-      letter-spacing: -.03em;
+      letter-spacing: -0.5px;
     }
 
     .brand-icon {
-      width: 43px;
-      height: 43px;
-
-      border-radius: 14px;
+      width: 42px;
+      height: 42px;
 
       display: grid;
-
       place-items: center;
 
-      font-size: 20px;
+      border-radius: 14px;
 
       background:
         linear-gradient(
           145deg,
-          #fff0b9,
-          #f5c95c 60%,
-          #c89427
+          rgba(255,255,255,.15),
+          rgba(255,255,255,.04)
         );
 
-      color: #211806;
+      border: 1px solid rgba(255,255,255,.12);
 
       box-shadow:
-        0 10px 28px
-        rgba(245,201,92,.18),
+        0 10px 30px rgba(0,0,0,.25),
+        inset 0 1px 0 rgba(255,255,255,.08);
 
-        inset 0 1px 0
-        rgba(255,255,255,.7);
+      font-size: 22px;
     }
 
-    .brand-name {
-      font-size: 20px;
-
-      background:
-        linear-gradient(
-          90deg,
-          #fff,
-          #ffe8a2,
-          #f5c95c
-        );
-
-      -webkit-background-clip: text;
-      background-clip: text;
-
-      color: transparent;
-    }
-
-    .top-link {
-      padding: 10px 17px;
-
-      border-radius: 999px;
-
-      border:
-        1px solid rgba(245,201,92,.22);
-
-      color: #f8e7b1;
-
-      background:
-        rgba(245,201,92,.05);
-
-      font-size: 13px;
-
-      font-weight: 800;
-
-      transition: .2s ease;
-    }
-
-    .top-link:hover {
-      transform: translateY(-1px);
-
-      border-color:
-        rgba(245,201,92,.48);
-
-      background:
-        rgba(245,201,92,.09);
-    }
-
-    /* =====================================
-       CONTENEDOR
-       ===================================== */
-
-    .container {
-      width:
-        min(1160px, calc(100% - 32px));
-
-      margin: auto;
-    }
-
-    /* =====================================
+    /* =========================
        HERO
-       ===================================== */
+    ========================= */
 
     .hero {
-      min-height:
-        calc(100vh - 74px);
+      width: 100%;
+      padding: 14px 20px 70px;
+    }
 
-      padding:
-        64px 0 75px;
+    .hero-container {
+      max-width: 1180px;
+      min-height: 650px;
+      margin: 0 auto;
 
       display: grid;
-
-      grid-template-columns:
-        1fr 1fr;
-
-      gap: 58px;
-
+      grid-template-columns: 1.02fr .98fr;
+      gap: 42px;
       align-items: center;
     }
 
     .hero-content {
-      min-width: 0;
+      padding: 20px 0;
     }
 
     .eyebrow {
       display: inline-flex;
-
       align-items: center;
-
       gap: 8px;
 
-      padding: 8px 14px;
+      margin-bottom: 20px;
+      padding: 8px 13px;
 
-      border:
-        1px solid rgba(245,201,92,.22);
-
+      border: 1px solid rgba(255,255,255,.11);
       border-radius: 999px;
 
-      background:
-        linear-gradient(
-          135deg,
-          rgba(245,201,92,.08),
-          rgba(139,108,255,.08)
-        );
+      background: rgba(255,255,255,.045);
 
-      color: #ffe9a5;
+      color: #d7d5ff;
+      font-size: 13px;
+      font-weight: 600;
+    }
 
-      font-size: 12px;
+    .eyebrow-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
 
-      font-weight: 800;
-
-      box-shadow:
-        0 10px 30px
-        rgba(0,0,0,.12);
+      background: #c9a7ff;
+      box-shadow: 0 0 14px #9c72ff;
     }
 
     .hero h1 {
-      margin: 23px 0 0;
+      max-width: 680px;
 
-      max-width: 650px;
+      font-size: clamp(44px, 7vw, 78px);
+      line-height: .98;
+      letter-spacing: -3.5px;
+      font-weight: 800;
 
-      font-family:
-        "Manrope",
-        sans-serif;
-
-      font-size:
-        clamp(3rem, 6.3vw, 5.6rem);
-
-      line-height: .95;
-
-      letter-spacing: -.075em;
+      margin-bottom: 24px;
     }
 
-    .gradient-text {
+    .hero h1 .highlight {
+      display: block;
+
       background:
         linear-gradient(
-          100deg,
-          #fff7da,
-          #ffe49b 30%,
-          #f5c95c 68%,
-          #fff
+          90deg,
+          #ffffff 0%,
+          #d7c9ff 48%,
+          #c39bff 100%
         );
 
       -webkit-background-clip: text;
       background-clip: text;
-
       color: transparent;
     }
 
     .hero-description {
       max-width: 590px;
 
-      margin: 26px 0 0;
+      color: #aeb3ca;
+      font-size: 18px;
+      line-height: 1.7;
 
-      color: var(--muted);
-
-      font-size: 17px;
-
-      line-height: 1.75;
+      margin-bottom: 30px;
     }
 
-    .feature-row {
-      display: flex;
-
-      flex-wrap: wrap;
-
-      gap: 9px;
-
-      margin-top: 25px;
-    }
-
-    .feature {
-      padding: 8px 12px;
-
-      border-radius: 999px;
-
-      border:
-        1px solid rgba(255,255,255,.08);
-
-      background:
-        rgba(255,255,255,.035);
-
-      color: #dce2ee;
-
-      font-size: 12px;
-
-      font-weight: 700;
-    }
+    /* =========================
+       HERO BUTTONS
+    ========================= */
 
     .hero-actions {
       display: flex;
-
+      align-items: center;
+      gap: 13px;
       flex-wrap: wrap;
 
-      gap: 12px;
-
-      margin-top: 30px;
+      margin-bottom: 30px;
     }
 
-    .hero-button {
-      min-height: 52px;
+    .primary-btn,
+    .secondary-btn {
+      min-height: 54px;
+      padding: 0 25px;
 
-      padding: 0 22px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
 
-      border-radius: 15px;
+      border-radius: 16px;
 
-      border:
-        1px solid transparent;
+      font-size: 15px;
+      font-weight: 700;
 
-      cursor: pointer;
-
-      font-weight: 900;
-
-      transition: .22s ease;
+      transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        background .2s ease;
     }
 
-    .hero-button.primary {
-      color: #211806;
+    .primary-btn {
+      color: #ffffff;
+
+      border: 1px solid rgba(255,255,255,.12);
 
       background:
         linear-gradient(
           135deg,
-          #fff0bd,
-          #f5c95c 65%,
-          #dca83a
+          #7554ff,
+          #9b64ff
         );
 
       box-shadow:
-        0 12px 32px
-        rgba(245,201,92,.16),
-
-        inset 0 1px 0
-        rgba(255,255,255,.7);
+        0 15px 35px rgba(113,78,255,.28);
     }
 
-    .hero-button.secondary {
-      color: #eeeaff;
+    .secondary-btn {
+      color: #ffffff;
 
-      border-color:
-        rgba(139,108,255,.30);
+      border: 1px solid rgba(255,255,255,.13);
 
-      background:
-        rgba(139,108,255,.08);
+      background: rgba(255,255,255,.055);
+
+      backdrop-filter: blur(12px);
     }
 
-    .hero-button:hover {
+    .primary-btn:hover,
+    .secondary-btn:hover {
       transform: translateY(-2px);
     }
 
-    .hero-button.primary:hover {
+    .primary-btn:hover {
       box-shadow:
-        0 17px 38px
-        rgba(245,201,92,.22),
-
-        inset 0 1px 0
-        rgba(255,255,255,.8);
+        0 18px 42px rgba(113,78,255,.38);
     }
 
-    .hero-button.secondary:hover {
-      border-color:
-        rgba(139,108,255,.55);
-
-      background:
-        rgba(139,108,255,.14);
+    .secondary-btn:hover {
+      background: rgba(255,255,255,.09);
     }
 
-    .trust-row {
+    .hero-features {
       display: flex;
-
       flex-wrap: wrap;
+      gap: 10px;
+    }
 
-      gap: 18px;
+    .feature-pill {
+      padding: 9px 12px;
 
-      margin-top: 27px;
+      border-radius: 999px;
 
-      color: #77839a;
+      border: 1px solid rgba(255,255,255,.08);
+
+      background: rgba(255,255,255,.035);
+
+      color: #b9bed2;
 
       font-size: 12px;
+      font-weight: 500;
     }
 
-    /* =====================================
-       VISUAL
-       ===================================== */
+    /* =========================
+       PHOTO
+    ========================= */
 
-    .visual {
+    .hero-visual {
       position: relative;
+      min-height: 600px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .image-shell {
-      position: relative;
+    .photo-glow {
+      position: absolute;
+      width: 440px;
+      height: 440px;
 
-      padding: 9px;
-
-      border-radius: 31px;
+      border-radius: 50%;
 
       background:
-        linear-gradient(
-          145deg,
-          rgba(255,255,255,.15),
-          rgba(139,108,255,.12),
-          rgba(245,201,92,.10)
+        radial-gradient(
+          circle,
+          rgba(128,87,255,.32),
+          transparent 68%
         );
 
-      box-shadow: var(--shadow);
+      filter: blur(12px);
     }
 
-    .image-frame {
+    .photo-card {
       position: relative;
-
-      min-height: 610px;
+      width: min(100%, 470px);
+      height: 570px;
 
       overflow: hidden;
 
-      border-radius: 24px;
+      border-radius: 32px;
 
-      border:
-        1px solid rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.15);
 
-      background: #0a0e1d;
+      background: #14172d;
+
+      box-shadow:
+        0 35px 90px rgba(0,0,0,.45),
+        0 0 50px rgba(105,72,255,.16);
     }
 
-    .hero-image {
-      position: absolute;
-
-      inset: 0;
-
+    .photo-card img {
       width: 100%;
       height: 100%;
 
-      object-fit: cover;
-
-      object-position: center;
-
       display: block;
+
+      object-fit: cover;
+      object-position: center;
 
       transform: scale(1.01);
     }
 
-    .image-overlay {
+    .photo-overlay {
       position: absolute;
-
       inset: 0;
 
       background:
         linear-gradient(
           180deg,
-          rgba(3,5,12,.05) 25%,
-          rgba(3,5,12,.18) 52%,
-          rgba(3,5,12,.88) 100%
+          rgba(6,8,22,.03) 35%,
+          rgba(6,8,22,.18) 55%,
+          rgba(6,8,22,.88) 100%
         );
     }
 
-    .image-glow {
+    .photo-caption {
       position: absolute;
-
-      width: 220px;
-      height: 220px;
-
-      top: -80px;
-      right: -70px;
-
-      border-radius: 50%;
-
-      background:
-        rgba(139,108,255,.28);
-
-      filter: blur(55px);
-    }
-
-    .image-caption {
-      position: absolute;
-
       left: 25px;
       right: 25px;
       bottom: 24px;
     }
 
-    .caption-badge {
+    .photo-caption-label {
       display: inline-flex;
 
-      align-items: center;
-
-      gap: 7px;
-
-      padding: 8px 11px;
+      margin-bottom: 10px;
+      padding: 7px 11px;
 
       border-radius: 999px;
 
-      background:
-        rgba(7,10,22,.68);
+      background: rgba(10,12,30,.58);
+      border: 1px solid rgba(255,255,255,.12);
 
-      border:
-        1px solid rgba(255,255,255,.14);
-
-      backdrop-filter: blur(14px);
-
-      color: #ffe8a1;
+      color: #ddd7ff;
 
       font-size: 11px;
+      font-weight: 600;
 
-      font-weight: 800;
+      backdrop-filter: blur(12px);
     }
 
-    .image-caption h2 {
-      margin: 14px 0 6px;
+    .photo-caption h2 {
+      font-size: 27px;
+      line-height: 1.15;
+      letter-spacing: -1px;
 
-      font-family:
-        "Manrope",
-        sans-serif;
-
-      font-size: 29px;
-
-      letter-spacing: -.04em;
+      margin-bottom: 7px;
     }
 
-    .image-caption p {
-      margin: 0;
-
-      color: #d5d9e3;
-
+    .photo-caption p {
+      color: #d0d3df;
       font-size: 13px;
+      line-height: 1.5;
     }
 
-    .floating-card {
-      position: absolute;
-
-      display: flex;
-
-      align-items: center;
-
-      gap: 10px;
-
-      padding: 12px 14px;
-
-      border:
-        1px solid rgba(255,255,255,.13);
-
-      border-radius: 16px;
-
-      background:
-        rgba(9,12,25,.78);
-
-      backdrop-filter: blur(18px);
-
-      box-shadow:
-        0 20px 50px
-        rgba(0,0,0,.30);
-
-      z-index: 3;
-    }
-
-    .floating-card.one {
-      top: 55px;
-      left: -30px;
-    }
-
-    .floating-card.two {
-      right: -27px;
-      bottom: 95px;
-    }
-
-    .floating-icon {
-      width: 35px;
-      height: 35px;
-
-      border-radius: 11px;
-
-      display: grid;
-
-      place-items: center;
-
-      background:
-        rgba(139,108,255,.15);
-
-      border:
-        1px solid rgba(139,108,255,.22);
-    }
-
-    .floating-title {
-      color: #fff;
-
-      font-size: 12px;
-
-      font-weight: 800;
-    }
-
-    .floating-text {
-      margin-top: 2px;
-
-      color: #8f9ab0;
-
-      font-size: 10px;
-    }
-        /* =====================================
-       ACCESO
-       ===================================== */
+    /* =========================
+       AUTH AREA
+    ========================= */
 
     .auth-section {
-      padding: 20px 0 85px;
+      display: none;
+
+      width: 100%;
+      padding: 30px 20px 90px;
+
+      animation: fadeUp .35s ease;
+    }
+
+    .auth-section.visible {
+      display: block;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(15px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .auth-container {
+      width: 100%;
+      max-width: 470px;
+      margin: 0 auto;
     }
 
     .auth-card {
-      max-width: 520px;
-
-      margin: auto;
-
       padding: 30px;
 
-      border:
-        1px solid rgba(255,255,255,.10);
-
       border-radius: 28px;
+
+      border: 1px solid rgba(255,255,255,.10);
 
       background:
         linear-gradient(
           145deg,
-          rgba(19,24,45,.95),
-          rgba(7,10,21,.98)
+          rgba(255,255,255,.075),
+          rgba(255,255,255,.035)
         );
 
-      box-shadow: var(--shadow);
+      box-shadow:
+        0 30px 70px rgba(0,0,0,.32);
+
+      backdrop-filter: blur(18px);
     }
 
-    .auth-heading {
-      text-align: center;
+    .auth-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
 
       margin-bottom: 22px;
-    }
 
-    .auth-heading h2 {
-      margin: 0;
-
-      font-family:
-        "Manrope",
-        sans-serif;
-
-      font-size: 26px;
-
-      letter-spacing: -.04em;
-    }
-
-    .auth-heading p {
-      margin: 8px 0 0;
-
-      color: #929db1;
-
+      color: #b8b2d5;
       font-size: 13px;
+      font-weight: 600;
+
+      background: none;
+      border: 0;
     }
 
-    .panel {
+    .auth-back:hover {
+      color: #ffffff;
+    }
+
+    .auth-title {
+      font-size: 30px;
+      letter-spacing: -1px;
+
+      margin-bottom: 8px;
+    }
+
+    .auth-description {
+      color: #9fa5bd;
+      font-size: 14px;
+      line-height: 1.6;
+
+      margin-bottom: 25px;
+    }
+
+    .auth-form {
       display: none;
     }
 
-    .panel.active {
+    .auth-form.active {
       display: block;
     }
 
-    .form {
-      display: grid;
-
-      gap: 14px;
-    }
-
     .field {
-      display: grid;
-
-      gap: 7px;
+      margin-bottom: 16px;
     }
 
     .field label {
-      color: #dce2ed;
+      display: block;
 
-      font-size: 12px;
+      margin-bottom: 8px;
 
-      font-weight: 800;
+      color: #d9dbea;
+      font-size: 13px;
+      font-weight: 600;
     }
 
     .input-wrap {
       position: relative;
     }
 
-    .input {
+    .field input {
       width: 100%;
+      height: 52px;
 
-      height: 51px;
-
-      padding:
-        0 45px 0 14px;
-
-      border:
-        1px solid rgba(255,255,255,.10);
-
-      border-radius: 13px;
-
-      outline: none;
-
-      color: #fff;
-
-      background:
-        rgba(2,5,13,.72);
-
-      transition: .2s ease;
-    }
-
-    .input::placeholder {
-      color: #657188;
-    }
-
-    .input:focus {
-      border-color:
-        rgba(245,201,92,.65);
-
-      box-shadow:
-        0 0 0 4px
-        rgba(245,201,92,.07);
-    }
-
-    .eye {
-      position: absolute;
-
-      top: 6px;
-      right: 6px;
-
-      width: 39px;
-      height: 39px;
-
-      border: 0;
-
-      border-radius: 10px;
-
-      color: #8d98ac;
-
-      background: transparent;
-
-      cursor: pointer;
-    }
-
-    .eye:hover {
-      color: #ffe7a0;
-
-      background:
-        rgba(255,255,255,.05);
-    }
-
-    .submit {
-      width: 100%;
-
-      min-height: 52px;
-
-      margin-top: 3px;
-
-      border: 0;
+      padding: 0 15px;
 
       border-radius: 14px;
 
-      cursor: pointer;
+      border: 1px solid rgba(255,255,255,.10);
 
-      color: #211806;
+      outline: none;
 
-      font-weight: 900;
+      color: #ffffff;
+      background: rgba(4,6,19,.55);
+
+      transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+    }
+
+    .field input:focus {
+      border-color: rgba(151,115,255,.75);
+
+      box-shadow:
+        0 0 0 4px rgba(117,84,255,.10);
+    }
+
+    .password-input {
+      padding-right: 52px !important;
+    }
+
+    .password-toggle {
+      position: absolute;
+      top: 50%;
+      right: 8px;
+
+      width: 38px;
+      height: 38px;
+
+      transform: translateY(-50%);
+
+      display: grid;
+      place-items: center;
+
+      border: 0;
+      border-radius: 10px;
+
+      background: transparent;
+
+      color: #9da2b9;
+    }
+
+    .password-toggle:hover {
+      background: rgba(255,255,255,.06);
+      color: #ffffff;
+    }
+
+    .form-submit {
+      width: 100%;
+      height: 53px;
+
+      margin-top: 7px;
+
+      border: 0;
+      border-radius: 15px;
+
+      color: #ffffff;
+
+      font-weight: 700;
 
       background:
         linear-gradient(
           135deg,
-          #fff0bd,
-          #f5c95c 65%,
-          #dca83a
+          #7654ff,
+          #a05eff
         );
 
       box-shadow:
-        0 11px 28px
-        rgba(245,201,92,.14);
-
-      transition: .2s ease;
+        0 14px 30px rgba(115,77,255,.25);
     }
 
-    .submit:hover {
-      transform: translateY(-1px);
+    .form-submit:disabled {
+      opacity: .65;
+      cursor: wait;
     }
 
-    .submit:disabled {
-      opacity: .55;
+    .form-link {
+      display: block;
 
-      cursor: not-allowed;
-
-      transform: none;
-    }
-
-    .forgot,
-    .back {
-      border: 0;
-
-      background: transparent;
-
-      color: #ffe39a;
-
-      cursor: pointer;
-
-      font-size: 12px;
-
-      font-weight: 800;
-    }
-
-    .forgot {
-      width: 100%;
+      margin-top: 17px;
 
       text-align: center;
 
-      margin-top: 1px;
+      color: #bcaeff;
+
+      font-size: 13px;
+      font-weight: 600;
     }
 
-    .back {
-      padding: 0;
-
-      margin-bottom: 14px;
+    .form-link:hover {
+      color: #ffffff;
     }
 
-    .secondary-button {
-      width: 100%;
+    .auth-message {
+      display: none;
 
-      min-height: 45px;
-
-      border:
-        1px solid rgba(255,255,255,.11);
+      margin-top: 15px;
+      padding: 12px 14px;
 
       border-radius: 12px;
 
-      color: #fff;
-
-      background:
-        rgba(255,255,255,.04);
-
-      cursor: pointer;
-
-      font-weight: 800;
-    }
-
-    .message {
-      display: none;
-
-      margin-bottom: 14px;
-
-      padding: 11px 13px;
-
-      border-radius: 11px;
-
-      font-size: 12px;
-
+      font-size: 13px;
       line-height: 1.5;
     }
 
-    .message.show {
+    .auth-message.visible {
       display: block;
     }
 
-    .message.success {
-      color: #a7f3d0;
-
-      border:
-        1px solid rgba(52,211,153,.18);
-
-      background:
-        rgba(52,211,153,.08);
+    .auth-message.error {
+      color: #ffd0d0;
+      background: rgba(190,50,70,.12);
+      border: 1px solid rgba(255,90,110,.16);
     }
 
-    .message.error {
-      color: #fecdd3;
-
-      border:
-        1px solid rgba(251,113,133,.18);
-
-      background:
-        rgba(251,113,133,.08);
+    .auth-message.success {
+      color: #d4ffe5;
+      background: rgba(30,170,100,.10);
+      border: 1px solid rgba(80,220,145,.15);
     }
 
-    .legal {
-      margin: 18px 0 0;
-
-      color: #68758a;
-
-      font-size: 10px;
-
-      line-height: 1.55;
-
-      text-align: center;
+    .auth-message.info {
+      color: #d9dcff;
+      background: rgba(100,80,220,.10);
+      border: 1px solid rgba(130,110,255,.15);
     }
-
-    /* =====================================
-       SELECTOR DE ACCESO
-       ===================================== */
-
-    .auth-switch {
-      display: flex;
-
-      justify-content: center;
-
-      align-items: center;
-
-      gap: 7px;
-
-      margin-top: 18px;
-
-      color: #7f8ba0;
-
-      font-size: 12px;
-    }
-
-    .auth-switch button {
-      padding: 0;
-
-      border: 0;
-
-      background: transparent;
-
-      color: #ffe29a;
-
-      cursor: pointer;
-
-      font-weight: 800;
-    }
-
-    .auth-switch button:hover {
-      text-decoration: underline;
-    }
-
-    /* =====================================
-       FOOTER
-       ===================================== */
-
-    .footer {
-      padding: 24px 0;
-
-      border-top:
-        1px solid rgba(255,255,255,.07);
-
-      background:
-        rgba(3,5,12,.45);
-    }
-
-    .footer-inner {
-      width:
-        min(1160px, calc(100% - 32px));
-
-      margin: auto;
-
-      display: flex;
-
-      justify-content: space-between;
-
-      gap: 15px;
-    }
-
-    .footer small,
-    .footer a {
-      color: #69758a;
-
-      font-size: 11px;
-    }
-
-    .footer-links {
-      display: flex;
-
-      gap: 16px;
-
-      flex-wrap: wrap;
-    }
-
-    .footer a:hover {
-      color: #ffe39a;
-    }
-
-    /* =====================================
-       RESPONSIVE
-       ===================================== */
-
-    @media (max-width: 900px) {
-
-      .hero {
-        grid-template-columns: 1fr;
-
-        padding-top: 48px;
-      }
-
-      .visual {
-        max-width: 650px;
-
-        width: 100%;
-
-        margin: auto;
-      }
-
-      .image-frame {
-        min-height: 560px;
-      }
-
-      .floating-card.one {
-        left: 10px;
-      }
-
-      .floating-card.two {
-        right: 10px;
-      }
-    }
-
-    @media (max-width: 600px) {
-
-      .topbar {
-        height: 68px;
-      }
-
-      .topbar-inner,
-      .container,
-      .footer-inner {
-        width:
-          min(100% - 22px, 1160px);
-      }
-
-      .brand-icon {
-        width: 39px;
-        height: 39px;
-
-        border-radius: 12px;
-      }
-
-      .brand-name {
-        font-size: 18px;
-      }
-
-      .top-link {
-        padding: 8px 12px;
-
-        font-size: 11px;
-      }
-
-      .hero {
-        min-height: auto;
-
-        padding: 38px 0 45px;
-
-        gap: 34px;
-      }
-
-      .hero h1 {
-        font-size:
-          clamp(
-            2.7rem,
-            14vw,
-            4rem
-          );
-      }
-
-      .hero-description {
-        font-size: 15px;
-
-        line-height: 1.65;
-      }
-
-      .hero-actions {
-        display: grid;
-
-        grid-template-columns: 1fr;
-      }
-
-      .hero-button {
-        width: 100%;
-      }
-
-      .image-shell {
-        padding: 6px;
-
-        border-radius: 25px;
-      }
-
-      .image-frame {
-        min-height: 470px;
-
-        border-radius: 20px;
-      }
-
-      .floating-card {
-        padding: 9px 11px;
-      }
-
-      .floating-card.one {
-        top: 25px;
-        left: 8px;
-      }
-
-      .floating-card.two {
-        right: 8px;
-        bottom: 75px;
-      }
-
-      .floating-title {
-        font-size: 10px;
-      }
-
-      .floating-text {
-        font-size: 8px;
-      }
-
-      .auth-card {
-        padding: 21px 16px;
-
-        border-radius: 23px;
-      }
-
-      .auth-heading h2 {
-        font-size: 23px;
-      }
-
-      .footer-inner {
-        flex-direction: column;
-      }
-    }
-
   </style>
 </head>
 
 <body>
 
-  <div class="page">
+<div class="page">
 
-    <header class="topbar">
+  <header class="topbar">
+    <div class="topbar-inner">
 
-      <div class="topbar-inner">
+      <a class="brand" href="index.html" aria-label="EmiMatch">
+        <span class="brand-icon">🫰</span>
+        <span>EmiMatch</span>
+      </a>
 
-        <a
-          href="index.html"
-          class="brand"
-          aria-label="EmiMatch inicio">
-
-          <span class="brand-icon">
-            🫰
-          </span>
-
-          <span class="brand-name">
-            EmiMatch
-          </span>
-
-        </a>
-
-        <a
-          href="#acceso"
-          class="top-link">
-
-          Ingresar
-
-        </a>
-
-      </div>
-
-    </header>
-
+    </div>
+  </header>
     <main>
 
-      <section class="hero container">
+    <section class="hero" id="inicio">
+
+      <div class="hero-container">
 
         <div class="hero-content">
 
-          <span class="eyebrow">
-            ✨ Conexiones que empiezan de verdad
-          </span>
+          <div class="eyebrow">
+            <span class="eyebrow-dot"></span>
+            Conexiones que empiezan de verdad
+          </div>
 
           <h1>
             Conocé personas.
-            <br>
-
-            <span class="gradient-text">
+            <span class="highlight">
               Encontrá nuevas historias.
             </span>
           </h1>
 
           <p class="hero-description">
-            Descubrí personas, conectá con quienes
-            realmente despiertan tu interés y empezá
-            conversaciones que pueden convertirse
+            Descubrí personas, conectá con quienes realmente despiertan
+            tu interés y empezá conversaciones que pueden convertirse
             en algo especial.
           </p>
-
-          <div class="feature-row">
-
-            <span class="feature">
-              🫰 Conexiones reales
-            </span>
-
-            <span class="feature">
-              ✨ Perfiles personalizados
-            </span>
-
-            <span class="feature">
-              💬 Conversaciones
-            </span>
-
-            <span class="feature">
-              🔐 Cuenta segura
-            </span>
-
-          </div>
 
           <div class="hero-actions">
 
             <button
               type="button"
-              class="hero-button primary"
-              id="heroLoginButton">
+              class="primary-btn"
+              id="createAccountHero"
+            >
+              ✨ Crear mi cuenta
+            </button>
 
+            <button
+              type="button"
+              class="secondary-btn"
+              id="loginHero"
+            >
               Iniciar sesión
-
-            </button>
-
-            <button
-              type="button"
-              class="hero-button secondary"
-              id="heroRegisterButton">
-
-              Crear mi cuenta
-
             </button>
 
           </div>
 
-          <div class="trust-row">
+          <div class="hero-features">
 
-            <span>
-              ✓ Experiencia simple
+            <span class="feature-pill">
+              🫰 Conexiones reales
             </span>
 
-            <span>
-              ✓ Perfiles personalizados
+            <span class="feature-pill">
+              ✨ Perfiles personalizados
             </span>
 
-            <span>
-              ✓ Conexiones auténticas
+            <span class="feature-pill">
+              💬 Conversaciones
+            </span>
+
+            <span class="feature-pill">
+              🔐 Cuenta segura
             </span>
 
           </div>
 
         </div>
 
-        <div class="visual">
 
-          <div class="image-shell">
+        <div class="hero-visual">
 
-            <div class="image-frame">
+          <div class="photo-glow"></div>
 
-              <img
-                class="hero-image"
-                src="assets/images/0b5083b19e534a3d8f797121ed2060d8.jpg"
-                alt="Personas conectando en EmiMatch"
-                loading="eager">
+          <div class="photo-card">
 
-              <div class="image-overlay"></div>
+            <img
+              src="assets/images/0b5083b19e534a3d8f797121ed2060d8.jpg"
+              alt="Personas conectando en EmiMatch"
+              loading="eager"
+            >
 
-              <div class="image-glow"></div>
+            <div class="photo-overlay"></div>
 
-              <div class="image-caption">
+            <div class="photo-caption">
 
-                <span class="caption-badge">
-                  ✦ EmiMatch
-                </span>
-
-                <h2>
-                  Una historia puede comenzar hoy.
-                </h2>
-
-                <p>
-                  Descubrí nuevas personas y conectá
-                  de una forma auténtica.
-                </p>
-
-              </div>
-
-            </div>
-
-          </div>
-
-          <div class="floating-card one">
-
-            <div class="floating-icon">
-              ✨
-            </div>
-
-            <div>
-
-              <div class="floating-title">
-                Nuevas historias
-              </div>
-
-              <div class="floating-text">
-                Descubrí personas
-              </div>
-
-            </div>
-
-          </div>
-
-          <div class="floating-card two">
-
-            <div class="floating-icon">
-              🫰
-            </div>
-
-            <div>
-
-              <div class="floating-title">
-                Conexiones auténticas
-              </div>
-
-              <div class="floating-text">
-                A tu manera
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
-            <section
-        class="auth-section container"
-        id="acceso">
-
-        <div class="auth-card">
-
-          <div class="auth-heading">
-
-            <h2 id="authTitle">
-              Iniciá con EmiMatch
-            </h2>
-
-            <p id="authSubtitle">
-              Elegí una opción para comenzar.
-            </p>
-
-          </div>
-
-          <div
-            id="authMessage"
-            class="message"
-            role="alert">
-          </div>
-
-          <!-- LOGIN -->
-
-          <section
-            id="loginPanel"
-            class="panel active">
-
-            <form
-              id="loginForm"
-              class="form">
-
-              <div class="field">
-
-                <label for="loginEmail">
-                  Correo electrónico
-                </label>
-
-                <input
-                  id="loginEmail"
-                  class="input"
-                  type="email"
-                  autocomplete="email"
-                  placeholder="tu@email.com"
-                  required>
-
-              </div>
-
-              <div class="field">
-
-                <label for="loginPassword">
-                  Contraseña
-                </label>
-
-                <div class="input-wrap">
-
-                  <input
-                    id="loginPassword"
-                    class="input"
-                    type="password"
-                    autocomplete="current-password"
-                    placeholder="Tu contraseña"
-                    required>
-
-                  <button
-                    type="button"
-                    class="eye"
-                    data-target="loginPassword"
-                    aria-label="Mostrar contraseña">
-
-                    👁
-
-                  </button>
-
-                </div>
-
-              </div>
-
-              <button
-                type="submit"
-                id="loginButton"
-                class="submit">
-
-                Iniciar sesión
-
-              </button>
-
-              <button
-                type="button"
-                id="forgotPassword"
-                class="forgot">
-
-                ¿Olvidaste tu contraseña?
-
-              </button>
-
-            </form>
-
-            <div class="auth-switch">
-
-              <span>
-                ¿Todavía no tenés cuenta?
+              <span class="photo-caption-label">
+                ✦ EmiMatch
               </span>
 
-              <button
-                type="button"
-                id="switchToRegister">
+              <h2>
+                Una historia puede comenzar hoy.
+              </h2>
 
-                Crear mi cuenta
-
-              </button>
-
-            </div>
-
-            <p class="legal">
-              Utilizá EmiMatch de forma responsable
-              y respetuosa.
-            </p>
-
-          </section>
-
-
-          <!-- REGISTRO -->
-
-          <section
-            id="registerPanel"
-            class="panel">
-
-            <form
-              id="registerForm"
-              class="form">
-
-              <div class="field">
-
-                <label for="registerEmail">
-                  Correo electrónico
-                </label>
-
-                <input
-                  id="registerEmail"
-                  class="input"
-                  type="email"
-                  autocomplete="email"
-                  placeholder="tu@email.com"
-                  required>
-
-              </div>
-
-              <div class="field">
-
-                <label for="registerPassword">
-                  Contraseña
-                </label>
-
-                <div class="input-wrap">
-
-                  <input
-                    id="registerPassword"
-                    class="input"
-                    type="password"
-                    autocomplete="new-password"
-                    placeholder="Mínimo 6 caracteres"
-                    minlength="6"
-                    required>
-
-                  <button
-                    type="button"
-                    class="eye"
-                    data-target="registerPassword"
-                    aria-label="Mostrar contraseña">
-
-                    👁
-
-                  </button>
-
-                </div>
-
-              </div>
-
-              <div class="field">
-
-                <label for="registerConfirm">
-                  Repetir contraseña
-                </label>
-
-                <div class="input-wrap">
-
-                  <input
-                    id="registerConfirm"
-                    class="input"
-                    type="password"
-                    autocomplete="new-password"
-                    placeholder="Repetí tu contraseña"
-                    minlength="6"
-                    required>
-
-                  <button
-                    type="button"
-                    class="eye"
-                    data-target="registerConfirm"
-                    aria-label="Mostrar contraseña">
-
-                    👁
-
-                  </button>
-
-                </div>
-
-              </div>
-
-              <button
-                type="submit"
-                id="registerButton"
-                class="submit">
-
-                Crear mi cuenta
-
-              </button>
-
-            </form>
-
-            <div class="auth-switch">
-
-              <span>
-                ¿Ya tenés una cuenta?
-              </span>
-
-              <button
-                type="button"
-                id="switchToLogin">
-
-                Iniciar sesión
-
-              </button>
+              <p>
+                Descubrí nuevas personas y conectá
+                de una forma auténtica.
+              </p>
 
             </div>
 
-            <p class="legal">
-              Al crear una cuenta aceptás utilizar
-              EmiMatch de manera responsable.
-            </p>
-
-          </section>
-
-
-          <!-- RECUPERACIÓN -->
-
-          <section
-            id="recoveryPanel"
-            class="panel">
-
-            <button
-              type="button"
-              id="recoveryBack"
-              class="back">
-
-              ← Volver
-
-            </button>
-
-            <p>
-              <strong>
-                🔐 Recuperar contraseña
-              </strong>
-            </p>
-
-            <p
-              style="
-                color:#929db1;
-                font-size:13px;
-                line-height:1.55;
-              ">
-
-              Escribí tu correo y te enviaremos
-              un enlace para crear una nueva contraseña.
-
-            </p>
-
-            <form
-              id="recoveryForm"
-              class="form">
-
-              <div class="field">
-
-                <label for="recoveryEmail">
-                  Correo electrónico
-                </label>
-
-                <input
-                  id="recoveryEmail"
-                  class="input"
-                  type="email"
-                  autocomplete="email"
-                  placeholder="tu@email.com"
-                  required>
-
-              </div>
-
-              <button
-                type="submit"
-                id="recoveryButton"
-                class="submit">
-
-                Enviar enlace
-
-              </button>
-
-              <button
-                type="button"
-                id="recoveryCancel"
-                class="secondary-button">
-
-                Cancelar
-
-              </button>
-
-            </form>
-
-          </section>
-
-        </div>
-
-      </section>
-
-    </main>
-
-    <footer class="footer">
-
-      <div class="footer-inner">
-
-        <small>
-          © 2026 EmiMatch.
-          Todos los derechos reservados.
-        </small>
-
-        <div class="footer-links">
-
-          <a href="menu.html">
-            Ayuda
-          </a>
-
-          <a href="configuracion.html">
-            Privacidad
-          </a>
-
-          <a href="configuracion.html">
-            Configuración
-          </a>
+          </div>
 
         </div>
 
       </div>
 
-    </footer>
+    </section>
 
-  </div>
 
-  <script
-    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-  </script>
+    <!-- =========================
+         AUTENTICACIÓN
+    ========================= -->
 
-  <script src="assets/js/config.js"></script>
+    <section
+      class="auth-section"
+      id="authSection"
+      aria-hidden="true"
+    >
 
-  <script>
+      <div class="auth-container">
 
-    (() => {
+        <div class="auth-card">
 
-      "use strict";
+          <button
+            type="button"
+            class="auth-back"
+            id="backToHome"
+          >
+            ← Volver
+          </button>
+
+
+          <!-- LOGIN -->
+
+          <form
+            class="auth-form active"
+            id="loginForm"
+          >
+
+            <h2 class="auth-title">
+              Iniciar sesión
+            </h2>
+
+            <p class="auth-description">
+              Volvé a EmiMatch y continuá descubriendo nuevas conexiones.
+            </p>
+
+            <div class="field">
+
+              <label for="loginEmail">
+                Correo electrónico
+              </label>
+
+              <div class="input-wrap">
+
+                <input
+                  id="loginEmail"
+                  type="email"
+                  autocomplete="email"
+                  placeholder="tu@email.com"
+                  required
+                >
+
+              </div>
+
+            </div>
+
+
+            <div class="field">
+
+              <label for="loginPassword">
+                Contraseña
+              </label>
+
+              <div class="input-wrap">
+
+                <input
+                  id="loginPassword"
+                  class="password-input"
+                  type="password"
+                  autocomplete="current-password"
+                  placeholder="Tu contraseña"
+                  required
+                >
+
+                <button
+                  type="button"
+                  class="password-toggle"
+                  data-target="loginPassword"
+                  aria-label="Mostrar contraseña"
+                >
+                  👁
+                </button>
+
+              </div>
+
+            </div>
+
+
+            <button
+              type="submit"
+              class="form-submit"
+              id="loginSubmit"
+            >
+              Iniciar sesión
+            </button>
+
+            <button
+              type="button"
+              class="form-link"
+              id="forgotPassword"
+            >
+              ¿Olvidaste tu contraseña?
+            </button>
+
+            <button
+              type="button"
+              class="form-link"
+              id="goRegister"
+            >
+              Crear mi cuenta
+            </button>
+
+            <div
+              id="loginMessage"
+              class="auth-message"
+            ></div>
+
+          </form>
+
+
+          <!-- REGISTRO -->
+
+          <form
+            class="auth-form"
+            id="registerForm"
+          >
+
+            <h2 class="auth-title">
+              Crear mi cuenta
+            </h2>
+
+            <p class="auth-description">
+              Registrate gratis y empezá a conocer nuevas personas.
+            </p>
+
+
+            <div class="field">
+
+              <label for="registerEmail">
+                Correo electrónico
+              </label>
+
+              <input
+                id="registerEmail"
+                type="email"
+                autocomplete="email"
+                placeholder="tu@email.com"
+                required
+              >
+
+            </div>
+
+
+            <div class="field">
+
+              <label for="registerPassword">
+                Contraseña
+              </label>
+
+              <div class="input-wrap">
+
+                <input
+                  id="registerPassword"
+                  class="password-input"
+                  type="password"
+                  autocomplete="new-password"
+                  placeholder="Elegí una contraseña"
+                  minlength="6"
+                  required
+                >
+
+                <button
+                  type="button"
+                  class="password-toggle"
+                  data-target="registerPassword"
+                  aria-label="Mostrar contraseña"
+                >
+                  👁
+                </button>
+
+              </div>
+
+            </div>
+
+
+            <button
+              type="submit"
+              class="form-submit"
+              id="registerSubmit"
+            >
+              Crear mi cuenta
+            </button>
+
+            <button
+              type="button"
+              class="form-link"
+              id="goLogin"
+            >
+              Ya tengo una cuenta
+            </button>
+
+            <div
+              id="registerMessage"
+              class="auth-message"
+            ></div>
+
+          </form>
+
+
+          <!-- RECUPERACIÓN -->
+
+          <form
+            class="auth-form"
+            id="recoveryForm"
+          >
+
+            <h2 class="auth-title">
+              Recuperar contraseña
+            </h2>
+
+            <p class="auth-description">
+              Ingresá tu correo y te enviaremos un enlace para recuperar tu cuenta.
+            </p>
+
+
+            <div class="field">
+
+              <label for="recoveryEmail">
+                Correo electrónico
+              </label>
+
+              <input
+                id="recoveryEmail"
+                type="email"
+                autocomplete="email"
+                placeholder="tu@email.com"
+                required
+              >
+
+            </div>
+
+
+            <button
+              type="submit"
+              class="form-submit"
+              id="recoverySubmit"
+            >
+              Enviar enlace
+            </button>
+
+            <button
+              type="button"
+              class="form-link"
+              id="recoveryBackLogin"
+            >
+              Volver a iniciar sesión
+            </button>
+
+            <div
+              id="recoveryMessage"
+              class="auth-message"
+            ></div>
+
+          </form>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    </main>
+      <footer
+    style="
+      max-width:1180px;
+      margin:0 auto;
+      padding:0 20px 35px;
+    "
+  >
+
+    <div
+      style="
+        height:1px;
+        background:rgba(255,255,255,.07);
+        margin-bottom:25px;
+      "
+    ></div>
+
+    <div
+      style="
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:20px;
+        flex-wrap:wrap;
+      "
+    >
+
+      <div
+        style="
+          color:#777d96;
+          font-size:12px;
+        "
+      >
+        Utilizá EmiMatch de forma responsable y respetuosa.
+      </div>
+
+      <div
+        style="
+          display:flex;
+          gap:18px;
+          flex-wrap:wrap;
+        "
+      >
+
+        <a
+          href="menu.html"
+          style="color:#858ba2;font-size:12px;"
+        >
+          Ayuda
+        </a>
+
+        <a
+          href="#"
+          style="color:#858ba2;font-size:12px;"
+          onclick="return false;"
+        >
+          Privacidad
+        </a>
+
+        <a
+          href="configuración.html"
+          style="color:#858ba2;font-size:12px;"
+        >
+          Configuración
+        </a>
+
+      </div>
+
+    </div>
+
+    <div
+      style="
+        margin-top:18px;
+        color:#62687d;
+        font-size:11px;
+      "
+    >
+      © 2026 EmiMatch. Todos los derechos reservados.
+    </div>
+
+  </footer>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="assets/js/config.js"></script>
+
+<script>
+  "use strict";
+
+  document.addEventListener("DOMContentLoaded", async () => {
+
+    const authSection = document.getElementById("authSection");
+
+    const loginForm = document.getElementById("loginForm");
+    const registerForm = document.getElementById("registerForm");
+    const recoveryForm = document.getElementById("recoveryForm");
+
+    const createAccountHero =
+      document.getElementById("createAccountHero");
+
+    const loginHero =
+      document.getElementById("loginHero");
+
+    const backToHome =
+      document.getElementById("backToHome");
+
+    const goRegister =
+      document.getElementById("goRegister");
+
+    const goLogin =
+      document.getElementById("goLogin");
+
+    const forgotPassword =
+      document.getElementById("forgotPassword");
+
+    const recoveryBackLogin =
+      document.getElementById("recoveryBackLogin");
+
+
+    function getConfig() {
 
       const config =
-        window.EMIMATCH_CONFIG;
-
-      if (
-        !config ||
-        !window.supabase
-      ) {
-
-        console.error(
-          "EmiMatch: configuración o Supabase no disponible."
-        );
-
-        return;
-      }
+        window.EMIMATCH_CONFIG || {};
 
       const supabaseUrl =
         config.supabaseUrl;
@@ -1837,680 +1215,674 @@
         config.supabaseKey ||
         config.supabaseAnonKey;
 
-      if (
-        !supabaseUrl ||
-        !supabaseKey
-      ) {
-
-        console.error(
-          "EmiMatch: faltan las credenciales de Supabase."
+      if (!supabaseUrl || !supabaseKey) {
+        throw new Error(
+          "Configuración de Supabase incompleta."
         );
-
-        return;
       }
 
-      const client =
+      return {
+        supabaseUrl,
+        supabaseKey
+      };
+    }
+
+
+    let supabaseClient = null;
+
+
+    try {
+
+      const config = getConfig();
+
+      supabaseClient =
         window.supabase.createClient(
-          supabaseUrl,
-          supabaseKey
+          config.supabaseUrl,
+          config.supabaseKey
         );
 
-      const $ = id =>
-        document.getElementById(id);
+    } catch (error) {
 
-      const message =
-        $("authMessage");
+      console.error(
+        "Error iniciando Supabase:",
+        error
+      );
 
+    }
 
-      function showMessage(
-        text,
-        type
-      ) {
 
-        if (!message) {
-          return;
-        }
+    function showAuth(form) {
 
-        message.textContent =
-          text;
+      authSection.classList.add("visible");
+      authSection.setAttribute(
+        "aria-hidden",
+        "false"
+      );
 
-        message.className =
-          "message show " + type;
-      }
+      loginForm.classList.remove("active");
+      registerForm.classList.remove("active");
+      recoveryForm.classList.remove("active");
 
+      form.classList.add("active");
 
-      function clearMessage() {
+      setTimeout(() => {
 
-        if (!message) {
-          return;
-        }
+        authSection.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
 
-        message.textContent =
-          "";
+      }, 40);
+    }
 
-        message.className =
-          "message";
-      }
 
+    function hideAuth() {
 
-      function scrollToAccess() {
+      authSection.classList.remove("visible");
+      authSection.setAttribute(
+        "aria-hidden",
+        "true"
+      );
 
-        $("acceso")
-          .scrollIntoView({
-            behavior: "smooth",
-            block: "center"
-          });
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    }
 
-      }
 
-
-      function showLogin() {
-
-        $("loginPanel")
-          .classList
-          .add("active");
-
-        $("registerPanel")
-          .classList
-          .remove("active");
-
-        $("recoveryPanel")
-          .classList
-          .remove("active");
-
-        $("authTitle").textContent =
-          "Iniciar sesión";
-
-        $("authSubtitle").textContent =
-          "Ingresá a tu espacio en EmiMatch.";
-
-        clearMessage();
-      }
-
-
-      function showRegister() {
-
-        $("loginPanel")
-          .classList
-          .remove("active");
-
-        $("registerPanel")
-          .classList
-          .add("active");
-
-        $("recoveryPanel")
-          .classList
-          .remove("active");
-
-        $("authTitle").textContent =
-          "Crear mi cuenta";
-
-        $("authSubtitle").textContent =
-          "Comenzá a conocer nuevas personas.";
-
-        clearMessage();
-      }
-
-
-      function showRecovery() {
-
-        $("loginPanel")
-          .classList
-          .remove("active");
-
-        $("registerPanel")
-          .classList
-          .remove("active");
-
-        $("recoveryPanel")
-          .classList
-          .add("active");
-
-        $("authTitle").textContent =
-          "Recuperar contraseña";
-
-        $("authSubtitle").textContent =
-          "Te ayudamos a recuperar tu acceso.";
-
-        clearMessage();
-      }
-
-
-      $("heroLoginButton")
-        .addEventListener(
-          "click",
-          () => {
-
-            scrollToAccess();
-
-            setTimeout(
-              showLogin,
-              250
-            );
-
-          }
-        );
-
-
-      $("heroRegisterButton")
-        .addEventListener(
-          "click",
-          () => {
-
-            scrollToAccess();
-
-            setTimeout(
-              showRegister,
-              250
-            );
-
-          }
-        );
-
-
-      $("switchToRegister")
-        .addEventListener(
-          "click",
-          () => {
-
-            showRegister();
-
-          }
-        );
-
-
-      $("switchToLogin")
-        .addEventListener(
-          "click",
-          () => {
-
-            showLogin();
-
-          }
-        );
-
-
-      $("forgotPassword")
-        .addEventListener(
-          "click",
-          () => {
-
-            const email =
-              $("loginEmail")
-                .value
-                .trim();
-
-            if (email) {
-
-              $("recoveryEmail")
-                .value = email;
-
-            }
-
-            showRecovery();
-
-          }
-        );
-
-
-      $("recoveryBack")
-        .addEventListener(
-          "click",
-          showLogin
-        );
-
-
-      $("recoveryCancel")
-        .addEventListener(
-          "click",
-          showLogin
-        );
-
+    function clearMessages() {
 
       document
-        .querySelectorAll(".eye")
-        .forEach(button => {
+        .querySelectorAll(".auth-message")
+        .forEach(message => {
 
-          button.addEventListener(
-            "click",
-            () => {
+          message.className =
+            "auth-message";
 
-              const input =
-                $(button.dataset.target);
-
-              if (!input) {
-                return;
-              }
-
-              if (
-                input.type === "password"
-              ) {
-
-                input.type = "text";
-
-                button.textContent =
-                  "🙈";
-
-              } else {
-
-                input.type =
-                  "password";
-
-                button.textContent =
-                  "👁";
-
-              }
-
-            }
-          );
+          message.textContent = "";
 
         });
-            /* =====================================
-         LOGIN
-         ===================================== */
 
-      $("loginForm")
-        .addEventListener(
-          "submit",
-          async event => {
+    }
 
-            event.preventDefault();
 
-            clearMessage();
+    function showMessage(
+      element,
+      message,
+      type = "info"
+    ) {
 
-            const email =
-              $("loginEmail")
-                .value
-                .trim();
+      element.textContent = message;
 
-            const password =
-              $("loginPassword")
-                .value;
+      element.className =
+        "auth-message visible " + type;
+    }
 
-            if (
-              !email ||
-              !password
-            ) {
 
-              showMessage(
-                "Completá tu correo y contraseña.",
-                "error"
-              );
+    function setLoading(
+      button,
+      loading,
+      normalText
+    ) {
 
-              return;
-            }
+      button.disabled = loading;
 
-            const button =
-              $("loginButton");
+      button.textContent =
+        loading
+          ? "Procesando..."
+          : normalText;
+    }
 
-            button.disabled = true;
 
-            button.textContent =
-              "Ingresando...";
+    createAccountHero.addEventListener(
+      "click",
+      () => {
 
-            try {
+        clearMessages();
 
-              const {
-                data,
-                error
-              } =
-                await client.auth
-                  .signInWithPassword({
-                    email,
-                    password
-                  });
+        showAuth(registerForm);
 
-              if (error) {
-                throw error;
-              }
+      }
+    );
 
-              if (
-                !data ||
-                !data.session
-              ) {
 
-                throw new Error(
-                  "No se pudo crear la sesión."
-                );
+    loginHero.addEventListener(
+      "click",
+      () => {
 
-              }
+        clearMessages();
 
-              showMessage(
-                "¡Bienvenido a EmiMatch!",
-                "success"
-              );
+        showAuth(loginForm);
 
-              setTimeout(
-                () => {
+      }
+    );
 
-                  window.location.href =
-                    "perfil.html";
 
-                },
-                650
-              );
+    backToHome.addEventListener(
+      "click",
+      () => {
 
-            } catch (error) {
+        hideAuth();
 
-              console.error(
-                "EmiMatch login:",
-                error
-              );
+      }
+    );
 
-              showMessage(
-                error.message ||
-                "No se pudo iniciar sesión.",
-                "error"
-              );
 
-              button.disabled = false;
+    goRegister.addEventListener(
+      "click",
+      () => {
 
-              button.textContent =
-                "Iniciar sesión";
+        clearMessages();
 
-            }
+        showAuth(registerForm);
 
-          }
-        );
+      }
+    );
 
 
-      /* =====================================
-         REGISTRO
-         ===================================== */
+    goLogin.addEventListener(
+      "click",
+      () => {
 
-      $("registerForm")
-        .addEventListener(
-          "submit",
-          async event => {
+        clearMessages();
 
-            event.preventDefault();
+        showAuth(loginForm);
 
-            clearMessage();
+      }
+    );
 
-            const email =
-              $("registerEmail")
-                .value
-                .trim();
 
-            const password =
-              $("registerPassword")
-                .value;
+    forgotPassword.addEventListener(
+      "click",
+      () => {
 
-            const confirm =
-              $("registerConfirm")
-                .value;
+        clearMessages();
 
-            if (
-              !email ||
-              !password ||
-              !confirm
-            ) {
+        showAuth(recoveryForm);
 
-              showMessage(
-                "Completá todos los campos.",
-                "error"
-              );
+      }
+    );
 
-              return;
-            }
 
-            if (
-              password.length < 6
-            ) {
+    recoveryBackLogin.addEventListener(
+      "click",
+      () => {
 
-              showMessage(
-                "La contraseña debe tener al menos 6 caracteres.",
-                "error"
-              );
+        clearMessages();
 
-              return;
-            }
+        showAuth(loginForm);
 
-            if (
-              password !== confirm
-            ) {
+      }
+    );
 
-              showMessage(
-                "Las contraseñas no coinciden.",
-                "error"
-              );
 
-              return;
-            }
+    /* =========================
+       MOSTRAR / OCULTAR CONTRASEÑA
+    ========================= */
 
-            const button =
-              $("registerButton");
+    document
+      .querySelectorAll(".password-toggle")
+      .forEach(toggle => {
 
-            button.disabled = true;
+        toggle.addEventListener(
+          "click",
+          () => {
 
-            button.textContent =
-              "Creando cuenta...";
+            const targetId =
+              toggle.dataset.target;
 
-            try {
+            const input =
+              document.getElementById(targetId);
 
-              const redirectUrl =
-                new URL(
-                  "perfil.html",
-                  window.location.href
-                ).href;
+            if (!input) return;
 
-              const {
-                data,
-                error
-              } =
-                await client.auth.signUp({
+            if (input.type === "password") {
 
-                  email,
+              input.type = "text";
+              toggle.textContent = "🙈";
 
-                  password,
+            } else {
 
-                  options: {
-
-                    emailRedirectTo:
-                      redirectUrl
-
-                  }
-
-                });
-
-              if (error) {
-                throw error;
-              }
-
-              if (
-                data &&
-                data.session
-              ) {
-
-                showMessage(
-                  "Cuenta creada. Entrando...",
-                  "success"
-                );
-
-                setTimeout(
-                  () => {
-
-                    window.location.href =
-                      "perfil.html";
-
-                  },
-                  700
-                );
-
-                return;
-              }
-
-              showMessage(
-                "Cuenta creada. Revisá tu correo para confirmar la cuenta.",
-                "success"
-              );
-
-              button.disabled = false;
-
-              button.textContent =
-                "Crear mi cuenta";
-
-            } catch (error) {
-
-              console.error(
-                "EmiMatch registro:",
-                error
-              );
-
-              showMessage(
-                error.message ||
-                "No se pudo crear la cuenta.",
-                "error"
-              );
-
-              button.disabled = false;
-
-              button.textContent =
-                "Crear mi cuenta";
+              input.type = "password";
+              toggle.textContent = "👁";
 
             }
 
           }
         );
 
+      });
 
-      /* =====================================
-         RECUPERACIÓN
-         ===================================== */
 
-      $("recoveryForm")
-        .addEventListener(
-          "submit",
-          async event => {
+    /* =========================
+       LOGIN
+    ========================= */
 
-            event.preventDefault();
+    loginForm.addEventListener(
+      "submit",
+      async event => {
 
-            clearMessage();
+        event.preventDefault();
 
-            const email =
-              $("recoveryEmail")
-                .value
-                .trim();
+        clearMessages();
 
-            if (!email) {
+        const email =
+          document
+            .getElementById("loginEmail")
+            .value
+            .trim();
 
-              showMessage(
-                "Ingresá tu correo electrónico.",
-                "error"
-              );
+        const password =
+          document
+            .getElementById("loginPassword")
+            .value;
 
-              return;
-            }
+        const button =
+          document.getElementById(
+            "loginSubmit"
+          );
 
-            const button =
-              $("recoveryButton");
+        const message =
+          document.getElementById(
+            "loginMessage"
+          );
 
-            button.disabled = true;
 
-            button.textContent =
-              "Enviando...";
+        if (!supabaseClient) {
 
-            try {
+          showMessage(
+            message,
+            "No se pudo conectar con EmiMatch. Revisá la configuración de Supabase.",
+            "error"
+          );
 
-              const redirectUrl =
-                new URL(
-                  "restablecer.html",
-                  window.location.href
-                ).href;
+          return;
+        }
 
-              const {
-                error
-              } =
-                await client.auth
-                  .resetPasswordForEmail(
-                    email,
-                    {
-                      redirectTo:
-                        redirectUrl
-                    }
-                  );
 
-              if (error) {
-                throw error;
-              }
+        try {
 
-              showMessage(
-                "Listo. Revisá tu correo para continuar.",
-                "success"
-              );
+          setLoading(
+            button,
+            true,
+            "Iniciar sesión"
+          );
 
-            } catch (error) {
 
-              console.error(
-                "EmiMatch recuperación:",
-                error
-              );
+          const {
+            data,
+            error
+          } =
+            await supabaseClient.auth.signInWithPassword({
+              email,
+              password
+            });
 
-              showMessage(
-                error.message ||
-                "No se pudo enviar el enlace.",
-                "error"
-              );
 
-            } finally {
+          if (error) {
+            throw error;
+          }
 
-              button.disabled = false;
 
-              button.textContent =
-                "Enviar enlace";
+          if (!data || !data.user) {
 
-            }
+            throw new Error(
+              "No se pudo iniciar la sesión."
+            );
 
           }
-        );
 
 
-      /* =====================================
-         SESIÓN ACTUAL
-         ===================================== */
+          showMessage(
+            message,
+            "¡Bienvenido nuevamente! Entrando a tu perfil...",
+            "success"
+          );
 
-      client.auth
-        .getSession()
-        .then(({ data }) => {
+
+          setTimeout(() => {
+
+            window.location.href =
+              "perfil.html";
+
+          }, 700);
+
+
+        } catch (error) {
+
+          console.error(
+            "Error de inicio de sesión:",
+            error
+          );
+
+          showMessage(
+            message,
+            error.message ||
+            "No se pudo iniciar sesión.",
+            "error"
+          );
+
+        } finally {
+
+          setLoading(
+            button,
+            false,
+            "Iniciar sesión"
+          );
+
+        }
+
+      }
+    );
+        /* =========================
+       REGISTRO
+    ========================= */
+
+    registerForm.addEventListener(
+      "submit",
+      async event => {
+
+        event.preventDefault();
+
+        clearMessages();
+
+        const email =
+          document
+            .getElementById("registerEmail")
+            .value
+            .trim();
+
+        const password =
+          document
+            .getElementById("registerPassword")
+            .value;
+
+        const button =
+          document.getElementById(
+            "registerSubmit"
+          );
+
+        const message =
+          document.getElementById(
+            "registerMessage"
+          );
+
+
+        if (password.length < 6) {
+
+          showMessage(
+            message,
+            "La contraseña debe tener al menos 6 caracteres.",
+            "error"
+          );
+
+          return;
+        }
+
+
+        if (!supabaseClient) {
+
+          showMessage(
+            message,
+            "No se pudo conectar con EmiMatch. Revisá la configuración de Supabase.",
+            "error"
+          );
+
+          return;
+        }
+
+
+        try {
+
+          setLoading(
+            button,
+            true,
+            "Crear mi cuenta"
+          );
+
+
+          const redirectUrl =
+            window.location.origin +
+            window.location.pathname
+              .replace(
+                /index\.html$/,
+                ""
+              ) +
+            "perfil.html";
+
+
+          const {
+            data,
+            error
+          } =
+            await supabaseClient.auth.signUp({
+              email,
+              password,
+              options: {
+                emailRedirectTo: redirectUrl
+              }
+            });
+
+
+          if (error) {
+            throw error;
+          }
+
 
           if (
             data &&
             data.session
           ) {
 
-            console.info(
-              "EmiMatch: sesión activa."
+            showMessage(
+              message,
+              "Cuenta creada correctamente. Entrando a tu perfil...",
+              "success"
             );
 
+
+            setTimeout(() => {
+
+              window.location.href =
+                "perfil.html";
+
+            }, 700);
+
+
+            return;
           }
 
-        })
-        .catch(error => {
 
-          console.warn(
-            "EmiMatch: no se pudo comprobar la sesión.",
+          showMessage(
+            message,
+            "Cuenta creada. Revisá tu correo para confirmar tu cuenta.",
+            "success"
+          );
+
+
+        } catch (error) {
+
+          console.error(
+            "Error de registro:",
             error
           );
 
-        });
+          showMessage(
+            message,
+            error.message ||
+            "No se pudo crear la cuenta.",
+            "error"
+          );
+
+        } finally {
+
+          setLoading(
+            button,
+            false,
+            "Crear mi cuenta"
+          );
+
+        }
+
+      }
+    );
 
 
-      /* =====================================
-         FINAL
-         ===================================== */
+    /* =========================
+       RECUPERACIÓN
+    ========================= */
 
-      console.info(
-        "%cEmiMatch",
-        "font-size:20px;font-weight:900;color:#f5c95c;"
-      );
+    recoveryForm.addEventListener(
+      "submit",
+      async event => {
 
-      console.info(
-        "Portada premium cargada correctamente."
-      );
+        event.preventDefault();
 
-    })();
+        clearMessages();
 
-  </script>
+        const email =
+          document
+            .getElementById("recoveryEmail")
+            .value
+            .trim();
+
+        const button =
+          document.getElementById(
+            "recoverySubmit"
+          );
+
+        const message =
+          document.getElementById(
+            "recoveryMessage"
+          );
+
+
+        if (!supabaseClient) {
+
+          showMessage(
+            message,
+            "No se pudo conectar con EmiMatch.",
+            "error"
+          );
+
+          return;
+        }
+
+
+        try {
+
+          setLoading(
+            button,
+            true,
+            "Enviar enlace"
+          );
+
+
+          const redirectUrl =
+            window.location.origin +
+            window.location.pathname
+              .replace(
+                /index\.html$/,
+                ""
+              ) +
+            "restablecer.html";
+
+
+          const {
+            error
+          } =
+            await supabaseClient.auth
+              .resetPasswordForEmail(
+                email,
+                {
+                  redirectTo:
+                    redirectUrl
+                }
+              );
+
+
+          if (error) {
+            throw error;
+          }
+
+
+          showMessage(
+            message,
+            "Te enviamos un enlace para recuperar tu contraseña.",
+            "success"
+          );
+
+
+        } catch (error) {
+
+          console.error(
+            "Error de recuperación:",
+            error
+          );
+
+          showMessage(
+            message,
+            error.message ||
+            "No se pudo enviar el enlace.",
+            "error"
+          );
+
+        } finally {
+
+          setLoading(
+            button,
+            false,
+            "Enviar enlace"
+          );
+
+        }
+
+      }
+    );
+
+
+    /* =========================
+       SI YA HAY SESIÓN
+    ========================= */
+
+    if (supabaseClient) {
+
+      try {
+
+        const {
+          data
+        } =
+          await supabaseClient.auth.getSession();
+
+
+        if (
+          data &&
+          data.session &&
+          window.location.pathname.endsWith(
+            "index.html"
+          )
+        ) {
+
+          console.log(
+            "Sesión activa detectada."
+          );
+
+        }
+
+      } catch (error) {
+
+        console.warn(
+          "No se pudo comprobar la sesión:",
+          error
+        );
+
+      }
+
+    }
+
+  });
+</script>
 
 </body>
 </html>
