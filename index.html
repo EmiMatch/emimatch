@@ -35,18 +35,26 @@
     rel="stylesheet">
 
   <style>
+
     :root {
       --bg: #050711;
       --bg2: #090d1b;
-      --panel: rgba(15,20,39,.78);
+      --panel: rgba(15, 20, 39, .80);
+      --panel2: rgba(9, 13, 27, .94);
+
       --text: #f8f8ff;
       --muted: #a3abc0;
+
       --purple: #8b6cff;
       --purple2: #6846ed;
+
       --gold: #f5c95c;
       --gold2: #ffe8a2;
+
       --border: rgba(255,255,255,.10);
-      --shadow: 0 35px 90px rgba(0,0,0,.45);
+
+      --shadow:
+        0 35px 90px rgba(0,0,0,.45);
     }
 
     * {
@@ -67,16 +75,18 @@
       font-family:
         "DM Sans",
         system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
         sans-serif;
 
       background:
         radial-gradient(
-          circle at 10% 5%,
+          circle at 8% 5%,
           rgba(117,79,255,.20),
           transparent 30%
         ),
         radial-gradient(
-          circle at 90% 12%,
+          circle at 92% 12%,
           rgba(245,201,92,.10),
           transparent 25%
         ),
@@ -95,9 +105,12 @@
 
     body::before {
       content: "";
+
       position: fixed;
       inset: 0;
+
       pointer-events: none;
+
       z-index: 0;
 
       background:
@@ -126,12 +139,13 @@
     .page {
       position: relative;
       z-index: 1;
+
       min-height: 100vh;
     }
 
-    /* =========================
+    /* =====================================
        HEADER
-       ========================= */
+       ===================================== */
 
     .topbar {
       position: sticky;
@@ -155,16 +169,21 @@
         min(1160px, calc(100% - 32px));
 
       height: 100%;
+
       margin: auto;
 
       display: flex;
+
       align-items: center;
+
       justify-content: space-between;
     }
 
     .brand {
       display: flex;
+
       align-items: center;
+
       gap: 11px;
 
       font-family:
@@ -172,6 +191,7 @@
         sans-serif;
 
       font-weight: 800;
+
       letter-spacing: -.03em;
     }
 
@@ -182,6 +202,7 @@
       border-radius: 14px;
 
       display: grid;
+
       place-items: center;
 
       font-size: 20px;
@@ -197,8 +218,11 @@
       color: #211806;
 
       box-shadow:
-        0 10px 28px rgba(245,201,92,.18),
-        inset 0 1px 0 rgba(255,255,255,.7);
+        0 10px 28px
+        rgba(245,201,92,.18),
+
+        inset 0 1px 0
+        rgba(255,255,255,.7);
     }
 
     .brand-name {
@@ -232,6 +256,7 @@
         rgba(245,201,92,.05);
 
       font-size: 13px;
+
       font-weight: 800;
 
       transition: .2s ease;
@@ -247,9 +272,9 @@
         rgba(245,201,92,.09);
     }
 
-    /* =========================
+    /* =====================================
        CONTENEDOR
-       ========================= */
+       ===================================== */
 
     .container {
       width:
@@ -258,9 +283,9 @@
       margin: auto;
     }
 
-    /* =========================
+    /* =====================================
        HERO
-       ========================= */
+       ===================================== */
 
     .hero {
       min-height:
@@ -279,10 +304,15 @@
       align-items: center;
     }
 
+    .hero-content {
+      min-width: 0;
+    }
+
     .eyebrow {
       display: inline-flex;
 
       align-items: center;
+
       gap: 8px;
 
       padding: 8px 14px;
@@ -302,10 +332,12 @@
       color: #ffe9a5;
 
       font-size: 12px;
+
       font-weight: 800;
 
       box-shadow:
-        0 10px 30px rgba(0,0,0,.12);
+        0 10px 30px
+        rgba(0,0,0,.12);
     }
 
     .hero h1 {
@@ -349,12 +381,15 @@
       color: var(--muted);
 
       font-size: 17px;
+
       line-height: 1.75;
     }
 
     .feature-row {
       display: flex;
+
       flex-wrap: wrap;
+
       gap: 9px;
 
       margin-top: 25px;
@@ -374,12 +409,15 @@
       color: #dce2ee;
 
       font-size: 12px;
+
       font-weight: 700;
     }
 
     .hero-actions {
       display: flex;
+
       flex-wrap: wrap;
+
       gap: 12px;
 
       margin-top: 30px;
@@ -414,8 +452,11 @@
         );
 
       box-shadow:
-        0 12px 32px rgba(245,201,92,.16),
-        inset 0 1px 0 rgba(255,255,255,.7);
+        0 12px 32px
+        rgba(245,201,92,.16),
+
+        inset 0 1px 0
+        rgba(255,255,255,.7);
     }
 
     .hero-button.secondary {
@@ -434,8 +475,11 @@
 
     .hero-button.primary:hover {
       box-shadow:
-        0 17px 38px rgba(245,201,92,.22),
-        inset 0 1px 0 rgba(255,255,255,.8);
+        0 17px 38px
+        rgba(245,201,92,.22),
+
+        inset 0 1px 0
+        rgba(255,255,255,.8);
     }
 
     .hero-button.secondary:hover {
@@ -448,7 +492,9 @@
 
     .trust-row {
       display: flex;
+
       flex-wrap: wrap;
+
       gap: 18px;
 
       margin-top: 27px;
@@ -458,9 +504,9 @@
       font-size: 12px;
     }
 
-    /* =========================
-       IMAGEN
-       ========================= */
+    /* =====================================
+       VISUAL
+       ===================================== */
 
     .visual {
       position: relative;
@@ -508,6 +554,7 @@
       height: 100%;
 
       object-fit: cover;
+
       object-position: center;
 
       display: block;
@@ -517,6 +564,7 @@
 
     .image-overlay {
       position: absolute;
+
       inset: 0;
 
       background:
@@ -557,6 +605,7 @@
       display: inline-flex;
 
       align-items: center;
+
       gap: 7px;
 
       padding: 8px 11px;
@@ -574,6 +623,7 @@
       color: #ffe8a1;
 
       font-size: 11px;
+
       font-weight: 800;
     }
 
@@ -603,6 +653,7 @@
       display: flex;
 
       align-items: center;
+
       gap: 10px;
 
       padding: 12px 14px;
@@ -618,7 +669,8 @@
       backdrop-filter: blur(18px);
 
       box-shadow:
-        0 20px 50px rgba(0,0,0,.30);
+        0 20px 50px
+        rgba(0,0,0,.30);
 
       z-index: 3;
     }
@@ -640,6 +692,7 @@
       border-radius: 11px;
 
       display: grid;
+
       place-items: center;
 
       background:
@@ -653,6 +706,7 @@
       color: #fff;
 
       font-size: 12px;
+
       font-weight: 800;
     }
 
@@ -663,9 +717,9 @@
 
       font-size: 10px;
     }
-        /* =========================
+        /* =====================================
        ACCESO
-       ========================= */
+       ===================================== */
 
     .auth-section {
       padding: 20px 0 85px;
@@ -695,6 +749,7 @@
 
     .auth-heading {
       text-align: center;
+
       margin-bottom: 22px;
     }
 
@@ -718,59 +773,6 @@
       font-size: 13px;
     }
 
-    .tabs {
-      display: grid;
-
-      grid-template-columns:
-        1fr 1fr;
-
-      gap: 5px;
-
-      padding: 5px;
-
-      margin-bottom: 22px;
-
-      border-radius: 15px;
-
-      background:
-        rgba(255,255,255,.045);
-
-      border:
-        1px solid rgba(255,255,255,.06);
-    }
-
-    .tab {
-      min-height: 44px;
-
-      border: 0;
-
-      border-radius: 11px;
-
-      background: transparent;
-
-      color: #909bb0;
-
-      cursor: pointer;
-
-      font-weight: 800;
-
-      transition: .2s ease;
-    }
-
-    .tab.active {
-      color: #201706;
-
-      background:
-        linear-gradient(
-          135deg,
-          #fff0bd,
-          #f5c95c
-        );
-
-      box-shadow:
-        0 8px 22px rgba(245,201,92,.12);
-    }
-
     .panel {
       display: none;
     }
@@ -781,11 +783,13 @@
 
     .form {
       display: grid;
+
       gap: 14px;
     }
 
     .field {
       display: grid;
+
       gap: 7px;
     }
 
@@ -793,6 +797,7 @@
       color: #dce2ed;
 
       font-size: 12px;
+
       font-weight: 800;
     }
 
@@ -901,7 +906,9 @@
 
     .submit:disabled {
       opacity: .55;
+
       cursor: not-allowed;
+
       transform: none;
     }
 
@@ -922,8 +929,16 @@
 
     .forgot {
       width: 100%;
+
       text-align: center;
+
       margin-top: 1px;
+    }
+
+    .back {
+      padding: 0;
+
+      margin-bottom: 14px;
     }
 
     .secondary-button {
@@ -996,9 +1011,47 @@
       text-align: center;
     }
 
-    /* =========================
+    /* =====================================
+       SELECTOR DE ACCESO
+       ===================================== */
+
+    .auth-switch {
+      display: flex;
+
+      justify-content: center;
+
+      align-items: center;
+
+      gap: 7px;
+
+      margin-top: 18px;
+
+      color: #7f8ba0;
+
+      font-size: 12px;
+    }
+
+    .auth-switch button {
+      padding: 0;
+
+      border: 0;
+
+      background: transparent;
+
+      color: #ffe29a;
+
+      cursor: pointer;
+
+      font-weight: 800;
+    }
+
+    .auth-switch button:hover {
+      text-decoration: underline;
+    }
+
+    /* =====================================
        FOOTER
-       ========================= */
+       ===================================== */
 
     .footer {
       padding: 24px 0;
@@ -1018,8 +1071,7 @@
 
       display: flex;
 
-      justify-content:
-        space-between;
+      justify-content: space-between;
 
       gap: 15px;
     }
@@ -1027,6 +1079,7 @@
     .footer small,
     .footer a {
       color: #69758a;
+
       font-size: 11px;
     }
 
@@ -1042,9 +1095,9 @@
       color: #ffe39a;
     }
 
-    /* =========================
+    /* =====================================
        RESPONSIVE
-       ========================= */
+       ===================================== */
 
     @media (max-width: 900px) {
 
@@ -1101,6 +1154,7 @@
 
       .top-link {
         padding: 8px 12px;
+
         font-size: 11px;
       }
 
@@ -1123,14 +1177,14 @@
 
       .hero-description {
         font-size: 15px;
+
         line-height: 1.65;
       }
 
       .hero-actions {
         display: grid;
 
-        grid-template-columns:
-          1fr;
+        grid-template-columns: 1fr;
       }
 
       .hero-button {
@@ -1139,6 +1193,7 @@
 
       .image-shell {
         padding: 6px;
+
         border-radius: 25px;
       }
 
@@ -1172,6 +1227,7 @@
 
       .auth-card {
         padding: 21px 16px;
+
         border-radius: 23px;
       }
 
@@ -1183,6 +1239,7 @@
         flex-direction: column;
       }
     }
+
   </style>
 </head>
 
@@ -1241,9 +1298,10 @@
           </h1>
 
           <p class="hero-description">
-            Descubrí personas, conectá con quienes realmente
-            despiertan tu interés y empezá conversaciones que
-            pueden convertirse en algo especial.
+            Descubrí personas, conectá con quienes
+            realmente despiertan tu interés y empezá
+            conversaciones que pueden convertirse
+            en algo especial.
           </p>
 
           <div class="feature-row">
@@ -1394,12 +1452,12 @@
 
           <div class="auth-heading">
 
-            <h2>
-              Empezá con EmiMatch
+            <h2 id="authTitle">
+              Iniciá con EmiMatch
             </h2>
 
-            <p>
-              Iniciá sesión o creá tu cuenta para comenzar.
+            <p id="authSubtitle">
+              Elegí una opción para comenzar.
             </p>
 
           </div>
@@ -1408,28 +1466,6 @@
             id="authMessage"
             class="message"
             role="alert">
-          </div>
-
-          <div class="tabs">
-
-            <button
-              type="button"
-              id="loginTab"
-              class="tab active">
-
-              Iniciar sesión
-
-            </button>
-
-            <button
-              type="button"
-              id="registerTab"
-              class="tab">
-
-              Crear cuenta
-
-            </button>
-
           </div>
 
           <!-- LOGIN -->
@@ -1508,11 +1544,29 @@
 
             </form>
 
+            <div class="auth-switch">
+
+              <span>
+                ¿Todavía no tenés cuenta?
+              </span>
+
+              <button
+                type="button"
+                id="switchToRegister">
+
+                Crear mi cuenta
+
+              </button>
+
+            </div>
+
             <p class="legal">
-              Utilizá EmiMatch de forma responsable y respetuosa.
+              Utilizá EmiMatch de forma responsable
+              y respetuosa.
             </p>
 
           </section>
+
 
           <!-- REGISTRO -->
 
@@ -1613,12 +1667,29 @@
 
             </form>
 
+            <div class="auth-switch">
+
+              <span>
+                ¿Ya tenés una cuenta?
+              </span>
+
+              <button
+                type="button"
+                id="switchToLogin">
+
+                Iniciar sesión
+
+              </button>
+
+            </div>
+
             <p class="legal">
               Al crear una cuenta aceptás utilizar
               EmiMatch de manera responsable.
             </p>
 
           </section>
+
 
           <!-- RECUPERACIÓN -->
 
@@ -1631,7 +1702,7 @@
               id="recoveryBack"
               class="back">
 
-              ← Volver al acceso
+              ← Volver
 
             </button>
 
@@ -1732,8 +1803,6 @@
 
   </div>
 
-  <!-- SUPABASE -->
-
   <script
     src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
   </script>
@@ -1792,6 +1861,7 @@
       const message =
         $("authMessage");
 
+
       function showMessage(
         text,
         type
@@ -1808,6 +1878,7 @@
           "message show " + type;
       }
 
+
       function clearMessage() {
 
         if (!message) {
@@ -1821,7 +1892,67 @@
           "message";
       }
 
-      function openPanel(name) {
+
+      function scrollToAccess() {
+
+        $("acceso")
+          .scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+          });
+
+      }
+
+
+      function showLogin() {
+
+        $("loginPanel")
+          .classList
+          .add("active");
+
+        $("registerPanel")
+          .classList
+          .remove("active");
+
+        $("recoveryPanel")
+          .classList
+          .remove("active");
+
+        $("authTitle").textContent =
+          "Iniciar sesión";
+
+        $("authSubtitle").textContent =
+          "Ingresá a tu espacio en EmiMatch.";
+
+        clearMessage();
+      }
+
+
+      function showRegister() {
+
+        $("loginPanel")
+          .classList
+          .remove("active");
+
+        $("registerPanel")
+          .classList
+          .add("active");
+
+        $("recoveryPanel")
+          .classList
+          .remove("active");
+
+        $("authTitle").textContent =
+          "Crear mi cuenta";
+
+        $("authSubtitle").textContent =
+          "Comenzá a conocer nuevas personas.";
+
+        clearMessage();
+      }
+
+
+      function showRecovery() {
 
         $("loginPanel")
           .classList
@@ -1833,109 +1964,71 @@
 
         $("recoveryPanel")
           .classList
-          .remove("active");
+          .add("active");
 
-        $("loginTab")
-          .classList
-          .remove("active");
+        $("authTitle").textContent =
+          "Recuperar contraseña";
 
-        $("registerTab")
-          .classList
-          .remove("active");
-
-        if (name === "login") {
-
-          $("loginPanel")
-            .classList
-            .add("active");
-
-          $("loginTab")
-            .classList
-            .add("active");
-        }
-
-        if (name === "register") {
-
-          $("registerPanel")
-            .classList
-            .add("active");
-
-          $("registerTab")
-            .classList
-            .add("active");
-        }
-
-        if (name === "recovery") {
-
-          $("recoveryPanel")
-            .classList
-            .add("active");
-        }
+        $("authSubtitle").textContent =
+          "Te ayudamos a recuperar tu acceso.";
 
         clearMessage();
       }
 
-      const heroLogin =
-        $("heroLoginButton");
 
-      const heroRegister =
-        $("heroRegisterButton");
-
-      if (heroLogin) {
-
-        heroLogin.addEventListener(
+      $("heroLoginButton")
+        .addEventListener(
           "click",
           () => {
 
-            $("acceso")
-              .scrollIntoView({
-                behavior: "smooth",
-                block: "center"
-              });
+            scrollToAccess();
 
             setTimeout(
-              () => openPanel("login"),
+              showLogin,
               250
             );
 
           }
         );
 
-      }
 
-      if (heroRegister) {
-
-        heroRegister.addEventListener(
+      $("heroRegisterButton")
+        .addEventListener(
           "click",
           () => {
 
-            $("acceso")
-              .scrollIntoView({
-                behavior: "smooth",
-                block: "center"
-              });
+            scrollToAccess();
 
             setTimeout(
-              () => openPanel("register"),
+              showRegister,
               250
             );
 
           }
         );
 
-      }
 
-      $("loginTab")
+      $("switchToRegister")
         .addEventListener(
           "click",
-          () => openPanel("login")
+          () => {
+
+            showRegister();
+
+          }
         );
 
-      $("registerTab")
+
+      $("switchToLogin")
         .addEventListener(
           "click",
-          () => openPanel("register")
+          () => {
+
+            showLogin();
+
+          }
         );
+
 
       $("forgotPassword")
         .addEventListener(
@@ -1948,25 +2041,31 @@
                 .trim();
 
             if (email) {
+
               $("recoveryEmail")
                 .value = email;
+
             }
 
-            openPanel("recovery");
+            showRecovery();
+
           }
         );
+
 
       $("recoveryBack")
         .addEventListener(
           "click",
-          () => openPanel("login")
+          showLogin
         );
+
 
       $("recoveryCancel")
         .addEventListener(
           "click",
-          () => openPanel("login")
+          showLogin
         );
+
 
       document
         .querySelectorAll(".eye")
@@ -1999,15 +2098,16 @@
 
                 button.textContent =
                   "👁";
+
               }
 
             }
           );
 
         });
-            /* =========================
+            /* =====================================
          LOGIN
-         ========================= */
+         ===================================== */
 
       $("loginForm")
         .addEventListener(
@@ -2072,6 +2172,7 @@
                 throw new Error(
                   "No se pudo crear la sesión."
                 );
+
               }
 
               showMessage(
@@ -2106,15 +2207,16 @@
 
               button.textContent =
                 "Iniciar sesión";
+
             }
 
           }
         );
 
 
-      /* =========================
+      /* =====================================
          REGISTRO
-         ========================= */
+         ===================================== */
 
       $("registerForm")
         .addEventListener(
@@ -2265,15 +2367,16 @@
 
               button.textContent =
                 "Crear mi cuenta";
+
             }
 
           }
         );
 
 
-      /* =========================
+      /* =====================================
          RECUPERACIÓN
-         ========================= */
+         ===================================== */
 
       $("recoveryForm")
         .addEventListener(
@@ -2362,9 +2465,9 @@
         );
 
 
-      /* =========================
+      /* =====================================
          SESIÓN ACTUAL
-         ========================= */
+         ===================================== */
 
       client.auth
         .getSession()
@@ -2392,9 +2495,9 @@
         });
 
 
-      /* =========================
-         ESTADO FINAL
-         ========================= */
+      /* =====================================
+         FINAL
+         ===================================== */
 
       console.info(
         "%cEmiMatch",
