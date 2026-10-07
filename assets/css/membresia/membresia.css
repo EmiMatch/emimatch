@@ -1,0 +1,117 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: linear-gradient(145deg, #07152f, #171044, #26134f);
+  color: #fff;
+}
+
+.membership {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.card {
+  width: 100%;
+  max-width: 430px;
+  padding: 34px 26px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 28px;
+  background: rgba(10, 17, 45, 0.88);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(14px);
+}
+
+.icon {
+  font-size: 54px;
+  margin-bottom: 12px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 32px;
+}
+
+.subtitle {
+  margin: 12px 0 26px;
+  color: #c9c8df;
+  line-height: 1.5;
+}
+
+.price {
+  margin: 20px 0 28px;
+}
+
+.currency {
+  font-size: 22px;
+  vertical-align: top;
+}
+
+.amount {
+  font-size: 48px;
+  font-weight: 800;
+}
+
+.period {
+  color: #aaa8c7;
+}
+
+.benefits {
+  margin: 0 0 28px;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+
+.benefits li {
+  padding: 13px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+#premiumButton {
+  width: 100%;
+  border: 0;
+  border-radius: 16px;
+  padding: 16px;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  background: linear-gradient(135deg, #d9b45b, #f0d58b);
+  color: #171126;
+}
+
+#premiumButton:active {
+  transform: scale(0.98);
+}
+
+.status {
+  min-height: 22px;
+  margin: 16px 0 4px;
+  color: #d9d7eb;
+}
+
+.back {
+  display: inline-block;
+  margin-top: 18px;
+  color: #c9c8df;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+@media (max-width: 480px) {
+  .membership {
+    padding: 14px;
+  }
+
+  .card {
+    padding: 30px 20px;
+  }
+}
