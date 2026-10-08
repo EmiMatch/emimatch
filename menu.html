@@ -48,6 +48,12 @@
 <a class="em-button" href="configuracion.html">🔐 Seguridad y cuenta</a>
 </div>
 
+<div id="adminSection" class="em-card" hidden>
+<h2>🛡️ Administración</h2>
+<p class="em-muted">Panel exclusivo para el administrador de EmiMatch.</p>
+<a id="adminLink" class="em-button em-button-primary" href="admin.html">⚙️ Administración</a>
+</div>
+
 <div id="message" class="em-alert" hidden></div>
 </section>
 </main>
@@ -57,6 +63,19 @@
 const c=window.EMIMATCH_CONFIG;
 if(!c){location.replace('index.html');return;}
 const db=window.supabase.createClient(c.supabaseUrl,c.supabaseKey);
+(async()=>{
+ const {data:{session}}=await db.auth.getSession();
+ if(!session){location.replace('index.html');return;}
+
+ try{
+   const {data,error}=await db.rpc('is_admin');
+   if(!error && data===true){
+     document.getElementById('adminSection').hidden=false;
+   }
+ }catch(e){
+   console.warn('Verificación de administrador:',e);
+ }
+})();
 (async()=>{
  const {data,error}=await db.auth.getSession();
  if(error||!data.session){location.replace('index.html');}
