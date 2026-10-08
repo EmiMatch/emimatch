@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
 
 <meta charset="UTF-8">
@@ -17,43 +18,125 @@
 >
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script src="assets/js/config.js"></script>
-
 <script src="assets/js/app.js"></script>
-
 <script src="assets/js/components.js"></script>
+
 
 <style>
 
 /* =========================================================
-   EMIMATCH — MODELO 7
-   Perfil premium dentro del menú
+   EMIMATCH — MENÚ PREMIUM / LIMPIO / ORDENADO
    ========================================================= */
+
+.menu-page {
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+
+/* ---------------------------------------------------------
+   ENCABEZADO
+   --------------------------------------------------------- */
+
+.menu-header-card {
+  margin-bottom: 16px;
+  padding: 22px 20px;
+
+  border-radius: 22px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(92,72,180,.20),
+      rgba(20,24,55,.96)
+    );
+
+  border:
+    1px solid rgba(255,255,255,.08);
+
+  box-shadow:
+    0 14px 35px rgba(0,0,0,.18);
+}
+
+.menu-brand-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.menu-brand-icon {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+
+  background:
+    rgba(103,86,232,.18);
+
+  font-size: 21px;
+}
+
+.menu-brand-name {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.menu-title {
+  margin:
+    17px 0 6px;
+
+  font-size: 27px;
+  line-height: 1.15;
+  font-weight: 850;
+}
+
+.menu-subtitle {
+  margin: 0;
+
+  color:
+    rgba(255,255,255,.58);
+
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+
+/* ---------------------------------------------------------
+   PERFIL
+   --------------------------------------------------------- */
 
 .menu-profile-card {
   position: relative;
   overflow: hidden;
-  margin-bottom: 18px;
+
+  margin-bottom: 16px;
   padding: 0 18px 18px;
+
   border-radius: 24px;
 
   background:
     linear-gradient(
       145deg,
-      rgba(92,72,180,.28),
-      rgba(20,24,55,.96) 55%,
-      rgba(173,126,42,.12)
+      rgba(96,78,190,.25),
+      rgba(20,24,55,.98) 58%,
+      rgba(173,126,42,.08)
     );
 
-  border: 1px solid rgba(255,255,255,.10);
+  border:
+    1px solid rgba(255,255,255,.09);
 
   box-shadow:
-    0 18px 45px rgba(0,0,0,.28);
+    0 18px 42px rgba(0,0,0,.22);
 }
 
-.menu-profile-top {
-  height: 92px;
+.menu-profile-cover {
+  height: 74px;
 
   margin:
     0 -18px;
@@ -61,25 +144,26 @@
   background:
     linear-gradient(
       135deg,
-      rgba(104,83,230,.55),
-      rgba(32,27,75,.25)
+      rgba(103,86,232,.58),
+      rgba(71,49,145,.30),
+      rgba(20,24,55,.10)
     );
 }
 
 .menu-profile-photo-wrap {
   position: relative;
 
-  width: 104px;
-  height: 104px;
+  width: 94px;
+  height: 94px;
 
   margin:
-    -52px auto 12px;
+    -47px auto 13px;
 }
 
 .menu-profile-photo,
 .menu-profile-placeholder {
-  width: 104px;
-  height: 104px;
+  width: 94px;
+  height: 94px;
 
   display: flex;
 
@@ -91,14 +175,14 @@
   object-fit: cover;
 
   border:
-    4px solid rgba(20,24,55,.98);
+    4px solid #171a38;
 
   box-shadow:
-    0 10px 30px rgba(0,0,0,.35);
+    0 10px 28px rgba(0,0,0,.35);
 }
 
 .menu-profile-placeholder {
-  font-size: 38px;
+  font-size: 34px;
 
   background:
     linear-gradient(
@@ -111,11 +195,11 @@
 .menu-profile-verified {
   position: absolute;
 
-  right: 1px;
-  bottom: 4px;
+  right: 0;
+  bottom: 2px;
 
-  width: 28px;
-  height: 28px;
+  width: 27px;
+  height: 27px;
 
   display: flex;
 
@@ -124,14 +208,14 @@
 
   border-radius: 50%;
 
-  color: #fff;
+  background: #6756e8;
 
-  background: #6c5ce7;
+  color: #fff;
 
   border:
     3px solid #171a38;
 
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 900;
 }
 
@@ -140,35 +224,35 @@
 
   text-align: center;
 
-  font-size: 24px;
-  font-weight: 800;
+  font-size: 22px;
+  line-height: 1.2;
+  font-weight: 850;
 }
 
 .menu-profile-city {
-  margin-top: 5px;
+  margin-top: 6px;
 
   text-align: center;
 
   color:
-    rgba(255,255,255,.62);
+    rgba(255,255,255,.58);
 
   font-size: 13px;
 }
 
 .menu-profile-description {
-  max-width: 360px;
+  max-width: 390px;
 
   margin:
-    15px auto 0;
+    13px auto 0;
 
   text-align: center;
 
   color:
-    rgba(255,255,255,.76);
-
-  line-height: 1.5;
+    rgba(255,255,255,.72);
 
   font-size: 13px;
+  line-height: 1.5;
 }
 
 .menu-profile-stats {
@@ -179,36 +263,37 @@
 
   gap: 9px;
 
-  margin-top: 17px;
+  margin-top: 16px;
 }
 
 .menu-profile-stat {
-  padding: 11px 8px;
+  padding: 10px 8px;
 
   text-align: center;
 
-  border-radius: 14px;
+  border-radius: 13px;
 
   background:
-    rgba(255,255,255,.055);
+    rgba(255,255,255,.045);
 
   border:
-    1px solid rgba(255,255,255,.07);
+    1px solid rgba(255,255,255,.065);
 }
 
 .menu-profile-stat strong {
   display: block;
 
   font-size: 17px;
+  font-weight: 800;
 }
 
 .menu-profile-stat span {
   display: block;
 
-  margin-top: 3px;
+  margin-top: 2px;
 
   color:
-    rgba(255,255,255,.48);
+    rgba(255,255,255,.45);
 
   font-size: 11px;
 }
@@ -216,50 +301,322 @@
 .menu-profile-button {
   width: 100%;
 
-  min-height: 50px;
-
-  margin-top: 14px;
-
-  border: 0;
-
-  border-radius: 15px;
-
-  color: #fff;
-
-  text-decoration: none;
+  min-height: 48px;
 
   display: flex;
 
   align-items: center;
   justify-content: center;
 
-  font-weight: 800;
+  margin-top: 13px;
+
+  border-radius: 14px;
 
   background:
     linear-gradient(
       135deg,
       #6756e8,
-      #8b5cf6
+      #8059e8
     );
 
+  color: #fff;
+
+  text-decoration: none;
+
+  font-size: 14px;
+  font-weight: 800;
+
   box-shadow:
-    0 12px 28px
+    0 9px 24px rgba(103,86,232,.22);
+}
+
+.menu-profile-button:active {
+  transform: scale(.99);
+}
+
+
+/* ---------------------------------------------------------
+   SECCIONES
+   --------------------------------------------------------- */
+
+.menu-section {
+  margin-bottom: 16px;
+}
+
+.menu-section-card {
+  padding: 18px;
+
+  border-radius: 20px;
+
+  background:
+    rgba(20,24,55,.92);
+
+  border:
+    1px solid rgba(255,255,255,.075);
+
+  box-shadow:
+    0 12px 30px rgba(0,0,0,.15);
+}
+
+.menu-section-title {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  margin: 0 0 5px;
+
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.menu-section-description {
+  margin: 0 0 14px;
+
+  color:
+    rgba(255,255,255,.48);
+
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+
+/* ---------------------------------------------------------
+   ACCESOS PRINCIPALES
+   --------------------------------------------------------- */
+
+.menu-action-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 9px;
+}
+
+.menu-action {
+  min-height: 58px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 13px;
+
+  padding: 10px 12px;
+
+  border-radius: 15px;
+
+  text-decoration: none;
+
+  color: inherit;
+
+  background:
+    rgba(255,255,255,.045);
+
+  border:
+    1px solid rgba(255,255,255,.055);
+
+  transition:
+    transform .15s ease,
+    background .15s ease;
+}
+
+.menu-action:hover {
+  background:
+    rgba(255,255,255,.07);
+}
+
+.menu-action:active {
+  transform: scale(.99);
+}
+
+.menu-action-icon {
+  width: 40px;
+  height: 40px;
+
+  flex: 0 0 40px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+
+  background:
+    rgba(103,86,232,.14);
+
+  font-size: 19px;
+}
+
+.menu-action-content {
+  min-width: 0;
+
+  flex: 1;
+}
+
+.menu-action-title {
+  display: block;
+
+  color: #fff;
+
+  font-size: 14px;
+  font-weight: 750;
+}
+
+.menu-action-text {
+  display: block;
+
+  margin-top: 3px;
+
+  color:
+    rgba(255,255,255,.43);
+
+  font-size: 11px;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.menu-action-arrow {
+  color:
+    rgba(255,255,255,.32);
+
+  font-size: 18px;
+}
+
+
+/* ---------------------------------------------------------
+   BOTÓN DESTACADO
+   --------------------------------------------------------- */
+
+.menu-action-featured {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(103,86,232,.22),
+      rgba(103,86,232,.08)
+    );
+
+  border:
+    1px solid rgba(125,108,235,.20);
+}
+
+.menu-action-featured .menu-action-icon {
+  background:
     rgba(103,86,232,.25);
 }
 
-.menu-profile-button:hover {
-  filter: brightness(1.06);
+
+/* ---------------------------------------------------------
+   ELEMENTOS SECUNDARIOS
+   --------------------------------------------------------- */
+
+.menu-secondary-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
 }
 
-.menu-profile-loading {
-  min-height: 20px;
+.menu-secondary {
+  min-height: 48px;
 
-  text-align: center;
+  display: flex;
 
+  align-items: center;
+
+  gap: 11px;
+
+  padding: 9px 11px;
+
+  border-radius: 13px;
+
+  color: #fff;
+
+  text-decoration: none;
+
+  background:
+    rgba(255,255,255,.035);
+
+  border:
+    1px solid rgba(255,255,255,.045);
+}
+
+.menu-secondary-icon {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background:
+    rgba(255,255,255,.055);
+
+  font-size: 16px;
+}
+
+.menu-secondary-label {
+  flex: 1;
+
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.menu-secondary-arrow {
   color:
-    rgba(255,255,255,.45);
+    rgba(255,255,255,.28);
+}
 
-  font-size: 12px;
+
+/* ---------------------------------------------------------
+   ADMINISTRACIÓN
+   --------------------------------------------------------- */
+
+.menu-admin-card {
+  border:
+    1px solid rgba(103,86,232,.20);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(103,86,232,.12),
+      rgba(20,24,55,.95)
+    );
+}
+
+
+/* ---------------------------------------------------------
+   RESPONSIVE
+   --------------------------------------------------------- */
+
+@media (max-width: 420px) {
+
+  .menu-profile-card {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  .menu-profile-cover {
+    margin-left: -15px;
+    margin-right: -15px;
+  }
+
+  .menu-section-card {
+    padding: 15px;
+  }
+
+  .menu-title {
+    font-size: 25px;
+  }
+
 }
 
 </style>
@@ -272,27 +629,47 @@
 
 <section class="em-shell">
 
-<div class="em-card">
+<div class="menu-page">
+  <!-- =========================================================
+     ENCABEZADO DEL MENÚ
+     ========================================================= -->
 
-  <div class="em-brand">
-    <span class="em-brand-mark">💕</span>
-    <span>EmiMatch</span>
+<div class="menu-header-card">
+
+  <div class="menu-brand-row">
+
+    <div class="menu-brand-icon">
+      🫰
+    </div>
+
+    <div class="menu-brand-name">
+      EmiMatch
+    </div>
+
   </div>
 
-  <h1>☰ Menú</h1>
 
-  <p class="em-muted">
-    Todo lo que necesitás para administrar tu experiencia.
+  <h1 class="menu-title">
+    ☰ Menú
+  </h1>
+
+
+  <p class="menu-subtitle">
+    Todo lo que necesitás para administrar
+    tu experiencia.
   </p>
 
 </div>
+
+
 <!-- =========================================================
-     PERFIL PREMIUM — MODELO 7
+     MI PERFIL
      ========================================================= -->
 
 <div class="menu-profile-card">
 
-  <div class="menu-profile-top"></div>
+  <div class="menu-profile-cover"></div>
+
 
   <div class="menu-profile-photo-wrap">
 
@@ -303,12 +680,14 @@
       🫰
     </div>
 
+
     <img
       id="menuProfilePhoto"
       class="menu-profile-photo"
       alt="Foto de perfil"
       hidden
     >
+
 
     <div
       id="menuProfileVerified"
@@ -342,9 +721,7 @@
     id="menuProfileDescription"
     class="menu-profile-description"
   >
-    <span class="menu-profile-loading">
-      Cargando información...
-    </span>
+    Cargando información...
   </p>
 
 
@@ -382,96 +759,268 @@
     class="menu-profile-button"
     href="perfil.html"
   >
-    👤 Ver mi perfil
+    👤 Ver mi perfil →
   </a>
 
 </div>
-
-
 <!-- =========================================================
      CONEXIONES
      ========================================================= -->
 
-<div class="em-card">
+<div class="menu-section">
 
-  <h2>
-    💘 Conexiones
-  </h2>
+  <div class="menu-section-card">
 
+    <h2 class="menu-section-title">
+      <span>💘</span>
+      <span>Conexiones</span>
+    </h2>
 
-  <a
-    class="em-button em-button-primary"
-    href="descubrir.html"
-  >
-    🔎 Descubrir personas
-  </a>
-
-
-  <a
-    class="em-button"
-    href="matches.html"
-  >
-    💕 Mis Matches
-  </a>
+    <p class="menu-section-description">
+      Descubrí personas, conectá y continuá tus conversaciones.
+    </p>
 
 
-  <a
-    class="em-button"
-    href="likes.html"
-  >
-    ❤️ Me gustas
-  </a>
+    <div class="menu-action-list">
 
 
-  <a
-    class="em-button"
-    href="chat.html"
-  >
-    💬 Mis mensajes
-  </a>
+      <!-- DESCUBRIR -->
+
+      <a
+        class="menu-action menu-action-featured"
+        href="descubrir.html"
+      >
+
+        <div class="menu-action-icon">
+          🔎
+        </div>
+
+        <div class="menu-action-content">
+
+          <span class="menu-action-title">
+            Descubrir personas
+          </span>
+
+          <span class="menu-action-text">
+            Encontrá nuevas conexiones
+          </span>
+
+        </div>
+
+        <div class="menu-action-arrow">
+          ›
+        </div>
+
+      </a>
+
+
+      <!-- MATCHES -->
+
+      <a
+        class="menu-action"
+        href="matches.html"
+      >
+
+        <div class="menu-action-icon">
+          💕
+        </div>
+
+        <div class="menu-action-content">
+
+          <span class="menu-action-title">
+            Mis Matches
+          </span>
+
+          <span class="menu-action-text">
+            Tus conexiones especiales
+          </span>
+
+        </div>
+
+        <div class="menu-action-arrow">
+          ›
+        </div>
+
+      </a>
+
+
+      <!-- MENSAJES -->
+
+      <a
+        class="menu-action"
+        href="chat.html"
+      >
+
+        <div class="menu-action-icon">
+          💬
+        </div>
+
+        <div class="menu-action-content">
+
+          <span class="menu-action-title">
+            Mis mensajes
+          </span>
+
+          <span class="menu-action-text">
+            Continuá tus conversaciones
+          </span>
+
+        </div>
+
+        <div class="menu-action-arrow">
+          ›
+        </div>
+
+      </a>
+
+
+      <!-- ME GUSTAS -->
+
+      <a
+        class="menu-action"
+        href="likes.html"
+      >
+
+        <div class="menu-action-icon">
+          ❤️
+        </div>
+
+        <div class="menu-action-content">
+
+          <span class="menu-action-title">
+            Me gustas
+          </span>
+
+          <span class="menu-action-text">
+            Personas interesadas en vos
+          </span>
+
+        </div>
+
+        <div class="menu-action-arrow">
+          ›
+        </div>
+
+      </a>
+
+
+    </div>
+
+  </div>
 
 </div>
 <!-- =========================================================
      MI CUENTA
      ========================================================= -->
 
-<div class="em-card">
+<div class="menu-section">
 
-  <h2>
-    👤 Mi cuenta
-  </h2>
+  <div class="menu-section-card">
 
+    <h2 class="menu-section-title">
+      <span>👤</span>
+      <span>Mi cuenta</span>
+    </h2>
 
-  <a
-    class="em-button"
-    href="perfil-usuario.html"
-  >
-    🔗 Ver perfil público
-  </a>
-
-
-  <a
-    class="em-button"
-    href="notificaciones.html"
-  >
-    🔔 Notificaciones
-  </a>
+    <p class="menu-section-description">
+      Administrá tu perfil y tus preferencias.
+    </p>
 
 
-  <a
-    class="em-button"
-    href="configuracion.html"
-  >
-    ⚙️ Configuración
-  </a>
+    <div class="menu-secondary-list">
 
 
-  <a
-    class="em-button"
-    href="membresia/membresia.html"
-  >
-    💎 EmiMatch Premium
-  </a>
+      <!-- PERFIL PÚBLICO -->
+
+      <a
+        class="menu-secondary"
+        href="perfil-usuario.html"
+      >
+
+        <div class="menu-secondary-icon">
+          🔗
+        </div>
+
+        <span class="menu-secondary-label">
+          Ver perfil público
+        </span>
+
+        <span class="menu-secondary-arrow">
+          ›
+        </span>
+
+      </a>
+
+
+      <!-- NOTIFICACIONES -->
+
+      <a
+        class="menu-secondary"
+        href="notificaciones.html"
+      >
+
+        <div class="menu-secondary-icon">
+          🔔
+        </div>
+
+        <span class="menu-secondary-label">
+          Notificaciones
+        </span>
+
+        <span class="menu-secondary-arrow">
+          ›
+        </span>
+
+      </a>
+
+
+      <!-- CONFIGURACIÓN -->
+
+      <a
+        class="menu-secondary"
+        href="configuracion.html"
+      >
+
+        <div class="menu-secondary-icon">
+          ⚙️
+        </div>
+
+        <span class="menu-secondary-label">
+          Configuración
+        </span>
+
+        <span class="menu-secondary-arrow">
+          ›
+        </span>
+
+      </a>
+
+
+      <!-- PREMIUM -->
+
+      <a
+        class="menu-secondary"
+        href="membresia/membresia.html"
+      >
+
+        <div class="menu-secondary-icon">
+          💎
+        </div>
+
+        <span class="menu-secondary-label">
+          EmiMatch Premium
+        </span>
+
+        <span class="menu-secondary-arrow">
+          ›
+        </span>
+
+      </a>
+
+
+    </div>
+
+  </div>
 
 </div>
 
@@ -480,24 +1029,45 @@
      SEGURIDAD
      ========================================================= -->
 
-<div class="em-card">
+<div class="menu-section">
 
-  <h2>
-    🛡️ Seguridad
-  </h2>
+  <div class="menu-section-card">
 
-  <p class="em-muted">
-    Administrá tu cuenta y mantené una experiencia
-    segura dentro de EmiMatch.
-  </p>
+    <h2 class="menu-section-title">
+      <span>🛡️</span>
+      <span>Seguridad</span>
+    </h2>
+
+    <p class="menu-section-description">
+      Mantené tu cuenta protegida y administrá
+      tus opciones de seguridad.
+    </p>
 
 
-  <a
-    class="em-button"
-    href="configuracion.html"
-  >
-    🔐 Seguridad y cuenta
-  </a>
+    <div class="menu-secondary-list">
+
+      <a
+        class="menu-secondary"
+        href="configuracion.html"
+      >
+
+        <div class="menu-secondary-icon">
+          🔐
+        </div>
+
+        <span class="menu-secondary-label">
+          Seguridad y cuenta
+        </span>
+
+        <span class="menu-secondary-arrow">
+          ›
+        </span>
+
+      </a>
+
+    </div>
+
+  </div>
 
 </div>
 <!-- =========================================================
@@ -507,32 +1077,53 @@
 
 <div
   id="adminSection"
-  class="em-card"
+  class="menu-section"
   hidden
 >
 
-  <h2>
-    🛡️ Administración
-  </h2>
+  <div class="menu-section-card menu-admin-card">
 
-  <p class="em-muted">
-    Panel exclusivo para el administrador de EmiMatch.
-  </p>
+    <h2 class="menu-section-title">
+      <span>🛡️</span>
+      <span>Administración</span>
+    </h2>
+
+    <p class="menu-section-description">
+      Panel exclusivo para el administrador de EmiMatch.
+    </p>
 
 
-  <a
-    id="adminLink"
-    class="em-button em-button-primary"
-    href="admin.html"
-  >
-    ⚙️ Administración
-  </a>
+    <div class="menu-secondary-list">
+
+      <a
+        id="adminLink"
+        class="menu-secondary"
+        href="admin.html"
+      >
+
+        <div class="menu-secondary-icon">
+          ⚙️
+        </div>
+
+        <span class="menu-secondary-label">
+          Administración
+        </span>
+
+        <span class="menu-secondary-arrow">
+          ›
+        </span>
+
+      </a>
+
+    </div>
+
+  </div>
 
 </div>
 
 
 <!-- =========================================================
-     MENSAJES
+     MENSAJE DEL SISTEMA
      ========================================================= -->
 
 <div
@@ -542,13 +1133,15 @@
 ></div>
 
 
+</div>
+
 </section>
 
 </main>
 
 
 <!-- =========================================================
-     EMIMATCH — LÓGICA DE SESIÓN Y ADMINISTRACIÓN
+     SESIÓN + ADMINISTRACIÓN
      ========================================================= -->
 
 <script>
@@ -570,17 +1163,15 @@
   }
 
 
-  const db = window.supabase.createClient(
-
-    c.supabaseUrl,
-
-    c.supabaseKey || c.supabaseAnonKey
-
-  );
+  const db =
+    window.supabase.createClient(
+      c.supabaseUrl,
+      c.supabaseKey || c.supabaseAnonKey
+    );
 
 
   /* =======================================================
-     SESIÓN + ADMINISTRACIÓN
+     VERIFICAR SESIÓN
      ======================================================= */
 
   (async () => {
@@ -593,7 +1184,11 @@
       } = await db.auth.getSession();
 
 
-      if (error || !data.session) {
+      if (
+        error ||
+        !data ||
+        !data.session
+      ) {
 
         location.replace("index.html");
 
@@ -602,9 +1197,9 @@
       }
 
 
-      /* ---------------------------------------------------
-         Verificación de administrador
-         --------------------------------------------------- */
+      /* ===================================================
+         VERIFICAR ADMINISTRADOR
+         =================================================== */
 
       try {
 
@@ -633,20 +1228,20 @@
 
         }
 
-      } catch (adminCheckError) {
+      } catch (adminError) {
 
         console.warn(
           "Verificación de administrador:",
-          adminCheckError
+          adminError
         );
 
       }
 
-    } catch (sessionError) {
+    } catch (error) {
 
       console.error(
         "Error verificando sesión:",
-        sessionError
+        error
       );
 
       location.replace("index.html");
@@ -655,14 +1250,14 @@
 
   })();
 
-
 })();
-    </script>
-    <script>
 
-/* =========================================================
-   EMIMATCH — CARGA DEL PERFIL EN EL MENÚ
-   ========================================================= */
+        </script>
+        <!-- =========================================================
+     CARGA DEL PERFIL EN EL MENÚ
+     ========================================================= -->
+
+<script>
 
 (() => {
 
@@ -672,22 +1267,25 @@
   const c = window.EMIMATCH_CONFIG;
 
 
-  if (!c || !window.supabase) {
+  if (
+    !c ||
+    !window.supabase
+  ) {
+
     return;
+
   }
 
 
-  const db = window.supabase.createClient(
-
-    c.supabaseUrl,
-
-    c.supabaseKey || c.supabaseAnonKey
-
-  );
+  const db =
+    window.supabase.createClient(
+      c.supabaseUrl,
+      c.supabaseKey || c.supabaseAnonKey
+    );
 
 
   /* =======================================================
-     ELEMENTOS DEL PERFIL
+     ELEMENTOS
      ======================================================= */
 
   const nameElement =
@@ -739,12 +1337,14 @@
 
 
   /* =======================================================
-     FUNCIONES AUXILIARES
+     VALOR
      ======================================================= */
 
   function firstValue(...values) {
 
-    for (const value of values) {
+    for (
+      const value of values
+    ) {
 
       if (
         value !== undefined &&
@@ -759,20 +1359,6 @@
     }
 
     return "";
-
-  }
-
-
-  function setText(element, value, fallback) {
-
-    if (!element) {
-      return;
-    }
-
-    const text =
-      firstValue(value, fallback);
-
-    element.textContent = text;
 
   }
 
@@ -806,14 +1392,19 @@
         sessionData.session.user;
 
 
-      if (!user || !user.id) {
+      if (
+        !user ||
+        !user.id
+      ) {
+
         return;
+
       }
 
 
-      /* ---------------------------------------------------
+      /* ===================================================
          PERFIL
-         --------------------------------------------------- */
+         =================================================== */
 
       const {
         data: profile,
@@ -895,35 +1486,38 @@
            NOMBRE + EDAD
            ----------------------------------------------- */
 
-        setText(
-          nameElement,
-          age
-            ? `${name}, ${age}`
-            : name,
-          "Mi perfil"
-        );
+        if (nameElement) {
+
+          nameElement.textContent =
+            age
+              ? `${name}, ${age}`
+              : name;
+
+        }
 
 
         /* -----------------------------------------------
            CIUDAD
            ----------------------------------------------- */
 
-        setText(
-          cityElement,
-          `📍 ${city}`,
-          "📍 Ciudad no indicada"
-        );
+        if (cityElement) {
+
+          cityElement.textContent =
+            `📍 ${city}`;
+
+        }
 
 
         /* -----------------------------------------------
            DESCRIPCIÓN
            ----------------------------------------------- */
 
-        setText(
-          descriptionElement,
-          description,
-          "Contá un poco sobre vos y empezá a conectar."
-        );
+        if (descriptionElement) {
+
+          descriptionElement.textContent =
+            description;
+
+        }
 
 
         /* -----------------------------------------------
@@ -949,13 +1543,17 @@
           photoElement
         ) {
 
-          photoElement.src = photoUrl;
+          photoElement.src =
+            photoUrl;
 
-          photoElement.hidden = false;
+          photoElement.hidden =
+            false;
+
 
           if (placeholderElement) {
 
-            placeholderElement.hidden = true;
+            placeholderElement.hidden =
+              true;
 
           }
 
@@ -986,8 +1584,12 @@
             photosError
           );
 
+
           if (photosElement) {
-            photosElement.textContent = "0";
+
+            photosElement.textContent =
+              "0";
+
           }
 
         } else {
@@ -1014,8 +1616,12 @@
           photoError
         );
 
+
         if (photosElement) {
-          photosElement.textContent = "0";
+
+          photosElement.textContent =
+            "0";
+
         }
 
       }
@@ -1042,33 +1648,48 @@
             matchesError
           );
 
+
           if (matchesElement) {
-            matchesElement.textContent = "0";
+
+            matchesElement.textContent =
+              "0";
+
           }
 
         } else {
 
           const userMatches =
             Array.isArray(matches)
-              ? matches.filter(match => {
+              ? matches.filter(
+                  match => {
 
-                  return (
-                    match.user_id === user.id ||
-                    match.matched_user_id === user.id ||
-                    match.user1_id === user.id ||
-                    match.user2_id === user.id ||
-                    match.profile_a_id === user.id ||
-                    match.profile_b_id === user.id
-                  );
+                    return (
 
-                })
+                      match.user_id === user.id ||
+
+                      match.matched_user_id === user.id ||
+
+                      match.user1_id === user.id ||
+
+                      match.user2_id === user.id ||
+
+                      match.profile_a_id === user.id ||
+
+                      match.profile_b_id === user.id
+
+                    );
+
+                  }
+                )
               : [];
 
 
           if (matchesElement) {
 
             matchesElement.textContent =
-              String(userMatches.length);
+              String(
+                userMatches.length
+              );
 
           }
 
@@ -1081,8 +1702,12 @@
           matchError
         );
 
+
         if (matchesElement) {
-          matchesElement.textContent = "0";
+
+          matchesElement.textContent =
+            "0";
+
         }
 
       }
@@ -1108,10 +1733,13 @@
 
 })();
 
-    </script>
-    <!-- =========================================================
-     EMIMATCH — FIN DEL DOCUMENTO
+</script>
+
+
+<!-- =========================================================
+     FIN EMIMATCH
      ========================================================= -->
 
 </body>
+
 </html>
