@@ -1,194 +1,1117 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1.0"
+>
+
 <title>Menú - EmiMatch</title>
 
-<link rel="stylesheet" href="assets/css/app.css">
+<link
+  rel="stylesheet"
+  href="assets/css/app.css"
+>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="assets/js/config.js"></script>
+
 <script src="assets/js/app.js"></script>
+
 <script src="assets/js/components.js"></script>
+
+<style>
+
+/* =========================================================
+   EMIMATCH — MODELO 7
+   Perfil premium dentro del menú
+   ========================================================= */
+
+.menu-profile-card {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 18px;
+  padding: 0 18px 18px;
+  border-radius: 24px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(92,72,180,.28),
+      rgba(20,24,55,.96) 55%,
+      rgba(173,126,42,.12)
+    );
+
+  border: 1px solid rgba(255,255,255,.10);
+
+  box-shadow:
+    0 18px 45px rgba(0,0,0,.28);
+}
+
+.menu-profile-top {
+  height: 92px;
+
+  margin:
+    0 -18px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(104,83,230,.55),
+      rgba(32,27,75,.25)
+    );
+}
+
+.menu-profile-photo-wrap {
+  position: relative;
+
+  width: 104px;
+  height: 104px;
+
+  margin:
+    -52px auto 12px;
+}
+
+.menu-profile-photo,
+.menu-profile-placeholder {
+  width: 104px;
+  height: 104px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  object-fit: cover;
+
+  border:
+    4px solid rgba(20,24,55,.98);
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,.35);
+}
+
+.menu-profile-placeholder {
+  font-size: 38px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #6756e8,
+      #8b5cf6
+    );
+}
+
+.menu-profile-verified {
+  position: absolute;
+
+  right: 1px;
+  bottom: 4px;
+
+  width: 28px;
+  height: 28px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  color: #fff;
+
+  background: #6c5ce7;
+
+  border:
+    3px solid #171a38;
+
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.menu-profile-name {
+  margin: 0;
+
+  text-align: center;
+
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.menu-profile-city {
+  margin-top: 5px;
+
+  text-align: center;
+
+  color:
+    rgba(255,255,255,.62);
+
+  font-size: 13px;
+}
+
+.menu-profile-description {
+  max-width: 360px;
+
+  margin:
+    15px auto 0;
+
+  text-align: center;
+
+  color:
+    rgba(255,255,255,.76);
+
+  line-height: 1.5;
+
+  font-size: 13px;
+}
+
+.menu-profile-stats {
+  display: grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap: 9px;
+
+  margin-top: 17px;
+}
+
+.menu-profile-stat {
+  padding: 11px 8px;
+
+  text-align: center;
+
+  border-radius: 14px;
+
+  background:
+    rgba(255,255,255,.055);
+
+  border:
+    1px solid rgba(255,255,255,.07);
+}
+
+.menu-profile-stat strong {
+  display: block;
+
+  font-size: 17px;
+}
+
+.menu-profile-stat span {
+  display: block;
+
+  margin-top: 3px;
+
+  color:
+    rgba(255,255,255,.48);
+
+  font-size: 11px;
+}
+
+.menu-profile-button {
+  width: 100%;
+
+  min-height: 50px;
+
+  margin-top: 14px;
+
+  border: 0;
+
+  border-radius: 15px;
+
+  color: #fff;
+
+  text-decoration: none;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  font-weight: 800;
+
+  background:
+    linear-gradient(
+      135deg,
+      #6756e8,
+      #8b5cf6
+    );
+
+  box-shadow:
+    0 12px 28px
+    rgba(103,86,232,.25);
+}
+
+.menu-profile-button:hover {
+  filter: brightness(1.06);
+}
+
+.menu-profile-loading {
+  min-height: 20px;
+
+  text-align: center;
+
+  color:
+    rgba(255,255,255,.45);
+
+  font-size: 12px;
+}
+
+</style>
+
 </head>
 
 <body>
 
 <main class="em-container em-section">
+
 <section class="em-shell">
 
 <div class="em-card">
-<div class="em-brand">
-<span class="em-brand-mark">💕</span>
-<span>EmiMatch</span>
+
+  <div class="em-brand">
+    <span class="em-brand-mark">💕</span>
+    <span>EmiMatch</span>
+  </div>
+
+  <h1>☰ Menú</h1>
+
+  <p class="em-muted">
+    Todo lo que necesitás para administrar tu experiencia.
+  </p>
+
+</div>
+<!-- =========================================================
+     PERFIL PREMIUM — MODELO 7
+     ========================================================= -->
+
+<div class="menu-profile-card">
+
+  <div class="menu-profile-top"></div>
+
+  <div class="menu-profile-photo-wrap">
+
+    <div
+      id="menuProfilePlaceholder"
+      class="menu-profile-placeholder"
+    >
+      🫰
+    </div>
+
+    <img
+      id="menuProfilePhoto"
+      class="menu-profile-photo"
+      alt="Foto de perfil"
+      hidden
+    >
+
+    <div
+      id="menuProfileVerified"
+      class="menu-profile-verified"
+      title="Perfil verificado"
+      hidden
+    >
+      ✓
+    </div>
+
+  </div>
+
+
+  <h2
+    id="menuProfileName"
+    class="menu-profile-name"
+  >
+    Mi perfil
+  </h2>
+
+
+  <div
+    id="menuProfileCity"
+    class="menu-profile-city"
+  >
+    Preparando tu perfil...
+  </div>
+
+
+  <p
+    id="menuProfileDescription"
+    class="menu-profile-description"
+  >
+    <span class="menu-profile-loading">
+      Cargando información...
+    </span>
+  </p>
+
+
+  <div class="menu-profile-stats">
+
+    <div class="menu-profile-stat">
+
+      <strong id="menuProfilePhotos">
+        —
+      </strong>
+
+      <span>
+        Fotos
+      </span>
+
+    </div>
+
+
+    <div class="menu-profile-stat">
+
+      <strong id="menuProfileMatches">
+        —
+      </strong>
+
+      <span>
+        Matches
+      </span>
+
+    </div>
+
+  </div>
+
+
+  <a
+    class="menu-profile-button"
+    href="perfil.html"
+  >
+    👤 Ver mi perfil
+  </a>
+
 </div>
 
-<h1>☰ Menú</h1>
-<p class="em-muted">
-Todo lo que necesitás para administrar tu experiencia.
-</p>
-</div>
 
+<!-- =========================================================
+     CONEXIONES
+     ========================================================= -->
 
 <div class="em-card">
-<h2>💘 Conexiones</h2>
 
-<a class="em-button em-button-primary" href="descubrir.html">
-🔎 Descubrir personas
-</a>
+  <h2>
+    💘 Conexiones
+  </h2>
 
-<a class="em-button" href="matches.html">
-💕 Mis Matches
-</a>
 
-<a class="em-button" href="likes.html">
-❤️ Me gustas
-</a>
+  <a
+    class="em-button em-button-primary"
+    href="descubrir.html"
+  >
+    🔎 Descubrir personas
+  </a>
 
-<a class="em-button" href="chat.html">
-💬 Mis mensajes
-</a>
+
+  <a
+    class="em-button"
+    href="matches.html"
+  >
+    💕 Mis Matches
+  </a>
+
+
+  <a
+    class="em-button"
+    href="likes.html"
+  >
+    ❤️ Me gustas
+  </a>
+
+
+  <a
+    class="em-button"
+    href="chat.html"
+  >
+    💬 Mis mensajes
+  </a>
+
 </div>
-
+<!-- =========================================================
+     MI CUENTA
+     ========================================================= -->
 
 <div class="em-card">
-<h2>👤 Mi cuenta</h2>
 
-<a class="em-button" href="perfil.html">
-👤 Mi perfil
-</a>
+  <h2>
+    👤 Mi cuenta
+  </h2>
 
-<a class="em-button" href="perfil-usuario.html">
-🔗 Ver perfil público
-</a>
 
-<a class="em-button" href="notificaciones.html">
-🔔 Notificaciones
-</a>
+  <a
+    class="em-button"
+    href="perfil-usuario.html"
+  >
+    🔗 Ver perfil público
+  </a>
 
-<a class="em-button" href="configuracion.html">
-⚙️ Configuración
-</a>
 
-<a class="em-button" href="membresia/membresia.html">
-💎 EmiMatch Premium
-</a>
+  <a
+    class="em-button"
+    href="notificaciones.html"
+  >
+    🔔 Notificaciones
+  </a>
+
+
+  <a
+    class="em-button"
+    href="configuracion.html"
+  >
+    ⚙️ Configuración
+  </a>
+
+
+  <a
+    class="em-button"
+    href="membresia/membresia.html"
+  >
+    💎 EmiMatch Premium
+  </a>
+
 </div>
 
+
+<!-- =========================================================
+     SEGURIDAD
+     ========================================================= -->
 
 <div class="em-card">
-<h2>🛡️ Seguridad</h2>
 
-<p class="em-muted">
-Administrá tu cuenta y mantené una experiencia segura dentro de EmiMatch.
-</p>
+  <h2>
+    🛡️ Seguridad
+  </h2>
 
-<a class="em-button" href="configuracion.html">
-🔐 Seguridad y cuenta
-</a>
+  <p class="em-muted">
+    Administrá tu cuenta y mantené una experiencia
+    segura dentro de EmiMatch.
+  </p>
+
+
+  <a
+    class="em-button"
+    href="configuracion.html"
+  >
+    🔐 Seguridad y cuenta
+  </a>
+
+</div>
+<!-- =========================================================
+     ADMINISTRACIÓN
+     Solo visible para el administrador
+     ========================================================= -->
+
+<div
+  id="adminSection"
+  class="em-card"
+  hidden
+>
+
+  <h2>
+    🛡️ Administración
+  </h2>
+
+  <p class="em-muted">
+    Panel exclusivo para el administrador de EmiMatch.
+  </p>
+
+
+  <a
+    id="adminLink"
+    class="em-button em-button-primary"
+    href="admin.html"
+  >
+    ⚙️ Administración
+  </a>
+
 </div>
 
 
-<!--
-  ADMINISTRACIÓN
-  Este bloque permanece oculto por defecto.
-  Solamente se muestra si Supabase confirma que
-  el usuario autenticado es administrador.
--->
-<div id="adminSection" class="em-card" hidden>
+<!-- =========================================================
+     MENSAJES
+     ========================================================= -->
 
-<h2>🛡️ Administración</h2>
+<div
+  id="message"
+  class="em-alert"
+  hidden
+></div>
 
-<p class="em-muted">
-Panel exclusivo para el administrador de EmiMatch.
-</p>
-
-<a
-id="adminLink"
-class="em-button em-button-primary"
-href="admin.html">
-⚙️ Administración
-</a>
-
-</div>
-
-
-<div id="message" class="em-alert" hidden></div>
 
 </section>
+
 </main>
 
 
+<!-- =========================================================
+     EMIMATCH — LÓGICA DE SESIÓN Y ADMINISTRACIÓN
+     ========================================================= -->
+
 <script>
+
 (() => {
-"use strict";
 
-const c = window.EMIMATCH_CONFIG;
+  "use strict";
 
-if (!c) {
-location.replace("index.html");
-return;
-}
 
-const db = window.supabase.createClient(
-c.supabaseUrl,
-c.supabaseKey
-);
+  const c = window.EMIMATCH_CONFIG;
 
-(async () => {
 
-const {
-data: { session }
-} = await db.auth.getSession();
+  if (!c) {
 
-if (!session) {
-location.replace("index.html");
-return;
-}
+    location.replace("index.html");
 
-try {
+    return;
 
-const { data, error } = await db.rpc("is_admin");
+  }
 
-if (!error && data === true) {
 
-const adminSection =
-document.getElementById("adminSection");
+  const db = window.supabase.createClient(
 
-if (adminSection) {
-adminSection.hidden = false;
-}
+    c.supabaseUrl,
 
-}
+    c.supabaseKey || c.supabaseAnonKey
 
-} catch (e) {
+  );
 
-console.warn(
-"Verificación de administrador:",
-e
-);
 
-}
+  /* =======================================================
+     SESIÓN + ADMINISTRACIÓN
+     ======================================================= */
+
+  (async () => {
+
+    try {
+
+      const {
+        data,
+        error
+      } = await db.auth.getSession();
+
+
+      if (error || !data.session) {
+
+        location.replace("index.html");
+
+        return;
+
+      }
+
+
+      /* ---------------------------------------------------
+         Verificación de administrador
+         --------------------------------------------------- */
+
+      try {
+
+        const {
+          data: isAdmin,
+          error: adminError
+        } = await db.rpc("is_admin");
+
+
+        if (
+          !adminError &&
+          isAdmin === true
+        ) {
+
+          const adminSection =
+            document.getElementById(
+              "adminSection"
+            );
+
+
+          if (adminSection) {
+
+            adminSection.hidden = false;
+
+          }
+
+        }
+
+      } catch (adminCheckError) {
+
+        console.warn(
+          "Verificación de administrador:",
+          adminCheckError
+        );
+
+      }
+
+    } catch (sessionError) {
+
+      console.error(
+        "Error verificando sesión:",
+        sessionError
+      );
+
+      location.replace("index.html");
+
+    }
+
+  })();
+
+
+})();
+    </script>
+    <script>
+
+/* =========================================================
+   EMIMATCH — CARGA DEL PERFIL EN EL MENÚ
+   ========================================================= */
+
+(() => {
+
+  "use strict";
+
+
+  const c = window.EMIMATCH_CONFIG;
+
+
+  if (!c || !window.supabase) {
+    return;
+  }
+
+
+  const db = window.supabase.createClient(
+
+    c.supabaseUrl,
+
+    c.supabaseKey || c.supabaseAnonKey
+
+  );
+
+
+  /* =======================================================
+     ELEMENTOS DEL PERFIL
+     ======================================================= */
+
+  const nameElement =
+    document.getElementById(
+      "menuProfileName"
+    );
+
+
+  const cityElement =
+    document.getElementById(
+      "menuProfileCity"
+    );
+
+
+  const descriptionElement =
+    document.getElementById(
+      "menuProfileDescription"
+    );
+
+
+  const photoElement =
+    document.getElementById(
+      "menuProfilePhoto"
+    );
+
+
+  const placeholderElement =
+    document.getElementById(
+      "menuProfilePlaceholder"
+    );
+
+
+  const verifiedElement =
+    document.getElementById(
+      "menuProfileVerified"
+    );
+
+
+  const photosElement =
+    document.getElementById(
+      "menuProfilePhotos"
+    );
+
+
+  const matchesElement =
+    document.getElementById(
+      "menuProfileMatches"
+    );
+
+
+  /* =======================================================
+     FUNCIONES AUXILIARES
+     ======================================================= */
+
+  function firstValue(...values) {
+
+    for (const value of values) {
+
+      if (
+        value !== undefined &&
+        value !== null &&
+        String(value).trim() !== ""
+      ) {
+
+        return value;
+
+      }
+
+    }
+
+    return "";
+
+  }
+
+
+  function setText(element, value, fallback) {
+
+    if (!element) {
+      return;
+    }
+
+    const text =
+      firstValue(value, fallback);
+
+    element.textContent = text;
+
+  }
+
+
+  /* =======================================================
+     CARGAR PERFIL
+     ======================================================= */
+
+  async function loadMenuProfile() {
+
+    try {
+
+      const {
+        data: sessionData,
+        error: sessionError
+      } = await db.auth.getSession();
+
+
+      if (
+        sessionError ||
+        !sessionData ||
+        !sessionData.session
+      ) {
+
+        return;
+
+      }
+
+
+      const user =
+        sessionData.session.user;
+
+
+      if (!user || !user.id) {
+        return;
+      }
+
+
+      /* ---------------------------------------------------
+         PERFIL
+         --------------------------------------------------- */
+
+      const {
+        data: profile,
+        error: profileError
+      } = await db
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .maybeSingle();
+
+
+      if (profileError) {
+
+        console.warn(
+          "No se pudo cargar el perfil:",
+          profileError
+        );
+
+      }
+
+
+      if (profile) {
+
+        const name =
+          firstValue(
+            profile.nombre,
+            profile.name,
+            profile.display_name,
+            user.user_metadata?.nombre,
+            user.user_metadata?.name,
+            "Mi perfil"
+          );
+
+
+        const age =
+          firstValue(
+            profile.edad,
+            profile.age,
+            user.user_metadata?.edad
+          );
+
+
+        const city =
+          firstValue(
+            profile.ciudad,
+            profile.city,
+            user.user_metadata?.ciudad,
+            "Ciudad no indicada"
+          );
+
+
+        const description =
+          firstValue(
+            profile.descripcion,
+            profile.description,
+            profile.bio,
+            user.user_metadata?.descripcion,
+            "Contá un poco sobre vos y empezá a conectar."
+          );
+
+
+        const photoUrl =
+          firstValue(
+            profile.foto_url,
+            profile.photo_url,
+            profile.avatar_url,
+            profile.foto,
+            profile.photo
+          );
+
+
+        const verified =
+          profile.verificado === true ||
+          profile.verified === true ||
+          profile.is_verified === true;
+
+
+        /* -----------------------------------------------
+           NOMBRE + EDAD
+           ----------------------------------------------- */
+
+        setText(
+          nameElement,
+          age
+            ? `${name}, ${age}`
+            : name,
+          "Mi perfil"
+        );
+
+
+        /* -----------------------------------------------
+           CIUDAD
+           ----------------------------------------------- */
+
+        setText(
+          cityElement,
+          `📍 ${city}`,
+          "📍 Ciudad no indicada"
+        );
+
+
+        /* -----------------------------------------------
+           DESCRIPCIÓN
+           ----------------------------------------------- */
+
+        setText(
+          descriptionElement,
+          description,
+          "Contá un poco sobre vos y empezá a conectar."
+        );
+
+
+        /* -----------------------------------------------
+           VERIFICACIÓN
+           ----------------------------------------------- */
+
+        if (
+          verifiedElement &&
+          verified
+        ) {
+
+          verifiedElement.hidden = false;
+
+        }
+
+
+        /* -----------------------------------------------
+           FOTO PRINCIPAL
+           ----------------------------------------------- */
+
+        if (
+          photoUrl &&
+          photoElement
+        ) {
+
+          photoElement.src = photoUrl;
+
+          photoElement.hidden = false;
+
+          if (placeholderElement) {
+
+            placeholderElement.hidden = true;
+
+          }
+
+        }
+
+      }
+
+
+      /* ===================================================
+         FOTOS DEL ÁLBUM
+         =================================================== */
+
+      try {
+
+        const {
+          data: photos,
+          error: photosError
+        } = await db
+          .from("profile_photos")
+          .select("*")
+          .eq("user_id", user.id);
+
+
+        if (photosError) {
+
+          console.warn(
+            "No se pudieron cargar las fotos:",
+            photosError
+          );
+
+          if (photosElement) {
+            photosElement.textContent = "0";
+          }
+
+        } else {
+
+          const totalPhotos =
+            Array.isArray(photos)
+              ? photos.length
+              : 0;
+
+
+          if (photosElement) {
+
+            photosElement.textContent =
+              String(totalPhotos);
+
+          }
+
+        }
+
+      } catch (photoError) {
+
+        console.warn(
+          "Error cargando álbum:",
+          photoError
+        );
+
+        if (photosElement) {
+          photosElement.textContent = "0";
+        }
+
+      }
+
+
+      /* ===================================================
+         MATCHES
+         =================================================== */
+
+      try {
+
+        const {
+          data: matches,
+          error: matchesError
+        } = await db
+          .from("matches")
+          .select("*");
+
+
+        if (matchesError) {
+
+          console.warn(
+            "No se pudieron cargar los matches:",
+            matchesError
+          );
+
+          if (matchesElement) {
+            matchesElement.textContent = "0";
+          }
+
+        } else {
+
+          const userMatches =
+            Array.isArray(matches)
+              ? matches.filter(match => {
+
+                  return (
+                    match.user_id === user.id ||
+                    match.matched_user_id === user.id ||
+                    match.user1_id === user.id ||
+                    match.user2_id === user.id ||
+                    match.profile_a_id === user.id ||
+                    match.profile_b_id === user.id
+                  );
+
+                })
+              : [];
+
+
+          if (matchesElement) {
+
+            matchesElement.textContent =
+              String(userMatches.length);
+
+          }
+
+        }
+
+      } catch (matchError) {
+
+        console.warn(
+          "Error cargando matches:",
+          matchError
+        );
+
+        if (matchesElement) {
+          matchesElement.textContent = "0";
+        }
+
+      }
+
+    } catch (error) {
+
+      console.error(
+        "Error cargando perfil del menú:",
+        error
+      );
+
+    }
+
+  }
+
+
+  /* =======================================================
+     INICIAR
+     ======================================================= */
+
+  loadMenuProfile();
+
 
 })();
 
-
-(async () => {
-
-const {
-data,
-error
-} = await db.auth.getSession();
-
-if (error || !data.session) {
-location.replace("index.html");
-}
-
-})();
-
-})();
-</script>
+    </script>
+    <!-- =========================================================
+     EMIMATCH — FIN DEL DOCUMENTO
+     ========================================================= -->
 
 </body>
 </html>
