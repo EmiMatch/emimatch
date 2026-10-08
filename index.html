@@ -1,22 +1,42 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>EmiMatch — Conexiones que empiezan de verdad</title>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="theme-color"
+    content="#070b18"
+  >
 
   <meta
     name="description"
-    content="EmiMatch: conocé personas, conectá y encontrá nuevas historias."
+    content="EmiMatch — Conexiones que empiezan de verdad."
   >
 
-  <meta name="theme-color" content="#090b20">
+  <title>EmiMatch — Conexiones que empiezan de verdad</title>
 
-  <link rel="icon" href="favicon.svg">
+  <link
+    rel="icon"
+    href="favicon.svg"
+    type="image/svg+xml"
+  >
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+  >
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  >
 
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
@@ -24,6 +44,7 @@
   >
 
   <style>
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -41,445 +62,301 @@
       background:
         radial-gradient(
           circle at 50% -10%,
-          rgba(111, 78, 255, 0.25),
-          transparent 38%
+          rgba(126, 92, 255, 0.22),
+          transparent 42%
         ),
-        linear-gradient(
-          180deg,
-          #080a1d 0%,
-          #0c1028 50%,
-          #080a18 100%
-        );
-      overflow-x: hidden;
+        radial-gradient(
+          circle at 90% 70%,
+          rgba(212, 175, 55, 0.08),
+          transparent 32%
+        ),
+        #070b18;
     }
 
     button,
     input {
-      font: inherit;
+      font-family: inherit;
     }
 
     button {
-      cursor: pointer;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .page {
-      width: 100%;
       min-height: 100vh;
+      overflow: hidden;
     }
 
     .topbar {
+      position: absolute;
+      z-index: 10;
+      top: 0;
+      left: 0;
       width: 100%;
-      padding: 20px 22px;
-      position: relative;
-      z-index: 20;
-    }
-
-    .topbar-inner {
-      max-width: 1180px;
-      margin: 0 auto;
-
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      padding: 22px 28px;
     }
 
     .brand {
       display: inline-flex;
       align-items: center;
       gap: 10px;
-
-      font-size: 22px;
+      color: #ffffff;
+      font-size: 20px;
       font-weight: 800;
       letter-spacing: -0.5px;
     }
 
-    .brand-icon {
+    .brand-mark {
+      display: grid;
       width: 42px;
       height: 42px;
-
-      display: grid;
       place-items: center;
-
+      border: 1px solid rgba(255,255,255,.14);
       border-radius: 14px;
-
       background:
         linear-gradient(
           145deg,
-          rgba(255,255,255,.15),
-          rgba(255,255,255,.04)
+          rgba(126,92,255,.30),
+          rgba(212,175,55,.14)
         );
-
-      border: 1px solid rgba(255,255,255,.12);
-
       box-shadow:
         0 10px 30px rgba(0,0,0,.25),
-        inset 0 1px 0 rgba(255,255,255,.08);
-
+        inset 0 1px 0 rgba(255,255,255,.12);
       font-size: 22px;
     }
 
     .hero {
-      width: 100%;
-      padding: 14px 20px 70px;
-    }
-
-    .hero-container {
-      max-width: 1180px;
-      min-height: 650px;
-      margin: 0 auto;
-
-      display: grid;
-      grid-template-columns: 1.02fr .98fr;
-      gap: 42px;
+      position: relative;
+      display: flex;
       align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 110px 22px 55px;
     }
 
-    .hero-content {
-      padding: 20px 0;
+    .hero-inner {
+      width: 100%;
+      max-width: 1120px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .photo-frame {
+      position: relative;
+      width: min(430px, 88vw);
+      height: min(300px, 62vw);
+      margin: 0 auto 34px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 30px;
+      background: #10172d;
+      box-shadow:
+        0 35px 90px rgba(0,0,0,.48),
+        0 0 60px rgba(111,79,255,.12);
+    }
+
+    .photo-frame::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(
+          180deg,
+          transparent 40%,
+          rgba(4,7,18,.48)
+        );
+      pointer-events: none;
+    }
+
+    .hero-photo {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .photo-badge {
+      position: absolute;
+      z-index: 2;
+      left: 18px;
+      bottom: 18px;
+      padding: 9px 13px;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 999px;
+      background: rgba(7,11,24,.72);
+      backdrop-filter: blur(12px);
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 600;
     }
 
     .eyebrow {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       padding: 8px 13px;
-
-      border: 1px solid rgba(255,255,255,.11);
+      border: 1px solid rgba(212,175,55,.22);
       border-radius: 999px;
-
-      background: rgba(255,255,255,.045);
-
-      color: #d7d5ff;
-      font-size: 13px;
-      font-weight: 600;
+      background: rgba(212,175,55,.07);
+      color: #e5c76b;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .3px;
     }
 
-    .eyebrow-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-
-      background: #c9a7ff;
-      box-shadow: 0 0 14px #9c72ff;
-    }
-
-    .hero h1 {
-      max-width: 680px;
-
-      font-size: clamp(44px, 7vw, 78px);
+    .hero-title {
+      max-width: 780px;
+      margin: 0 auto;
+      font-size: clamp(42px, 7vw, 76px);
       line-height: .98;
-      letter-spacing: -3.5px;
+      letter-spacing: -3px;
       font-weight: 800;
-
-      margin-bottom: 24px;
     }
 
-    .hero h1 .highlight {
-      display: block;
-
+    .hero-title span {
       background:
         linear-gradient(
-          90deg,
-          #ffffff 0%,
-          #d7c9ff 48%,
-          #c39bff 100%
+          110deg,
+          #ffffff 10%,
+          #c8b8ff 55%,
+          #e6c96d
         );
-
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
     }
 
     .hero-description {
-      max-width: 590px;
-
-      color: #aeb3ca;
-      font-size: 18px;
+      max-width: 620px;
+      margin: 24px auto 0;
+      color: #aab2cb;
+      font-size: 17px;
       line-height: 1.7;
-
-      margin-bottom: 30px;
     }
 
     .hero-actions {
       display: flex;
-      align-items: center;
-      gap: 13px;
-      flex-wrap: wrap;
-
-      margin-bottom: 30px;
-    }
-
-    .primary-btn,
-    .secondary-btn {
-      min-height: 54px;
-      padding: 0 25px;
-
-      display: inline-flex;
-      align-items: center;
       justify-content: center;
-      gap: 9px;
-
-      border-radius: 16px;
-
-      font-size: 15px;
-      font-weight: 700;
-
-      transition:
-        transform .2s ease,
-        box-shadow .2s ease,
-        background .2s ease;
+      flex-wrap: wrap;
+      gap: 13px;
+      margin-top: 32px;
     }
 
-    .primary-btn {
+    .hero-button {
+      min-width: 185px;
+      padding: 15px 24px;
+      border-radius: 15px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .22s ease;
+    }
+
+    .hero-button.primary {
+      border: 0;
       color: #ffffff;
-
-      border: 1px solid rgba(255,255,255,.12);
-
       background:
         linear-gradient(
           135deg,
-          #7554ff,
-          #9b64ff
+          #7355ff,
+          #a46cff
         );
-
       box-shadow:
-        0 15px 35px rgba(113,78,255,.28);
+        0 15px 35px rgba(115,85,255,.28);
     }
 
-    .secondary-btn {
-      color: #ffffff;
-
+    .hero-button.secondary {
       border: 1px solid rgba(255,255,255,.13);
-
-      background: rgba(255,255,255,.055);
-
+      color: #ffffff;
+      background: rgba(255,255,255,.045);
       backdrop-filter: blur(12px);
     }
 
-    .primary-btn:hover,
-    .secondary-btn:hover {
+    .hero-button:hover {
       transform: translateY(-2px);
     }
 
-    .primary-btn:hover {
+    .hero-button.primary:hover {
       box-shadow:
-        0 18px 42px rgba(113,78,255,.38);
+        0 20px 45px rgba(115,85,255,.38);
     }
 
-    .secondary-btn:hover {
-      background: rgba(255,255,255,.09);
+    .hero-button.secondary:hover {
+      background: rgba(255,255,255,.08);
     }
 
-    .hero-features {
+    .feature-row {
       display: flex;
+      justify-content: center;
       flex-wrap: wrap;
       gap: 10px;
+      margin-top: 27px;
     }
 
     .feature-pill {
-      padding: 9px 12px;
-
-      border-radius: 999px;
-
+      padding: 9px 13px;
       border: 1px solid rgba(255,255,255,.08);
-
-      background: rgba(255,255,255,.035);
-
-      color: #b9bed2;
-
-      font-size: 12px;
-      font-weight: 500;
-    }
-
-    .hero-visual {
-      position: relative;
-      min-height: 600px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .photo-glow {
-      position: absolute;
-
-      width: 440px;
-      height: 440px;
-
-      border-radius: 50%;
-
-      background:
-        radial-gradient(
-          circle,
-          rgba(128,87,255,.32),
-          transparent 68%
-        );
-
-      filter: blur(12px);
-    }
-
-    .photo-card {
-      position: relative;
-
-      width: min(100%, 470px);
-      height: 570px;
-
-      overflow: hidden;
-
-      border-radius: 32px;
-
-      border: 1px solid rgba(255,255,255,.15);
-
-      background: #14172d;
-
-      box-shadow:
-        0 35px 90px rgba(0,0,0,.45),
-        0 0 50px rgba(105,72,255,.16);
-    }
-
-    .photo-card img {
-      width: 100%;
-      height: 100%;
-
-      display: block;
-
-      object-fit: cover;
-      object-position: center;
-    }
-
-    .photo-overlay {
-      position: absolute;
-      inset: 0;
-
-      background:
-        linear-gradient(
-          180deg,
-          rgba(6,8,22,.03) 35%,
-          rgba(6,8,22,.18) 55%,
-          rgba(6,8,22,.88) 100%
-        );
-    }
-
-    .photo-caption {
-      position: absolute;
-
-      left: 25px;
-      right: 25px;
-      bottom: 24px;
-    }
-
-    .photo-caption-label {
-      display: inline-flex;
-
-      margin-bottom: 10px;
-      padding: 7px 11px;
-
       border-radius: 999px;
-
-      background: rgba(10,12,30,.58);
-
-      border: 1px solid rgba(255,255,255,.12);
-
-      color: #ddd7ff;
-
-      font-size: 11px;
-      font-weight: 600;
-
-      backdrop-filter: blur(12px);
-    }
-
-    .photo-caption h2 {
-      font-size: 27px;
-      line-height: 1.15;
-      letter-spacing: -1px;
-
-      margin-bottom: 7px;
-    }
-
-    .photo-caption p {
-      color: #d0d3df;
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    @media (max-width: 900px) {
-      .hero-container {
-        grid-template-columns: 1fr;
-        min-height: auto;
-      }
-
-      .hero-content {
-        text-align: center;
-      }
-
-      .hero-description {
-        margin-left: auto;
-        margin-right: auto;
-      }
-
-      .hero-actions,
-      .hero-features {
-        justify-content: center;
-      }
-
-      .hero-visual {
-        min-height: 520px;
-      }
+      background: rgba(255,255,255,.035);
+      color: #858fae;
+      font-size: 12px;
     }
 
     @media (max-width: 600px) {
+
       .topbar {
-        padding: 15px 16px;
+        padding: 17px;
       }
 
       .brand {
-        font-size: 20px;
+        font-size: 18px;
       }
 
-      .brand-icon {
+      .brand-mark {
         width: 38px;
         height: 38px;
+        border-radius: 12px;
       }
 
       .hero {
-        padding: 8px 14px 50px;
+        padding: 90px 16px 40px;
       }
 
-      .hero h1 {
-        font-size: clamp(40px, 13vw, 58px);
-        letter-spacing: -2.5px;
+      .photo-frame {
+        width: 100%;
+        height: 230px;
+        margin-bottom: 28px;
+        border-radius: 24px;
+      }
+
+      .hero-title {
+        font-size: clamp(39px, 12vw, 58px);
+        letter-spacing: -2px;
       }
 
       .hero-description {
-        font-size: 16px;
+        font-size: 15px;
       }
 
-      .hero-visual {
-        min-height: 440px;
+      .hero-actions {
+        flex-direction: column;
       }
 
-      .photo-card {
-        height: 460px;
-        border-radius: 25px;
+      .hero-button {
+        width: 100%;
       }
 
-      .photo-caption {
-        left: 20px;
-        right: 20px;
-      }
-
-      .photo-caption h2 {
-        font-size: 23px;
-      }
     }
+
   </style>
+
+  <script src="assets/js/config.js"></script>
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+  ></script>
+
 </head>
 
 <body>
@@ -487,123 +364,95 @@
   <div class="page">
 
     <header class="topbar">
-      <div class="topbar-inner">
 
-        <a
-          class="brand"
-          href="index.html"
-          aria-label="EmiMatch"
-        >
-          <span class="brand-icon">🫰</span>
-          <span>EmiMatch</span>
-        </a>
+      <div class="brand">
+
+        <div class="brand-mark">
+          🫰
+        </div>
+
+        <span>EmiMatch</span>
 
       </div>
+
     </header>
 
-    <main>
+    <main id="mainContent">
 
       <section
         class="hero"
-        id="inicio"
+        id="landingSection"
       >
 
-        <div class="hero-container">
+        <div class="hero-inner">
 
-          <div class="hero-content">
+          <div class="photo-frame">
 
-            <div class="eyebrow">
-              <span class="eyebrow-dot"></span>
-              Conexiones que empiezan de verdad
-            </div>
+            <img
+              class="hero-photo"
+              src="assets/images/0b5083b19e534a3d8f797121ed2060d8.jpg"
+              alt="EmiMatch"
+              onerror="this.style.display='none'"
+            >
 
-            <h1>
-              Conocé personas.
-              <span class="highlight">
-                Encontrá nuevas historias.
-              </span>
-            </h1>
-
-            <p class="hero-description">
-              Descubrí personas, conectá con quienes realmente despiertan
-              tu interés y empezá conversaciones que pueden convertirse
-              en algo especial.
-            </p>
-
-            <div class="hero-actions">
-
-              <button
-                type="button"
-                class="primary-btn"
-                id="createAccountHero"
-              >
-                ✨ Crear mi cuenta
-              </button>
-
-              <button
-                type="button"
-                class="secondary-btn"
-                id="loginHero"
-              >
-                Iniciar sesión
-              </button>
-
-            </div>
-
-            <div class="hero-features">
-
-              <span class="feature-pill">
-                🫰 Conexiones reales
-              </span>
-
-              <span class="feature-pill">
-                ✨ Perfiles personalizados
-              </span>
-
-              <span class="feature-pill">
-                💬 Conversaciones
-              </span>
-
-              <span class="feature-pill">
-                🔐 Cuenta segura
-              </span>
-
+            <div class="photo-badge">
+              ✨ Conexiones que empiezan de verdad
             </div>
 
           </div>
 
-          <div class="hero-visual">
+          <div class="eyebrow">
+            💜 Una forma diferente de conectar
+          </div>
 
-            <div class="photo-glow"></div>
+          <h1 class="hero-title">
+            Conocé personas.<br>
+            <span>Conectá de verdad.</span>
+          </h1>
 
-            <div class="photo-card">
+          <p class="hero-description">
+            EmiMatch está pensado para personas reales,
+            conversaciones reales y nuevas historias
+            que puedan empezar de verdad.
+          </p>
 
-              <img
-                src="assets/images/0b5083b19e534a3d8f797121ed2060d8.jpg"
-                alt="Personas conectando en EmiMatch"
-                loading="eager"
-              >
+          <div class="hero-actions">
 
-              <div class="photo-overlay"></div>
+            <button
+              type="button"
+              class="hero-button primary"
+              id="createAccountHero"
+            >
+              Crear mi cuenta
+            </button>
 
-              <div class="photo-caption">
+            <button
+              type="button"
+              class="hero-button secondary"
+              id="loginHero"
+            >
+              Iniciar sesión
+            </button>
 
-                <span class="photo-caption-label">
-                  ✦ EmiMatch
-                </span>
+          </div>
 
-                <h2>
-                  Una historia puede comenzar hoy.
-                </h2>
+          <div class="feature-row">
 
-                <p>
-                  Descubrí nuevas personas y conectá
-                  de una forma auténtica.
-                </p>
+            <span class="feature-pill">
+              🔒 Privacidad
+            </span>
 
-              </div>
+            <span class="feature-pill">
+              💬 Chat
+            </span>
 
-            </div>
+            <span class="feature-pill">
+              💕 Matches
+            </span>
+
+            <span class="feature-pill">
+              👤 Personas reales
+            </span>
 
           </div>
 
@@ -628,18 +477,31 @@
               ← Volver
             </button>
 
-            <form
-              class="auth-form active"
-              id="loginForm"
+            <div
+              class="auth-logo"
+              aria-hidden="true"
             >
+              🫰
+            </div>
 
-              <h2 class="auth-title">
+            <div class="auth-heading">
+
+              <h2 id="authTitle">
                 Iniciar sesión
               </h2>
 
-              <p class="auth-description">
-                Volvé a EmiMatch y continuá descubriendo nuevas conexiones.
+              <p id="authSubtitle">
+                Volvé a EmiMatch y continuá
+                descubriendo nuevas conexiones.
               </p>
+
+            </div>
+
+            <form
+              class="auth-form active"
+              id="loginForm"
+              novalidate
+            >
 
               <div class="field">
 
@@ -667,7 +529,6 @@
 
                   <input
                     id="loginPassword"
-                    class="password-input"
                     type="password"
                     autocomplete="current-password"
                     placeholder="Tu contraseña"
@@ -705,15 +566,16 @@
 
               <button
                 type="button"
-                class="form-link"
+                class="form-link strong"
                 id="goRegister"
               >
-                Crear mi cuenta
+                Crear una cuenta nueva
               </button>
 
               <div
                 id="loginMessage"
                 class="auth-message"
+                role="alert"
               ></div>
 
             </form>
@@ -721,15 +583,8 @@
             <form
               class="auth-form"
               id="registerForm"
+              novalidate
             >
-
-              <h2 class="auth-title">
-                Crear mi cuenta
-              </h2>
-
-              <p class="auth-description">
-                Registrate gratis y empezá a conocer nuevas personas.
-              </p>
 
               <div class="field">
 
@@ -757,10 +612,9 @@
 
                   <input
                     id="registerPassword"
-                    class="password-input"
                     type="password"
                     autocomplete="new-password"
-                    placeholder="Elegí una contraseña"
+                    placeholder="Mínimo 6 caracteres"
                     minlength="6"
                     required
                   >
@@ -778,6 +632,10 @@
 
               </div>
 
+              <div class="password-hint">
+                Usá al menos 6 caracteres.
+              </div>
+
               <button
                 type="submit"
                 class="form-submit"
@@ -788,7 +646,7 @@
 
               <button
                 type="button"
-                class="form-link"
+                class="form-link strong"
                 id="goLogin"
               >
                 Ya tengo una cuenta
@@ -797,6 +655,7 @@
               <div
                 id="registerMessage"
                 class="auth-message"
+                role="alert"
               ></div>
 
             </form>
@@ -804,16 +663,8 @@
             <form
               class="auth-form"
               id="recoveryForm"
+              novalidate
             >
-
-              <h2 class="auth-title">
-                Recuperar contraseña
-              </h2>
-
-              <p class="auth-description">
-                Ingresá tu correo y te enviaremos un enlace
-                para recuperar tu cuenta.
-              </p>
 
               <div class="field">
 
@@ -841,7 +692,7 @@
 
               <button
                 type="button"
-                class="form-link"
+                class="form-link strong"
                 id="recoveryBackLogin"
               >
                 Volver a iniciar sesión
@@ -850,6 +701,7 @@
               <div
                 id="recoveryMessage"
                 class="auth-message"
+                role="alert"
               ></div>
 
             </form>
@@ -862,13 +714,17 @@
 
     </main>
     <style>
+
   .auth-section {
     display: none;
     min-height: 100vh;
-    padding: 120px 20px 60px;
+    padding: 105px 18px 55px;
     background:
-      radial-gradient(circle at top right, rgba(124, 92, 255, 0.18), transparent 35%),
-      radial-gradient(circle at bottom left, rgba(212, 175, 55, 0.10), transparent 35%),
+      radial-gradient(
+        circle at 50% 0%,
+        rgba(126, 92, 255, .18),
+        transparent 42%
+      ),
       #070b18;
   }
 
@@ -878,34 +734,80 @@
 
   .auth-container {
     width: 100%;
-    max-width: 520px;
+    max-width: 480px;
     margin: 0 auto;
   }
 
   .auth-card {
     position: relative;
-    padding: 38px 32px;
-    border: 1px solid rgba(255, 255, 255, 0.10);
-    border-radius: 28px;
-    background: rgba(13, 18, 38, 0.94);
+    padding: 34px;
+    border: 1px solid rgba(255,255,255,.11);
+    border-radius: 30px;
+    background:
+      linear-gradient(
+        145deg,
+        rgba(20,26,52,.97),
+        rgba(9,13,29,.97)
+      );
     box-shadow:
-      0 30px 80px rgba(0, 0, 0, 0.45),
-      0 0 50px rgba(100, 80, 220, 0.08);
-    backdrop-filter: blur(18px);
+      0 35px 90px rgba(0,0,0,.48),
+      0 0 70px rgba(112,79,255,.08);
+    backdrop-filter: blur(20px);
   }
 
   .auth-back {
+    display: inline-flex;
+    align-items: center;
     border: 0;
+    padding: 5px 0;
     background: transparent;
-    color: #b8bfd8;
+    color: #9fa8c3;
     font-size: 14px;
     cursor: pointer;
-    padding: 0;
-    margin-bottom: 28px;
   }
 
   .auth-back:hover {
     color: #ffffff;
+  }
+
+  .auth-logo {
+    display: grid;
+    width: 58px;
+    height: 58px;
+    margin: 24px auto 20px;
+    place-items: center;
+    border: 1px solid rgba(255,255,255,.13);
+    border-radius: 18px;
+    background:
+      linear-gradient(
+        145deg,
+        rgba(126,92,255,.30),
+        rgba(212,175,55,.13)
+      );
+    box-shadow:
+      0 14px 35px rgba(0,0,0,.28);
+    font-size: 28px;
+  }
+
+  .auth-heading {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .auth-heading h2 {
+    margin: 0;
+    color: #ffffff;
+    font-size: 29px;
+    line-height: 1.15;
+    letter-spacing: -.7px;
+  }
+
+  .auth-heading p {
+    max-width: 360px;
+    margin: 11px auto 0;
+    color: #949db9;
+    font-size: 14px;
+    line-height: 1.6;
   }
 
   .auth-form {
@@ -916,54 +818,40 @@
     display: block;
   }
 
-  .auth-title {
-    margin: 0 0 10px;
-    color: #ffffff;
-    font-size: 32px;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-  }
-
-  .auth-description {
-    margin: 0 0 30px;
-    color: #9da6c3;
-    line-height: 1.6;
-    font-size: 15px;
-  }
-
   .field {
-    margin-bottom: 20px;
+    margin-bottom: 19px;
   }
 
   .field label {
     display: block;
     margin-bottom: 8px;
-    color: #e8ebf7;
-    font-size: 14px;
+    color: #e7eaf4;
+    font-size: 13px;
     font-weight: 600;
   }
 
   .field input {
     width: 100%;
-    box-sizing: border-box;
-    padding: 15px 16px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    height: 52px;
+    padding: 0 16px;
+    border: 1px solid rgba(255,255,255,.11);
     border-radius: 14px;
     outline: none;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255,255,255,.045);
     color: #ffffff;
-    font-size: 15px;
-    transition: 0.2s ease;
+    font-size: 14px;
+    transition: .2s ease;
   }
 
   .field input::placeholder {
-    color: #68718e;
+    color: #646e8c;
   }
 
   .field input:focus {
-    border-color: rgba(166, 126, 255, 0.75);
-    background: rgba(255, 255, 255, 0.07);
-    box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.12);
+    border-color: rgba(143,111,255,.78);
+    background: rgba(255,255,255,.065);
+    box-shadow:
+      0 0 0 3px rgba(126,92,255,.11);
   }
 
   .input-wrap {
@@ -971,44 +859,64 @@
   }
 
   .input-wrap input {
-    padding-right: 52px;
+    padding-right: 54px;
   }
 
   .password-toggle {
     position: absolute;
     top: 50%;
-    right: 12px;
+    right: 8px;
+    width: 40px;
+    height: 40px;
     transform: translateY(-50%);
     border: 0;
+    border-radius: 11px;
     background: transparent;
-    color: #9da6c3;
+    color: #8d96b0;
     cursor: pointer;
-    font-size: 18px;
-    padding: 8px;
+    font-size: 17px;
+  }
+
+  .password-toggle:hover {
+    background: rgba(255,255,255,.06);
+    color: #ffffff;
+  }
+
+  .password-hint {
+    margin-top: -8px;
+    margin-bottom: 20px;
+    color: #69738f;
+    font-size: 12px;
   }
 
   .form-submit {
     width: 100%;
-    margin-top: 4px;
-    padding: 15px 20px;
+    height: 52px;
     border: 0;
-    border-radius: 15px;
-    background: linear-gradient(135deg, #7c5cff, #a46bff);
+    border-radius: 14px;
+    background:
+      linear-gradient(
+        135deg,
+        #7355ff,
+        #a46cff
+      );
     color: #ffffff;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 12px 30px rgba(124, 92, 255, 0.25);
-    transition: 0.2s ease;
+    box-shadow:
+      0 14px 32px rgba(115,85,255,.25);
+    transition: .2s ease;
   }
 
   .form-submit:hover {
     transform: translateY(-1px);
-    box-shadow: 0 16px 35px rgba(124, 92, 255, 0.35);
+    box-shadow:
+      0 18px 40px rgba(115,85,255,.34);
   }
 
   .form-submit:disabled {
-    opacity: 0.65;
+    opacity: .65;
     cursor: wait;
     transform: none;
   }
@@ -1016,11 +924,11 @@
   .form-link {
     display: block;
     width: 100%;
-    margin-top: 18px;
+    margin-top: 17px;
     border: 0;
     background: transparent;
-    color: #bca8ff;
-    font-size: 14px;
+    color: #8f99b6;
+    font-size: 13px;
     cursor: pointer;
   }
 
@@ -1028,12 +936,17 @@
     color: #ffffff;
   }
 
+  .form-link.strong {
+    color: #baa8ff;
+    font-weight: 600;
+  }
+
   .auth-message {
     display: none;
     margin-top: 20px;
-    padding: 13px 15px;
-    border-radius: 12px;
-    font-size: 14px;
+    padding: 13px 14px;
+    border-radius: 13px;
+    font-size: 13px;
     line-height: 1.5;
   }
 
@@ -1042,212 +955,433 @@
   }
 
   .auth-message.success {
-    background: rgba(46, 204, 113, 0.10);
-    border: 1px solid rgba(46, 204, 113, 0.25);
-    color: #7ee2a8;
+    border: 1px solid rgba(60,210,130,.22);
+    background: rgba(60,210,130,.08);
+    color: #7de0a8;
   }
 
   .auth-message.error {
-    background: rgba(255, 82, 82, 0.10);
-    border: 1px solid rgba(255, 82, 82, 0.25);
-    color: #ff9b9b;
+    border: 1px solid rgba(255,85,85,.22);
+    background: rgba(255,85,85,.08);
+    color: #ff9e9e;
   }
 
   @media (max-width: 600px) {
+
     .auth-section {
-      padding: 100px 15px 40px;
+      padding: 90px 14px 40px;
     }
 
     .auth-card {
-      padding: 30px 22px;
-      border-radius: 22px;
+      padding: 27px 21px;
+      border-radius: 24px;
     }
 
-    .auth-title {
-      font-size: 27px;
+    .auth-heading h2 {
+      font-size: 26px;
     }
+
   }
+
 </style>
 
 <script>
-  const config = window.EMIMATCH_CONFIG || {};
 
-  const supabaseUrl = config.supabaseUrl;
-  const supabaseKey =
-    config.supabaseAnonKey || config.supabaseKey;
+  const EMIMATCH_CONFIG =
+    window.EMIMATCH_CONFIG || {};
+
+  const EMIMATCH_SUPABASE_URL =
+    EMIMATCH_CONFIG.supabaseUrl || "";
+
+  const EMIMATCH_SUPABASE_KEY =
+    EMIMATCH_CONFIG.supabaseAnonKey ||
+    EMIMATCH_CONFIG.supabaseKey ||
+    "";
 
   let supabaseClient = null;
 
   if (
     window.supabase &&
-    supabaseUrl &&
-    supabaseKey
+    EMIMATCH_SUPABASE_URL &&
+    EMIMATCH_SUPABASE_KEY
   ) {
-    supabaseClient = window.supabase.createClient(
-      supabaseUrl,
-      supabaseKey
+
+    supabaseClient =
+      window.supabase.createClient(
+        EMIMATCH_SUPABASE_URL,
+        EMIMATCH_SUPABASE_KEY
+      );
+
+  } else {
+
+    console.error(
+      "EmiMatch: no se pudo inicializar Supabase."
     );
+
   }
 
   const landingSection =
-    document.getElementById("landingSection");
+    document.getElementById(
+      "landingSection"
+    );
 
   const authSection =
-    document.getElementById("authSection");
+    document.getElementById(
+      "authSection"
+    );
+
+  const authTitle =
+    document.getElementById(
+      "authTitle"
+    );
+
+  const authSubtitle =
+    document.getElementById(
+      "authSubtitle"
+    );
 
   const loginForm =
-    document.getElementById("loginForm");
+    document.getElementById(
+      "loginForm"
+    );
 
   const registerForm =
-    document.getElementById("registerForm");
+    document.getElementById(
+      "registerForm"
+    );
 
   const recoveryForm =
-    document.getElementById("recoveryForm");
+    document.getElementById(
+      "recoveryForm"
+    );
 
   const loginMessage =
-    document.getElementById("loginMessage");
+    document.getElementById(
+      "loginMessage"
+    );
 
   const registerMessage =
-    document.getElementById("registerMessage");
+    document.getElementById(
+      "registerMessage"
+    );
 
   const recoveryMessage =
-    document.getElementById("recoveryMessage");
+    document.getElementById(
+      "recoveryMessage"
+    );
 
-  function showMessage(element, message, type) {
+  function showMessage(
+    element,
+    message,
+    type
+  ) {
+
     if (!element) return;
 
     element.textContent = message;
+
     element.className =
-      "auth-message show " + type;
+      "auth-message show " +
+      type;
+
   }
 
   function clearMessages() {
+
     [
       loginMessage,
       registerMessage,
       recoveryMessage
     ].forEach(function (element) {
+
       if (!element) return;
 
       element.textContent = "";
-      element.className = "auth-message";
+
+      element.className =
+        "auth-message";
+
     });
+
   }
 
-  function setLoading(button, loading, normalText) {
+  function setLoading(
+    button,
+    loading,
+    normalText
+  ) {
+
     if (!button) return;
 
     button.disabled = loading;
+
     button.textContent =
-      loading ? "Procesando..." : normalText;
+      loading
+        ? "Procesando..."
+        : normalText;
+
+  }
+
+  function updateAuthHeading(
+    title,
+    subtitle
+  ) {
+
+    authTitle.textContent = title;
+    authSubtitle.textContent = subtitle;
+
   }
 
   function showHome() {
+
     clearMessages();
 
-    authSection.classList.remove("active");
-    authSection.setAttribute("aria-hidden", "true");
+    authSection.classList.remove(
+      "active"
+    );
 
-    landingSection.style.display = "block";
+    authSection.setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
+    landingSection.style.display =
+      "flex";
+
+    updateAuthHeading(
+      "Iniciar sesión",
+      "Volvé a EmiMatch y continuá descubriendo nuevas conexiones."
+    );
 
     window.scrollTo({
       top: 0,
       behavior: "smooth"
     });
+
   }
 
   function showAuth(form) {
+
     clearMessages();
 
-    landingSection.style.display = "none";
+    landingSection.style.display =
+      "none";
 
-    authSection.classList.add("active");
-    authSection.setAttribute("aria-hidden", "false");
+    authSection.classList.add(
+      "active"
+    );
+
+    authSection.setAttribute(
+      "aria-hidden",
+      "false"
+    );
 
     [
       loginForm,
       registerForm,
       recoveryForm
     ].forEach(function (item) {
-      item.classList.remove("active");
+
+      item.classList.remove(
+        "active"
+      );
+
     });
 
-    form.classList.add("active");
+    form.classList.add(
+      "active"
+    );
+
+    if (form === loginForm) {
+
+      updateAuthHeading(
+        "Iniciar sesión",
+        "Volvé a EmiMatch y continuá descubriendo nuevas conexiones."
+      );
+
+    }
+
+    if (form === registerForm) {
+
+      updateAuthHeading(
+        "Crear mi cuenta",
+        "Registrate gratis y empezá a conocer nuevas personas."
+      );
+
+    }
+
+    if (form === recoveryForm) {
+
+      updateAuthHeading(
+        "Recuperar contraseña",
+        "Ingresá tu correo y te enviaremos un enlace para recuperar tu cuenta."
+      );
+
+    }
 
     window.scrollTo({
       top: 0,
       behavior: "smooth"
     });
+
   }
 
-  function redirectAfterLogin() {
-    window.location.href = "perfil.html";
+  function redirectToProfile() {
+
+    window.location.href =
+      "perfil.html";
+
   }
 
   document
-    .getElementById("createAccountHero")
-    .addEventListener("click", function () {
-      showAuth(registerForm);
-    });
+    .getElementById(
+      "createAccountHero"
+    )
+    .addEventListener(
+      "click",
+      function () {
+
+        showAuth(
+          registerForm
+        );
+
+      }
+    );
 
   document
-    .getElementById("loginHero")
-    .addEventListener("click", function () {
-      showAuth(loginForm);
-    });
+    .getElementById(
+      "loginHero"
+    )
+    .addEventListener(
+      "click",
+      function () {
+
+        showAuth(
+          loginForm
+        );
+
+      }
+    );
 
   document
-    .getElementById("backToHome")
-    .addEventListener("click", function () {
-      showHome();
-    });
+    .getElementById(
+      "backToHome"
+    )
+    .addEventListener(
+      "click",
+      function () {
+
+        showHome();
+
+      }
+    );
 
   document
-    .getElementById("goRegister")
-    .addEventListener("click", function () {
-      showAuth(registerForm);
-    });
+    .getElementById(
+      "goRegister"
+    )
+    .addEventListener(
+      "click",
+      function () {
+
+        showAuth(
+          registerForm
+        );
+
+      }
+    );
 
   document
-    .getElementById("goLogin")
-    .addEventListener("click", function () {
-      showAuth(loginForm);
-    });
+    .getElementById(
+      "goLogin"
+    )
+    .addEventListener(
+      "click",
+      function () {
+
+        showAuth(
+          loginForm
+        );
+
+      }
+    );
 
   document
-    .getElementById("forgotPassword")
-    .addEventListener("click", function () {
-      showAuth(recoveryForm);
-    });
+    .getElementById(
+      "forgotPassword"
+    )
+    .addEventListener(
+      "click",
+      function () {
+
+        showAuth(
+          recoveryForm
+        );
+
+      }
+    );
 
   document
-    .getElementById("recoveryBackLogin")
-    .addEventListener("click", function () {
-      showAuth(loginForm);
-    });
+    .getElementById(
+      "recoveryBackLogin"
+    )
+    .addEventListener(
+      "click",
+      function () {
+
+        showAuth(
+          loginForm
+        );
+
+      }
+    );
 
   document
-    .querySelectorAll(".password-toggle")
-    .forEach(function (button) {
+    .querySelectorAll(
+      ".password-toggle"
+    )
+    .forEach(
+      function (button) {
 
-      button.addEventListener("click", function () {
+        button.addEventListener(
+          "click",
+          function () {
 
-        const target =
-          document.getElementById(
-            button.dataset.target
-          );
+            const target =
+              document.getElementById(
+                button.dataset.target
+              );
 
-        if (!target) return;
+            if (!target) return;
 
-        if (target.type === "password") {
-          target.type = "text";
-          button.textContent = "🙈";
-        } else {
-          target.type = "password";
-          button.textContent = "👁";
-        }
-      });
-    });
+            if (
+              target.type ===
+              "password"
+            ) {
+
+              target.type = "text";
+
+              button.textContent =
+                "🙈";
+
+            } else {
+
+              target.type =
+                "password";
+
+              button.textContent =
+                "👁";
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+</script>
+<script>
 
   loginForm.addEventListener(
     "submit",
@@ -1258,11 +1392,13 @@
       clearMessages();
 
       if (!supabaseClient) {
+
         showMessage(
           loginMessage,
-          "No se pudo conectar con EmiMatch. Revisá la configuración de Supabase.",
+          "No se pudo conectar con EmiMatch. Revisá la configuración.",
           "error"
         );
+
         return;
       }
 
@@ -1273,9 +1409,20 @@
           .trim();
 
       const password =
-        document.getElementById(
-          "loginPassword"
-        ).value;
+        document
+          .getElementById("loginPassword")
+          .value;
+
+      if (!email || !password) {
+
+        showMessage(
+          loginMessage,
+          "Completá tu correo y contraseña.",
+          "error"
+        );
+
+        return;
+      }
 
       const button =
         document.getElementById(
@@ -1289,33 +1436,77 @@
       );
 
       try {
-        const result =
+
+        const {
+          data,
+          error
+        } =
           await supabaseClient.auth.signInWithPassword({
             email: email,
             password: password
           });
 
-        if (result.error) {
-          throw result.error;
+        if (error) {
+          throw error;
+        }
+
+        if (!data || !data.user) {
+
+          throw new Error(
+            "No se pudo iniciar la sesión."
+          );
+
         }
 
         showMessage(
           loginMessage,
-          "Inicio de sesión correcto. Entrando...",
+          "Inicio de sesión correcto. Entrando a tu perfil...",
           "success"
         );
 
         setTimeout(
-          redirectAfterLogin,
+          function () {
+            redirectToProfile();
+          },
           500
         );
 
       } catch (error) {
 
+        console.error(
+          "EmiMatch login:",
+          error
+        );
+
+        let message =
+          error.message ||
+          "No se pudo iniciar sesión.";
+
+        if (
+          message
+            .toLowerCase()
+            .includes("invalid login credentials")
+        ) {
+
+          message =
+            "El correo o la contraseña son incorrectos.";
+
+        }
+
+        if (
+          message
+            .toLowerCase()
+            .includes("email not confirmed")
+        ) {
+
+          message =
+            "Tu correo todavía no fue confirmado. Revisá tu bandeja de entrada.";
+
+        }
+
         showMessage(
           loginMessage,
-          error.message ||
-            "No se pudo iniciar sesión.",
+          message,
           "error"
         );
 
@@ -1326,9 +1517,12 @@
           false,
           "Iniciar sesión"
         );
+
       }
+
     }
   );
+
 
   registerForm.addEventListener(
     "submit",
@@ -1339,11 +1533,13 @@
       clearMessages();
 
       if (!supabaseClient) {
+
         showMessage(
           registerMessage,
-          "No se pudo conectar con EmiMatch. Revisá la configuración de Supabase.",
+          "No se pudo conectar con EmiMatch. Revisá la configuración.",
           "error"
         );
+
         return;
       }
 
@@ -1354,30 +1550,47 @@
           .trim();
 
       const password =
-        document.getElementById(
-          "registerPassword"
-        ).value;
+        document
+          .getElementById("registerPassword")
+          .value;
+
+      if (!email || !password) {
+
+        showMessage(
+          registerMessage,
+          "Completá todos los campos.",
+          "error"
+        );
+
+        return;
+      }
+
+      if (password.length < 6) {
+
+        showMessage(
+          registerMessage,
+          "La contraseña debe tener al menos 6 caracteres.",
+          "error"
+        );
+
+        return;
+      }
 
       const button =
         document.getElementById(
           "registerSubmit"
         );
 
-      if (password.length < 6) {
-        showMessage(
-          registerMessage,
-          "La contraseña debe tener al menos 6 caracteres.",
-          "error"
-        );
-        return;
-      }
+      const baseUrl =
+        window.location.origin +
+        window.location.pathname
+          .replace(
+            /index\.html$/,
+            ""
+          );
 
       const redirectUrl =
-        window.location.origin +
-        window.location.pathname.replace(
-          /index\.html$/,
-          ""
-        );
+        baseUrl;
 
       setLoading(
         button,
@@ -1387,20 +1600,27 @@
 
       try {
 
-        const result =
+        const {
+          data,
+          error
+        } =
           await supabaseClient.auth.signUp({
             email: email,
             password: password,
             options: {
-              emailRedirectTo: redirectUrl
+              emailRedirectTo:
+                redirectUrl
             }
           });
 
-        if (result.error) {
-          throw result.error;
+        if (error) {
+          throw error;
         }
 
-        if (result.data && result.data.session) {
+        if (
+          data &&
+          data.session
+        ) {
 
           showMessage(
             registerMessage,
@@ -1409,25 +1629,46 @@
           );
 
           setTimeout(
-            redirectAfterLogin,
+            function () {
+              redirectToProfile();
+            },
             500
           );
 
-        } else {
-
-          showMessage(
-            registerMessage,
-            "Cuenta creada. Revisá tu correo para confirmar tu cuenta.",
-            "success"
-          );
+          return;
         }
-
-      } catch (error) {
 
         showMessage(
           registerMessage,
+          "Cuenta creada correctamente. Revisá tu correo para confirmar la cuenta.",
+          "success"
+        );
+
+      } catch (error) {
+
+        console.error(
+          "EmiMatch registro:",
+          error
+        );
+
+        let message =
           error.message ||
-            "No se pudo crear la cuenta.",
+          "No se pudo crear la cuenta.";
+
+        if (
+          message
+            .toLowerCase()
+            .includes("user already registered")
+        ) {
+
+          message =
+            "Ese correo ya tiene una cuenta. Probá iniciar sesión.";
+
+        }
+
+        showMessage(
+          registerMessage,
+          message,
           "error"
         );
 
@@ -1438,9 +1679,12 @@
           false,
           "Crear mi cuenta"
         );
+
       }
+
     }
   );
+
 
   recoveryForm.addEventListener(
     "submit",
@@ -1451,11 +1695,13 @@
       clearMessages();
 
       if (!supabaseClient) {
+
         showMessage(
           recoveryMessage,
-          "No se pudo conectar con EmiMatch. Revisá la configuración de Supabase.",
+          "No se pudo conectar con EmiMatch. Revisá la configuración.",
           "error"
         );
+
         return;
       }
 
@@ -1465,17 +1711,32 @@
           .value
           .trim();
 
+      if (!email) {
+
+        showMessage(
+          recoveryMessage,
+          "Ingresá tu correo electrónico.",
+          "error"
+        );
+
+        return;
+      }
+
       const button =
         document.getElementById(
           "recoverySubmit"
         );
 
-      const redirectUrl =
+      const baseUrl =
         window.location.origin +
-        window.location.pathname.replace(
-          /index\.html$/,
-          ""
-        ) +
+        window.location.pathname
+          .replace(
+            /index\.html$/,
+            ""
+          );
+
+      const redirectUrl =
+        baseUrl +
         "restablecer.html";
 
       setLoading(
@@ -1486,16 +1747,20 @@
 
       try {
 
-        const result =
-          await supabaseClient.auth.resetPasswordForEmail(
-            email,
-            {
-              redirectTo: redirectUrl
-            }
-          );
+        const {
+          error
+        } =
+          await supabaseClient.auth
+            .resetPasswordForEmail(
+              email,
+              {
+                redirectTo:
+                  redirectUrl
+              }
+            );
 
-        if (result.error) {
-          throw result.error;
+        if (error) {
+          throw error;
         }
 
         showMessage(
@@ -1505,6 +1770,11 @@
         );
 
       } catch (error) {
+
+        console.error(
+          "EmiMatch recuperación:",
+          error
+        );
 
         showMessage(
           recoveryMessage,
@@ -1520,37 +1790,72 @@
           false,
           "Enviar enlace"
         );
+
       }
+
     }
   );
+
 </script>
 <script>
-  document.addEventListener("DOMContentLoaded", async function () {
-    if (!supabaseClient) {
-      console.error(
-        "EmiMatch: Supabase no está configurado correctamente."
-      );
-      return;
-    }
 
-    try {
-      const {
-        data: { session }
-      } = await supabaseClient.auth.getSession();
+  document.addEventListener(
+    "DOMContentLoaded",
+    async function () {
 
-      if (session) {
-        console.log(
-          "EmiMatch: sesión activa.",
-          session.user.email
+      if (!supabaseClient) {
+
+        console.error(
+          "EmiMatch: Supabase no está disponible."
         );
+
+        return;
       }
-    } catch (error) {
-      console.error(
-        "EmiMatch: error verificando sesión.",
-        error
-      );
+
+      try {
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient.auth.getSession();
+
+        if (error) {
+
+          console.error(
+            "EmiMatch: error obteniendo sesión.",
+            error
+          );
+
+          return;
+        }
+
+        if (
+          data &&
+          data.session &&
+          data.session.user
+        ) {
+
+          console.log(
+            "EmiMatch: sesión activa.",
+            data.session.user.email
+          );
+
+        }
+
+      } catch (error) {
+
+        console.error(
+          "EmiMatch: error verificando sesión.",
+          error
+        );
+
+      }
+
     }
-  });
+  );
+
 </script>
+
 </body>
 </html>
