@@ -15,16 +15,8 @@
 
   <link rel="icon" href="favicon.svg">
 
-  <link
-    rel="preconnect"
-    href="https://fonts.googleapis.com"
-  >
-
-  <link
-    rel="preconnect"
-    href="https://fonts.gstatic.com"
-    crossorigin
-  >
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
@@ -80,10 +72,6 @@
       min-height: 100vh;
     }
 
-    /* =========================
-       HEADER
-    ========================= */
-
     .topbar {
       width: 100%;
       padding: 20px 22px;
@@ -134,10 +122,6 @@
 
       font-size: 22px;
     }
-
-    /* =========================
-       HERO
-    ========================= */
 
     .hero {
       width: 100%;
@@ -222,10 +206,6 @@
 
       margin-bottom: 30px;
     }
-
-    /* =========================
-       HERO BUTTONS
-    ========================= */
 
     .hero-actions {
       display: flex;
@@ -318,10 +298,6 @@
       font-weight: 500;
     }
 
-    /* =========================
-       PHOTO
-    ========================= */
-
     .hero-visual {
       position: relative;
       min-height: 600px;
@@ -333,6 +309,7 @@
 
     .photo-glow {
       position: absolute;
+
       width: 440px;
       height: 440px;
 
@@ -350,6 +327,7 @@
 
     .photo-card {
       position: relative;
+
       width: min(100%, 470px);
       height: 570px;
 
@@ -374,8 +352,6 @@
 
       object-fit: cover;
       object-position: center;
-
-      transform: scale(1.01);
     }
 
     .photo-overlay {
@@ -393,6 +369,7 @@
 
     .photo-caption {
       position: absolute;
+
       left: 25px;
       right: 25px;
       bottom: 24px;
@@ -407,6 +384,7 @@
       border-radius: 999px;
 
       background: rgba(10,12,30,.58);
+
       border: 1px solid rgba(255,255,255,.12);
 
       color: #ddd7ff;
@@ -431,371 +409,199 @@
       line-height: 1.5;
     }
 
-    /* =========================
-       AUTH AREA
-    ========================= */
-
-    .auth-section {
-      display: none;
-
-      width: 100%;
-      padding: 30px 20px 90px;
-
-      animation: fadeUp .35s ease;
-    }
-
-    .auth-section.visible {
-      display: block;
-    }
-
-    @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(15px);
+    @media (max-width: 900px) {
+      .hero-container {
+        grid-template-columns: 1fr;
+        min-height: auto;
       }
 
-      to {
-        opacity: 1;
-        transform: translateY(0);
+      .hero-content {
+        text-align: center;
+      }
+
+      .hero-description {
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .hero-actions,
+      .hero-features {
+        justify-content: center;
+      }
+
+      .hero-visual {
+        min-height: 520px;
       }
     }
 
-    .auth-container {
-      width: 100%;
-      max-width: 470px;
-      margin: 0 auto;
-    }
+    @media (max-width: 600px) {
+      .topbar {
+        padding: 15px 16px;
+      }
 
-    .auth-card {
-      padding: 30px;
+      .brand {
+        font-size: 20px;
+      }
 
-      border-radius: 28px;
+      .brand-icon {
+        width: 38px;
+        height: 38px;
+      }
 
-      border: 1px solid rgba(255,255,255,.10);
+      .hero {
+        padding: 8px 14px 50px;
+      }
 
-      background:
-        linear-gradient(
-          145deg,
-          rgba(255,255,255,.075),
-          rgba(255,255,255,.035)
-        );
+      .hero h1 {
+        font-size: clamp(40px, 13vw, 58px);
+        letter-spacing: -2.5px;
+      }
 
-      box-shadow:
-        0 30px 70px rgba(0,0,0,.32);
+      .hero-description {
+        font-size: 16px;
+      }
 
-      backdrop-filter: blur(18px);
-    }
+      .hero-visual {
+        min-height: 440px;
+      }
 
-    .auth-back {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+      .photo-card {
+        height: 460px;
+        border-radius: 25px;
+      }
 
-      margin-bottom: 22px;
+      .photo-caption {
+        left: 20px;
+        right: 20px;
+      }
 
-      color: #b8b2d5;
-      font-size: 13px;
-      font-weight: 600;
-
-      background: none;
-      border: 0;
-    }
-
-    .auth-back:hover {
-      color: #ffffff;
-    }
-
-    .auth-title {
-      font-size: 30px;
-      letter-spacing: -1px;
-
-      margin-bottom: 8px;
-    }
-
-    .auth-description {
-      color: #9fa5bd;
-      font-size: 14px;
-      line-height: 1.6;
-
-      margin-bottom: 25px;
-    }
-
-    .auth-form {
-      display: none;
-    }
-
-    .auth-form.active {
-      display: block;
-    }
-
-    .field {
-      margin-bottom: 16px;
-    }
-
-    .field label {
-      display: block;
-
-      margin-bottom: 8px;
-
-      color: #d9dbea;
-      font-size: 13px;
-      font-weight: 600;
-    }
-
-    .input-wrap {
-      position: relative;
-    }
-
-    .field input {
-      width: 100%;
-      height: 52px;
-
-      padding: 0 15px;
-
-      border-radius: 14px;
-
-      border: 1px solid rgba(255,255,255,.10);
-
-      outline: none;
-
-      color: #ffffff;
-      background: rgba(4,6,19,.55);
-
-      transition:
-        border-color .2s ease,
-        box-shadow .2s ease;
-    }
-
-    .field input:focus {
-      border-color: rgba(151,115,255,.75);
-
-      box-shadow:
-        0 0 0 4px rgba(117,84,255,.10);
-    }
-
-    .password-input {
-      padding-right: 52px !important;
-    }
-
-    .password-toggle {
-      position: absolute;
-      top: 50%;
-      right: 8px;
-
-      width: 38px;
-      height: 38px;
-
-      transform: translateY(-50%);
-
-      display: grid;
-      place-items: center;
-
-      border: 0;
-      border-radius: 10px;
-
-      background: transparent;
-
-      color: #9da2b9;
-    }
-
-    .password-toggle:hover {
-      background: rgba(255,255,255,.06);
-      color: #ffffff;
-    }
-
-    .form-submit {
-      width: 100%;
-      height: 53px;
-
-      margin-top: 7px;
-
-      border: 0;
-      border-radius: 15px;
-
-      color: #ffffff;
-
-      font-weight: 700;
-
-      background:
-        linear-gradient(
-          135deg,
-          #7654ff,
-          #a05eff
-        );
-
-      box-shadow:
-        0 14px 30px rgba(115,77,255,.25);
-    }
-
-    .form-submit:disabled {
-      opacity: .65;
-      cursor: wait;
-    }
-
-    .form-link {
-      display: block;
-
-      margin-top: 17px;
-
-      text-align: center;
-
-      color: #bcaeff;
-
-      font-size: 13px;
-      font-weight: 600;
-    }
-
-    .form-link:hover {
-      color: #ffffff;
-    }
-
-    .auth-message {
-      display: none;
-
-      margin-top: 15px;
-      padding: 12px 14px;
-
-      border-radius: 12px;
-
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    .auth-message.visible {
-      display: block;
-    }
-
-    .auth-message.error {
-      color: #ffd0d0;
-      background: rgba(190,50,70,.12);
-      border: 1px solid rgba(255,90,110,.16);
-    }
-
-    .auth-message.success {
-      color: #d4ffe5;
-      background: rgba(30,170,100,.10);
-      border: 1px solid rgba(80,220,145,.15);
-    }
-
-    .auth-message.info {
-      color: #d9dcff;
-      background: rgba(100,80,220,.10);
-      border: 1px solid rgba(130,110,255,.15);
+      .photo-caption h2 {
+        font-size: 23px;
+      }
     }
   </style>
 </head>
 
 <body>
 
-<div class="page">
+  <div class="page">
 
-  <header class="topbar">
-    <div class="topbar-inner">
+    <header class="topbar">
+      <div class="topbar-inner">
 
-      <a class="brand" href="index.html" aria-label="EmiMatch">
-        <span class="brand-icon">🫰</span>
-        <span>EmiMatch</span>
-      </a>
+        <a
+          class="brand"
+          href="index.html"
+          aria-label="EmiMatch"
+        >
+          <span class="brand-icon">🫰</span>
+          <span>EmiMatch</span>
+        </a>
 
-    </div>
-  </header>
+      </div>
+    </header>
+
     <main>
 
-    <section class="hero" id="inicio">
+      <section
+        class="hero"
+        id="inicio"
+      >
 
-      <div class="hero-container">
+        <div class="hero-container">
 
-        <div class="hero-content">
+          <div class="hero-content">
 
-          <div class="eyebrow">
-            <span class="eyebrow-dot"></span>
-            Conexiones que empiezan de verdad
-          </div>
+            <div class="eyebrow">
+              <span class="eyebrow-dot"></span>
+              Conexiones que empiezan de verdad
+            </div>
 
-          <h1>
-            Conocé personas.
-            <span class="highlight">
-              Encontrá nuevas historias.
-            </span>
-          </h1>
+            <h1>
+              Conocé personas.
+              <span class="highlight">
+                Encontrá nuevas historias.
+              </span>
+            </h1>
 
-          <p class="hero-description">
-            Descubrí personas, conectá con quienes realmente despiertan
-            tu interés y empezá conversaciones que pueden convertirse
-            en algo especial.
-          </p>
+            <p class="hero-description">
+              Descubrí personas, conectá con quienes realmente despiertan
+              tu interés y empezá conversaciones que pueden convertirse
+              en algo especial.
+            </p>
 
-          <div class="hero-actions">
+            <div class="hero-actions">
 
-            <button
-              type="button"
-              class="primary-btn"
-              id="createAccountHero"
-            >
-              ✨ Crear mi cuenta
-            </button>
+              <button
+                type="button"
+                class="primary-btn"
+                id="createAccountHero"
+              >
+                ✨ Crear mi cuenta
+              </button>
 
-            <button
-              type="button"
-              class="secondary-btn"
-              id="loginHero"
-            >
-              Iniciar sesión
-            </button>
+              <button
+                type="button"
+                class="secondary-btn"
+                id="loginHero"
+              >
+                Iniciar sesión
+              </button>
 
-          </div>
+            </div>
 
-          <div class="hero-features">
+            <div class="hero-features">
 
-            <span class="feature-pill">
-              🫰 Conexiones reales
-            </span>
-
-            <span class="feature-pill">
-              ✨ Perfiles personalizados
-            </span>
-
-            <span class="feature-pill">
-              💬 Conversaciones
-            </span>
-
-            <span class="feature-pill">
-              🔐 Cuenta segura
-            </span>
-
-          </div>
-
-        </div>
-
-
-        <div class="hero-visual">
-
-          <div class="photo-glow"></div>
-
-          <div class="photo-card">
-
-            <img
-              src="assets/images/0b5083b19e534a3d8f797121ed2060d8.jpg"
-              alt="Personas conectando en EmiMatch"
-              loading="eager"
-            >
-
-            <div class="photo-overlay"></div>
-
-            <div class="photo-caption">
-
-              <span class="photo-caption-label">
-                ✦ EmiMatch
+              <span class="feature-pill">
+                🫰 Conexiones reales
               </span>
 
-              <h2>
-                Una historia puede comenzar hoy.
-              </h2>
+              <span class="feature-pill">
+                ✨ Perfiles personalizados
+              </span>
 
-              <p>
-                Descubrí nuevas personas y conectá
-                de una forma auténtica.
-              </p>
+              <span class="feature-pill">
+                💬 Conversaciones
+              </span>
+
+              <span class="feature-pill">
+                🔐 Cuenta segura
+              </span>
+
+            </div>
+
+          </div>
+
+          <div class="hero-visual">
+
+            <div class="photo-glow"></div>
+
+            <div class="photo-card">
+
+              <img
+                src="assets/images/0b5083b19e534a3d8f797121ed2060d8.jpg"
+                alt="Personas conectando en EmiMatch"
+                loading="eager"
+              >
+
+              <div class="photo-overlay"></div>
+
+              <div class="photo-caption">
+
+                <span class="photo-caption-label">
+                  ✦ EmiMatch
+                </span>
+
+                <h2>
+                  Una historia puede comenzar hoy.
+                </h2>
+
+                <p>
+                  Descubrí nuevas personas y conectá
+                  de una forma auténtica.
+                </p>
+
+              </div>
 
             </div>
 
@@ -803,56 +609,43 @@
 
         </div>
 
-      </div>
+      </section>
+            <section
+        class="auth-section"
+        id="authSection"
+        aria-hidden="true"
+      >
 
-    </section>
+        <div class="auth-container">
 
+          <div class="auth-card">
 
-    <!-- =========================
-         AUTENTICACIÓN
-    ========================= -->
+            <button
+              type="button"
+              class="auth-back"
+              id="backToHome"
+            >
+              ← Volver
+            </button>
 
-    <section
-      class="auth-section"
-      id="authSection"
-      aria-hidden="true"
-    >
+            <form
+              class="auth-form active"
+              id="loginForm"
+            >
 
-      <div class="auth-container">
+              <h2 class="auth-title">
+                Iniciar sesión
+              </h2>
 
-        <div class="auth-card">
+              <p class="auth-description">
+                Volvé a EmiMatch y continuá descubriendo nuevas conexiones.
+              </p>
 
-          <button
-            type="button"
-            class="auth-back"
-            id="backToHome"
-          >
-            ← Volver
-          </button>
+              <div class="field">
 
-
-          <!-- LOGIN -->
-
-          <form
-            class="auth-form active"
-            id="loginForm"
-          >
-
-            <h2 class="auth-title">
-              Iniciar sesión
-            </h2>
-
-            <p class="auth-description">
-              Volvé a EmiMatch y continuá descubriendo nuevas conexiones.
-            </p>
-
-            <div class="field">
-
-              <label for="loginEmail">
-                Correo electrónico
-              </label>
-
-              <div class="input-wrap">
+                <label for="loginEmail">
+                  Correo electrónico
+                </label>
 
                 <input
                   id="loginEmail"
@@ -864,1025 +657,900 @@
 
               </div>
 
-            </div>
+              <div class="field">
 
+                <label for="loginPassword">
+                  Contraseña
+                </label>
 
-            <div class="field">
+                <div class="input-wrap">
 
-              <label for="loginPassword">
-                Contraseña
-              </label>
+                  <input
+                    id="loginPassword"
+                    class="password-input"
+                    type="password"
+                    autocomplete="current-password"
+                    placeholder="Tu contraseña"
+                    required
+                  >
 
-              <div class="input-wrap">
+                  <button
+                    type="button"
+                    class="password-toggle"
+                    data-target="loginPassword"
+                    aria-label="Mostrar contraseña"
+                  >
+                    👁
+                  </button>
 
-                <input
-                  id="loginPassword"
-                  class="password-input"
-                  type="password"
-                  autocomplete="current-password"
-                  placeholder="Tu contraseña"
-                  required
-                >
-
-                <button
-                  type="button"
-                  class="password-toggle"
-                  data-target="loginPassword"
-                  aria-label="Mostrar contraseña"
-                >
-                  👁
-                </button>
-
-              </div>
-
-            </div>
-
-
-            <button
-              type="submit"
-              class="form-submit"
-              id="loginSubmit"
-            >
-              Iniciar sesión
-            </button>
-
-            <button
-              type="button"
-              class="form-link"
-              id="forgotPassword"
-            >
-              ¿Olvidaste tu contraseña?
-            </button>
-
-            <button
-              type="button"
-              class="form-link"
-              id="goRegister"
-            >
-              Crear mi cuenta
-            </button>
-
-            <div
-              id="loginMessage"
-              class="auth-message"
-            ></div>
-
-          </form>
-
-
-          <!-- REGISTRO -->
-
-          <form
-            class="auth-form"
-            id="registerForm"
-          >
-
-            <h2 class="auth-title">
-              Crear mi cuenta
-            </h2>
-
-            <p class="auth-description">
-              Registrate gratis y empezá a conocer nuevas personas.
-            </p>
-
-
-            <div class="field">
-
-              <label for="registerEmail">
-                Correo electrónico
-              </label>
-
-              <input
-                id="registerEmail"
-                type="email"
-                autocomplete="email"
-                placeholder="tu@email.com"
-                required
-              >
-
-            </div>
-
-
-            <div class="field">
-
-              <label for="registerPassword">
-                Contraseña
-              </label>
-
-              <div class="input-wrap">
-
-                <input
-                  id="registerPassword"
-                  class="password-input"
-                  type="password"
-                  autocomplete="new-password"
-                  placeholder="Elegí una contraseña"
-                  minlength="6"
-                  required
-                >
-
-                <button
-                  type="button"
-                  class="password-toggle"
-                  data-target="registerPassword"
-                  aria-label="Mostrar contraseña"
-                >
-                  👁
-                </button>
+                </div>
 
               </div>
 
-            </div>
-
-
-            <button
-              type="submit"
-              class="form-submit"
-              id="registerSubmit"
-            >
-              Crear mi cuenta
-            </button>
-
-            <button
-              type="button"
-              class="form-link"
-              id="goLogin"
-            >
-              Ya tengo una cuenta
-            </button>
-
-            <div
-              id="registerMessage"
-              class="auth-message"
-            ></div>
-
-          </form>
-
-
-          <!-- RECUPERACIÓN -->
-
-          <form
-            class="auth-form"
-            id="recoveryForm"
-          >
-
-            <h2 class="auth-title">
-              Recuperar contraseña
-            </h2>
-
-            <p class="auth-description">
-              Ingresá tu correo y te enviaremos un enlace para recuperar tu cuenta.
-            </p>
-
-
-            <div class="field">
-
-              <label for="recoveryEmail">
-                Correo electrónico
-              </label>
-
-              <input
-                id="recoveryEmail"
-                type="email"
-                autocomplete="email"
-                placeholder="tu@email.com"
-                required
+              <button
+                type="submit"
+                class="form-submit"
+                id="loginSubmit"
               >
+                Iniciar sesión
+              </button>
 
-            </div>
+              <button
+                type="button"
+                class="form-link"
+                id="forgotPassword"
+              >
+                ¿Olvidaste tu contraseña?
+              </button>
 
+              <button
+                type="button"
+                class="form-link"
+                id="goRegister"
+              >
+                Crear mi cuenta
+              </button>
 
-            <button
-              type="submit"
-              class="form-submit"
-              id="recoverySubmit"
+              <div
+                id="loginMessage"
+                class="auth-message"
+              ></div>
+
+            </form>
+
+            <form
+              class="auth-form"
+              id="registerForm"
             >
-              Enviar enlace
-            </button>
 
-            <button
-              type="button"
-              class="form-link"
-              id="recoveryBackLogin"
+              <h2 class="auth-title">
+                Crear mi cuenta
+              </h2>
+
+              <p class="auth-description">
+                Registrate gratis y empezá a conocer nuevas personas.
+              </p>
+
+              <div class="field">
+
+                <label for="registerEmail">
+                  Correo electrónico
+                </label>
+
+                <input
+                  id="registerEmail"
+                  type="email"
+                  autocomplete="email"
+                  placeholder="tu@email.com"
+                  required
+                >
+
+              </div>
+
+              <div class="field">
+
+                <label for="registerPassword">
+                  Contraseña
+                </label>
+
+                <div class="input-wrap">
+
+                  <input
+                    id="registerPassword"
+                    class="password-input"
+                    type="password"
+                    autocomplete="new-password"
+                    placeholder="Elegí una contraseña"
+                    minlength="6"
+                    required
+                  >
+
+                  <button
+                    type="button"
+                    class="password-toggle"
+                    data-target="registerPassword"
+                    aria-label="Mostrar contraseña"
+                  >
+                    👁
+                  </button>
+
+                </div>
+
+              </div>
+
+              <button
+                type="submit"
+                class="form-submit"
+                id="registerSubmit"
+              >
+                Crear mi cuenta
+              </button>
+
+              <button
+                type="button"
+                class="form-link"
+                id="goLogin"
+              >
+                Ya tengo una cuenta
+              </button>
+
+              <div
+                id="registerMessage"
+                class="auth-message"
+              ></div>
+
+            </form>
+
+            <form
+              class="auth-form"
+              id="recoveryForm"
             >
-              Volver a iniciar sesión
-            </button>
 
-            <div
-              id="recoveryMessage"
-              class="auth-message"
-            ></div>
+              <h2 class="auth-title">
+                Recuperar contraseña
+              </h2>
 
-          </form>
+              <p class="auth-description">
+                Ingresá tu correo y te enviaremos un enlace
+                para recuperar tu cuenta.
+              </p>
+
+              <div class="field">
+
+                <label for="recoveryEmail">
+                  Correo electrónico
+                </label>
+
+                <input
+                  id="recoveryEmail"
+                  type="email"
+                  autocomplete="email"
+                  placeholder="tu@email.com"
+                  required
+                >
+
+              </div>
+
+              <button
+                type="submit"
+                class="form-submit"
+                id="recoverySubmit"
+              >
+                Enviar enlace
+              </button>
+
+              <button
+                type="button"
+                class="form-link"
+                id="recoveryBackLogin"
+              >
+                Volver a iniciar sesión
+              </button>
+
+              <div
+                id="recoveryMessage"
+                class="auth-message"
+              ></div>
+
+            </form>
+
+          </div>
 
         </div>
 
-      </div>
-
-    </section>
+      </section>
 
     </main>
-      <footer
-    style="
-      max-width:1180px;
-      margin:0 auto;
-      padding:0 20px 35px;
-    "
-  >
+    <style>
+  .auth-section {
+    display: none;
+    min-height: 100vh;
+    padding: 120px 20px 60px;
+    background:
+      radial-gradient(circle at top right, rgba(124, 92, 255, 0.18), transparent 35%),
+      radial-gradient(circle at bottom left, rgba(212, 175, 55, 0.10), transparent 35%),
+      #070b18;
+  }
 
-    <div
-      style="
-        height:1px;
-        background:rgba(255,255,255,.07);
-        margin-bottom:25px;
-      "
-    ></div>
+  .auth-section.active {
+    display: block;
+  }
 
-    <div
-      style="
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-        gap:20px;
-        flex-wrap:wrap;
-      "
-    >
+  .auth-container {
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+  }
 
-      <div
-        style="
-          color:#777d96;
-          font-size:12px;
-        "
-      >
-        Utilizá EmiMatch de forma responsable y respetuosa.
-      </div>
+  .auth-card {
+    position: relative;
+    padding: 38px 32px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 28px;
+    background: rgba(13, 18, 38, 0.94);
+    box-shadow:
+      0 30px 80px rgba(0, 0, 0, 0.45),
+      0 0 50px rgba(100, 80, 220, 0.08);
+    backdrop-filter: blur(18px);
+  }
 
-      <div
-        style="
-          display:flex;
-          gap:18px;
-          flex-wrap:wrap;
-        "
-      >
+  .auth-back {
+    border: 0;
+    background: transparent;
+    color: #b8bfd8;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 0;
+    margin-bottom: 28px;
+  }
 
-        <a
-          href="menu.html"
-          style="color:#858ba2;font-size:12px;"
-        >
-          Ayuda
-        </a>
+  .auth-back:hover {
+    color: #ffffff;
+  }
 
-        <a
-          href="#"
-          style="color:#858ba2;font-size:12px;"
-          onclick="return false;"
-        >
-          Privacidad
-        </a>
+  .auth-form {
+    display: none;
+  }
 
-        <a
-          href="configuración.html"
-          style="color:#858ba2;font-size:12px;"
-        >
-          Configuración
-        </a>
+  .auth-form.active {
+    display: block;
+  }
 
-      </div>
+  .auth-title {
+    margin: 0 0 10px;
+    color: #ffffff;
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
 
-    </div>
+  .auth-description {
+    margin: 0 0 30px;
+    color: #9da6c3;
+    line-height: 1.6;
+    font-size: 15px;
+  }
 
-    <div
-      style="
-        margin-top:18px;
-        color:#62687d;
-        font-size:11px;
-      "
-    >
-      © 2026 EmiMatch. Todos los derechos reservados.
-    </div>
+  .field {
+    margin-bottom: 20px;
+  }
 
-  </footer>
+  .field label {
+    display: block;
+    margin-bottom: 8px;
+    color: #e8ebf7;
+    font-size: 14px;
+    font-weight: 600;
+  }
 
-</div>
+  .field input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 15px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    outline: none;
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+    font-size: 15px;
+    transition: 0.2s ease;
+  }
 
+  .field input::placeholder {
+    color: #68718e;
+  }
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  .field input:focus {
+    border-color: rgba(166, 126, 255, 0.75);
+    background: rgba(255, 255, 255, 0.07);
+    box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.12);
+  }
 
-<script src="assets/js/config.js"></script>
+  .input-wrap {
+    position: relative;
+  }
+
+  .input-wrap input {
+    padding-right: 52px;
+  }
+
+  .password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    border: 0;
+    background: transparent;
+    color: #9da6c3;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 8px;
+  }
+
+  .form-submit {
+    width: 100%;
+    margin-top: 4px;
+    padding: 15px 20px;
+    border: 0;
+    border-radius: 15px;
+    background: linear-gradient(135deg, #7c5cff, #a46bff);
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 12px 30px rgba(124, 92, 255, 0.25);
+    transition: 0.2s ease;
+  }
+
+  .form-submit:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 16px 35px rgba(124, 92, 255, 0.35);
+  }
+
+  .form-submit:disabled {
+    opacity: 0.65;
+    cursor: wait;
+    transform: none;
+  }
+
+  .form-link {
+    display: block;
+    width: 100%;
+    margin-top: 18px;
+    border: 0;
+    background: transparent;
+    color: #bca8ff;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .form-link:hover {
+    color: #ffffff;
+  }
+
+  .auth-message {
+    display: none;
+    margin-top: 20px;
+    padding: 13px 15px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .auth-message.show {
+    display: block;
+  }
+
+  .auth-message.success {
+    background: rgba(46, 204, 113, 0.10);
+    border: 1px solid rgba(46, 204, 113, 0.25);
+    color: #7ee2a8;
+  }
+
+  .auth-message.error {
+    background: rgba(255, 82, 82, 0.10);
+    border: 1px solid rgba(255, 82, 82, 0.25);
+    color: #ff9b9b;
+  }
+
+  @media (max-width: 600px) {
+    .auth-section {
+      padding: 100px 15px 40px;
+    }
+
+    .auth-card {
+      padding: 30px 22px;
+      border-radius: 22px;
+    }
+
+    .auth-title {
+      font-size: 27px;
+    }
+  }
+</style>
 
 <script>
-  "use strict";
+  const config = window.EMIMATCH_CONFIG || {};
 
-  document.addEventListener("DOMContentLoaded", async () => {
+  const supabaseUrl = config.supabaseUrl;
+  const supabaseKey =
+    config.supabaseAnonKey || config.supabaseKey;
 
-    const authSection = document.getElementById("authSection");
+  let supabaseClient = null;
 
-    const loginForm = document.getElementById("loginForm");
-    const registerForm = document.getElementById("registerForm");
-    const recoveryForm = document.getElementById("recoveryForm");
-
-    const createAccountHero =
-      document.getElementById("createAccountHero");
-
-    const loginHero =
-      document.getElementById("loginHero");
-
-    const backToHome =
-      document.getElementById("backToHome");
-
-    const goRegister =
-      document.getElementById("goRegister");
-
-    const goLogin =
-      document.getElementById("goLogin");
-
-    const forgotPassword =
-      document.getElementById("forgotPassword");
-
-    const recoveryBackLogin =
-      document.getElementById("recoveryBackLogin");
-
-
-    function getConfig() {
-
-      const config =
-        window.EMIMATCH_CONFIG || {};
-
-      const supabaseUrl =
-        config.supabaseUrl;
-
-      const supabaseKey =
-        config.supabaseKey ||
-        config.supabaseAnonKey;
-
-      if (!supabaseUrl || !supabaseKey) {
-        throw new Error(
-          "Configuración de Supabase incompleta."
-        );
-      }
-
-      return {
-        supabaseUrl,
-        supabaseKey
-      };
-    }
-
-
-    let supabaseClient = null;
-
-
-    try {
-
-      const config = getConfig();
-
-      supabaseClient =
-        window.supabase.createClient(
-          config.supabaseUrl,
-          config.supabaseKey
-        );
-
-    } catch (error) {
-
-      console.error(
-        "Error iniciando Supabase:",
-        error
-      );
-
-    }
-
-
-    function showAuth(form) {
-
-      authSection.classList.add("visible");
-      authSection.setAttribute(
-        "aria-hidden",
-        "false"
-      );
-
-      loginForm.classList.remove("active");
-      registerForm.classList.remove("active");
-      recoveryForm.classList.remove("active");
-
-      form.classList.add("active");
-
-      setTimeout(() => {
-
-        authSection.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
-
-      }, 40);
-    }
-
-
-    function hideAuth() {
-
-      authSection.classList.remove("visible");
-      authSection.setAttribute(
-        "aria-hidden",
-        "true"
-      );
-
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-      });
-    }
-
-
-    function clearMessages() {
-
-      document
-        .querySelectorAll(".auth-message")
-        .forEach(message => {
-
-          message.className =
-            "auth-message";
-
-          message.textContent = "";
-
-        });
-
-    }
-
-
-    function showMessage(
-      element,
-      message,
-      type = "info"
-    ) {
-
-      element.textContent = message;
-
-      element.className =
-        "auth-message visible " + type;
-    }
-
-
-    function setLoading(
-      button,
-      loading,
-      normalText
-    ) {
-
-      button.disabled = loading;
-
-      button.textContent =
-        loading
-          ? "Procesando..."
-          : normalText;
-    }
-
-
-    createAccountHero.addEventListener(
-      "click",
-      () => {
-
-        clearMessages();
-
-        showAuth(registerForm);
-
-      }
+  if (
+    window.supabase &&
+    supabaseUrl &&
+    supabaseKey
+  ) {
+    supabaseClient = window.supabase.createClient(
+      supabaseUrl,
+      supabaseKey
     );
+  }
 
+  const landingSection =
+    document.getElementById("landingSection");
 
-    loginHero.addEventListener(
-      "click",
-      () => {
+  const authSection =
+    document.getElementById("authSection");
 
-        clearMessages();
+  const loginForm =
+    document.getElementById("loginForm");
 
-        showAuth(loginForm);
+  const registerForm =
+    document.getElementById("registerForm");
 
-      }
-    );
+  const recoveryForm =
+    document.getElementById("recoveryForm");
 
+  const loginMessage =
+    document.getElementById("loginMessage");
 
-    backToHome.addEventListener(
-      "click",
-      () => {
+  const registerMessage =
+    document.getElementById("registerMessage");
 
-        hideAuth();
+  const recoveryMessage =
+    document.getElementById("recoveryMessage");
 
-      }
-    );
+  function showMessage(element, message, type) {
+    if (!element) return;
 
+    element.textContent = message;
+    element.className =
+      "auth-message show " + type;
+  }
 
-    goRegister.addEventListener(
-      "click",
-      () => {
+  function clearMessages() {
+    [
+      loginMessage,
+      registerMessage,
+      recoveryMessage
+    ].forEach(function (element) {
+      if (!element) return;
 
-        clearMessages();
+      element.textContent = "";
+      element.className = "auth-message";
+    });
+  }
 
-        showAuth(registerForm);
+  function setLoading(button, loading, normalText) {
+    if (!button) return;
 
-      }
-    );
+    button.disabled = loading;
+    button.textContent =
+      loading ? "Procesando..." : normalText;
+  }
 
+  function showHome() {
+    clearMessages();
 
-    goLogin.addEventListener(
-      "click",
-      () => {
+    authSection.classList.remove("active");
+    authSection.setAttribute("aria-hidden", "true");
 
-        clearMessages();
+    landingSection.style.display = "block";
 
-        showAuth(loginForm);
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
 
-      }
-    );
+  function showAuth(form) {
+    clearMessages();
 
+    landingSection.style.display = "none";
 
-    forgotPassword.addEventListener(
-      "click",
-      () => {
+    authSection.classList.add("active");
+    authSection.setAttribute("aria-hidden", "false");
 
-        clearMessages();
+    [
+      loginForm,
+      registerForm,
+      recoveryForm
+    ].forEach(function (item) {
+      item.classList.remove("active");
+    });
 
-        showAuth(recoveryForm);
+    form.classList.add("active");
 
-      }
-    );
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
 
+  function redirectAfterLogin() {
+    window.location.href = "perfil.html";
+  }
 
-    recoveryBackLogin.addEventListener(
-      "click",
-      () => {
+  document
+    .getElementById("createAccountHero")
+    .addEventListener("click", function () {
+      showAuth(registerForm);
+    });
 
-        clearMessages();
+  document
+    .getElementById("loginHero")
+    .addEventListener("click", function () {
+      showAuth(loginForm);
+    });
 
-        showAuth(loginForm);
+  document
+    .getElementById("backToHome")
+    .addEventListener("click", function () {
+      showHome();
+    });
 
-      }
-    );
+  document
+    .getElementById("goRegister")
+    .addEventListener("click", function () {
+      showAuth(registerForm);
+    });
 
+  document
+    .getElementById("goLogin")
+    .addEventListener("click", function () {
+      showAuth(loginForm);
+    });
 
-    /* =========================
-       MOSTRAR / OCULTAR CONTRASEÑA
-    ========================= */
+  document
+    .getElementById("forgotPassword")
+    .addEventListener("click", function () {
+      showAuth(recoveryForm);
+    });
 
-    document
-      .querySelectorAll(".password-toggle")
-      .forEach(toggle => {
+  document
+    .getElementById("recoveryBackLogin")
+    .addEventListener("click", function () {
+      showAuth(loginForm);
+    });
 
-        toggle.addEventListener(
-          "click",
-          () => {
+  document
+    .querySelectorAll(".password-toggle")
+    .forEach(function (button) {
 
-            const targetId =
-              toggle.dataset.target;
+      button.addEventListener("click", function () {
 
-            const input =
-              document.getElementById(targetId);
-
-            if (!input) return;
-
-            if (input.type === "password") {
-
-              input.type = "text";
-              toggle.textContent = "🙈";
-
-            } else {
-
-              input.type = "password";
-              toggle.textContent = "👁";
-
-            }
-
-          }
-        );
-
-      });
-
-
-    /* =========================
-       LOGIN
-    ========================= */
-
-    loginForm.addEventListener(
-      "submit",
-      async event => {
-
-        event.preventDefault();
-
-        clearMessages();
-
-        const email =
-          document
-            .getElementById("loginEmail")
-            .value
-            .trim();
-
-        const password =
-          document
-            .getElementById("loginPassword")
-            .value;
-
-        const button =
+        const target =
           document.getElementById(
-            "loginSubmit"
+            button.dataset.target
           );
 
-        const message =
-          document.getElementById(
-            "loginMessage"
-          );
+        if (!target) return;
 
+        if (target.type === "password") {
+          target.type = "text";
+          button.textContent = "🙈";
+        } else {
+          target.type = "password";
+          button.textContent = "👁";
+        }
+      });
+    });
 
-        if (!supabaseClient) {
+  loginForm.addEventListener(
+    "submit",
+    async function (event) {
 
-          showMessage(
-            message,
-            "No se pudo conectar con EmiMatch. Revisá la configuración de Supabase.",
-            "error"
-          );
+      event.preventDefault();
 
-          return;
+      clearMessages();
+
+      if (!supabaseClient) {
+        showMessage(
+          loginMessage,
+          "No se pudo conectar con EmiMatch. Revisá la configuración de Supabase.",
+          "error"
+        );
+        return;
+      }
+
+      const email =
+        document
+          .getElementById("loginEmail")
+          .value
+          .trim();
+
+      const password =
+        document.getElementById(
+          "loginPassword"
+        ).value;
+
+      const button =
+        document.getElementById(
+          "loginSubmit"
+        );
+
+      setLoading(
+        button,
+        true,
+        "Iniciar sesión"
+      );
+
+      try {
+        const result =
+          await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
+          });
+
+        if (result.error) {
+          throw result.error;
         }
 
+        showMessage(
+          loginMessage,
+          "Inicio de sesión correcto. Entrando...",
+          "success"
+        );
 
-        try {
+        setTimeout(
+          redirectAfterLogin,
+          500
+        );
 
-          setLoading(
-            button,
-            true,
-            "Iniciar sesión"
-          );
+      } catch (error) {
 
-
-          const {
-            data,
-            error
-          } =
-            await supabaseClient.auth.signInWithPassword({
-              email,
-              password
-            });
-
-
-          if (error) {
-            throw error;
-          }
-
-
-          if (!data || !data.user) {
-
-            throw new Error(
-              "No se pudo iniciar la sesión."
-            );
-
-          }
-
-
-          showMessage(
-            message,
-            "¡Bienvenido nuevamente! Entrando a tu perfil...",
-            "success"
-          );
-
-
-          setTimeout(() => {
-
-            window.location.href =
-              "perfil.html";
-
-          }, 700);
-
-
-        } catch (error) {
-
-          console.error(
-            "Error de inicio de sesión:",
-            error
-          );
-
-          showMessage(
-            message,
-            error.message ||
+        showMessage(
+          loginMessage,
+          error.message ||
             "No se pudo iniciar sesión.",
-            "error"
-          );
+          "error"
+        );
 
-        } finally {
+      } finally {
 
-          setLoading(
-            button,
-            false,
-            "Iniciar sesión"
-          );
-
-        }
-
+        setLoading(
+          button,
+          false,
+          "Iniciar sesión"
+        );
       }
-    );
-        /* =========================
-       REGISTRO
-    ========================= */
+    }
+  );
 
-    registerForm.addEventListener(
-      "submit",
-      async event => {
+  registerForm.addEventListener(
+    "submit",
+    async function (event) {
 
-        event.preventDefault();
+      event.preventDefault();
 
-        clearMessages();
+      clearMessages();
 
-        const email =
-          document
-            .getElementById("registerEmail")
-            .value
-            .trim();
-
-        const password =
-          document
-            .getElementById("registerPassword")
-            .value;
-
-        const button =
-          document.getElementById(
-            "registerSubmit"
-          );
-
-        const message =
-          document.getElementById(
-            "registerMessage"
-          );
-
-
-        if (password.length < 6) {
-
-          showMessage(
-            message,
-            "La contraseña debe tener al menos 6 caracteres.",
-            "error"
-          );
-
-          return;
-        }
-
-
-        if (!supabaseClient) {
-
-          showMessage(
-            message,
-            "No se pudo conectar con EmiMatch. Revisá la configuración de Supabase.",
-            "error"
-          );
-
-          return;
-        }
-
-
-        try {
-
-          setLoading(
-            button,
-            true,
-            "Crear mi cuenta"
-          );
-
-
-          const redirectUrl =
-            window.location.origin +
-            window.location.pathname
-              .replace(
-                /index\.html$/,
-                ""
-              ) +
-            "perfil.html";
-
-
-          const {
-            data,
-            error
-          } =
-            await supabaseClient.auth.signUp({
-              email,
-              password,
-              options: {
-                emailRedirectTo: redirectUrl
-              }
-            });
-
-
-          if (error) {
-            throw error;
-          }
-
-
-          if (
-            data &&
-            data.session
-          ) {
-
-            showMessage(
-              message,
-              "Cuenta creada correctamente. Entrando a tu perfil...",
-              "success"
-            );
-
-
-            setTimeout(() => {
-
-              window.location.href =
-                "perfil.html";
-
-            }, 700);
-
-
-            return;
-          }
-
-
-          showMessage(
-            message,
-            "Cuenta creada. Revisá tu correo para confirmar tu cuenta.",
-            "success"
-          );
-
-
-        } catch (error) {
-
-          console.error(
-            "Error de registro:",
-            error
-          );
-
-          showMessage(
-            message,
-            error.message ||
-            "No se pudo crear la cuenta.",
-            "error"
-          );
-
-        } finally {
-
-          setLoading(
-            button,
-            false,
-            "Crear mi cuenta"
-          );
-
-        }
-
+      if (!supabaseClient) {
+        showMessage(
+          registerMessage,
+          "No se pudo conectar con EmiMatch. Revisá la configuración de Supabase.",
+          "error"
+        );
+        return;
       }
-    );
 
+      const email =
+        document
+          .getElementById("registerEmail")
+          .value
+          .trim();
 
-    /* =========================
-       RECUPERACIÓN
-    ========================= */
+      const password =
+        document.getElementById(
+          "registerPassword"
+        ).value;
 
-    recoveryForm.addEventListener(
-      "submit",
-      async event => {
+      const button =
+        document.getElementById(
+          "registerSubmit"
+        );
 
-        event.preventDefault();
-
-        clearMessages();
-
-        const email =
-          document
-            .getElementById("recoveryEmail")
-            .value
-            .trim();
-
-        const button =
-          document.getElementById(
-            "recoverySubmit"
-          );
-
-        const message =
-          document.getElementById(
-            "recoveryMessage"
-          );
-
-
-        if (!supabaseClient) {
-
-          showMessage(
-            message,
-            "No se pudo conectar con EmiMatch.",
-            "error"
-          );
-
-          return;
-        }
-
-
-        try {
-
-          setLoading(
-            button,
-            true,
-            "Enviar enlace"
-          );
-
-
-          const redirectUrl =
-            window.location.origin +
-            window.location.pathname
-              .replace(
-                /index\.html$/,
-                ""
-              ) +
-            "restablecer.html";
-
-
-          const {
-            error
-          } =
-            await supabaseClient.auth
-              .resetPasswordForEmail(
-                email,
-                {
-                  redirectTo:
-                    redirectUrl
-                }
-              );
-
-
-          if (error) {
-            throw error;
-          }
-
-
-          showMessage(
-            message,
-            "Te enviamos un enlace para recuperar tu contraseña.",
-            "success"
-          );
-
-
-        } catch (error) {
-
-          console.error(
-            "Error de recuperación:",
-            error
-          );
-
-          showMessage(
-            message,
-            error.message ||
-            "No se pudo enviar el enlace.",
-            "error"
-          );
-
-        } finally {
-
-          setLoading(
-            button,
-            false,
-            "Enviar enlace"
-          );
-
-        }
-
+      if (password.length < 6) {
+        showMessage(
+          registerMessage,
+          "La contraseña debe tener al menos 6 caracteres.",
+          "error"
+        );
+        return;
       }
-    );
 
+      const redirectUrl =
+        window.location.origin +
+        window.location.pathname.replace(
+          /index\.html$/,
+          ""
+        );
 
-    /* =========================
-       SI YA HAY SESIÓN
-    ========================= */
-
-    if (supabaseClient) {
+      setLoading(
+        button,
+        true,
+        "Crear mi cuenta"
+      );
 
       try {
 
-        const {
-          data
-        } =
-          await supabaseClient.auth.getSession();
+        const result =
+          await supabaseClient.auth.signUp({
+            email: email,
+            password: password,
+            options: {
+              emailRedirectTo: redirectUrl
+            }
+          });
 
+        if (result.error) {
+          throw result.error;
+        }
 
-        if (
-          data &&
-          data.session &&
-          window.location.pathname.endsWith(
-            "index.html"
-          )
-        ) {
+        if (result.data && result.data.session) {
 
-          console.log(
-            "Sesión activa detectada."
+          showMessage(
+            registerMessage,
+            "Cuenta creada correctamente. Entrando...",
+            "success"
           );
 
+          setTimeout(
+            redirectAfterLogin,
+            500
+          );
+
+        } else {
+
+          showMessage(
+            registerMessage,
+            "Cuenta creada. Revisá tu correo para confirmar tu cuenta.",
+            "success"
+          );
         }
 
       } catch (error) {
 
-        console.warn(
-          "No se pudo comprobar la sesión:",
-          error
+        showMessage(
+          registerMessage,
+          error.message ||
+            "No se pudo crear la cuenta.",
+          "error"
         );
 
+      } finally {
+
+        setLoading(
+          button,
+          false,
+          "Crear mi cuenta"
+        );
+      }
+    }
+  );
+
+  recoveryForm.addEventListener(
+    "submit",
+    async function (event) {
+
+      event.preventDefault();
+
+      clearMessages();
+
+      if (!supabaseClient) {
+        showMessage(
+          recoveryMessage,
+          "No se pudo conectar con EmiMatch. Revisá la configuración de Supabase.",
+          "error"
+        );
+        return;
       }
 
+      const email =
+        document
+          .getElementById("recoveryEmail")
+          .value
+          .trim();
+
+      const button =
+        document.getElementById(
+          "recoverySubmit"
+        );
+
+      const redirectUrl =
+        window.location.origin +
+        window.location.pathname.replace(
+          /index\.html$/,
+          ""
+        ) +
+        "restablecer.html";
+
+      setLoading(
+        button,
+        true,
+        "Enviar enlace"
+      );
+
+      try {
+
+        const result =
+          await supabaseClient.auth.resetPasswordForEmail(
+            email,
+            {
+              redirectTo: redirectUrl
+            }
+          );
+
+        if (result.error) {
+          throw result.error;
+        }
+
+        showMessage(
+          recoveryMessage,
+          "Te enviamos un enlace para recuperar tu contraseña. Revisá tu correo.",
+          "success"
+        );
+
+      } catch (error) {
+
+        showMessage(
+          recoveryMessage,
+          error.message ||
+            "No se pudo enviar el enlace de recuperación.",
+          "error"
+        );
+
+      } finally {
+
+        setLoading(
+          button,
+          false,
+          "Enviar enlace"
+        );
+      }
+    }
+  );
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", async function () {
+    if (!supabaseClient) {
+      console.error(
+        "EmiMatch: Supabase no está configurado correctamente."
+      );
+      return;
     }
 
+    try {
+      const {
+        data: { session }
+      } = await supabaseClient.auth.getSession();
+
+      if (session) {
+        console.log(
+          "EmiMatch: sesión activa.",
+          session.user.email
+        );
+      }
+    } catch (error) {
+      console.error(
+        "EmiMatch: error verificando sesión.",
+        error
+      );
+    }
   });
 </script>
-
 </body>
 </html>
