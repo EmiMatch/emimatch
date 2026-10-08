@@ -4,83 +4,191 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Menú - EmiMatch</title>
+
 <link rel="stylesheet" href="assets/css/app.css">
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/js/config.js"></script>
 <script src="assets/js/app.js"></script>
 <script src="assets/js/components.js"></script>
 </head>
+
 <body>
+
 <main class="em-container em-section">
 <section class="em-shell">
+
 <div class="em-card">
-<div class="em-brand"><span class="em-brand-mark">💕</span><span>EmiMatch</span></div>
-<h1>☰ Menú</h1>
-<p class="em-muted">Todo lo que necesitás para administrar tu experiencia.</p>
+<div class="em-brand">
+<span class="em-brand-mark">💕</span>
+<span>EmiMatch</span>
 </div>
+
+<h1>☰ Menú</h1>
+<p class="em-muted">
+Todo lo que necesitás para administrar tu experiencia.
+</p>
+</div>
+
 
 <div class="em-card">
 <h2>💘 Conexiones</h2>
-<a class="em-button em-button-primary" href="descubrir.html">🔎 Descubrir personas</a>
-<a class="em-button" href="matches.html">💕 Mis Matches</a>
-<a class="em-button" href="likes.html">❤️ Me gustas</a>
-<a class="em-button" href="chat.html">💬 Mis mensajes</a>
+
+<a class="em-button em-button-primary" href="descubrir.html">
+🔎 Descubrir personas
+</a>
+
+<a class="em-button" href="matches.html">
+💕 Mis Matches
+</a>
+
+<a class="em-button" href="likes.html">
+❤️ Me gustas
+</a>
+
+<a class="em-button" href="chat.html">
+💬 Mis mensajes
+</a>
 </div>
+
 
 <div class="em-card">
 <h2>👤 Mi cuenta</h2>
-<a class="em-button" href="perfil.html">👤 Mi perfil</a>
-<a class="em-button" href="perfil-usuario.html">🔗 Ver perfil público</a>
-<a class="em-button" href="notificaciones.html">🔔 Notificaciones</a>
-<a class="em-button" href="configuracion.html">⚙️ Configuración</a>
-<a class="em-button" href="membresia/membresia.html">💎 EmiMatch Premium</a>
+
+<a class="em-button" href="perfil.html">
+👤 Mi perfil
+</a>
+
+<a class="em-button" href="perfil-usuario.html">
+🔗 Ver perfil público
+</a>
+
+<a class="em-button" href="notificaciones.html">
+🔔 Notificaciones
+</a>
+
+<a class="em-button" href="configuracion.html">
+⚙️ Configuración
+</a>
+
+<a class="em-button" href="membresia/membresia.html">
+💎 EmiMatch Premium
+</a>
 </div>
 
-<div class="em-card">
-<h2>🛠️ Administracion</h2>
-<p class="em-muted">Administrá tu cuenta, seguridad y preferencias de EmiMatch.</p>
-<a class="em-button" href="configuracion.html">🧾 Administracion</a>
-</div>
 
 <div class="em-card">
 <h2>🛡️ Seguridad</h2>
-<p class="em-muted">Administrá tu cuenta y mantené una experiencia segura dentro de EmiMatch.</p>
-<a class="em-button" href="configuracion.html">🔐 Seguridad y cuenta</a>
+
+<p class="em-muted">
+Administrá tu cuenta y mantené una experiencia segura dentro de EmiMatch.
+</p>
+
+<a class="em-button" href="configuracion.html">
+🔐 Seguridad y cuenta
+</a>
 </div>
 
+
+<!--
+  ADMINISTRACIÓN
+  Este bloque permanece oculto por defecto.
+  Solamente se muestra si Supabase confirma que
+  el usuario autenticado es administrador.
+-->
 <div id="adminSection" class="em-card" hidden>
+
 <h2>🛡️ Administración</h2>
-<p class="em-muted">Panel exclusivo para el administrador de EmiMatch.</p>
-<a id="adminLink" class="em-button em-button-primary" href="admin.html">⚙️ Administración</a>
+
+<p class="em-muted">
+Panel exclusivo para el administrador de EmiMatch.
+</p>
+
+<a
+id="adminLink"
+class="em-button em-button-primary"
+href="admin.html">
+⚙️ Administración
+</a>
+
 </div>
+
 
 <div id="message" class="em-alert" hidden></div>
+
 </section>
 </main>
-<script>
-(()=>{
-"use strict";
-const c=window.EMIMATCH_CONFIG;
-if(!c){location.replace('index.html');return;}
-const db=window.supabase.createClient(c.supabaseUrl,c.supabaseKey);
-(async()=>{
- const {data:{session}}=await db.auth.getSession();
- if(!session){location.replace('index.html');return;}
 
- try{
-   const {data,error}=await db.rpc('is_admin');
-   if(!error && data===true){
-     document.getElementById('adminSection').hidden=false;
-   }
- }catch(e){
-   console.warn('Verificación de administrador:',e);
- }
+
+<script>
+(() => {
+"use strict";
+
+const c = window.EMIMATCH_CONFIG;
+
+if (!c) {
+location.replace("index.html");
+return;
+}
+
+const db = window.supabase.createClient(
+c.supabaseUrl,
+c.supabaseKey
+);
+
+(async () => {
+
+const {
+data: { session }
+} = await db.auth.getSession();
+
+if (!session) {
+location.replace("index.html");
+return;
+}
+
+try {
+
+const { data, error } = await db.rpc("is_admin");
+
+if (!error && data === true) {
+
+const adminSection =
+document.getElementById("adminSection");
+
+if (adminSection) {
+adminSection.hidden = false;
+}
+
+}
+
+} catch (e) {
+
+console.warn(
+"Verificación de administrador:",
+e
+);
+
+}
+
 })();
-(async()=>{
- const {data,error}=await db.auth.getSession();
- if(error||!data.session){location.replace('index.html');}
+
+
+(async () => {
+
+const {
+data,
+error
+} = await db.auth.getSession();
+
+if (error || !data.session) {
+location.replace("index.html");
+}
+
 })();
+
 })();
 </script>
+
 </body>
 </html>
