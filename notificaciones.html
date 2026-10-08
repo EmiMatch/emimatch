@@ -1,57 +1,1506 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>EmiMatch - Notificaciones</title>
-<meta name="theme-color" content="#07152f">
-<link rel="stylesheet" href="assets/css/app.css">
-<style>
-body{margin:0;background:#071225;color:#fff;font-family:Arial,sans-serif}.page{max-width:760px;margin:auto;padding:90px 16px 120px}h1{text-align:center;margin:0 0 8px}.sub{text-align:center;color:#aab6ca;margin-bottom:20px}.tools{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:18px}.tools button{border:0;border-radius:12px;padding:10px 14px;font-weight:700;cursor:pointer;background:#263653;color:#fff}.tools .primary{background:#d8ad42;color:#071225}.status,.notice{background:#101d34;border:1px solid #263653;border-radius:18px;padding:18px;margin-bottom:12px}.notice{display:flex;gap:13px;align-items:center;cursor:pointer}.avatar{width:58px;height:58px;border-radius:50%;object-fit:cover;border:2px solid #d8ad42;flex:none}.info{flex:1;min-width:0}.name{font-weight:800}.msg{margin-top:5px;color:#d8deea;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.time{margin-top:5px;color:#8e9ab0;font-size:12px}.dot{width:10px;height:10px;border-radius:50%;background:#ff3f70;flex:none}.empty{text-align:center;color:#aab6ca;padding:35px 15px}@media(max-width:480px){.page{padding-top:80px}.notice{padding:13px}.avatar{width:52px;height:52px}}
-</style>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>EmiMatch - Notificaciones</title>
+
+  <link
+    rel="stylesheet"
+    href="assets/css/app.css"
+  >
+
+  <style>
+
+    :root{
+      --bg:#071225;
+      --surface:#101d34;
+      --surface2:#152642;
+      --gold:#d8ad42;
+      --text:#fff;
+      --muted:#9eabc0;
+      --border:rgba(255,255,255,.08);
+      --pink:#ff4f87;
+    }
+
+    *{
+      box-sizing:border-box;
+    }
+
+    body{
+      margin:0;
+      min-height:100vh;
+      background:
+        radial-gradient(
+          circle at top,
+          rgba(76,29,149,.20),
+          transparent 42%
+        ),
+        var(--bg);
+      color:var(--text);
+      font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+    }
+
+    .notifications-page{
+      width:100%;
+      max-width:680px;
+      min-height:100vh;
+      margin:0 auto;
+      padding:18px 14px 110px;
+    }
+
+    /* HEADER */
+
+    .notifications-header{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:14px 4px 20px;
+    }
+
+    .back{
+      width:42px;
+      height:42px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:14px;
+      text-decoration:none;
+      color:#fff;
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--border);
+      font-size:22px;
+    }
+
+    .header-icon{
+      width:48px;
+      height:48px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:16px;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(216,173,66,.22),
+          rgba(76,29,149,.28)
+        );
+
+      border:1px solid
+        rgba(216,173,66,.25);
+
+      font-size:24px;
+    }
+
+    .header-text{
+      flex:1;
+      min-width:0;
+    }
+
+    .header-text h1{
+      margin:0;
+      font-size:24px;
+      font-weight:800;
+    }
+
+    .header-text p{
+      margin:5px 0 0;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    /* ACTIONS */
+
+    .actions{
+      display:flex;
+      gap:8px;
+      margin-bottom:14px;
+    }
+
+    .action-btn{
+      flex:1;
+      min-height:42px;
+      border:1px solid var(--border);
+      border-radius:13px;
+      background:rgba(255,255,255,.05);
+      color:#fff;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    .action-btn.primary{
+      background:
+        linear-gradient(
+          135deg,
+          #d8ad42,
+          #b98c25
+        );
+
+      color:#071225;
+      border:0;
+    }
+
+    .action-btn:active{
+      transform:scale(.98);
+    }
+
+    /* CONTENEDOR */
+
+    .notifications-list{
+      display:flex;
+      flex-direction:column;
+      gap:9px;
+    }
+
+    /* NOTIFICACIÓN */
+
+    .notification{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:14px;
+
+      border-radius:19px;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(16,29,52,.98),
+          rgba(21,38,66,.94)
+        );
+
+      border:1px solid var(--border);
+
+      cursor:pointer;
+
+      transition:
+        transform .15s ease,
+        border-color .15s ease;
+    }
+
+    .notification:hover{
+      border-color:
+        rgba(216,173,66,.28);
+    }
+
+    .notification:active{
+      transform:scale(.985);
+    }
+
+    /* ICONO */
+
+    .notification-icon{
+      width:52px;
+      height:52px;
+      flex:none;
+
+      display:flex;
+      align-items:center;
+      justify-content:center;
+
+      border-radius:16px;
+
+      background:
+        rgba(216,173,66,.10);
+
+      border:
+        1px solid
+        rgba(216,173,66,.18);
+
+      font-size:25px;
+    }
+
+    .notification-content{
+      flex:1;
+      min-width:0;
+    }
+
+    .notification-title{
+      font-size:15px;
+      font-weight:800;
+      margin-bottom:4px;
+    }
+
+    .notification-text{
+      color:#aebbd0;
+      font-size:13px;
+      line-height:1.4;
+    }
+
+    .notification-time{
+      margin-top:5px;
+      color:#7f8ca3;
+      font-size:11px;
+    }
+
+  </style>
+
 </head>
+
 <body>
-<main class="page">
-<h1>🔔 Notificaciones</h1>
-<div class="sub">Mensajes y actividad reciente</div>
-<div class="tools"><button class="primary" id="refresh">🔄 Actualizar</button><button id="readAll">✓✓ Marcar mensajes leídos</button></div>
-<div id="status" class="status">Cargando notificaciones...</div>
-<section id="list"></section>
-</main>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <main class="notifications-page">
+
+    <header class="notifications-header">
+
+      <a
+        class="back"
+        href="menu.html"
+        aria-label="Volver"
+      >
+        ←
+      </a>
+
+      <div class="header-icon">
+        🔔
+      </div>
+
+      <div class="header-text">
+
+        <h1>
+          Notificaciones
+        </h1>
+
+        <p>
+          Tus novedades y alertas
+        </p>
+
+      </div>
+
+    </header>
+
+
+    <section class="actions">
+
+      <button
+        id="refreshButton"
+        class="action-btn"
+        type="button"
+      >
+        🔄 Actualizar
+      </button>
+
+      <button
+        id="readAllButton"
+        class="action-btn primary"
+        type="button"
+      >
+        ✓✓ Leer todo
+      </button>
+
+    </section>
+        <section
+      id="status"
+      class="status"
+    >
+
+      <div class="loading">
+
+        <span class="spinner"></span>
+
+        <span>
+          Cargando notificaciones...
+        </span>
+
+      </div>
+
+    </section>
+
+
+    <section
+      id="notificationsList"
+      class="notifications-list"
+      hidden
+    ></section>
+
+
+    <section
+      id="emptyState"
+      class="empty-state"
+      hidden
+    >
+
+      <div class="empty-icon">
+        🔔
+      </div>
+
+      <h2>
+        No tenés notificaciones
+      </h2>
+
+      <p>
+        Acá vas a recibir avisos cuando
+        tengas un nuevo mensaje, un match,
+        una solicitud o alguien vea tu perfil.
+      </p>
+
+    </section>
+
+
+    <div class="bottom-space"></div>
+
+  </main>
+
+
+  <style>
+
+    /* ESTADOS */
+
+    .status{
+      text-align:center;
+      padding:26px 16px;
+      border-radius:20px;
+      background:rgba(255,255,255,.04);
+      border:1px solid var(--border);
+      color:var(--muted);
+      line-height:1.5;
+    }
+
+    .loading{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:9px;
+    }
+
+    .spinner{
+      width:18px;
+      height:18px;
+      border-radius:50%;
+      border:2px solid
+        rgba(255,255,255,.15);
+
+      border-top-color:
+        var(--gold);
+
+      animation:
+        spin .8s linear infinite;
+    }
+
+    @keyframes spin{
+
+      to{
+        transform:rotate(360deg);
+      }
+
+    }
+
+    .empty-state{
+      text-align:center;
+      padding:42px 20px;
+      border-radius:22px;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(16,29,52,.96),
+          rgba(21,38,66,.90)
+        );
+
+      border:1px solid var(--border);
+    }
+
+    .empty-icon{
+      font-size:48px;
+      margin-bottom:12px;
+    }
+
+    .empty-state h2{
+      margin:
+        0 0 8px;
+
+      font-size:20px;
+    }
+
+    .empty-state p{
+      margin:0 auto;
+      max-width:430px;
+
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.55;
+    }
+
+    .bottom-space{
+      height:20px;
+    }
+
+    @media(max-width:420px){
+
+      .notifications-page{
+        padding-left:10px;
+        padding-right:10px;
+      }
+
+      .header-text h1{
+        font-size:21px;
+      }
+
+      .header-icon{
+        width:44px;
+        height:44px;
+      }
+
+      .notification{
+        padding:12px;
+      }
+
+      .notification-icon{
+        width:48px;
+        height:48px;
+      }
+
+    }
+
+     </style>
+     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="assets/js/config.js"></script>
+
 <script>
+
 "use strict";
-let client,user,channel;
-const $=id=>document.getElementById(id);
-const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]));
-const ago=d=>{const s=Math.max(0,Math.floor((Date.now()-new Date(d))/1000));if(s<60)return"Ahora";const m=Math.floor(s/60);if(m<60)return`Hace ${m} min`;const h=Math.floor(m/60);if(h<24)return`Hace ${h} h`;const day=Math.floor(h/24);return day<7?`Hace ${day} d`:new Date(d).toLocaleDateString("es-AR",{day:"2-digit",month:"2-digit"})};
-async function start(){if(!window.EMIMATCH_CONFIG){$("status").textContent="Error: falta config.js";return}client=window.supabase.createClient(EMIMATCH_CONFIG.supabaseUrl,EMIMATCH_CONFIG.supabaseKey);const {data:{session}}=await client.auth.getSession();if(!session){location.href="index.html";return}user=session.user;await load();activateRealtime()}
-async function load(){
- $("status").textContent="Cargando notificaciones...";$("list").innerHTML="";
- const {data:matches,error:me}=await client.from("matches").select("id,user1_id,user2_id,created_at").or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`).order("created_at",{ascending:false});
- if(me){$("status").textContent="Error al cargar notificaciones: "+me.message;return}
- const rows=[];
- for(const match of matches||[]){
-  const other=match.user1_id===user.id?match.user2_id:match.user1_id;
-  const {data:messages,error:msgError}=await client.from("messages").select("id,match_id,sender_id,content,created_at,read_at").eq("match_id",match.id).neq("sender_id",user.id).order("created_at",{ascending:false}).limit(20);
-  if(msgError)continue;
-  if(!messages?.length)continue;
-  const {data:profile}=await client.from("profiles").select("id,nombre,foto_url").eq("id",other).maybeSingle();
-  messages.forEach(message=>rows.push({message,profile,other}));
- }
- rows.sort((a,b)=>new Date(b.message.created_at)-new Date(a.message.created_at));
- if(!rows.length){$("status").style.display="block";$("status").innerHTML="🔔 No tenés mensajes recibidos todavía.";return}
- $("status").style.display="none";
- rows.forEach(x=>render(x));
+
+/* =========================================================
+   EMIMATCH — NOTIFICACIONES
+   PARTE 3/7
+   ========================================================= */
+
+let client = null;
+let currentUser = null;
+let realtimeChannel = null;
+
+const statusEl =
+  document.getElementById("status");
+
+const notificationsList =
+  document.getElementById(
+    "notificationsList"
+  );
+
+const emptyStateEl =
+  document.getElementById("emptyState");
+
+const refreshButton =
+  document.getElementById(
+    "refreshButton"
+  );
+
+const readAllButton =
+  document.getElementById(
+    "readAllButton"
+  );
+
+
+/* =========================================================
+   SUPABASE
+   ========================================================= */
+
+function initSupabase(){
+
+  const config =
+    window.EMIMATCH_CONFIG || {};
+
+  const supabaseUrl =
+    config.supabaseUrl || "";
+
+  const supabaseKey =
+    config.supabaseKey ||
+    config.supabaseAnonKey ||
+    "";
+
+  if(
+    !supabaseUrl ||
+    !supabaseKey
+  ){
+
+    throw new Error(
+      "Configuración de Supabase incompleta."
+    );
+  }
+
+  client =
+    window.supabase.createClient(
+      supabaseUrl,
+      supabaseKey
+    );
 }
-function render(x){const p=x.profile||{};const unread=!x.message.read_at;const el=document.createElement("article");el.className="notice";const photo=p.foto_url?`<img class="avatar" src="${esc(p.foto_url)}" alt="Foto de ${esc(p.nombre||"Usuario")}" onerror="this.src='https://placehold.co/120x120?text=EmiMatch'">`:`<img class="avatar" src="https://placehold.co/120x120?text=EmiMatch" alt="Foto">`;el.innerHTML=`${photo}<div class="info"><div class="name">${esc(p.nombre||"Usuario")}</div><div class="msg">${esc(x.message.content||"")}</div><div class="time">${ago(x.message.created_at)}</div></div>${unread?'<span class="dot" aria-label="No leído"></span>':''}`;el.onclick=()=>openConversation(x.message.id,x.other);$("list").appendChild(el)}
-async function openConversation(messageId,other){await client.from("messages").update({read_at:new Date().toISOString()}).eq("id",messageId).eq("sender_id",other);location.href=`conversacion.html?user=${encodeURIComponent(other)}`}
-async function readAll(){const now=new Date().toISOString();const {data,error}=await client.from("messages").select("id,match_id").neq("sender_id",user.id).is("read_at",null);if(error){alert("No se pudieron marcar los mensajes como leídos.");return}const ids=(data||[]).map(x=>x.id);if(ids.length)await client.from("messages").update({read_at:now}).in("id",ids);await load()}
-function activateRealtime(){if(channel)client.removeChannel(channel);channel=client.channel("emimatch-notificaciones").on("postgres_changes",{event:"INSERT",schema:"public",table:"messages"},payload=>{if(payload.new?.sender_id!==user.id)load()}).subscribe()}
-$("refresh").onclick=load;$("readAll").onclick=readAll;start();
+
+
+/* =========================================================
+   UTILIDADES
+   ========================================================= */
+
+function escapeHtml(value){
+
+  return String(value ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+
+function formatTime(dateValue){
+
+  if(!dateValue){
+    return "";
+  }
+
+  const date =
+    new Date(dateValue);
+
+  if(
+    Number.isNaN(
+      date.getTime()
+    )
+  ){
+
+    return "";
+  }
+
+  const now =
+    new Date();
+
+  const sameDay =
+    date.toDateString() ===
+    now.toDateString();
+
+  if(sameDay){
+
+    return date.toLocaleTimeString(
+      "es-AR",
+      {
+        hour:"2-digit",
+        minute:"2-digit"
+      }
+    );
+  }
+
+  const yesterday =
+    new Date(now);
+
+  yesterday.setDate(
+    yesterday.getDate() - 1
+  );
+
+  if(
+    date.toDateString() ===
+    yesterday.toDateString()
+  ){
+
+    return "Ayer";
+  }
+
+  return date.toLocaleDateString(
+    "es-AR",
+    {
+      day:"2-digit",
+      month:"2-digit"
+    }
+  );
+}
+
+
+/* =========================================================
+   ESTADOS
+   ========================================================= */
+
+function showLoading(){
+
+  statusEl.hidden = false;
+
+  statusEl.innerHTML = `
+    <div class="loading">
+
+      <span class="spinner"></span>
+
+      <span>
+        Cargando notificaciones...
+      </span>
+
+    </div>
+  `;
+
+  notificationsList.hidden = true;
+  emptyStateEl.hidden = true;
+}
+
+
+function hideStatus(){
+
+  statusEl.hidden = true;
+}
+
+
+function showError(message){
+
+  statusEl.hidden = false;
+
+  statusEl.innerHTML = `
+    <div>
+      ⚠️ ${escapeHtml(message)}
+    </div>
+  `;
+
+  notificationsList.hidden = true;
+  emptyStateEl.hidden = true;
+}
+
+
+/* =========================================================
+   SESIÓN
+   ========================================================= */
+
+async function loadSession(){
+
+  const {
+    data,
+    error
+  } =
+    await client.auth.getSession();
+
+  if(error){
+    throw error;
+  }
+
+  currentUser =
+    data?.session?.user || null;
+
+  if(!currentUser){
+
+    window.location.href =
+      "index.html";
+
+    return false;
+  }
+
+  return true;
+}
+
+
+/* =========================================================
+   PERFIL
+   ========================================================= */
+
+async function getProfile(userId){
+
+  const {
+    data,
+    error
+  } =
+    await client
+      .from("profiles")
+      .select(
+        "id,nombre,foto_url"
+      )
+      .eq(
+        "id",
+        userId
+      )
+      .maybeSingle();
+
+  if(error){
+    throw error;
+  }
+
+  return data || {
+    id:userId,
+    nombre:"Usuario",
+    foto_url:""
+  };
+}
+ /* =========================================================
+   OBTENER MATCHES
+   ========================================================= */
+
+async function loadMatches(){
+
+  const {
+    data,
+    error
+  } = await client
+    .from("matches")
+    .select(
+      "id,user1_id,user2_id,created_at"
+    )
+    .or(
+      `user1_id.eq.${currentUser.id},user2_id.eq.${currentUser.id}`
+    )
+    .order(
+      "created_at",
+      {
+        ascending:false
+      }
+    );
+
+  if(error){
+    throw error;
+  }
+
+  return data || [];
+}
+
+
+/* =========================================================
+   OBTENER MENSAJES RECIBIDOS
+   ========================================================= */
+
+async function loadReceivedMessages(){
+
+  const matches =
+    await loadMatches();
+
+  const notifications = [];
+
+  for(
+    const match of matches
+  ){
+
+    const otherUserId =
+      match.user1_id === currentUser.id
+        ? match.user2_id
+        : match.user1_id;
+
+
+    const {
+      data,
+      error
+    } = await client
+      .from("messages")
+      .select(
+        "id,match_id,sender_id,content,created_at,read_at"
+      )
+      .eq(
+        "match_id",
+        match.id
+      )
+      .neq(
+        "sender_id",
+        currentUser.id
+      )
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
+      )
+      .limit(20);
+
+
+    if(error){
+
+      console.warn(
+        "No se pudieron cargar mensajes:",
+        error
+      );
+
+      continue;
+    }
+
+
+    const profile =
+      await getProfile(
+        otherUserId
+      );
+
+
+    for(
+      const message of
+      (data || [])
+    ){
+
+      notifications.push({
+
+        type:"message",
+
+        id:
+          `message-${message.id}`,
+
+        userId:
+          otherUserId,
+
+        matchId:
+          match.id,
+
+        profile,
+
+        createdAt:
+          message.created_at,
+
+        read:
+          Boolean(
+            message.read_at
+          )
+
+      });
+
+    }
+
+  }
+
+  return notifications;
+}
+
+
+/* =========================================================
+   CREAR NOTIFICACIONES DE MATCH
+   ========================================================= */
+
+async function loadMatchNotifications(){
+
+  const matches =
+    await loadMatches();
+
+  const notifications = [];
+
+  for(
+    const match of matches
+  ){
+
+    const otherUserId =
+      match.user1_id === currentUser.id
+        ? match.user2_id
+        : match.user1_id;
+
+
+    const profile =
+      await getProfile(
+        otherUserId
+      );
+
+
+    notifications.push({
+
+      type:"match",
+
+      id:
+        `match-${match.id}`,
+
+      userId:
+        otherUserId,
+
+      matchId:
+        match.id,
+
+      profile,
+
+      createdAt:
+        match.created_at,
+
+      read:true
+
+    });
+
+  }
+
+  return notifications;
+}
+
+
+/* =========================================================
+   UNIR TODAS LAS ALERTAS
+   ========================================================= */
+
+async function buildNotifications(){
+
+  const [
+    messageNotifications,
+    matchNotifications
+  ] = await Promise.all([
+
+    loadReceivedMessages(),
+
+    loadMatchNotifications()
+
+  ]);
+
+
+  const notifications = [
+
+    ...messageNotifications,
+
+    ...matchNotifications
+
+  ];
+
+
+  notifications.sort(
+    (a,b) => {
+
+      const dateA =
+        new Date(
+          a.createdAt
+        ).getTime();
+
+      const dateB =
+        new Date(
+          b.createdAt
+        ).getTime();
+
+      return dateB - dateA;
+
+    }
+  );
+
+
+  return notifications;
+ }
+ /* =========================================================
+   DIBUJAR UNA NOTIFICACIÓN
+   ========================================================= */
+
+function renderNotification(item){
+
+  const notification =
+    document.createElement("article");
+
+  notification.className =
+    "notification";
+
+  notification.tabIndex = 0;
+
+
+  let icon = "🔔";
+  let title = "Nueva notificación";
+  let text = "Tenés una nueva novedad.";
+  let action = null;
+
+
+  /* =======================================================
+     NUEVO MENSAJE
+     ======================================================= */
+
+  if(item.type === "message"){
+
+    icon = "💬";
+
+    title = "Nuevo mensaje";
+
+    text =
+      `${item.profile?.nombre || "Alguien"} te envió un mensaje.`;
+
+    action = () => {
+
+      window.location.href =
+        `conversacion.html?user=${encodeURIComponent(
+          item.userId
+        )}`;
+
+    };
+
+  }
+
+
+  /* =======================================================
+     NUEVO MATCH
+     ======================================================= */
+
+  if(item.type === "match"){
+
+    icon = "💕";
+
+    title = "Nuevo Match";
+
+    text =
+      `Hiciste match con ${
+        item.profile?.nombre || "alguien"
+      }.`;
+
+    action = () => {
+
+      window.location.href =
+        `conversacion.html?user=${encodeURIComponent(
+          item.userId
+        )}`;
+
+    };
+
+  }
+
+
+  /* =======================================================
+     ESTADO VISUAL
+     ======================================================= */
+
+  if(!item.read){
+
+    notification.style.borderColor =
+      "rgba(255,79,135,.25)";
+
+  }
+
+
+  notification.innerHTML = `
+
+    <div class="notification-icon">
+      ${icon}
+    </div>
+
+
+    <div class="notification-content">
+
+      <div class="notification-title">
+        ${escapeHtml(title)}
+      </div>
+
+      <div class="notification-text">
+        ${escapeHtml(text)}
+      </div>
+
+      <div class="notification-time">
+        ${escapeHtml(
+          formatTime(
+            item.createdAt
+          )
+        )}
+      </div>
+
+    </div>
+
+  `;
+
+
+  if(action){
+
+    notification.addEventListener(
+      "click",
+      action
+    );
+
+
+    notification.addEventListener(
+      "keydown",
+      event => {
+
+        if(
+          event.key === "Enter" ||
+          event.key === " "
+        ){
+
+          event.preventDefault();
+
+          action();
+
+        }
+
+      }
+    );
+
+  }
+
+
+  return notification;
+}
+
+
+/* =========================================================
+   MOSTRAR TODAS LAS NOTIFICACIONES
+   ========================================================= */
+
+function renderNotifications(
+  notifications
+){
+
+  notificationsList.innerHTML = "";
+
+
+  if(
+    !notifications ||
+    notifications.length === 0
+  ){
+
+    notificationsList.hidden = true;
+
+    emptyStateEl.hidden = false;
+
+    hideStatus();
+
+    return;
+
+  }
+
+
+  emptyStateEl.hidden = true;
+
+  notificationsList.hidden = false;
+
+  hideStatus();
+
+
+  notifications.forEach(
+    item => {
+
+      notificationsList.appendChild(
+        renderNotification(item)
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   CARGAR NOTIFICACIONES
+   ========================================================= */
+
+async function loadNotifications(){
+
+  showLoading();
+
+  try{
+
+    const notifications =
+      await buildNotifications();
+
+    renderNotifications(
+      notifications
+    );
+
+  }catch(error){
+
+    console.error(
+      "Error cargando notificaciones:",
+      error
+    );
+
+    showError(
+      "No se pudieron cargar tus notificaciones."
+    );
+
+  }
+
+ }
+ /* =========================================================
+   LEER TODO
+   ========================================================= */
+
+readAllButton.addEventListener(
+  "click",
+  async () => {
+
+    if(!currentUser){
+      return;
+    }
+
+    readAllButton.disabled = true;
+
+    const originalText =
+      readAllButton.textContent;
+
+    readAllButton.textContent =
+      "✓ Marcando...";
+
+
+    try{
+
+      const matches =
+        await loadMatches();
+
+      const now =
+        new Date().toISOString();
+
+
+      for(
+        const match of matches
+      ){
+
+        const {
+          error
+        } = await client
+          .from("messages")
+          .update({
+            read_at: now
+          })
+          .eq(
+            "match_id",
+            match.id
+          )
+          .neq(
+            "sender_id",
+            currentUser.id
+          )
+          .is(
+            "read_at",
+            null
+          );
+
+
+        if(error){
+
+          console.warn(
+            "No se pudieron marcar mensajes:",
+            match.id,
+            error
+          );
+
+        }
+
+      }
+
+
+      await loadNotifications();
+
+
+    }catch(error){
+
+      console.error(
+        "Error marcando notificaciones:",
+        error
+      );
+
+    }finally{
+
+      readAllButton.disabled =
+        false;
+
+      readAllButton.textContent =
+        originalText;
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   ACTUALIZAR
+   ========================================================= */
+
+refreshButton.addEventListener(
+  "click",
+  async () => {
+
+    refreshButton.disabled = true;
+
+    const originalText =
+      refreshButton.textContent;
+
+    refreshButton.textContent =
+      "🔄 Cargando...";
+
+
+    try{
+
+      await loadNotifications();
+
+    }finally{
+
+      refreshButton.disabled =
+        false;
+
+      refreshButton.textContent =
+        originalText;
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   REALTIME
+   ========================================================= */
+
+function subscribeToMessages(){
+
+  if(!client){
+    return;
+  }
+
+
+  if(realtimeChannel){
+
+    try{
+
+      client.removeChannel(
+        realtimeChannel
+      );
+
+    }catch(error){
+
+      console.warn(
+        "No se pudo cerrar el canal anterior:",
+        error
+      );
+
+    }
+
+  }
+
+
+  realtimeChannel =
+    client
+      .channel(
+        "emimatch-notifications"
+      )
+
+
+      .on(
+        "postgres_changes",
+        {
+          event:"INSERT",
+          schema:"public",
+          table:"messages"
+        },
+        async payload => {
+
+          console.log(
+            "Nuevo mensaje recibido:",
+            payload.new
+          );
+
+          await loadNotifications();
+
+        }
+      )
+
+
+      .on(
+        "postgres_changes",
+        {
+          event:"UPDATE",
+          schema:"public",
+          table:"messages"
+        },
+        async payload => {
+
+          console.log(
+            "Mensaje actualizado:",
+            payload.new
+          );
+
+          await loadNotifications();
+
+        }
+      )
+
+
+      .on(
+        "postgres_changes",
+        {
+          event:"INSERT",
+          schema:"public",
+          table:"matches"
+        },
+        async payload => {
+
+          console.log(
+            "Nuevo match:",
+            payload.new
+          );
+
+          await loadNotifications();
+
+        }
+      )
+
+
+      .subscribe(
+        status => {
+
+          console.log(
+            "Realtime notificaciones:",
+            status
+          );
+
+        }
+      );
+
+ }
+ /* =========================================================
+   INICIALIZACIÓN
+   ========================================================= */
+
+async function init(){
+
+  try{
+
+    initSupabase();
+
+    const authenticated =
+      await loadSession();
+
+    if(!authenticated){
+      return;
+    }
+
+    await loadNotifications();
+
+    subscribeToMessages();
+
+  }catch(error){
+
+    console.error(
+      "Error iniciando notificaciones:",
+      error
+    );
+
+    showError(
+      error?.message ||
+      "No se pudieron iniciar las notificaciones."
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   LIMPIEZA REALTIME
+   ========================================================= */
+
+window.addEventListener(
+  "beforeunload",
+  () => {
+
+    if(
+      client &&
+      realtimeChannel
+    ){
+
+      try{
+
+        client.removeChannel(
+          realtimeChannel
+        );
+
+      }catch(error){
+
+        console.warn(
+          "Error cerrando Realtime:",
+          error
+        );
+
+      }
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   INICIAR
+   ========================================================= */
+
+init();
+
 </script>
-<script src="assets/js/app.js"></script>
-<script src="assets/js/components.js"></script>
+
 </body>
+
 </html>
