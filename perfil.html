@@ -2319,78 +2319,245 @@ async function loadProfile() {
       profileName.textContent =
         name;
 
+/* =========================================
+   CARGAR PERFIL
+   ========================================= */
+
+async function loadProfile() {
+
+  try {
+
+    const {
+      data: sessionData,
+      error: sessionError
+    } = await profileSupabase.auth.getSession();
+
+    if (sessionError) {
+      throw sessionError;
+    }
+
+    const user =
+      sessionData?.session?.user;
+
+    if (!user) {
+
+      window.location.href =
+        "index.html";
+
+      return;
+    }
+
+
+    /* =====================================
+       BUSCAR PERFIL
+       ===================================== */
+
+    const {
+      data: profile,
+      error: profileError
+    } = await profileSupabase
+      .from("profiles")
+      .select("*")
+      .eq("id", user.id)
+      .maybeSingle();
+
+
+    if (profileError) {
+
+      console.error(
+        "Error cargando perfil:",
+        profileError
+      );
+
+      /*
+       * Aunque el perfil todavía no exista,
+       * mostramos los datos básicos del usuario.
+       */
+
+      renderUserBasicData(user);
+
+      await loadMainPhoto(user.id);
+      await loadAlbum(user.id);
+
+      return;
+    }
+
+
+    /* =====================================
+       DATOS DEL USUARIO
+       ===================================== */
+
+    const metadata =
+      user.user_metadata || {};
+
+
+    const name =
+      profile?.nombre ||
+      profile?.name ||
+      profile?.display_name ||
+      metadata.nombre ||
+      metadata.name ||
+      "Mi perfil";
+
+
+    const age =
+      profile?.edad ??
+      profile?.age ??
+      metadata.edad ??
+      metadata.age ??
+      "";
+
+
+    const city =
+      profile?.ciudad ||
+      profile?.city ||
+      metadata.ciudad ||
+      metadata.city ||
+      "";
+
+
+    const description =
+      profile?.descripcion ||
+      profile?.description ||
+      metadata.descripcion ||
+      metadata.description ||
+      "";
+
+
+    /* =====================================
+       MOSTRAR DATOS
+       ===================================== */
+
+    if (profileName) {
+
+      profileName.textContent =
+        name;
+    }
+
+
+    if (profileLocation) {
 
       profileLocation.textContent =
         city
           ? `📍 ${city}`
           : "📍 Ubicación no disponible";
+    }
 
+
+    if (profileAge) {
 
       profileAge.textContent =
         age
           ? `${age} años`
           : "Edad no disponible";
+    }
 
+
+    if (profileDescription) {
 
       profileDescription.textContent =
         description ||
         "Todavía no agregaste una descripción.";
+    }
 
+
+    if (infoName) {
 
       infoName.textContent =
         name;
+    }
 
+
+    if (infoAge) {
 
       infoAge.textContent =
         age
           ? `${age} años`
           : "—";
+    }
 
+
+    if (infoCity) {
 
       infoCity.textContent =
         city ||
         "—";
-
-
-      infoStatus.textContent =
-        "Cuenta activa";
-
-
-      profileStatus.textContent =
-        "Cuenta activa";
-
-
-      if (
-        profile.verificado === true ||
-        profile.verified === true ||
-        profile.verificado === "true"
-      ) {
-
-        verifiedBadge.hidden =
-          false;
-
-      } else {
-
-        verifiedBadge.hidden =
-          true;
-      }
-
-
-      renderMainPhoto(
-        profile.foto_url ||
-        profile.photo_url ||
-        null
-      );
     }
 
 
-    await loadMainPhoto(
+    if (infoStatus) {
+
+      infoStatus.textContent =
+        "Cuenta activa";
+    }
+
+
+    if (profileStatus) {
+
+      profileStatus.textContent =
+        "Cuenta activa";
+    }
+
+
+    /* =====================================
+       VERIFICACIÓN
+       ===================================== */
+
+    const isVerified =
+      profile?.verificado === true ||
+      profile?.verified === true ||
+      profile?.verificado === "true" ||
+      profile?.verified === "true";
+
+
+    if (verifiedBadge) {
+
+      verifiedBadge.hidden =
+        !isVerified;
+    }
+
+
+    /* =====================================
+       FOTO PRINCIPAL
+       ===================================== */
+
+    const mainPhoto =
+      profile?.foto_url ||
+      profile?.photo_url ||
+      metadata.foto_url ||
+      metadata.photo_url ||
+      null;
+
+
+    renderMainPhoto(
+      mainPhoto
+    );
+
+
+    /* =====================================
+       ÁLBUM
+       ===================================== */
+
+    await loadAlbum(
       user.id
     );
 
 
-    await loadAlbum(
-      user.id
+    /* =====================================
+       OCULTAR CARGANDO
+       ===================================== */
+
+    const loadingElements =
+      document.querySelectorAll(
+        "[data-profile-loading]"
+      );
+
+
+    loadingElements.forEach(
+      element => {
+        element.style.display =
+          "none";
+      }
     );
 
 
@@ -2400,7 +2567,126 @@ async function loadProfile() {
       "Error cargando perfil:",
       error
     );
+
+
+    /*
+     * No dejamos la pantalla
+     * eternamente en "Cargando perfil..."
+     */
+
+    renderUserBasicData(
+      null
+    );
+
+
+    if (profileStatus) {
+
+      profileStatus.textContent =
+        "Cuenta activa";
+    }
+
   }
+
+}
+
+
+/* =========================================
+   DATOS BÁSICOS DEL USUARIO
+   ========================================= */
+
+function renderUserBasicData(user) {
+
+  const metadata =
+    user?.user_metadata || {};
+
+
+  const name =
+    metadata.nombre ||
+    metadata.name ||
+    "Mi perfil";
+
+
+  const age =
+    metadata.edad ??
+    metadata.age ??
+    "";
+
+
+  const city =
+    metadata.ciudad ||
+    metadata.city ||
+    "";
+
+
+  const description =
+    metadata.descripcion ||
+    metadata.description ||
+    "";
+
+
+  if (profileName) {
+
+    profileName.textContent =
+      name;
+  }
+
+
+  if (profileLocation) {
+
+    profileLocation.textContent =
+      city
+        ? `📍 ${city}`
+        : "📍 Ubicación no disponible";
+  }
+
+
+  if (profileAge) {
+
+    profileAge.textContent =
+      age
+        ? `${age} años`
+        : "Edad no disponible";
+  }
+
+
+  if (profileDescription) {
+
+    profileDescription.textContent =
+      description ||
+      "Todavía no agregaste una descripción.";
+  }
+
+
+  if (infoName) {
+
+    infoName.textContent =
+      name;
+  }
+
+
+  if (infoAge) {
+
+    infoAge.textContent =
+      age
+        ? `${age} años`
+        : "—";
+  }
+
+
+  if (infoCity) {
+
+    infoCity.textContent =
+      city ||
+      "—";
+  }
+
+
+  if (infoStatus) {
+
+    infoStatus.textContent =
+      "Cuenta activa";
+  }
+
 }
 
 
