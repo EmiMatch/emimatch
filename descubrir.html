@@ -486,6 +486,40 @@ function render() {
 
   const profile =
     profiles[index];
+  /* =========================
+   REGISTRAR VISITA AL PERFIL
+========================= */
+
+if (
+  profile &&
+  user &&
+  profile.id !== user.id
+) {
+  const visitKey =
+    `emimatch_visit_${user.id}_${profile.id}`;
+
+  if (!sessionStorage.getItem(visitKey)) {
+    sessionStorage.setItem(visitKey, "pending");
+
+    client
+      .from("profile_views")
+      .insert({
+        viewer_id: user.id,
+        profile_id: profile.id
+      })
+      .then(({ error }) => {
+        if (error) {
+          sessionStorage.removeItem(visitKey);
+          console.warn(
+            "No se pudo registrar la visita:",
+            error.message
+          );
+        } else {
+          sessionStorage.setItem(visitKey, "done");
+        }
+      });
+  }
+}
 
   const photo =
     profile.foto_url ||
