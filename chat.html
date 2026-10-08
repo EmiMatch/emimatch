@@ -1393,56 +1393,22 @@ async function markAllAsRead(){
   readAllButton.textContent =
     "✓ Marcando...";
 
-
   try{
-
-    const {
-      error
-    } = await client
-      .from("messages")
-      .update({
-        read_at:
-          new Date().toISOString()
-      })
-      .eq(
-        "sender_id",
-        currentUser.id
-      )
-      .is(
-        "read_at",
-        null
-      );
-
-
-    /*
-     * La condición anterior solamente
-     * afecta mensajes enviados por vos.
-     * Por seguridad, hacemos la operación
-     * correcta sobre mensajes recibidos
-     * consultando primero los matches.
-     */
-
-    if(error){
-
-      console.warn(
-        "Aviso al marcar mensajes:",
-        error
-      );
-    }
 
     const matches =
       await loadMatches();
 
+    const now =
+      new Date().toISOString();
 
-    for(
-      const match of matches
-    ){
+    for(const match of matches){
 
-      await client
+      const {
+        error
+      } = await client
         .from("messages")
         .update({
-          read_at:
-            new Date().toISOString()
+          read_at: now
         })
         .eq(
           "match_id",
@@ -1457,16 +1423,22 @@ async function markAllAsRead(){
           null
         );
 
+      if(error){
+        console.warn(
+          "No se pudieron marcar mensajes del match:",
+          match.id,
+          error
+        );
+      }
+
     }
 
-
     await loadConversations();
-
 
   }catch(error){
 
     console.error(
-      "Error marcando mensajes:",
+      "Error marcando mensajes como leídos:",
       error
     );
 
@@ -1480,7 +1452,7 @@ async function markAllAsRead(){
 
   }
 
-  }
+}
   /* =========================================================
    ACTUALIZAR
    ========================================================= */
