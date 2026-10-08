@@ -490,36 +490,33 @@ function render() {
    REGISTRAR VISITA AL PERFIL
 ========================= */
 
-if (
-  profile &&
-  user &&
-  profile.id !== user.id
-) {
-  const visitKey =
-    `emimatch_visit_${user.id}_${profile.id}`;
+/* REGISTRAR VISITA AL PERFIL */
 
-  if (!sessionStorage.getItem(visitKey)) {
-    sessionStorage.setItem(visitKey, "pending");
+if (profile && user && profile.id !== user.id) {
+const visitKey = "emimatch_visit_${user.id}_${profile.id}";
 
-    client
-      .from("profile_views")
-      .insert({
-        viewer_id: user.id,
-        profile_id: profile.id
-      })
-      .then(({ error }) => {
-        if (error) {
-          sessionStorage.removeItem(visitKey);
-          console.warn(
-            "No se pudo registrar la visita:",
-            error.message
-          );
-        } else {
-          sessionStorage.setItem(visitKey, "done");
-        }
-      });
-  }
+if (!sessionStorage.getItem(visitKey)) {
+client
+.from("profile_views")
+.insert({
+viewer_id: user.id,
+profile_id: profile.id
+})
+.then(({ error }) => {
+if (error) {
+sessionStorage.removeItem(visitKey);
+alert("Error al registrar la visita: " + error.message);
+console.error("profile_views:", error);
+} else {
+sessionStorage.setItem(visitKey, "done");
 }
+})
+.catch(error => {
+sessionStorage.removeItem(visitKey);
+alert("Error de conexión: " + error.message);
+});
+}
+  }
 
   const photo =
     profile.foto_url ||
