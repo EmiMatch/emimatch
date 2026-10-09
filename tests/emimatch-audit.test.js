@@ -104,7 +104,41 @@ if (exists("assets/js/config.js")) {
   }
 }
 
-/* 3. ELIMINACIÓN DE CUENTA */
+/* 3. ADMINISTRACIÓN Y BLOQUEOS */
+
+console.log("");
+console.log("🛡️ ADMINISTRACIÓN PRIVADA");
+
+if (exists("menu.html")) {
+  const menu = read("menu.html");
+
+  if (
+    menu.includes("/functions/v1/admin-check") &&
+    !menu.includes('db.rpc("is_admin")')
+  ) {
+    ok("El menú verifica la administración mediante admin-check");
+  } else {
+    error("El menú no usa la verificación administrativa esperada");
+  }
+}
+
+console.log("");
+console.log("🚫 SEGURIDAD DE CONVERSACIONES");
+
+if (exists("conversacion.html")) {
+  const conversacion = read("conversacion.html");
+
+  if (
+    conversacion.includes('bloqueoError.code = "BLOCK_CHECK_FAILED"') &&
+    conversacion.includes("Por seguridad, el chat quedó desactivado")
+  ) {
+    ok("El chat falla de forma segura si no puede verificar bloqueos");
+  } else {
+    error("El chat no bloquea el envío cuando falla la verificación de bloqueos");
+  }
+}
+
+/* 4. ELIMINACIÓN DE CUENTA */
 
 console.log("");
 console.log("🗑️ ELIMINACIÓN DE CUENTA");
@@ -147,7 +181,7 @@ if (exists("configuracion.html")) {
   }
 }
 
-/* 4. HTML */
+/* 5. HTML */
 
 console.log("");
 console.log("🌐 HTML");
@@ -174,7 +208,7 @@ for (const file of htmlFiles) {
   }
 }
 
-/* 5. JAVASCRIPT */
+/* 6. JAVASCRIPT */
 
 console.log("");
 console.log("🟨 JAVASCRIPT");
@@ -216,7 +250,7 @@ for (const file of jsFiles) {
   }
 }
 
-/* 6. TESTS */
+/* 7. TESTS */
 
 console.log("");
 console.log("🧪 SISTEMA DE TESTS");
@@ -227,7 +261,7 @@ if (exists("tests")) {
   warning("Directorio tests no encontrado");
 }
 
-/* 7. SUPABASE VERSIONADO */
+/* 8. SUPABASE VERSIONADO */
 
 console.log("");
 console.log("☁️ SUPABASE");
