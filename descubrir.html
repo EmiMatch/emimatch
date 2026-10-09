@@ -493,7 +493,7 @@ function render() {
 /* REGISTRAR VISITA AL PERFIL */
 
 if (profile && user && profile.id !== user.id) {
-const visitKey = "emimatch_visit_${user.id}_${profile.id}";
+const visitKey = `emimatch_visit_${user.id}_${profile.id}`;
 
 if (!sessionStorage.getItem(visitKey)) {
 client
