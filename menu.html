@@ -1203,29 +1203,43 @@
 
       try {
 
-        const {
-          data: isAdmin,
-          error: adminError
-        } = await db.rpc("is_admin");
+        const adminCheckResponse = await fetch(
+          c.supabaseUrl + "/functions/v1/admin-check",
+          {
+            method: "POST",
+            headers: {
+              "Authorization": "Bearer " + data.session.access_token,
+              "apikey": c.supabaseKey || c.supabaseAnonKey,
+              "Content-Type": "application/json",
+              "Accept": "application/json"
+            },
+            body: JSON.stringify({})
+          }
+        );
 
+        let adminCheckData = null;
 
+        try {
+          adminCheckData = await adminCheckResponse.json();
+        } catch (parseError) {
+          throw new Error("La respuesta de verificación administrativa no es válida.");
+        }
+
+        // Fail closed: el acceso solo se muestra con confirmación positiva del servidor.
         if (
-          !adminError &&
-          isAdmin === true
+          adminCheckResponse.ok &&
+          adminCheckData?.success === true &&
+          adminCheckData?.isAdmin === true
         ) {
-
-          const adminSection =
-            document.getElementById(
-              "adminSection"
-            );
-
+          const adminSection = document.getElementById("adminSection");
 
           if (adminSection) {
-
             adminSection.hidden = false;
-
           }
-
+        } else {
+          console.warn(
+            "No se pudo confirmar el permiso de administrador; la sección permanece oculta."
+          );
         }
 
       } catch (adminError) {
