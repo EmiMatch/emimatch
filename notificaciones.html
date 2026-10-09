@@ -545,7 +545,10 @@
         };
       });
     }
-    async function loadProfileViewNotifications() {
+   loadProfileViewNotifications().catch(error => {
+console.warn("Visitas al perfil no disponibles:", error);
+return [];
+}) {
       const { data, error } = await client
         .from("profile_views")
         .select("id, viewer_id, profile_id, created_at")
