@@ -621,7 +621,9 @@ async function iniciar() {
     );
 
     mostrarError(
-      "No se pudo cargar la conversación."
+      error?.code === "BLOCK_CHECK_FAILED"
+        ? error.message
+        : "No se pudo cargar la conversación."
     );
 
     desactivarChat();
@@ -755,7 +757,11 @@ async function comprobarBloqueo() {
       error
     );
 
-    bloqueado = false;
+    const bloqueoError = new Error(
+      "No se pudo verificar si existe un bloqueo. Por seguridad, el chat quedó desactivado. Revisá tu conexión e intentá nuevamente."
+    );
+    bloqueoError.code = "BLOCK_CHECK_FAILED";
+    throw bloqueoError;
 
   } else {
 
