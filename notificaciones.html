@@ -1,571 +1,289 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#071225">
-  <title>EmiMatch - Notificaciones</title>
-  <link rel="stylesheet" href="assets/css/app.css">
-
-  <style>
-    :root {
-      --bg: #071225;
-      --surface: #101d34;
-      --surface2: #152642;
-      --gold: #d8ad42;
-      --text: #ffffff;
-      --muted: #9eabc0;
-      --border: rgba(255,255,255,.09);
-      --purple: #7c5cff;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background:
-        radial-gradient(circle at top,
-          rgba(76,29,149,.20), transparent 42%),
-        var(--bg);
-      color: var(--text);
-      font-family: Arial, Helvetica, sans-serif;
-    }
-
-    .notifications-page {
-      width: 100%;
-      max-width: 680px;
-      min-height: 100vh;
-      margin: 0 auto;
-      padding: 18px 14px 50px;
-    }
-
-    .notifications-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 14px 4px 22px;
-    }
-
-    .back {
-      width: 42px;
-      height: 42px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      border-radius: 14px;
-      text-decoration: none;
-      color: #fff;
-      background: rgba(255,255,255,.06);
-      border: 1px solid var(--border);
-      font-size: 22px;
-    }
-
-    .header-icon {
-      width: 48px;
-      height: 48px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      border-radius: 16px;
-      background: linear-gradient(
-        145deg,
-        rgba(216,173,66,.22),
-        rgba(76,29,149,.28)
-      );
-      border: 1px solid rgba(216,173,66,.25);
-      font-size: 24px;
-    }
-
-    .header-text {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .header-text h1 {
-      margin: 0;
-      font-size: 24px;
-      font-weight: 800;
-    }
-
-    .header-text p {
-      margin: 5px 0 0;
-      color: var(--muted);
-      font-size: 13px;
-    }
-    .actions {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-
-    .action-btn {
-      flex: 1;
-      min-height: 42px;
-      padding: 10px;
-      border: 1px solid var(--border);
-      border-radius: 13px;
-      background: rgba(255,255,255,.05);
-      color: #fff;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .action-btn.primary {
-      background: linear-gradient(135deg, #d8ad42, #b98c25);
-      color: #071225;
-      border: 0;
-    }
-
-    .action-btn:disabled {
-      opacity: .6;
-      cursor: wait;
-    }
-
-    .notifications-status {
-      margin: 0 0 14px;
-      padding: 14px;
-      border: 1px solid var(--border);
-      border-radius: 15px;
-      background: rgba(255,255,255,.04);
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    .notifications-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .notification {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 14px;
-      border-radius: 18px;
-      background: linear-gradient(
-        145deg,
-        rgba(16,29,52,.98),
-        rgba(21,38,66,.94)
-      );
-      border: 1px solid var(--border);
-      color: var(--text);
-      text-decoration: none;
-      overflow-wrap: anywhere;
-      transition: border-color .15s ease;
-    }
-
-    .notification:hover {
-      border-color: rgba(216,173,66,.4);
-    }
-
-    .notification.notification-unread {
-      border-color: rgba(216,173,66,.45);
-      background: linear-gradient(
-        145deg,
-        rgba(35,39,68,.98),
-        rgba(21,38,66,.94)
-      );
-    }
-
-    .notification-icon {
-      width: 50px;
-      height: 50px;
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 16px;
-      background: rgba(216,173,66,.10);
-      border: 1px solid rgba(216,173,66,.18);
-      font-size: 24px;
-    }
-
-    .notification-content {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .notification-title {
-      display: block;
-      margin-bottom: 5px;
-      font-size: 15px;
-      font-weight: 800;
-      line-height: 1.4;
-    }
-
-    .notification-text {
-      display: block;
-      color: #aebbd0;
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    .notification-time {
-      display: block;
-      margin-top: 6px;
-      color: #7f8ca3;
-      font-size: 11px;
-    }
-
-    .notification-arrow {
-      flex-shrink: 0;
-      color: var(--gold);
-      font-size: 22px;
-    }
-    .empty-state {
-      padding: 38px 20px;
-      border-radius: 20px;
-      background: linear-gradient(
-        145deg,
-        rgba(16,29,52,.96),
-        rgba(21,38,66,.90)
-      );
-      border: 1px solid var(--border);
-      text-align: center;
-    }
-
-    .empty-icon {
-      margin-bottom: 12px;
-      font-size: 44px;
-    }
-
-    .empty-state h2 {
-      margin: 0 0 8px;
-      font-size: 20px;
-    }
-
-    .empty-state p {
-      max-width: 430px;
-      margin: 0 auto;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.55;
-    }
-
-    .bottom-space {
-      height: 20px;
-    }
-
-    @media (max-width: 420px) {
-      .notifications-page {
-        padding-left: 10px;
-        padding-right: 10px;
-      }
-
-      .header-text h1 {
-        font-size: 21px;
-      }
-
-      .header-icon {
-        width: 44px;
-        height: 44px;
-      }
-
-      .notification {
-        gap: 10px;
-        padding: 12px;
-      }
-
-      .notification-icon {
-        width: 46px;
-        height: 46px;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#071225">
+<title>EmiMatch - Notificaciones</title>
+<link rel="stylesheet" href="assets/css/app.css">
+<style>
+:root{--bg:#071225;--surface:#101d34;--gold:#d8ad42;--text:#fff;--muted:#aebbd0;--border:rgba(255,255,255,.1)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at top,rgba(76,29,149,.2),transparent 42%),var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif}
+.notifications-page{width:100%;max-width:680px;min-height:100vh;margin:auto;padding:18px 14px 50px}
+.notifications-header{display:flex;align-items:center;gap:12px;padding:14px 4px 22px}
+.back{width:42px;height:42px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border-radius:14px;text-decoration:none;color:#fff;background:rgba(255,255,255,.06);border:1px solid var(--border);font-size:22px}
+.header-icon{width:48px;height:48px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border-radius:16px;background:linear-gradient(145deg,rgba(216,173,66,.22),rgba(76,29,149,.28));border:1px solid rgba(216,173,66,.25);font-size:24px}
+.header-text{flex:1;min-width:0}
+.header-text h1{margin:0;font-size:24px;font-weight:800}
+.header-text p{margin:5px 0 0;color:var(--muted);font-size:13px}
+.actions{display:flex;gap:8px;margin-bottom:16px}
+.action-btn{flex:1;min-height:42px;padding:10px;border:1px solid var(--border);border-radius:13px;background:rgba(255,255,255,.05);color:#fff;font-weight:700;cursor:pointer}
+.action-btn.primary{background:linear-gradient(135deg,#d8ad42,#b98c25);color:#071225;border:0}
+.action-btn:disabled{opacity:.6;cursor:wait}
+.notifications-status{margin:0 0 14px;padding:14px;border:1px solid var(--border);border-radius:15px;background:rgba(255,255,255,.04);color:var(--muted);font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+.notifications-list{display:flex;flex-direction:column;gap:10px}
+.notification{display:flex;align-items:center;gap:12px;padding:14px;border-radius:18px;background:linear-gradient(145deg,rgba(16,29,52,.98),rgba(21,38,66,.94));border:1px solid var(--border);color:var(--text);text-decoration:none;overflow-wrap:anywhere}
+.notification-unread{border-color:rgba(216,173,66,.45);background:linear-gradient(145deg,rgba(35,39,68,.98),rgba(21,38,66,.94))}
+.notification-icon{width:50px;height:50px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:16px;background:rgba(216,173,66,.1);border:1px solid rgba(216,173,66,.18);font-size:24px}
+.notification-content{flex:1;min-width:0}
+.notification-title{display:block;margin-bottom:5px;font-size:15px;font-weight:800;line-height:1.4}
+.notification-text{display:block;color:var(--muted);font-size:13px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
+.notification-time{display:block;margin-top:6px;color:#7f8ca3;font-size:11px}
+.empty-state{padding:38px 20px;border-radius:20px;background:linear-gradient(145deg,rgba(16,29,52,.96),rgba(21,38,66,.9));border:1px solid var(--border);text-align:center}
+.empty-icon{margin-bottom:12px;font-size:44px}
+.empty-state h2{margin:0 0 8px;font-size:20px}
+.empty-state p{max-width:430px;margin:0 auto;color:var(--muted);font-size:14px;line-height:1.55}
+[hidden]{display:none!important}
+@media(max-width:420px){.notifications-page{padding-left:10px;padding-right:10px}.header-text h1{font-size:21px}.header-icon{width:44px;height:44px}.notification{gap:10px;padding:12px}.notification-icon{width:46px;height:46px}}
+</style>
 </head>
-
 <body>
-  <main class="notifications-page">
-    <header class="notifications-header">
-      <a class="back" href="menu.html" aria-label="Volver al menú">←</a>
+<main class="notifications-page">
+  <header class="notifications-header">
+    <a class="back" href="menu.html" aria-label="Volver al menú">←</a>
+    <div class="header-icon">🔔</div>
+    <div class="header-text">
+      <h1>Notificaciones</h1>
+      <p>Tus novedades y alertas</p>
+    </div>
+  </header>
 
-      <div class="header-icon">🔔</div>
+  <section class="actions" aria-label="Acciones">
+    <button id="refreshButton" class="action-btn" type="button">
+      🔄 Actualizar
+    </button>
+    <button id="readAllButton" class="action-btn primary" type="button">
+      ✓✓ Leer todo
+    </button>
+  </section>
 
-      <div class="header-text">
-        <h1>Notificaciones</h1>
-        <p>Tus novedades y alertas</p>
-      </div>
-    </header>
+  <p id="status" class="notifications-status" role="status" aria-live="polite">
+    Preparando notificaciones...
+  </p>
 
-    <section class="actions" aria-label="Acciones">
-      <button id="refreshButton" class="action-btn" type="button">
-        🔄 Actualizar
-      </button>
+  <section id="notificationsList" class="notifications-list"
+    aria-label="Lista de notificaciones" hidden></section>
 
-      <button id="readAllButton" class="action-btn primary" type="button">
-        ✓✓ Leer todo
-      </button>
-    </section>
+  <section id="emptyState" class="empty-state" hidden>
+    <div class="empty-icon">🔔</div>
+    <h2>No tenés notificaciones</h2>
+    <p>Acá vas a recibir avisos de mensajes, nuevos matches y visitas a tu perfil.</p>
+  </section>
+</main>
 
-    <p
-      id="status"
-      class="notifications-status"
-      role="status"
-      aria-live="polite"
-    >
-      Cargando notificaciones...
-    </p>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/config.js"></script>
+<script>
+"use strict";
 
-    <section
-      id="notificationsList"
-      class="notifications-list"
-      aria-label="Lista de notificaciones"
-      hidden
-    ></section>
+const MAX_MATCH_NOTIFICATION_AGE = 24 * 60 * 60 * 1000;
+const REQUEST_TIMEOUT_MS = 15000;
 
-    <section id="emptyState" class="empty-state" hidden>
-      <div class="empty-icon">🔔</div>
-      <h2>No tenés notificaciones</h2>
-      <p>
-        Acá vas a recibir avisos de mensajes, nuevos matches
-        y personas que visiten tu perfil.
-      </p>
-    </section>
+const statusEl = document.getElementById("status");
+const notificationsList = document.getElementById("notificationsList");
+const emptyStateEl = document.getElementById("emptyState");
+const refreshButton = document.getElementById("refreshButton");
+const readAllButton = document.getElementById("readAllButton");
 
-    <div class="bottom-space"></div>
-  </main>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="assets/js/config.js"></script>
+let client = null;
+let currentUser = null;
+let realtimeChannel = null;
+let refreshInProgress = false;
 
-  <script>
-    "use strict";
+function formatTime(value) {
+  if (!value) return "Fecha no disponible";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Fecha no disponible";
+  return date.toLocaleString("es-AR", {
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
 
-    const MAX_MATCH_NOTIFICATION_AGE = 24 * 60 * 60 * 1000;
+function showLoading(message = "Cargando notificaciones...") {
+  statusEl.hidden = false;
+  statusEl.textContent = message;
+  notificationsList.hidden = true;
+  emptyStateEl.hidden = true;
+}
 
-    const statusEl = document.getElementById("status");
-    const notificationsList = document.getElementById("notificationsList");
-    const emptyStateEl = document.getElementById("emptyState");
-    const refreshButton = document.getElementById("refreshButton");
-    const readAllButton = document.getElementById("readAllButton");
+function showError(message) {
+  statusEl.hidden = false;
+  statusEl.textContent = message;
+  notificationsList.hidden = true;
+  emptyStateEl.hidden = true;
+}
 
-    let client = null;
-    let currentUser = null;
-    let realtimeChannel = null;
-    let refreshInProgress = false;
+function withTimeout(promise, milliseconds = REQUEST_TIMEOUT_MS) {
+  let timer;
+  const timeout = new Promise((_, reject) => {
+    timer = window.setTimeout(() => {
+      reject(new Error(
+        "La consulta tardó más de 15 segundos. Revisá la conexión y tocá Actualizar."
+      ));
+    }, milliseconds);
+  });
 
-    function escapeHtml(value) {
-      return String(value ?? "").replace(/[&<>"']/g, function (char) {
-        const entities = {
-          "&": "&amp;",
-          "<": "&lt;",
-          ">": "&gt;",
-          '"': "&quot;",
-          "'": "&#039;"
-        };
-        return entities[char];
-      });
-    }
+  return Promise.race([promise, timeout])
+    .finally(() => window.clearTimeout(timer));
+}
 
-    function formatTime(value) {
-      if (!value) return "Fecha no disponible";
+function initSupabase() {
+  const config = window.EMIMATCH_CONFIG || {};
+  const url = config.supabaseUrl || config.SUPABASE_URL || "";
+  const key = config.supabaseKey || config.supabaseAnonKey ||
+    config.anonKey || config.SUPABASE_ANON_KEY || "";
 
-      const date = new Date(value);
-      if (Number.isNaN(date.getTime())) {
-        return "Fecha no disponible";
-      }
+  if (!window.supabase) {
+    throw new Error("No se pudo cargar la biblioteca de conexión.");
+  }
+  if (!url || !key) {
+    throw new Error("Falta la configuración de Supabase en config.js.");
+  }
 
-      return date.toLocaleString("es-AR", {
-        day: "2-digit",
-        month: "short",
-        hour: "2-digit",
-        minute: "2-digit"
-      });
-    }
+  client = window.supabase.createClient(url, key);
+}
 
-    function showLoading() {
-      statusEl.hidden = false;
-      statusEl.textContent = "Cargando notificaciones...";
-      notificationsList.hidden = true;
-      emptyStateEl.hidden = true;
-    }
+async function loadSession() {
+  const { data, error } = await client.auth.getSession();
+  if (error) throw error;
 
-    function showError(message) {
-      statusEl.hidden = false;
-      statusEl.textContent = message;
-      notificationsList.hidden = true;
-      emptyStateEl.hidden = true;
-    }
+  currentUser = data?.session?.user || null;
+  if (!currentUser) {
+    window.location.href = "index.html";
+    return false;
+  }
+  return true;
+}
+  async function loadMatches() {
+  const { data, error } = await client
+    .from("matches")
+    .select("id, user1_id, user2_id, created_at")
+    .or(
+      `user1_id.eq.${currentUser.id},user2_id.eq.${currentUser.id}`
+    )
+    .order("created_at", { ascending: false });
 
-    function hideStatus() {
-      statusEl.hidden = true;
-    }
+  if (error) throw error;
+  return data || [];
+}
 
-    function initSupabase() {
-      const config = window.EMIMATCH_CONFIG || {};
-      const url = config.supabaseUrl || "";
-      const key =
-        config.supabaseKey ||
-        config.supabaseAnonKey ||
-        "";
+async function loadReceivedMessages(matches) {
+  if (!matches.length) return [];
 
-      if (!window.supabase || !url || !key) {
-        throw new Error(
-          "No se pudo iniciar la conexión con Supabase. Revisá la configuración."
-        );
-      }
+  const matchIds = matches.map(match => match.id);
 
-      client = window.supabase.createClient(url, key);
-    }
+  const { data, error } = await client
+    .from("messages")
+    .select("id, match_id, sender_id, content, created_at, read_at")
+    .in("match_id", matchIds)
+    .neq("sender_id", currentUser.id)
+    .order("created_at", { ascending: false })
+    .limit(50);
 
-    async function loadSession() {
-      const { data, error } = await client.auth.getSession();
+  if (error) throw error;
 
-      if (error) throw error;
+  const messages = data || [];
+  const senderIds = [...new Set(
+    messages.map(message => message.sender_id).filter(Boolean)
+  )];
 
-      currentUser = data?.session?.user || null;
+  let profilesById = {};
 
-      if (!currentUser) {
-        window.location.href = "index.html";
-        return false;
-      }
-
-      return true;
-    }
-    async function getProfile(userId) {
-      const { data, error } = await client
+  if (senderIds.length) {
+    // Si falla la consulta de perfiles, los mensajes siguen apareciendo.
+    try {
+      const { data: profiles, error: profileError } = await client
         .from("profiles")
-        .select("id, nombre, foto_url")
-        .eq("id", userId)
-        .maybeSingle();
+        .select("id, nombre")
+        .in("id", senderIds);
 
-      if (error) throw error;
+      if (profileError) throw profileError;
 
-      return data || {
-        id: userId,
-        nombre: "Usuario",
-        foto_url: ""
+      profilesById = Object.fromEntries(
+        (profiles || []).map(profile => [profile.id, profile])
+      );
+    } catch (profileError) {
+      console.warn("No se pudieron cargar los nombres de los perfiles:", profileError);
+    }
+  }
+
+  return messages.map(message => {
+    const name = profilesById[message.sender_id]?.nombre || "Tu match";
+
+    return {
+      id: `message-${message.id}`,
+      type: "message",
+      userId: message.sender_id,
+      createdAt: message.created_at,
+      unread: !message.read_at,
+      title: message.read_at
+        ? `Mensaje de ${name}`
+        : `Nuevo mensaje de ${name}`,
+      text: message.content || "Te envió un mensaje.",
+      icon: "💬",
+      href: `conversacion.html?user=${encodeURIComponent(message.sender_id)}`
+    };
+  });
+}
+
+async function loadMatchNotifications(matches) {
+  const now = Date.now();
+
+  return matches
+    .filter(match => {
+      if (!match.created_at) return false;
+
+      const created = new Date(match.created_at).getTime();
+      const age = now - created;
+
+      return Number.isFinite(created) &&
+        age >= 0 &&
+        age <= MAX_MATCH_NOTIFICATION_AGE;
+    })
+    .map(match => {
+      const otherUserId = match.user1_id === currentUser.id
+        ? match.user2_id
+        : match.user1_id;
+
+      return {
+        id: `match-${match.id}`,
+        type: "match",
+        userId: otherUserId,
+        createdAt: match.created_at,
+        unread: false,
+        title: "¡Tenés un nuevo match!",
+        text: "Una nueva conexión puede convertirse en una gran historia.",
+        icon: "💜",
+        href: `conversacion.html?user=${encodeURIComponent(otherUserId)}`
       };
-    }
+    });
+  }
+  async function loadProfileViewNotifications() {
+  const { data, error } = await client
+    .from("profile_views")
+    .select("id, viewer_id, profile_id, created_at")
+    .eq("profile_id", currentUser.id)
+    .neq("viewer_id", currentUser.id)
+    .order("created_at", { ascending: false })
+    .limit(30);
 
-    async function loadMatches() {
-      const { data, error } = await client
-        .from("matches")
-        .select("id, user1_id, user2_id, created_at")
-        .or(
-          `user1_id.eq.${currentUser.id},user2_id.eq.${currentUser.id}`
-        )
-        .order("created_at", { ascending: false });
+  if (error) throw error;
 
-      if (error) throw error;
+  const views = data || [];
+  if (!views.length) return [];
 
-      return data || [];
-    }
+  const viewerIds = [...new Set(
+    views.map(view => view.viewer_id).filter(Boolean)
+  )];
 
-    async function loadReceivedMessages(matches) {
-      if (!matches.length) return [];
+  let profilesById = {};
 
-      const matchIds = matches.map(match => match.id);
-
-      const { data, error } = await client
-        .from("messages")
-        .select("id, match_id, sender_id, content, created_at, read_at")
-        .in("match_id", matchIds)
-        .neq("sender_id", currentUser.id)
-        .order("created_at", { ascending: false })
-        .limit(50);
-
-      if (error) throw error;
-
-      const messages = data || [];
-      const senderIds = [
-        ...new Set(messages.map(message => message.sender_id))
-      ];
-
-      let profilesById = {};
-
-      if (senderIds.length) {
-        const { data: profiles, error: profilesError } = await client
-          .from("profiles")
-          .select("id, nombre, foto_url")
-          .in("id", senderIds);
-
-        if (profilesError) throw profilesError;
-
-        profilesById = Object.fromEntries(
-          (profiles || []).map(profile => [profile.id, profile])
-        );
-      }
-
-      return messages.map(message => {
-        const profile = profilesById[message.sender_id] || {};
-        const name = profile.nombre || "Tu match";
-
-        return {
-          id: `message-${message.id}`,
-          type: "message",
-          userId: message.sender_id,
-          createdAt: message.created_at,
-          unread: !message.read_at,
-          title: message.read_at
-            ? `Mensaje de ${name}`
-            : `Nuevo mensaje de ${name}`,
-          text: message.content || "Te envió un mensaje.",
-          icon: "💬",
-          href: `conversacion.html?user=${encodeURIComponent(message.sender_id)}`
-        };
-      });
-    }
-
-    async function loadMatchNotifications(matches) {
-      const now = Date.now();
-
-      const recentMatches = matches.filter(match => {
-        if (!match.created_at) return false;
-
-        const created = new Date(match.created_at).getTime();
-        const age = now - created;
-
-        return Number.isFinite(created) &&
-          age >= 0 &&
-          age <= MAX_MATCH_NOTIFICATION_AGE;
-      });
-
-      return recentMatches.map(match => {
-        const otherUserId = match.user1_id === currentUser.id
-          ? match.user2_id
-          : match.user1_id;
-
-        return {
-          id: `match-${match.id}`,
-          type: "match",
-          userId: otherUserId,
-          createdAt: match.created_at,
-          unread: false,
-          title: "¡Tenés un nuevo match!",
-          text: "Una nueva conexión puede convertirse en una gran historia.",
-          icon: "💜",
-          href: `conversacion.html?user=${encodeURIComponent(otherUserId)}`
-        };
-      });
-    }
-   loadProfileViewNotifications().catch(error => {
-console.warn("Visitas al perfil no disponibles:", error);
-return [];
-}) {
-      const { data, error } = await client
-        .from("profile_views")
-        .select("id, viewer_id, profile_id, created_at")
-        .eq("profile_id", currentUser.id)
-        .neq("viewer_id", currentUser.id)
-        .order("created_at", { ascending: false })
-        .limit(30);
-
-      if (error) throw error;
-
-      const views = data || [];
-      if (!views.length) return [];
-
-      const viewerIds = [
-        ...new Set(views.map(view => view.viewer_id))
-      ];
-
+  if (viewerIds.length) {
+    try {
       const { data: profiles, error: profilesError } = await client
         .from("profiles")
         .select("id, nombre")
@@ -573,225 +291,232 @@ return [];
 
       if (profilesError) throw profilesError;
 
-      const profilesById = Object.fromEntries(
+      profilesById = Object.fromEntries(
         (profiles || []).map(profile => [profile.id, profile])
       );
+    } catch (profileError) {
+      console.warn("No se pudieron cargar nombres de visitantes:", profileError);
+    }
+  }
 
-      return views.map(view => {
-        const viewer = profilesById[view.viewer_id] || {};
+  return views.map(view => ({
+    id: `view-${view.id}`,
+    type: "view",
+    userId: view.viewer_id,
+    createdAt: view.created_at,
+    unread: false,
+    title: `${profilesById[view.viewer_id]?.nombre || "Alguien"} visitó tu perfil`,
+    text: "¡Quizás sea el comienzo de una nueva conexión!",
+    icon: "👀",
+    href: "perfil.html"
+  }));
+}
 
-        return {
-          id: `view-${view.id}`,
-          type: "view",
-          userId: view.viewer_id,
-          createdAt: view.created_at,
-          unread: false,
-          title: `${viewer.nombre || "Alguien"} visitó tu perfil`,
-          text: "¡Quizás sea el comienzo de una nueva conexión!",
-          icon: "👀",
-          href: `perfil.html`
-        };
+function renderNotifications(notifications) {
+  notificationsList.replaceChildren();
+
+  if (!notifications.length) {
+    notificationsList.hidden = true;
+    emptyStateEl.hidden = false;
+    statusEl.hidden = false;
+    statusEl.textContent = "Estás al día. Por ahora no hay novedades.";
+    return;
+  }
+
+  emptyStateEl.hidden = true;
+  notificationsList.hidden = false;
+  statusEl.hidden = false;
+  statusEl.textContent = `${notifications.length} ${
+    notifications.length === 1 ? "notificación encontrada" : "notificaciones encontradas"
+  }.`;
+
+  notifications.forEach(notification => {
+    const link = document.createElement("a");
+    link.className = "notification";
+    link.href = notification.href || "menu.html";
+
+    if (notification.unread) {
+      link.classList.add("notification-unread");
+    }
+
+    const icon = document.createElement("div");
+    icon.className = "notification-icon";
+    icon.textContent = notification.icon || "🔔";
+
+    const content = document.createElement("div");
+    content.className = "notification-content";
+
+    const title = document.createElement("span");
+    title.className = "notification-title";
+    title.textContent = notification.title || "Notificación";
+
+    const description = document.createElement("span");
+    description.className = "notification-text";
+    description.textContent = notification.text || "";
+
+    const time = document.createElement("small");
+    time.className = "notification-time";
+    time.textContent = formatTime(notification.createdAt);
+
+    content.append(title, description, time);
+    link.append(icon, content);
+    notificationsList.appendChild(link);
+  });
+  }
+  async function loadNotifications() {
+  if (refreshInProgress || !client || !currentUser) return;
+
+  refreshInProgress = true;
+  refreshButton.disabled = true;
+  showLoading();
+
+  try {
+    const notifications = await withTimeout((async () => {
+      const matches = await loadMatches();
+
+      const results = await Promise.all([
+        loadReceivedMessages(matches),
+        loadMatchNotifications(matches),
+
+        // Las visitas no deben impedir cargar mensajes y matches.
+        loadProfileViewNotifications().catch(error => {
+          console.warn("Visitas al perfil no disponibles:", error);
+          return [];
+        })
+      ]);
+
+      return results.flat().sort((a, b) => {
+        const dateA = new Date(a.createdAt || 0).getTime();
+        const dateB = new Date(b.createdAt || 0).getTime();
+        return dateB - dateA;
       });
-    }
+    })());
 
-    function renderNotifications(notifications) {
-      notificationsList.innerHTML = "";
+    renderNotifications(notifications);
+  } catch (error) {
+    console.error("EmiMatch: error al cargar notificaciones:", error);
 
-      if (!notifications.length) {
-        notificationsList.hidden = true;
-        emptyStateEl.hidden = false;
-        statusEl.hidden = false;
-        statusEl.textContent = "Estás al día. Por ahora no hay novedades.";
-        return;
-      }
+    const detail = error?.message || String(error || "Error desconocido");
+    showError(`No se pudieron cargar las notificaciones. Detalle: ${detail}`);
+  } finally {
+    refreshInProgress = false;
+    refreshButton.disabled = false;
+  }
+  }
+  async function markAllAsRead() {
+  if (!client || !currentUser || readAllButton.disabled) return;
 
-      emptyStateEl.hidden = true;
-      notificationsList.hidden = false;
-      statusEl.hidden = false;
-      statusEl.textContent = `${notifications.length} ${
-        notifications.length === 1
-          ? "notificación"
-          : "notificaciones"
-      } encontradas.`;
+  readAllButton.disabled = true;
+  const originalText = readAllButton.textContent;
+  readAllButton.textContent = "Marcando...";
 
-      notifications.forEach(notification => {
-        const link = document.createElement("a");
-        link.className = "notification";
-        link.href = notification.href || "menu.html";
+  try {
+    await withTimeout((async () => {
+      const matches = await loadMatches();
+      const matchIds = matches.map(match => match.id);
 
-        if (notification.unread) {
-          link.classList.add("notification-unread");
-        }
+      if (!matchIds.length) return;
 
-        const icon = document.createElement("div");
-        icon.className = "notification-icon";
-        icon.textContent = notification.icon;
+      const { error } = await client
+        .from("messages")
+        .update({ read_at: new Date().toISOString() })
+        .in("match_id", matchIds)
+        .neq("sender_id", currentUser.id)
+        .is("read_at", null);
 
-        const content = document.createElement("div");
-        content.className = "notification-content";
+      if (error) throw error;
+    })());
 
-        const title = document.createElement("span");
-        title.className = "notification-title";
-        title.textContent = notification.title;
+    await loadNotifications();
+  } catch (error) {
+    console.error("EmiMatch: error al marcar como leídos:", error);
+    showError(
+      "No se pudieron marcar los mensajes como leídos. Detalle: " +
+      (error?.message || String(error))
+    );
+  } finally {
+    readAllButton.disabled = false;
+    readAllButton.textContent = originalText;
+  }
+}
 
-        const description = document.createElement("span");
-        description.className = "notification-text";
-        description.textContent = notification.text;
+function subscribeToNotifications() {
+  if (!client || !currentUser) return;
 
-        const time = document.createElement("small");
-        time.className = "notification-time";
-        time.textContent = formatTime(notification.createdAt);
+  if (realtimeChannel) {
+    client.removeChannel(realtimeChannel);
+    realtimeChannel = null;
+  }
 
-        content.append(title, description, time);
-        link.append(icon, content);
-        notificationsList.appendChild(link);
-      });
-    }
-
-    async function loadNotifications() {
-      if (refreshInProgress) return;
-
-      refreshInProgress = true;
-      refreshButton.disabled = true;
-      showLoading();
-
-      try {
-        const matches = await loadMatches();
-
-        const results = await Promise.all([
-          loadReceivedMessages(matches),
-          loadMatchNotifications(matches),
-          loadProfileViewNotifications()
-        ]);
-
-        const notifications = results
-          .flat()
-          .sort((a, b) => {
-            const dateA = new Date(a.createdAt || 0).getTime();
-            const dateB = new Date(b.createdAt || 0).getTime();
-            return dateB - dateA;
-          });
-
-        renderNotifications(notifications);
-      } catch (error) {
-        console.error("EmiMatch: error al cargar notificaciones:", error);
-        showError(
-          "No se pudieron cargar las notificaciones. Revisá tu conexión e intentá actualizar."
-        );
-      } finally {
-        refreshInProgress = false;
-        refreshButton.disabled = false;
-      }
-    }
-    async function markAllAsRead() {
-      if (!client || !currentUser) return;
-
-      readAllButton.disabled = true;
-
-      try {
-        const matches = await loadMatches();
-        const matchIds = matches.map(match => match.id);
-
-        if (matchIds.length > 0) {
-          const { error } = await client
-            .from("messages")
-            .update({ read_at: new Date().toISOString() })
-            .in("match_id", matchIds)
-            .neq("sender_id", currentUser.id)
-            .is("read_at", null);
-
-          if (error) throw error;
-        }
-
-        await loadNotifications();
-      } catch (error) {
-        console.error("EmiMatch: error al marcar mensajes:", error);
-        showError("No se pudieron marcar los mensajes como leídos.");
-      } finally {
-        readAllButton.disabled = false;
-      }
-    }
-
-    function subscribeToNotifications() {
-      if (!client || !currentUser) return;
-
-      if (realtimeChannel) {
-        client.removeChannel(realtimeChannel);
-      }
-
-      realtimeChannel = client
-        .channel("emimatch-notificaciones")
-        .on(
-          "postgres_changes",
-          {
-            event: "*",
-            schema: "public",
-            table: "messages"
-          },
-          () => loadNotifications()
-        )
-        .on(
-          "postgres_changes",
-          {
-            event: "INSERT",
-            schema: "public",
-            table: "matches"
-          },
-          () => loadNotifications()
-        )
-        .on(
-          "postgres_changes",
-          {
-            event: "INSERT",
-            schema: "public",
-            table: "profile_views",
-            filter: `profile_id=eq.${currentUser.id}`
-          },
-          () => loadNotifications()
-        )
-        .subscribe(status => {
-          if (status === "CHANNEL_ERROR") {
-            console.warn(
-              "EmiMatch: no se pudo conectar a las notificaciones en tiempo real."
-            );
-          }
-        });
-    }
-
-    refreshButton.addEventListener("click", loadNotifications);
-    readAllButton.addEventListener("click", markAllAsRead);
-
-    async function initNotifications() {
-      try {
-        initSupabase();
-
-        const hasSession = await loadSession();
-
-        if (!hasSession) return;
-
-        await loadNotifications();
-        subscribeToNotifications();
-      } catch (error) {
-        console.error("EmiMatch: error de inicialización:", error);
-        showError(
-          "No se pudieron iniciar las notificaciones. Verificá la configuración y volvé a intentar."
-        );
-      }
-    }
-
-    document.addEventListener("visibilitychange", () => {
-      if (!document.hidden && client && currentUser) {
-        loadNotifications();
+  realtimeChannel = client
+    .channel("emimatch-notificaciones")
+    .on("postgres_changes", {
+      event: "*",
+      schema: "public",
+      table: "messages"
+    }, () => {
+      loadNotifications();
+    })
+    .on("postgres_changes", {
+      event: "INSERT",
+      schema: "public",
+      table: "matches"
+    }, () => {
+      loadNotifications();
+    })
+    .subscribe(status => {
+      if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
+        console.warn("EmiMatch: las actualizaciones en tiempo real no están disponibles.");
       }
     });
+}
 
-    window.addEventListener("beforeunload", () => {
-      if (client && realtimeChannel) {
-        client.removeChannel(realtimeChannel);
-      }
-    });
+refreshButton.addEventListener("click", () => {
+  loadNotifications();
+});
 
-    initNotifications();
-  </script>
+readAllButton.addEventListener("click", () => {
+  markAllAsRead();
+});
+  async function initNotifications() {
+  try {
+    showLoading("Conectando con EmiMatch...");
+
+    await withTimeout((async () => {
+      initSupabase();
+
+      const authenticated = await loadSession();
+      if (!authenticated) return;
+
+      await loadNotifications();
+      subscribeToNotifications();
+    })());
+  } catch (error) {
+    console.error("EmiMatch: error al iniciar notificaciones:", error);
+
+    showError(
+      "No se pudieron iniciar las notificaciones. Detalle: " +
+      (error?.message || String(error))
+    );
+
+    refreshButton.disabled = false;
+  }
+}
+
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden && client && currentUser) {
+    loadNotifications();
+  }
+});
+
+window.addEventListener("beforeunload", () => {
+  if (client && realtimeChannel) {
+    client.removeChannel(realtimeChannel);
+    realtimeChannel = null;
+  }
+});
+
+initNotifications();
+</script>
 </body>
 </html>
