@@ -505,22 +505,21 @@ profile_id: profile.id
 .then(({ error }) => {
 if (error) {
 sessionStorage.removeItem(visitKey);
-alert("Error al registrar la visita: " + error.message);
-console.error("profile_views:", error);
+console.error("Error al registrar visita:", error.message);
 } else {
 sessionStorage.setItem(visitKey, "done");
 }
 })
 .catch(error => {
 sessionStorage.removeItem(visitKey);
-alert("Error de conexión: " + error.message);
+console.error("Error de conexión al registrar visita:", error);
 });
 }
-  }
+}
 
-  const photo =
-    profile.foto_url ||
-    "https://placehold.co/400x400?text=EmiMatch";
+const photo =
+profile.foto_url ||
+"https://placehold.co/400x400?text=EmiMatch";
 
 
   container.innerHTML = `
