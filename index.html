@@ -358,104 +358,138 @@
   ></script>
 
 
-  <!-- EmiMatch · identidad romántica y sofisticada -->
+  <!-- EmiMatch · rediseño romántico visible -->
   <style id="emimatch-romantic-theme">
     :root {
-      --em-romance-rose: #d98a9b;
-      --em-romance-rose-light: #f0b9bd;
-      --em-romance-champagne: #e8cb91;
-      --em-romance-ink: #160f1d;
-      --em-romance-plum: #281726;
+      --em-romance-rose: #e8a0ad;
+      --em-romance-champagne: #f0d9ad;
+      --em-romance-plum: #21121f;
     }
+    html { background: #120c17 !important; }
     body {
+      color: #fff7f1 !important;
       background:
-        radial-gradient(ellipse at 50% 5%, rgba(169, 91, 113, .25), transparent 43%),
-        radial-gradient(ellipse at 8% 65%, rgba(232, 203, 145, .09), transparent 34%),
-        linear-gradient(145deg, #100d18 0%, #1b1220 52%, #100e19 100%) !important;
+        radial-gradient(ellipse at 50% 18%, rgba(202,105,132,.32), transparent 38%),
+        radial-gradient(ellipse at 8% 80%, rgba(240,217,173,.13), transparent 32%),
+        radial-gradient(ellipse at 95% 55%, rgba(139,65,101,.22), transparent 35%),
+        linear-gradient(145deg, #100b15 0%, #291725 48%, #120d19 100%) !important;
     }
-    .topbar { padding-top: 24px; }
-    .brand { letter-spacing: -.65px; }
+    .topbar { padding: 22px 26px !important; }
+    .brand { font-family: Georgia, "Times New Roman", serif !important; font-size: 23px !important; letter-spacing: .1px !important; }
     .brand-mark, .auth-logo {
-      border-color: rgba(232,203,145,.3) !important;
-      background: linear-gradient(145deg, rgba(217,138,155,.26), rgba(232,203,145,.17)) !important;
-      box-shadow: 0 12px 34px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.14) !important;
+      border: 1px solid rgba(240,217,173,.55) !important;
+      border-radius: 17px !important;
+      background: linear-gradient(145deg, #b76580, #e8a0ad 58%, #f0d9ad) !important;
+      color: #251321 !important;
+      box-shadow: 0 10px 38px rgba(220,127,153,.28), inset 0 1px 0 rgba(255,255,255,.5) !important;
     }
+    .hero { padding-top: 104px !important; }
+    .hero-inner { max-width: 1000px !important; }
     .photo-frame {
-      width: min(460px, 90vw) !important;
-      height: min(340px, 66vw) !important;
-      border: 1px solid rgba(232,203,145,.35) !important;
-      border-radius: 34px !important;
-      box-shadow: 0 32px 85px rgba(0,0,0,.42), 0 0 65px rgba(217,138,155,.12) !important;
+      width: min(560px, 91vw) !important;
+      height: min(390px, 67vw) !important;
+      margin-bottom: 32px !important;
+      border: 1px solid rgba(240,217,173,.62) !important;
+      border-radius: 36px !important;
+      background: #2a1727 !important;
+      box-shadow: 0 35px 100px rgba(0,0,0,.5), 0 0 0 7px rgba(232,160,173,.055), 0 0 75px rgba(220,127,153,.23) !important;
     }
     .photo-frame::after {
-      background: linear-gradient(180deg, rgba(17,11,20,.02) 30%, rgba(17,11,20,.68) 100%) !important;
+      background: linear-gradient(180deg, rgba(15,8,16,.02) 24%, rgba(20,10,20,.16) 48%, rgba(20,10,20,.78) 100%) !important;
     }
+    .hero-photo { filter: saturate(.9) contrast(1.03); }
     .photo-badge {
-      border-color: rgba(232,203,145,.32) !important;
-      background: rgba(25,15,26,.78) !important;
-      color: #fff4e7 !important;
+      left: 20px !important; bottom: 20px !important;
+      padding: 11px 16px !important;
+      border: 1px solid rgba(240,217,173,.45) !important;
+      background: rgba(31,17,30,.82) !important;
+      color: #fff4e8 !important;
+      backdrop-filter: blur(16px) !important;
     }
     .eyebrow {
-      border-color: rgba(232,203,145,.28) !important;
-      background: rgba(217,138,155,.09) !important;
-      color: #f0c8c4 !important;
-      letter-spacing: .45px !important;
+      border: 1px solid rgba(240,217,173,.4) !important;
+      background: rgba(232,160,173,.13) !important;
+      color: #f5d7d4 !important;
+      padding: 9px 16px !important;
+      letter-spacing: .5px !important;
     }
     .hero-title {
       font-family: Georgia, "Times New Roman", serif !important;
-      font-weight: 600 !important;
-      letter-spacing: -2.2px !important;
-      line-height: 1.02 !important;
+      font-weight: 500 !important;
+      letter-spacing: -2.5px !important;
+      line-height: 1.03 !important;
+      text-shadow: 0 5px 35px rgba(220,127,153,.12);
     }
     .hero-title span {
-      background: linear-gradient(110deg, #fff4e8 5%, #f0b9bd 53%, #e8cb91 100%) !important;
+      background: linear-gradient(105deg, #fff5e9 0%, #f0b9c3 48%, #f0d9ad 100%) !important;
       -webkit-background-clip: text !important;
       background-clip: text !important;
+      color: transparent !important;
     }
-    .hero-description { color: #c7b9c7 !important; }
-    .hero-button { border-radius: 999px !important; min-height: 54px; }
+    .hero-description { color: #ddcbd7 !important; }
+    .hero-actions { gap: 14px !important; margin-top: 30px !important; }
+    .hero-button {
+      min-height: 56px !important;
+      border-radius: 999px !important;
+      padding: 15px 25px !important;
+      font-weight: 700 !important;
+      transition: transform .2s ease, box-shadow .2s ease, filter .2s ease !important;
+    }
     .hero-button.primary, .form-submit {
-      background: linear-gradient(120deg, #b9697f 0%, #d98a9b 48%, #e8cb91 140%) !important;
-      color: #21121d !important;
-      box-shadow: 0 14px 34px rgba(185,105,127,.24) !important;
+      color: #281522 !important;
+      border: 1px solid rgba(255,239,220,.55) !important;
+      background: linear-gradient(115deg, #bd6e86 0%, #e8a0ad 48%, #f0d9ad 115%) !important;
+      box-shadow: 0 12px 35px rgba(196,104,132,.32), inset 0 1px 0 rgba(255,255,255,.45) !important;
     }
     .hero-button.primary:hover, .form-submit:hover {
-      box-shadow: 0 18px 42px rgba(217,138,155,.32) !important;
+      transform: translateY(-2px) !important;
+      box-shadow: 0 17px 42px rgba(220,127,153,.42) !important;
       filter: brightness(1.04);
     }
     .hero-button.secondary {
-      border-color: rgba(232,203,145,.27) !important;
-      background: rgba(255,244,232,.045) !important;
-      color: #fff4e8 !important;
+      color: #fff3ec !important;
+      border: 1px solid rgba(240,217,173,.45) !important;
+      background: rgba(255,245,239,.065) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.07) !important;
     }
     .feature-pill {
-      border-color: rgba(232,203,145,.12) !important;
-      background: rgba(255,244,232,.035) !important;
-      color: #bcaebd !important;
+      color: #e1cedb !important;
+      border-color: rgba(240,217,173,.2) !important;
+      background: rgba(255,245,239,.055) !important;
     }
     .auth-section {
       background:
-        radial-gradient(ellipse at 50% 0%, rgba(169,91,113,.2), transparent 44%),
-        linear-gradient(145deg, #100d18, #1b1220 55%, #100e19) !important;
+        radial-gradient(ellipse at 50% 0%, rgba(202,105,132,.27), transparent 44%),
+        linear-gradient(145deg, #100b15, #291725 55%, #120d19) !important;
     }
     .auth-card {
-      border-color: rgba(232,203,145,.2) !important;
-      background: linear-gradient(145deg, rgba(43,27,43,.97), rgba(19,14,25,.98)) !important;
-      box-shadow: 0 32px 85px rgba(0,0,0,.42), 0 0 60px rgba(217,138,155,.08) !important;
+      border: 1px solid rgba(240,217,173,.3) !important;
+      border-radius: 30px !important;
+      background: linear-gradient(145deg, rgba(52,30,48,.98), rgba(23,14,26,.99)) !important;
+      box-shadow: 0 32px 90px rgba(0,0,0,.44), 0 0 55px rgba(220,127,153,.12) !important;
     }
     .auth-heading h2 {
       font-family: Georgia, "Times New Roman", serif !important;
-      font-weight: 600 !important;
+      font-weight: 500 !important;
+    }
+    .field input {
+      border-color: rgba(240,217,173,.19) !important;
+      background: rgba(14,9,18,.56) !important;
+      color: #fff7f1 !important;
     }
     .field input:focus {
-      border-color: rgba(217,138,155,.8) !important;
-      box-shadow: 0 0 0 3px rgba(217,138,155,.12) !important;
+      border-color: #e8a0ad !important;
+      box-shadow: 0 0 0 3px rgba(232,160,173,.16) !important;
     }
-    .form-link.strong { color: #efb7bd !important; }
+    .form-link.strong { color: #f0b9c3 !important; }
     @media (max-width: 600px) {
-      .photo-frame { height: 235px !important; border-radius: 26px !important; }
-      .hero-title { letter-spacing: -1.6px !important; }
-      .hero-button { border-radius: 16px !important; }
+      .topbar { padding: 16px 17px !important; }
+      .hero { padding: 92px 17px 45px !important; }
+      .photo-frame { width: min(440px, 92vw) !important; height: 245px !important; border-radius: 27px !important; }
+      .hero-title { letter-spacing: -1.5px !important; }
+      .hero-description { font-size: 15px !important; }
+      .hero-actions { flex-direction: column !important; align-items: stretch !important; }
+      .hero-button { width: 100% !important; border-radius: 17px !important; }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
