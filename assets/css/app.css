@@ -320,3 +320,24 @@ textarea:focus-visible, select:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
+
+
+/* Unified black-and-gold surfaces across every app screen */
+body {
+  background: #080808 !important;
+  background-image: radial-gradient(ellipse at 50% 0%, rgba(228,195,109,.075), transparent 44%) !important;
+  color: #f7f3e9 !important;
+}
+:root {
+  --bg: #080808;
+  --panel: #121212;
+  --surface: #161616;
+  --text: #f7f3e9;
+  --muted: #aaa49a;
+  --gold: #e4c36d;
+  --border: rgba(228,195,109,.2);
+}
+input, textarea, select {
+  color: #f7f3e9;
+  accent-color: #d9b45b;
+}
