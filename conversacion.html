@@ -1117,18 +1117,20 @@ function mostrarAvisoBloqueado() {
 }
 
 async function marcarMensajesRecibidosComoLeidos() {
-  if (!matchActual || !usuarioActual || bloqueado) return;
+  if (!matchActual || !usuarioActual || bloqueado) return 0;
 
-  const { error } = await supabaseClient
-    .from("messages")
-    .update({ read_at: new Date().toISOString() })
-    .eq("match_id", matchActual.id)
-    .neq("sender_id", usuarioActual.id)
-    .is("read_at", null);
+  const { data, error } = await supabaseClient.rpc(
+    "mark_match_messages_read",
+    { p_match_id: matchActual.id }
+  );
 
   if (error) {
-    console.warn("No se pudieron marcar los mensajes recibidos como leídos:", error);
+    console.error("No se pudieron marcar los mensajes recibidos como leídos:", error);
+    return 0;
   }
+
+  console.log("Mensajes recibidos marcados como leídos:", data || 0);
+  return Number(data || 0);
 }
 
 async function marcarMensajeRecibidoComoLeido(mensajeId) {
