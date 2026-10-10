@@ -535,13 +535,29 @@ body { background:radial-gradient(ellipse at 50% 0%,rgba(228,195,109,.10),transp
   background:
     linear-gradient(180deg,rgba(8,8,8,.05) 0%,rgba(8,8,8,.10) 34%,rgba(8,8,8,.50) 72%,rgba(8,8,8,.82) 100%),
     linear-gradient(90deg,rgba(8,8,8,.16),rgba(8,8,8,.02) 75%),
-    url("assets/images/0b8840566944e40f0e1640397835d931.jpg") center 28% / cover no-repeat!important;
+    url("assets/images/0b8840566944e40f0e1640397835d931.jpg") center 12% / cover no-repeat!important;
 }
 .hero::before {
   background:radial-gradient(ellipse at 50% 32%,transparent 0%,rgba(8,8,8,.02) 58%,rgba(8,8,8,.25) 100%)!important;
   pointer-events:none!important;
 }
-.hero-inner { position:relative!important; z-index:1!important; }
+.hero-inner { position:relative!important; z-index:2!important; }
+.hero::after {
+  content:"🫰"!important;
+  position:absolute!important;
+  z-index:0!important;
+  top:clamp(72px,12vh,145px)!important;
+  right:clamp(8px,7vw,100px)!important;
+  font-size:clamp(130px,25vw,300px)!important;
+  line-height:1!important;
+  opacity:.15!important;
+  filter:drop-shadow(0 0 26px rgba(228,195,109,.3))!important;
+  pointer-events:none!important;
+  transform:rotate(-12deg)!important;
+}
+@media(max-width:600px) {
+  .hero::after { top:100px!important; right:0!important; font-size:clamp(120px,34vw,190px)!important; opacity:.13!important; }
+}
 .brand,.hero h1,.auth-card h2 { color:#fff7df!important;text-shadow:0 2px 22px rgba(0,0,0,.45)!important }
 .brand-mark,.auth-logo { background:linear-gradient(135deg,#c9a24b,#ffe6a0)!important;color:#17130a!important;border-color:rgba(255,235,170,.85)!important;box-shadow:0 0 28px rgba(228,195,109,.22)!important }
 .hero-button.primary,.primary,.form-submit {
@@ -561,7 +577,7 @@ body { background:radial-gradient(ellipse at 50% 0%,rgba(228,195,109,.10),transp
 input,textarea,select { background:#101010!important;color:#f7f3e9!important;border-color:rgba(228,195,109,.25)!important }
 a:focus-visible,button:focus-visible,input:focus-visible { outline:2px solid #ffe6a0!important;outline-offset:3px }
 @media(max-width:600px) {
-  .hero { background-position:center 24%!important; }
+  .hero { background-position:center 9%!important; }
   .hero-title { text-shadow:0 2px 22px rgba(0,0,0,.55)!important; }
   .hero-button.primary,.hero-button.secondary { min-height:52px!important; }
 }
