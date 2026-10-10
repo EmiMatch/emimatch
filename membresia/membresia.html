@@ -668,30 +668,26 @@
         }
 
         /*
-         * MODO SEGURO DE PRUEBA:
-         * No redirigir al enlace de producción.
-         * Solo continuar si Mercado Pago devuelve
-         * un enlace explícito de sandbox/prueba.
+         * El servidor selecciona el enlace según el modo
+         * configurado y validado con el token de Mercado Pago.
          */
-
-        if (data.sandbox_init_point) {
+        const checkoutUrl = data.checkout_url;
+        if (!checkoutUrl) {
           status.textContent =
-            "Suscripción de prueba preparada. Abriendo el entorno de prueba de Mercado Pago...";
-
-          window.location.href =
-            data.sandbox_init_point;
-
+            data.checkout_mode === "test"
+              ? "No se abrió el pago: Mercado Pago no devolvió un enlace de prueba. No se realizó ningún cobro."
+              : "No se pudo preparar el checkout de Mercado Pago. No se realizó ningún cobro.";
           return;
         }
-
-        /*
-         * Si no hay enlace sandbox, detener el flujo.
-         * No usar init_point como alternativa porque
-         * podría llevar a un cobro real.
-         */
-
+        if (data.checkout_mode !== "test" && data.checkout_mode !== "production") {
+          throw new Error("Mercado Pago no confirmó el entorno del checkout. Por seguridad, no se abrió.");
+        }
         status.textContent =
-          "Por seguridad, no se abrió el pago: Mercado Pago no devolvió un enlace de prueba. No se realizó ningún cobro.";
+          data.checkout_mode === "test"
+            ? "Abriendo el entorno de prueba de Mercado Pago..."
+            : "Abriendo el checkout de Mercado Pago. El pago solo se realizará si lo confirmás allí.";
+        window.location.href = checkoutUrl;
+        return;
 
       } catch (error) {
 
