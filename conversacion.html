@@ -1116,11 +1116,51 @@ function mostrarAvisoBloqueado() {
   );
 }
 
+async function marcarMensajesRecibidosComoLeidos() {
+  if (!matchActual || !usuarioActual || bloqueado) return;
+
+  const { error } = await supabaseClient
+    .from("messages")
+    .update({ read_at: new Date().toISOString() })
+    .eq("match_id", matchActual.id)
+    .neq("sender_id", usuarioActual.id)
+    .is("read_at", null);
+
+  if (error) {
+    console.warn("No se pudieron marcar los mensajes recibidos como leídos:", error);
+  }
+}
+
+async function marcarMensajeRecibidoComoLeido(mensajeId) {
+  if (!matchActual || !usuarioActual || bloqueado || !mensajeId) return null;
+
+  const readAt = new Date().toISOString();
+  const { data, error } = await supabaseClient
+    .from("messages")
+    .update({ read_at: readAt })
+    .eq("id", mensajeId)
+    .eq("match_id", matchActual.id)
+    .neq("sender_id", usuarioActual.id)
+    .is("read_at", null)
+    .select("id,read_at")
+    .maybeSingle();
+
+  if (error) {
+    console.warn("No se pudo marcar el mensaje recibido como leído:", error);
+    return null;
+  }
+
+  return data?.read_at || null;
+}
+
 async function cargarMensajes() {
 
   if (!matchActual) {
     return;
   }
+
+  // Al abrir la conversación, marcamos como leídos los mensajes recibidos.
+  await marcarMensajesRecibidosComoLeidos();
 
   const {
     data,
@@ -1129,7 +1169,7 @@ async function cargarMensajes() {
     await supabaseClient
       .from("messages")
       .select(
-        "id,match_id,sender_id,content,created_at,message_type,media_path,media_mime,media_name,media_size,is_view_once,opened_at"
+        "id,match_id,sender_id,content,created_at,read_at,message_type,media_path,media_mime,media_name,media_size,is_view_once,opened_at"
       )
       .eq(
         "match_id",
@@ -1332,19 +1372,18 @@ function mostrarMensaje(mensaje) {
             "match_id=eq." +
             matchActual.id
         },
-        (payload) => {
+        async (payload) => {
 
-          const mensaje =
-            payload?.new;
+          const mensaje = payload?.new;
+          if (!mensaje?.id) return;
 
-          if (!mensaje?.id) {
-            return;
+          // Si el destinatario tiene este chat abierto, el mensaje se marca leído.
+          if (mensaje.sender_id !== usuarioActual.id) {
+            const readAt = await marcarMensajeRecibidoComoLeido(mensaje.id);
+            if (readAt) mensaje.read_at = readAt;
           }
 
-          mostrarMensaje(
-            mensaje
-          );
-
+          mostrarMensaje(mensaje);
           bajarAlFinal();
         }
       )
