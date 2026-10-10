@@ -742,23 +742,48 @@
         }
 
         /*
-         * Buscamos los likes recibidos:
-         *
-         * user_id       = persona que dio Like
-         * target_user_id = usuario actual
-         * action        = like
+         * Esta lista es un beneficio Premium.
+         * La autorización se comprueba en Supabase,
+         * no solamente ocultando elementos de la página.
+         */
+        const {
+          data: premiumActive,
+          error: premiumError
+        } = await db.rpc("is_premium");
+
+        if (premiumError) {
+          console.error("Error comprobando Premium:", premiumError);
+          setStatus("No se pudo verificar tu membresía. Intentá nuevamente.", true);
+          return;
+        }
+
+        if (premiumActive !== true) {
+          setStatus("");
+          counterEl.textContent = "Exclusivo Premium";
+          likesList.innerHTML = `
+            <div class="empty">
+              <div class="empty-icon">💎</div>
+              <h2>Descubrí quién gusta de vos</h2>
+              <p>
+                Con EmiMatch Premium podés ver las personas que te dieron Me gusta
+                y decidir si también querés conectar.
+              </p>
+              <a class="primary-link" href="membresia/membresia.html">
+                Conocer Premium
+              </a>
+            </div>
+          `;
+          return;
+        }
+
+        /*
+         * La función del servidor devuelve únicamente
+         * los Me gusta recibidos por esta cuenta Premium.
          */
         const {
           data: receivedLikes,
           error: likesError
-        } = await db
-          .from("swipes")
-          .select("user_id, created_at")
-          .eq("target_user_id", me.id)
-          .eq("action", "like")
-          .order("created_at", {
-            ascending: false
-          });
+        } = await db.rpc("get_received_likes");
 
         if (likesError) {
           console.error(
