@@ -1319,7 +1319,8 @@ function renderAvatar(profile){
             event.preventDefault();
 
             openConversation(
-              item.otherUserId
+              item.otherUserId,
+              item.match?.id
             );
 
           }
@@ -1341,12 +1342,35 @@ function renderAvatar(profile){
    ABRIR CONVERSACIÓN
    ========================================================= */
 
-function openConversation(
-  userId
+async function openConversation(
+  userId,
+  matchId
 ){
 
   if(!userId){
     return;
+  }
+
+  // Marcar los mensajes recibidos antes de salir de la lista.
+  // Así el contador queda actualizado incluso si el chat tarda en cargar.
+  if(currentUser && matchId){
+    try{
+      const { data, error } = await client
+        .from("messages")
+        .update({ read_at: new Date().toISOString() })
+        .eq("match_id", matchId)
+        .neq("sender_id", currentUser.id)
+        .is("read_at", null)
+        .select("id");
+
+      if(error){
+        console.warn("No se pudieron marcar mensajes como leídos al abrir el chat:", error);
+      } else {
+        console.log("Mensajes marcados como leídos al abrir:", data?.length || 0);
+      }
+    }catch(error){
+      console.warn("Error marcando mensajes al abrir el chat:", error);
+    }
   }
 
   window.location.href =
