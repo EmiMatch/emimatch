@@ -1492,6 +1492,21 @@ function mostrarMensaje(mensaje) {
           }
         }
       )
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "message_reactions"
+        },
+        payload => {
+          const reaction = payload?.new || payload?.old;
+          if (!reaction?.message_id) return;
+          const messageEl = messagesDiv.querySelector(`[data-message-id="${reaction.message_id}"]`);
+          const row = messageEl?.querySelector(".reaction-row");
+          if (row) cargarReaccionesMensaje(reaction.message_id, row);
+        }
+      )
       .subscribe(
         (status) => {
 
