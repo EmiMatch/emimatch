@@ -662,6 +662,34 @@
     }
   </style>
 
+  <style id="emimatch-whatsapp-chat">
+    html, body { background:#0b141a !important; }
+    .app { background:#efeae2 !important; box-shadow:0 0 45px rgba(0,0,0,.32); }
+    .header { background:#075e54 !important; border-bottom:1px solid rgba(255,255,255,.12); }
+    .back,.block-btn,.report-btn { background:rgba(255,255,255,.12) !important; border:1px solid rgba(255,255,255,.08); }
+    .messages { background-color:#efeae2 !important; background-image:radial-gradient(circle at 18% 16%,rgba(255,255,255,.5),transparent 28%),radial-gradient(circle at 82% 74%,rgba(255,255,255,.35),transparent 26%) !important; }
+    .mine { background:#d9fdd3 !important; color:#17352d !important; border:0 !important; box-shadow:0 1px 2px rgba(0,0,0,.12) !important; }
+    .theirs { background:#fff !important; color:#1f2c33 !important; border:0 !important; box-shadow:0 1px 2px rgba(0,0,0,.10) !important; }
+    .read { color:#34b7f1 !important; }
+    .time { color:#667781 !important; }
+    .composer { background:#f0f2f5 !important; border-top:1px solid #d9e0e5 !important; }
+    .composer textarea { background:#fff !important; border:1px solid #dce1e5 !important; color:#1f2c33 !important; }
+    .composer textarea:focus { border-color:#128c7e !important; box-shadow:0 0 0 3px rgba(18,140,126,.12) !important; }
+    .send { background:#128c7e !important; color:#fff !important; box-shadow:none !important; }
+    .attach-photo,.record-audio,.emoji-toggle { background:#fff !important; color:#54656f !important; border:1px solid #dce1e5 !important; }
+    .bloqueado-info { background:#fff4e5 !important; color:#8a4b08 !important; }
+    .report-btn { width:40px;height:40px;font-size:17px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:50%;color:#fff;cursor:pointer; }
+    .emoji-picker { display:flex;gap:7px;flex-wrap:wrap;padding:9px 12px;background:#f0f2f5;border-top:1px solid #d9e0e5; }
+    .emoji-picker[hidden] { display:none !important; }
+    .emoji-picker button { border:0;background:#fff;border-radius:18px;min-width:38px;min-height:38px;font-size:22px;cursor:pointer; }
+    .reaction-row { display:flex;gap:5px;flex-wrap:wrap;margin-top:5px; }
+    .reaction-btn { border:1px solid #d5e3df;background:rgba(255,255,255,.92);color:#304b43;border-radius:14px;padding:3px 7px;font-size:13px;cursor:pointer; }
+    .reaction-btn.active { background:#d9fdd3;border-color:#128c7e;box-shadow:0 0 0 1px rgba(18,140,126,.12); }
+    .reaction-btn:disabled { opacity:.5; }
+    .message-actions { display:flex;justify-content:flex-end;gap:6px;margin-top:5px; }
+    .message-action { border:0;background:transparent;color:#667781;font-size:11px;padding:3px 4px;cursor:pointer; }
+    @media (prefers-reduced-motion:reduce) { .message { animation:none; } }
+  </style>
 </head>
 
 <body>
@@ -705,6 +733,13 @@
     </div>
 
     <button
+      id="btnDenunciar"
+      class="report-btn"
+      type="button"
+      title="Denunciar usuario"
+      aria-label="Denunciar usuario"
+    >⚑</button>
+    <button
       id="btnBloquear"
       class="block-btn"
       onclick="bloquearUsuario()"
@@ -741,8 +776,12 @@
 
   <input id="inputArchivo" type="file" accept=".pdf,.txt,.csv,.doc,.docx,.xls,.xlsx,.ppt,.pptx" hidden>
 
+  <div id="emojiPicker" class="emoji-picker" hidden aria-label="Elegir emoji">
+    <button type="button" data-emoji="😀">😀</button><button type="button" data-emoji="😂">😂</button><button type="button" data-emoji="🥰">🥰</button><button type="button" data-emoji="😍">😍</button><button type="button" data-emoji="😘">😘</button><button type="button" data-emoji="❤️">❤️</button><button type="button" data-emoji="👍">👍</button><button type="button" data-emoji="🔥">🔥</button><button type="button" data-emoji="😉">😉</button><button type="button" data-emoji="😮">😮</button>
+  </div>
   <div class="composer">
 
+    <button id="btnEmoji" class="emoji-toggle attach-photo" type="button" aria-label="Elegir emoji" title="Emojis" disabled>☺</button>
     <button
       id="btnAdjuntarFoto"
       class="attach-photo"
@@ -820,6 +859,12 @@ const btnEnviar =
 
 const btnBloquear =
   document.getElementById("btnBloquear");
+const btnDenunciar =
+  document.getElementById("btnDenunciar");
+const btnEmoji =
+  document.getElementById("btnEmoji");
+const emojiPicker =
+  document.getElementById("emojiPicker");
 
 const btnAdjuntarFoto =
   document.getElementById("btnAdjuntarFoto");
@@ -1062,8 +1107,9 @@ async function comprobarBloqueo() {
 
     btnAdjuntarFoto.disabled =
       true;
-
+    btnAdjuntarArchivo.disabled = true;
     btnGrabarAudio.disabled = true;
+    btnEmoji.disabled = true;
 
     mostrarAvisoBloqueado();
 
@@ -1081,8 +1127,9 @@ async function comprobarBloqueo() {
 
   btnAdjuntarFoto.disabled =
     false;
-
+  btnAdjuntarArchivo.disabled = false;
   btnGrabarAudio.disabled = false;
+  btnEmoji.disabled = false;
 }
 
 function mostrarAvisoBloqueado() {
@@ -1227,6 +1274,53 @@ async function cargarMensajes() {
   bajarAlFinal();
 }
 
+async function cargarReaccionesMensaje(mensajeId, row) {
+  if (!mensajeId || !row || !usuarioActual) return;
+  const { data, error } = await supabaseClient
+    .from("message_reactions")
+    .select("user_id,emoji")
+    .eq("message_id", mensajeId);
+  if (error) {
+    console.warn("No se pudieron cargar las reacciones:", error.message);
+    return;
+  }
+  const counts = {};
+  const own = new Set();
+  (data || []).forEach(r => {
+    counts[r.emoji] = (counts[r.emoji] || 0) + 1;
+    if (r.user_id === usuarioActual.id) own.add(r.emoji);
+  });
+  row.replaceChildren();
+  ["❤️","😂","😮","👍","😢","🔥"].forEach(emoji => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "reaction-btn" + (own.has(emoji) ? " active" : "");
+    button.textContent = counts[emoji] ? emoji + " " + counts[emoji] : emoji;
+    button.setAttribute("aria-label", "Reaccionar " + emoji);
+    button.addEventListener("click", async () => {
+      if (bloqueado) return;
+      button.disabled = true;
+      try {
+        if (own.has(emoji)) {
+          const { error: removeError } = await supabaseClient.from("message_reactions")
+            .delete().eq("message_id", mensajeId).eq("user_id", usuarioActual.id);
+          if (removeError) throw removeError;
+        } else {
+          const { error: saveError } = await supabaseClient.from("message_reactions")
+            .upsert({ message_id: mensajeId, user_id: usuarioActual.id, emoji }, { onConflict: "message_id,user_id" });
+          if (saveError) throw saveError;
+        }
+        await cargarReaccionesMensaje(mensajeId, row);
+      } catch (err) {
+        console.error("Error al guardar reacción:", err);
+        alert("No se pudo guardar la reacción. Probá de nuevo.");
+        button.disabled = false;
+      }
+    });
+    row.appendChild(button);
+  });
+}
+
 function mostrarMensaje(mensaje) {
 
   if (!mensaje?.id) {
@@ -1309,34 +1403,23 @@ function mostrarMensaje(mensaje) {
     );
 
   if (mio) {
-
-    const checks =
-      document.createElement(
-        "span"
-      );
-
-    checks.className =
-      "checks";
-
-    checks.textContent =
-      "✓";
-
-    hora.appendChild(
-      checks
-    );
+    const checks = document.createElement("span");
+    checks.className = "checks" + (mensaje.read_at ? " read" : "");
+    checks.textContent = mensaje.read_at ? "✓✓" : "✓";
+    checks.title = mensaje.read_at ? "Leído" : "Enviado";
+    hora.appendChild(checks);
   }
 
-  div.appendChild(
-    contenido
-  );
+  div.appendChild(contenido);
+  div.appendChild(hora);
 
-  div.appendChild(
-    hora
-  );
+  const reactionRow = document.createElement("div");
+  reactionRow.className = "reaction-row";
+  reactionRow.setAttribute("aria-label", "Reacciones al mensaje");
+  div.appendChild(reactionRow);
+  cargarReaccionesMensaje(mensaje.id, reactionRow);
 
-  messagesDiv.appendChild(
-    div
-  );
+  messagesDiv.appendChild(div);
 }
   function activarRealtimeMensajes() {
 
@@ -1387,6 +1470,26 @@ function mostrarMensaje(mensaje) {
 
           mostrarMensaje(mensaje);
           bajarAlFinal();
+        }
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "messages",
+          filter: "match_id=eq." + matchActual.id
+        },
+        payload => {
+          const updated = payload?.new;
+          if (!updated?.id || !updated.read_at) return;
+          const messageEl = messagesDiv.querySelector(`[data-message-id="${updated.id}"]`);
+          const checks = messageEl?.querySelector(".checks");
+          if (checks) {
+            checks.textContent = "✓✓";
+            checks.classList.add("read");
+            checks.title = "Leído";
+          }
         }
       )
       .subscribe(
@@ -1777,6 +1880,23 @@ function abrirFotoAmpliada(url) {
 function activarInputMensaje() {
 
   btnGrabarAudio.addEventListener("click", manejarBotonAudio);
+
+  btnDenunciar.addEventListener("click", denunciarUsuario);
+  btnEmoji.addEventListener("click", () => {
+    if (bloqueado) return;
+    emojiPicker.hidden = !emojiPicker.hidden;
+  });
+  emojiPicker.addEventListener("click", event => {
+    const button = event.target.closest("[data-emoji]");
+    if (!button || inputMensaje.disabled) return;
+    const emoji = button.dataset.emoji;
+    const start = inputMensaje.selectionStart ?? inputMensaje.value.length;
+    const end = inputMensaje.selectionEnd ?? start;
+    inputMensaje.setRangeText(emoji, start, end, "end");
+    inputMensaje.focus();
+    ajustarAlturaInput();
+    actualizarEstadoBotonEnviar();
+  });
 
   btnAdjuntarFoto.addEventListener("click", () => {
     if (!bloqueado && matchActual && usuarioActual) {
@@ -2340,6 +2460,35 @@ function mostrarPremiumLimitPrompt() {
 
 
 /* =========================================================
+   DENUNCIAR USUARIO
+========================================================= */
+async function denunciarUsuario() {
+  if (!usuarioActual || !destinoId || bloqueado) return;
+  const reason = window.prompt(
+    "Motivo de la denuncia:\n\n1. Acoso o mensajes inapropiados\n2. Perfil falso o suplantación\n3. Spam o estafa\n4. Contenido sexual no solicitado\n5. Otro",
+    "Acoso o mensajes inapropiados"
+  );
+  if (!reason || !reason.trim()) return;
+  const details = window.prompt("Si querés, agregá detalles (opcional):", "") || "";
+  btnDenunciar.disabled = true;
+  try {
+    const { error } = await supabaseClient.from("user_reports").insert({
+      reporter_id: usuarioActual.id,
+      reported_id: destinoId,
+      reason: reason.trim().slice(0,120),
+      details: details.trim().slice(0,1000) || null
+    });
+    if (error) throw error;
+    alert("Gracias. Recibimos tu denuncia para revisión.");
+  } catch (error) {
+    console.error("Error al denunciar usuario:", error);
+    alert("No se pudo enviar la denuncia: " + (error?.message || "error desconocido"));
+  } finally {
+    btnDenunciar.disabled = false;
+  }
+}
+
+/* =========================================================
    BLOQUEAR USUARIO
 ========================================================= */
 
@@ -2433,6 +2582,8 @@ async function bloquearUsuario() {
 
 function desactivarChat() {
 
+  btnEmoji.disabled = true;
+  btnDenunciar.disabled = true;
   inputMensaje.disabled =
     true;
 
