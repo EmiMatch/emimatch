@@ -347,8 +347,7 @@
     }
 
     .upload-box {
-      margin-top: 13px;
-      padding: 15px;
+      margin-top: 13px;      padding: 15px;
       border-radius: 17px;
       background: rgba(255,255,255,.04);
       border: 1px solid rgba(255,255,255,.08);
@@ -489,6 +488,161 @@
     .section-subtitle,.info-label { color:#d2bfcf !important; }
 
   </style>
+
+  <style id="emimatch-premium-profile">
+    :root {
+      color-scheme: dark;
+      --premium-gold: #f0d18a;
+      --premium-purple: #8b72ff;
+      --premium-ink: #080d20;
+      --premium-panel: rgba(17, 24, 52, .96);
+    }
+    body {
+      background:
+        radial-gradient(ellipse at 18% 0%, rgba(113, 77, 221, .28), transparent 36%),
+        radial-gradient(ellipse at 88% 8%, rgba(240, 209, 138, .13), transparent 28%),
+        linear-gradient(150deg, #070b19 0%, #111832 52%, #080b18 100%) !important;
+      color: #f8f7ff !important;
+    }
+    .profile-page { max-width: 760px !important; padding-top: 20px !important; }
+    .top-bar { margin-bottom: 20px !important; }
+    .brand {
+      color: #f6e8c1 !important;
+      letter-spacing: .5px !important;
+      text-shadow: 0 0 22px rgba(240, 209, 138, .18);
+    }
+    .back-button {
+      background: rgba(255,255,255,.055) !important;
+      border-color: rgba(240,209,138,.2) !important;
+      transition: transform .2s ease, background .2s ease;
+    }
+    .back-button:hover { transform: translateY(-1px); background: rgba(255,255,255,.09) !important; }
+    .profile-card {
+      background: linear-gradient(160deg, rgba(19,27,59,.98), rgba(9,13,31,.99)) !important;
+      border: 1px solid rgba(240,209,138,.22) !important;
+      border-radius: 28px !important;
+      box-shadow: 0 28px 80px rgba(0,0,0,.46), 0 0 45px rgba(112,85,222,.08), inset 0 1px 0 rgba(255,255,255,.06) !important;
+    }
+    .cover {
+      height: 178px !important;
+      background:
+        radial-gradient(circle at 18% 35%, rgba(255,255,255,.15), transparent 18%),
+        radial-gradient(circle at 78% 25%, rgba(240,209,138,.22), transparent 23%),
+        radial-gradient(ellipse at 50% 120%, rgba(139,114,255,.38), transparent 52%),
+        linear-gradient(125deg, #32265f 0%, #171e47 48%, #0a1029 100%) !important;
+    }
+    .cover::before {
+      content: "";
+      position: absolute;
+      inset: 16px;
+      border: 1px solid rgba(240,209,138,.14);
+      border-radius: 18px;
+      pointer-events: none;
+    }
+    .cover::after {
+      background: linear-gradient(180deg, transparent 25%, rgba(8,13,32,.52)) !important;
+    }
+    .profile-content { padding: 0 24px 28px !important; }
+    .avatar-wrap { width: 132px !important; height: 132px !important; margin-top: -66px !important; margin-bottom: 17px !important; }
+    .avatar {
+      width: 132px !important; height: 132px !important;
+      border: 4px solid #111832 !important;
+      outline: 2px solid rgba(240,209,138,.78);
+      outline-offset: 2px;
+      box-shadow: 0 14px 38px rgba(0,0,0,.5), 0 0 24px rgba(139,114,255,.18) !important;
+      background: linear-gradient(135deg,#302763,#111832) !important;
+    }
+    .avatar-placeholder { color: var(--premium-gold); }
+    .verified-badge {
+      background: linear-gradient(135deg,#7765ff,#a18cff) !important;
+      border-color: #111832 !important;
+      box-shadow: 0 0 0 1px rgba(240,209,138,.55), 0 5px 18px rgba(0,0,0,.35) !important;
+    }
+    .profile-name {
+      color: #fffaf0 !important;
+      font-family: Georgia, "Times New Roman", serif !important;
+      font-weight: 600 !important;
+      letter-spacing: -.35px !important;
+    }
+    .profile-meta { color: #c7c9df !important; }
+    .profile-description { color: #e4e5f2 !important; line-height: 1.75 !important; }
+    .info-grid { gap: 11px !important; margin-top: 24px !important; }
+    .info-box {
+      background: linear-gradient(145deg, rgba(31,39,77,.72), rgba(14,20,45,.88)) !important;
+      border: 1px solid rgba(177,165,255,.15) !important;
+      border-radius: 17px !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.035) !important;
+    }
+    .info-label { color: #aeb2d1 !important; }
+    .info-value { color: #fff7df !important; }
+    .section { margin-top: 30px !important; }
+    .section-title {
+      color: #fff7e4 !important;
+      font-family: Georgia, "Times New Roman", serif !important;
+      font-weight: 600 !important;
+      letter-spacing: -.2px;
+    }
+    .section-subtitle { color: #b9bfdc !important; }
+    .album-item {
+      border: 1px solid rgba(240,209,138,.18) !important;
+      border-radius: 17px !important;
+      box-shadow: 0 8px 22px rgba(0,0,0,.18);
+    }
+    .album-empty {
+      background: rgba(21,29,61,.65) !important;
+      border: 1px dashed rgba(240,209,138,.26) !important;
+      color: #bfc4df !important;
+    }
+    .upload-box {
+      background: rgba(20,28,60,.62) !important;
+      border: 1px solid rgba(177,165,255,.15) !important;
+      border-radius: 18px !important;
+    }
+    .upload-label {
+      color: #10152d !important;
+      background: linear-gradient(110deg,#a391ff 0%,#8772ff 52%,#f0d18a 140%) !important;
+      box-shadow: 0 12px 30px rgba(109,86,230,.23) !important;
+    }
+    .upload-info { color: #aeb5d6 !important; }
+    .actions { gap: 11px !important; }
+    .action-button {
+      min-height: 53px !important;
+      background: rgba(255,255,255,.045) !important;
+      border: 1px solid rgba(177,165,255,.19) !important;
+      border-radius: 16px !important;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+    }
+    .action-button:hover {
+      transform: translateY(-1px);
+      background: rgba(139,114,255,.10) !important;
+      border-color: rgba(240,209,138,.35) !important;
+    }
+    .action-button.primary {
+      color: #10152d !important;
+      background: linear-gradient(110deg,#a391ff 0%,#8874ff 58%,#f0d18a 150%) !important;
+      border-color: rgba(240,209,138,.55) !important;
+      box-shadow: 0 12px 28px rgba(109,86,230,.22) !important;
+    }
+    .action-button.danger {
+      color: #ffb8c2 !important;
+      background: rgba(185,57,87,.10) !important;
+      border-color: rgba(255,130,153,.22) !important;
+    }
+    .status, .album-status { color: #c7cbea !important; }
+    @media (max-width: 520px) {
+      .profile-page { padding: 12px 11px 110px !important; }
+      .cover { height: 145px !important; }
+      .profile-content { padding: 0 16px 22px !important; }
+      .avatar-wrap { width: 112px !important; height: 112px !important; margin-top: -56px !important; }
+      .avatar { width: 112px !important; height: 112px !important; }
+      .info-grid { gap: 8px !important; }
+      .info-box { padding: 12px !important; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .back-button, .action-button { transition: none !important; }
+    }
+  </style>
+
 </head>
 <body>
 
@@ -697,7 +851,6 @@
 
 const EMIMATCH_CONFIG =
   window.EMIMATCH_CONFIG || {};
-
 const supabaseUrl =
   EMIMATCH_CONFIG.supabaseUrl ||
   "https://kngiadwaesdbmvwivdev.supabase.co";
@@ -1047,7 +1200,6 @@ async function loadMainPhoto(userId) {
 
 
 async function uploadPhotos(fileList) {
-
   if (!fileList?.length) {
     return;
   }
@@ -1398,7 +1550,6 @@ async function deletePhoto(photo) {
   if (!user) {
     return;
   }
-
   setAlbumStatus(
     "Eliminando foto..."
   );
@@ -1747,8 +1898,7 @@ document.addEventListener(
   "DOMContentLoaded",
   () => {
     loadProfile();
-  }
-);
+  });
 
 
 window.EmiMatchProfile = {
