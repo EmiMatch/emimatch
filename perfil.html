@@ -594,6 +594,15 @@
       line-height: 1.25;
       overflow-wrap: anywhere;
     }
+    .social-links-list { display:flex; flex-wrap:wrap; gap:9px; }
+    .social-link {
+      display:inline-flex; align-items:center; justify-content:center; gap:8px;
+      min-height:43px; padding:10px 14px; border-radius:13px;
+      color:#f5dfaa !important; text-decoration:none; font-weight:750;
+      background:linear-gradient(145deg,#1b1914,#10100e);
+      border:1px solid rgba(240,209,138,.27);
+    }
+    .social-link:hover { border-color:rgba(240,209,138,.65); background:rgba(240,209,138,.09); }
     .section { margin-top: 30px !important; }
     .section-title {
       color: #fff7e4 !important;
@@ -888,6 +897,12 @@
 
       </div>
 
+      <section class="section hidden" id="socialLinksSection" aria-label="Redes sociales">
+        <h2 class="section-title">🌐 Redes sociales</h2>
+        <p class="section-subtitle">Conocé un poco más y encontranos en redes.</p>
+        <div id="socialLinksList" class="social-links-list"></div>
+      </section>
+
       <section class="section" id="photosSection">
 
         <h2 class="section-title">
@@ -1046,6 +1061,12 @@ const profileCity =
 const profileInterests =
   document.getElementById("profileInterests");
 
+const socialLinksSection =
+  document.getElementById("socialLinksSection");
+
+const socialLinksList =
+  document.getElementById("socialLinksList");
+
 const profileAvatar =
   document.getElementById("profileAvatar");
 
@@ -1115,6 +1136,53 @@ function normalizeInterestList(value) {
       .map(item => String(item ?? "").trim())
       .filter(Boolean)
   )].slice(0, 20);
+}
+
+function normalizeSocialUrl(platform, value) {
+  const raw = String(value || "").trim();
+  if (!raw) return null;
+  if (/^https?:\/\//i.test(raw)) {
+    try {
+      const url = new URL(raw);
+      const host = url.hostname.toLowerCase().replace(/^www\./, "");
+      const allowed = {
+        facebook: ["facebook.com", "m.facebook.com", "fb.com"],
+        instagram: ["instagram.com"],
+        twitter: ["twitter.com", "x.com"]
+      }[platform] || [];
+      if (!allowed.some(domain => host === domain || host.endsWith("." + domain))) return null;
+      url.protocol = "https:";
+      return url.href;
+    } catch (_) { return null; }
+  }
+  const handle = raw.replace(/^@/, "").replace(/^\/+|\/+$/g, "");
+  if (!/^[a-zA-Z0-9._-]{1,100}$/.test(handle)) return null;
+  const base = {facebook:"https://www.facebook.com/", instagram:"https://www.instagram.com/", twitter:"https://x.com/"}[platform];
+  return base ? base + encodeURIComponent(handle) : null;
+}
+
+function renderSocialLinks(profile) {
+  if (!socialLinksSection || !socialLinksList) return;
+  socialLinksList.replaceChildren();
+  const items = [
+    ["facebook", "Facebook", "f"],
+    ["instagram", "Instagram", "◎"],
+    ["twitter", "Twitter / X", "𝕏"]
+  ];
+  let count = 0;
+  items.forEach(([key, label, iconText]) => {
+    const href = normalizeSocialUrl(key, profile?.[key]);
+    if (!href) return;
+    const link = document.createElement("a");
+    link.className = "social-link";
+    link.href = href;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = iconText + "  " + label;
+    socialLinksList.appendChild(link);
+    count++;
+  });
+  socialLinksSection.classList.toggle("hidden", count === 0);
 }
 
 function renderInterests(value) {
@@ -2009,6 +2077,7 @@ async function loadProfile() {
       city || "—";
 
     renderInterests(interests);
+    renderSocialLinks(profile);
 
     const isVerified =
       profile?.verificado === true ||
