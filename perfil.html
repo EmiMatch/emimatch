@@ -575,6 +575,25 @@
     }
     .info-label { color: #aeb2d1 !important; }
     .info-value { color: #fff7df !important; }
+    .interest-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 2px;
+    }
+    .interest-tag {
+      display: inline-flex;
+      align-items: center;
+      max-width: 100%;
+      padding: 7px 10px;
+      border: 1px solid rgba(177,165,255,.25);
+      border-radius: 999px;
+      color: #eeeaff;
+      background: linear-gradient(135deg,rgba(139,114,255,.17),rgba(240,209,138,.07));
+      font-size: 12px;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
     .section { margin-top: 30px !important; }
     .section-title {
       color: #fff7e4 !important;
@@ -932,21 +951,52 @@ function setAlbumStatus(message) {
   }
 }
 
-function normalizeInterests(value) {
+function normalizeInterestList(value) {
 
   if (!value) {
-    return "—";
+    return [];
   }
+
+  let values = [];
 
   if (Array.isArray(value)) {
-    return value.join(", ");
+    values = value;
+  } else if (typeof value === "object") {
+    values = Object.values(value);
+  } else {
+    values = String(value).split(/[,;|]/);
   }
 
-  if (typeof value === "object") {
-    return Object.values(value).join(", ");
+  return [...new Set(
+    values
+      .map(item => String(item ?? "").trim())
+      .filter(Boolean)
+  )].slice(0, 20);
+}
+
+function renderInterests(value) {
+
+  if (!profileInterests) return;
+
+  const interests = normalizeInterestList(value);
+  profileInterests.replaceChildren();
+
+  if (!interests.length) {
+    profileInterests.textContent = "Todavía no agregaste intereses.";
+    return;
   }
 
-  return String(value);
+  const wrapper = document.createElement("div");
+  wrapper.className = "interest-tags";
+
+  interests.forEach(interest => {
+    const tag = document.createElement("span");
+    tag.className = "interest-tag";
+    tag.textContent = interest;
+    wrapper.appendChild(tag);
+  });
+
+  profileInterests.appendChild(wrapper);
 }
 
 function renderMainPhoto(url) {
@@ -1815,10 +1865,7 @@ async function loadProfile() {
     profileCity.textContent =
       city || "—";
 
-    profileInterests.textContent =
-      normalizeInterests(
-        interests
-      );
+    renderInterests(interests);
 
     const isVerified =
       profile?.verificado === true ||
