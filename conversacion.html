@@ -413,6 +413,123 @@
       }
     }
   </style>
+
+  <style id="emimatch-chat-stage1">
+    :root {
+      --chat-plum: #291b2b;
+      --chat-plum-soft: #3a2638;
+      --chat-rose: #d98a9b;
+      --chat-rose-light: #f3dce1;
+      --chat-champagne: #e8cb91;
+      --chat-paper: #fffaf8;
+      --chat-ink: #302533;
+      --chat-muted: #887985;
+    }
+
+    html, body { background: #1b1220; }
+    body {
+      background:
+        radial-gradient(circle at 15% 5%, rgba(217,138,155,.15), transparent 34%),
+        radial-gradient(circle at 90% 90%, rgba(232,203,145,.10), transparent 32%),
+        #1b1220;
+      color: var(--chat-ink);
+    }
+    .app {
+      background: var(--chat-paper);
+      box-shadow: 0 0 48px rgba(0,0,0,.22);
+    }
+    .header {
+      background: linear-gradient(135deg, #211522, #38243a 72%, #493047);
+      border-bottom: 1px solid rgba(232,203,145,.24);
+      box-shadow: 0 5px 20px rgba(26,12,26,.20);
+    }
+    .back, .block-btn {
+      background: rgba(255,255,255,.075);
+      border: 1px solid rgba(255,255,255,.10);
+    }
+    .back:hover, .block-btn:hover {
+      background: rgba(217,138,155,.18);
+    }
+    .avatar { border-color: rgba(232,203,145,.9); }
+    .online-dot { border-color: #38243a; }
+    .status { color: #e8d7e1; }
+    .messages {
+      gap: 9px;
+      padding-top: 20px;
+      background-color: #fbf6f5;
+      background-image:
+        radial-gradient(circle at 10% 10%, rgba(217,138,155,.075), transparent 25%),
+        radial-gradient(circle at 90% 75%, rgba(232,203,145,.10), transparent 28%);
+    }
+    .message {
+      max-width: min(82%, 480px);
+      padding: 11px 14px 8px;
+      border-radius: 19px;
+      font-size: 15px;
+      line-height: 1.48;
+      box-shadow: 0 3px 11px rgba(56,34,53,.07);
+    }
+    .mine {
+      background: linear-gradient(135deg, #c9778d, #d98a9b);
+      color: #2b1726;
+      border: 1px solid rgba(255,255,255,.4);
+      border-bottom-right-radius: 6px;
+      box-shadow: 0 4px 13px rgba(174,91,117,.15);
+    }
+    .theirs {
+      background: #fff;
+      color: #302533;
+      border: 1px solid #f0e5e8;
+      border-bottom-left-radius: 6px;
+    }
+    .time { color: inherit; opacity: .68; }
+    .read { color: #fff5d9; }
+    .typing {
+      color: #8b7180;
+      background: #fbf6f5;
+      min-height: 25px;
+    }
+    .composer {
+      background: rgba(255,250,248,.98);
+      border-top: 1px solid #efdee3;
+      box-shadow: 0 -5px 18px rgba(56,34,53,.06);
+      gap: 9px;
+    }
+    .composer textarea {
+      background: #fff;
+      border: 1px solid #ead9df;
+      color: #302533;
+      border-radius: 22px;
+      min-height: 44px;
+      padding: 12px 15px;
+    }
+    .composer textarea:focus {
+      border-color: #d98a9b;
+      box-shadow: 0 0 0 3px rgba(217,138,155,.15);
+    }
+    .composer textarea::placeholder { color: #a28d9a; }
+    .send {
+      background: linear-gradient(135deg, #d98a9b, #bd6e86);
+      color: #2b1726;
+      box-shadow: 0 5px 14px rgba(174,91,117,.22);
+      font-size: 20px;
+    }
+    .send:disabled { opacity: .48; }
+    .empty, .error { color: #8b7180; }
+    .bloqueado-info {
+      background: #fff5f2;
+      color: #8d3e4c;
+      border-color: #f0c9ce;
+    }
+    @media (max-width: 380px) {
+      .message { max-width: 88%; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .message { animation: none; }
+      .messages { scroll-behavior: auto; }
+    }
+  </style>
+
 </head>
 
 <body>
