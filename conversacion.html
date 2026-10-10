@@ -545,8 +545,14 @@
       justify-content: center;
       transition: transform .18s ease, background .18s ease;
     }
-    .attach-photo:active { transform: scale(.93); }
-    .attach-photo:disabled { opacity: .45; cursor: not-allowed; }
+    .attach-photo:active, .record-audio:active { transform:scale(.93); }
+    .attach-photo:disabled, .record-audio:disabled { opacity:.45;cursor:not-allowed; }
+    .record-audio { width:42px;height:42px;min-width:42px;border:1px solid #ead9df;border-radius:50%;background:#f8e9ed;color:#8f5268;font-size:19px;cursor:pointer; }
+    .record-audio.is-recording { background:#9f344b;color:#fff; }
+    .chat-audio-player { display:block;width:min(68vw,300px);max-width:100%;height:42px; }
+    .audio-message-label { font-size:12px;margin-bottom:5px;opacity:.8; }
+    .em-audio-preview { display:block;width:100%;margin-bottom:14px; }
+    .em-audio-timer { font-size:13px;color:#8b7180;margin:8px 0 14px; }
     .chat-photo-wrap { margin: 0; max-width: min(64vw, 310px); }
     .chat-photo {
       display: block;
@@ -649,7 +655,8 @@
       cursor: pointer;
     }
     @media (max-width: 380px) {
-      .attach-photo { width: 39px; height: 39px; min-width: 39px; }
+      .attach-photo, .record-audio { width:39px;height:39px;min-width:39px; }
+      .chat-audio-player { width:min(66vw,260px); }
       .chat-photo-wrap { max-width: 72vw; }
       .em-photo-dialog { padding: 15px; }
     }
@@ -743,6 +750,8 @@
       disabled
     >＋</button>
 
+    <button id="btnGrabarAudio" class="record-audio" type="button" aria-label="Grabar mensaje de voz" title="Grabar mensaje de voz" disabled>🎙️</button>
+
     <textarea
       id="inputMensaje"
       placeholder="Escribí un mensaje..."
@@ -813,6 +822,8 @@ const btnAdjuntarFoto =
 
 const inputFoto =
   document.getElementById("inputFoto");
+
+const btnGrabarAudio = document.getElementById("btnGrabarAudio");
 
 const typingDiv =
   document.getElementById("typing");
@@ -1213,6 +1224,8 @@ function mostrarMensaje(mensaje) {
 
   if (mensaje.message_type === "image" && mensaje.media_path) {
     renderizarFotoMensaje(mensaje, contenido);
+  } else if (mensaje.message_type === "audio" && mensaje.media_path) {
+    renderizarAudioMensaje(mensaje, contenido);
   } else {
     contenido.textContent = mensaje.content || "";
   }
@@ -1341,6 +1354,10 @@ function mostrarMensaje(mensaje) {
 const CHAT_MEDIA_BUCKET = "chat-media";
 const CHAT_IMAGE_MAX_BYTES = 8 * 1024 * 1024;
 const CHAT_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const CHAT_AUDIO_BUCKET = "chat-audio";
+const CHAT_AUDIO_MAX_BYTES = 12 * 1024 * 1024;
+const CHAT_AUDIO_MIMES = ["audio/webm","audio/mp4","audio/ogg","audio/mpeg","audio/wav","audio/aac","audio/3gpp"];
+let grabadorAudio=null, streamAudio=null, chunksAudio=[], grabacionActiva=false, grabacionIniciada=0, temporizadorAudio=null;
 
 function abrirVistaPreviaFoto(archivo) {
   if (bloqueado || !matchActual || !usuarioActual) return;
@@ -1547,6 +1564,17 @@ function renderizarFotoMensaje(mensaje, contenedor) {
   });
 }
 
+function renderizarAudioMensaje(mensaje, contenedor) {
+  const label=document.createElement("div");label.className="audio-message-label";label.textContent="🎙️ Mensaje de voz";
+  const loading=document.createElement("div");loading.className="chat-photo-loading";loading.textContent="Preparando audio…";
+  const player=document.createElement("audio");player.className="chat-audio-player";player.controls=true;player.preload="none";player.style.display="none";
+  contenedor.append(label,loading,player);
+  supabaseClient.storage.from(CHAT_AUDIO_BUCKET).createSignedUrl(mensaje.media_path,600).then(({data,error})=>{
+    if(error||!data?.signedUrl){loading.textContent="Audio privado no disponible.";return;}
+    player.src=data.signedUrl;player.style.display="block";loading.remove();
+  }).catch(error=>{console.warn("Error preparando audio:",error);loading.textContent="No se pudo cargar este audio.";});
+}
+
 function abrirFotoAmpliada(url) {
   if (!url) return;
 
@@ -1583,6 +1611,8 @@ function abrirFotoAmpliada(url) {
 ========================================================= */
 
 function activarInputMensaje() {
+
+  btnGrabarAudio.addEventListener("click", manejarBotonAudio);
 
   btnAdjuntarFoto.addEventListener("click", () => {
     if (!bloqueado && matchActual && usuarioActual) {
@@ -1629,6 +1659,73 @@ function activarInputMensaje() {
 /* =========================================================
    ALTURA DEL INPUT
 ========================================================= */
+
+async function manejarBotonAudio() {
+  if(bloqueado||!matchActual||!usuarioActual)return;
+  if(grabacionActiva){detenerGrabacionAudio();return;}
+  if(!navigator.mediaDevices?.getUserMedia||typeof MediaRecorder==="undefined"){alert("Este navegador no permite grabar audio. Probá Chrome actualizado y autorizá el micrófono.");return;}
+  try{
+    streamAudio=await navigator.mediaDevices.getUserMedia({audio:true});
+    const choices=["audio/webm;codecs=opus","audio/webm","audio/mp4","audio/ogg;codecs=opus","audio/ogg"];
+    const chosen=choices.find(t=>MediaRecorder.isTypeSupported?.(t));
+    grabadorAudio=new MediaRecorder(streamAudio,chosen?{mimeType:chosen}:{});
+    chunksAudio=[];
+    grabadorAudio.ondataavailable=e=>{if(e.data?.size)chunksAudio.push(e.data);};
+    grabadorAudio.onerror=e=>{console.error(e.error);limpiarGrabacionAudio();alert("No se pudo grabar el audio.");};
+    grabadorAudio.onstop=()=>{
+      const raw=(chunksAudio[0]?.type||grabadorAudio?.mimeType||"audio/webm").split(";")[0].toLowerCase();
+      const exts={"audio/webm":"webm","audio/mp4":"m4a","audio/ogg":"ogg","audio/mpeg":"mp3","audio/wav":"wav","audio/aac":"aac","audio/3gpp":"3gp"};
+      const mime=CHAT_AUDIO_MIMES.includes(raw)?raw:"audio/webm";
+      const blob=new Blob(chunksAudio,{type:mime}), duration=Date.now()-grabacionIniciada;
+      limpiarGrabacionAudio();
+      if(duration<500){alert("Grabá un poco más de tiempo.");return;}
+      if(!blob.size||blob.size>CHAT_AUDIO_MAX_BYTES){alert("El audio debe pesar como máximo 12 MB.");return;}
+      abrirVistaPreviaAudio(blob,mime,exts[mime]||"webm",duration);
+    };
+    grabacionIniciada=Date.now();grabacionActiva=true;grabadorAudio.start(250);
+    btnGrabarAudio.classList.add("is-recording");btnGrabarAudio.textContent="■";btnGrabarAudio.title="Tocá para detener la grabación";
+    btnAdjuntarFoto.disabled=true;inputMensaje.disabled=true;btnEnviar.disabled=true;
+    temporizadorAudio=setTimeout(()=>{if(grabacionActiva)detenerGrabacionAudio();},120000);
+  }catch(error){console.error(error);limpiarGrabacionAudio();alert("No se pudo acceder al micrófono. Revisá sus permisos.");}
+}
+function detenerGrabacionAudio(){if(temporizadorAudio)clearTimeout(temporizadorAudio);temporizadorAudio=null;if(grabadorAudio&&grabadorAudio.state!=="inactive")grabadorAudio.stop();else limpiarGrabacionAudio();}
+function limpiarGrabacionAudio(){
+  grabacionActiva=false;if(temporizadorAudio)clearTimeout(temporizadorAudio);temporizadorAudio=null;
+  if(streamAudio){streamAudio.getTracks().forEach(t=>t.stop());streamAudio=null;}
+  grabadorAudio=null;btnGrabarAudio.classList.remove("is-recording");btnGrabarAudio.textContent="🎙️";btnGrabarAudio.title="Grabar mensaje de voz";
+  if(!bloqueado){btnAdjuntarFoto.disabled=false;inputMensaje.disabled=false;actualizarEstadoBotonEnviar();}
+}
+function abrirVistaPreviaAudio(blob,mime,extension,duracion){
+  const url=URL.createObjectURL(blob),overlay=document.createElement("div");overlay.className="em-photo-overlay";overlay.setAttribute("role","dialog");overlay.setAttribute("aria-modal","true");
+  const dialog=document.createElement("div");dialog.className="em-photo-dialog";
+  const title=document.createElement("h2");title.textContent="Enviar mensaje de voz";
+  const note=document.createElement("p");note.textContent="Escuchalo antes de compartirlo. Solo estará disponible en esta conversación.";
+  const player=document.createElement("audio");player.className="em-audio-preview";player.controls=true;player.src=url;
+  const timer=document.createElement("div");timer.className="em-audio-timer";timer.textContent="Duración aproximada: "+Math.round(duracion/1000)+" s";
+  const actions=document.createElement("div");actions.className="em-photo-actions";
+  const cancel=document.createElement("button");cancel.className="em-photo-cancel";cancel.type="button";cancel.textContent="Descartar";
+  const send=document.createElement("button");send.className="em-photo-send";send.type="button";send.textContent="Enviar audio";
+  actions.append(cancel,send);dialog.append(title,note,player,timer,actions);overlay.appendChild(dialog);document.body.appendChild(overlay);
+  const close=()=>{player.pause();URL.revokeObjectURL(url);overlay.remove();};
+  cancel.addEventListener("click",close);overlay.addEventListener("click",e=>{if(e.target===overlay&&!send.disabled)close();});
+  send.addEventListener("click",()=>enviarAudioGrabado(blob,mime,extension,overlay,url,send,cancel));
+}
+async function enviarAudioGrabado(blob,mime,extension,overlay,url,send,cancel){
+  if(bloqueado||!matchActual||!usuarioActual)return;
+  send.disabled=true;cancel.disabled=true;send.textContent="Enviando…";btnGrabarAudio.disabled=true;btnAdjuntarFoto.disabled=true;inputMensaje.disabled=true;
+  let path=null,uploaded=false;
+  try{
+    const uid=crypto.randomUUID?crypto.randomUUID():Date.now()+"-"+Math.random().toString(16).slice(2);
+    path=matchActual.id+"/"+usuarioActual.id+"/"+uid+"."+extension;
+    const up=await supabaseClient.storage.from(CHAT_AUDIO_BUCKET).upload(path,blob,{cacheControl:"3600",contentType:mime,upsert:false});if(up.error)throw up.error;uploaded=true;
+    const res=await supabaseClient.from("messages").insert({match_id:matchActual.id,sender_id:usuarioActual.id,content:"🎙️ Mensaje de voz",message_type:"audio",media_path:path,media_mime:mime,media_name:"mensaje-de-voz."+extension,media_size:blob.size}).select("id,match_id,sender_id,content,created_at,message_type,media_path,media_mime,media_name,media_size").single();
+    if(res.error)throw res.error;mostrarMensaje(res.data);bajarAlFinal();URL.revokeObjectURL(url);overlay.remove();
+  }catch(error){
+    console.error("Error enviando audio:",error);
+    if(uploaded&&path){const rm=await supabaseClient.storage.from(CHAT_AUDIO_BUCKET).remove([path]);if(rm.error)console.warn(rm.error);}
+    alert("No se pudo enviar el audio. "+(error?.message||"Revisá tu conexión."));send.disabled=false;cancel.disabled=false;send.textContent="Reintentar envío";
+  }finally{btnGrabarAudio.disabled=bloqueado;if(!bloqueado){btnAdjuntarFoto.disabled=false;inputMensaje.disabled=false;actualizarEstadoBotonEnviar();}}
+}
 
 function ajustarAlturaInput() {
 
@@ -2180,6 +2277,8 @@ function desactivarChat() {
 
   btnAdjuntarFoto.disabled =
     true;
+
+  btnGrabarAudio.disabled = true;
 }
 
 
@@ -2258,6 +2357,9 @@ function volver() {
 window.addEventListener(
   "pagehide",
   () => {
+
+    if (grabacionActiva) detenerGrabacionAudio();
+    if (streamAudio) streamAudio.getTracks().forEach((track) => track.stop());
 
     if (canalMensajes) {
 
