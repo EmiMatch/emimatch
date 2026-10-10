@@ -528,6 +528,131 @@
       .message { animation: none; }
       .messages { scroll-behavior: auto; }
     }
+
+    .attach-photo {
+      width: 42px;
+      height: 42px;
+      min-width: 42px;
+      border: 1px solid #ead9df;
+      border-radius: 50%;
+      background: #f8e9ed;
+      color: #8f5268;
+      font-size: 27px;
+      line-height: 1;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform .18s ease, background .18s ease;
+    }
+    .attach-photo:active { transform: scale(.93); }
+    .attach-photo:disabled { opacity: .45; cursor: not-allowed; }
+    .chat-photo-wrap { margin: 0; max-width: min(64vw, 310px); }
+    .chat-photo {
+      display: block;
+      width: 100%;
+      max-height: 360px;
+      object-fit: cover;
+      border-radius: 13px;
+      cursor: zoom-in;
+      background: #f3e9ed;
+      min-height: 90px;
+    }
+    .chat-photo-loading {
+      min-width: 180px;
+      padding: 22px 12px;
+      text-align: center;
+      color: #8b7180;
+      font-size: 13px;
+    }
+    .em-photo-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(24, 13, 26, .82);
+      backdrop-filter: blur(9px);
+      -webkit-backdrop-filter: blur(9px);
+    }
+    .em-photo-dialog {
+      width: min(100%, 440px);
+      max-height: min(90dvh, 760px);
+      overflow: auto;
+      padding: 18px;
+      border-radius: 24px;
+      background: #fffaf8;
+      color: #302533;
+      box-shadow: 0 24px 70px rgba(0,0,0,.38);
+    }
+    .em-photo-dialog h2 {
+      margin: 0 0 5px;
+      font-size: 20px;
+      color: #38243a;
+    }
+    .em-photo-dialog p {
+      margin: 0 0 14px;
+      color: #887985;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .em-photo-preview {
+      display: block;
+      width: 100%;
+      max-height: 48dvh;
+      object-fit: contain;
+      border-radius: 16px;
+      background: #f3e9ed;
+      margin-bottom: 15px;
+    }
+    .em-photo-actions { display: flex; gap: 10px; }
+    .em-photo-actions button {
+      flex: 1;
+      min-height: 44px;
+      border-radius: 14px;
+      padding: 10px 12px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .em-photo-cancel {
+      border: 1px solid #ead9df;
+      background: #fff;
+      color: #674b60;
+    }
+    .em-photo-send {
+      border: 0;
+      background: linear-gradient(135deg, #d98a9b, #bd6e86);
+      color: #2b1726;
+    }
+    .em-photo-send:disabled { opacity: .55; cursor: wait; }
+    .em-photo-full {
+      max-width: min(96vw, 1000px);
+      max-height: 90dvh;
+      object-fit: contain;
+      border-radius: 14px;
+      box-shadow: 0 20px 70px rgba(0,0,0,.4);
+    }
+    .em-photo-close {
+      position: fixed;
+      top: max(14px, env(safe-area-inset-top));
+      right: 14px;
+      width: 44px;
+      height: 44px;
+      border: 1px solid rgba(255,255,255,.28);
+      border-radius: 50%;
+      background: rgba(255,255,255,.12);
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+    }
+    @media (max-width: 380px) {
+      .attach-photo { width: 39px; height: 39px; min-width: 39px; }
+      .chat-photo-wrap { max-width: 72vw; }
+      .em-photo-dialog { padding: 15px; }
+    }
   </style>
 
 </head>
@@ -600,7 +725,23 @@
     aria-live="polite"
   ></div>
 
+  <input
+    id="inputFoto"
+    type="file"
+    accept="image/jpeg,image/png,image/webp"
+    hidden
+  >
+
   <div class="composer">
+
+    <button
+      id="btnAdjuntarFoto"
+      class="attach-photo"
+      type="button"
+      aria-label="Adjuntar foto"
+      title="Enviar foto"
+      disabled
+    >＋</button>
 
     <textarea
       id="inputMensaje"
@@ -608,6 +749,7 @@
       rows="1"
       maxlength="2000"
       disabled
+      aria-label="Escribir mensaje"
     ></textarea>
 
     <button
@@ -665,6 +807,12 @@ const btnEnviar =
 
 const btnBloquear =
   document.getElementById("btnBloquear");
+
+const btnAdjuntarFoto =
+  document.getElementById("btnAdjuntarFoto");
+
+const inputFoto =
+  document.getElementById("inputFoto");
 
 const typingDiv =
   document.getElementById("typing");
@@ -894,6 +1042,9 @@ async function comprobarBloqueo() {
     btnBloquear.disabled =
       true;
 
+    btnAdjuntarFoto.disabled =
+      true;
+
     mostrarAvisoBloqueado();
 
     return;
@@ -906,6 +1057,9 @@ async function comprobarBloqueo() {
     true;
 
   btnBloquear.disabled =
+    false;
+
+  btnAdjuntarFoto.disabled =
     false;
 }
 
@@ -953,7 +1107,7 @@ async function cargarMensajes() {
     await supabaseClient
       .from("messages")
       .select(
-        "id,match_id,sender_id,content,created_at"
+        "id,match_id,sender_id,content,created_at,message_type,media_path,media_mime,media_name,media_size"
       )
       .eq(
         "match_id",
@@ -1057,8 +1211,11 @@ function mostrarMensaje(mensaje) {
       "div"
     );
 
-  contenido.textContent =
-    mensaje.content || "";
+  if (mensaje.message_type === "image" && mensaje.media_path) {
+    renderizarFotoMensaje(mensaje, contenido);
+  } else {
+    contenido.textContent = mensaje.content || "";
+  }
 
   const hora =
     document.createElement(
@@ -1176,11 +1333,268 @@ function mostrarMensaje(mensaje) {
 }
 
 
+
+/* =========================================================
+   FOTOS DEL CHAT · ALMACENAMIENTO PRIVADO
+========================================================= */
+
+const CHAT_MEDIA_BUCKET = "chat-media";
+const CHAT_IMAGE_MAX_BYTES = 8 * 1024 * 1024;
+const CHAT_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+
+function abrirVistaPreviaFoto(archivo) {
+  if (bloqueado || !matchActual || !usuarioActual) return;
+
+  if (!CHAT_IMAGE_TYPES.includes(archivo.type)) {
+    alert("Elegí una foto JPG, PNG o WebP.");
+    return;
+  }
+
+  if (archivo.size < 1 || archivo.size > CHAT_IMAGE_MAX_BYTES) {
+    alert("La foto debe pesar como máximo 8 MB.");
+    return;
+  }
+
+  const objectUrl = URL.createObjectURL(archivo);
+  const overlay = document.createElement("div");
+  overlay.className = "em-photo-overlay";
+  overlay.setAttribute("role", "dialog");
+  overlay.setAttribute("aria-modal", "true");
+  overlay.setAttribute("aria-label", "Vista previa de foto");
+
+  const dialog = document.createElement("div");
+  dialog.className = "em-photo-dialog";
+  const title = document.createElement("h2");
+  title.textContent = "Enviar foto";
+  const note = document.createElement("p");
+  note.textContent = "La foto se compartirá únicamente dentro de esta conversación.";
+  const preview = document.createElement("img");
+  preview.className = "em-photo-preview";
+  preview.src = objectUrl;
+  preview.alt = "Vista previa de la foto elegida";
+  const actions = document.createElement("div");
+  actions.className = "em-photo-actions";
+  const cancel = document.createElement("button");
+  cancel.className = "em-photo-cancel";
+  cancel.type = "button";
+  cancel.textContent = "Cancelar";
+  const send = document.createElement("button");
+  send.className = "em-photo-send";
+  send.type = "button";
+  send.textContent = "Enviar foto";
+
+  actions.append(cancel, send);
+  dialog.append(title, note, preview, actions);
+  overlay.appendChild(dialog);
+  document.body.appendChild(overlay);
+
+  const cerrar = () => {
+    URL.revokeObjectURL(objectUrl);
+    overlay.remove();
+  };
+
+  cancel.addEventListener("click", cerrar);
+  overlay.addEventListener("click", (event) => {
+    if (event.target === overlay && !send.disabled) cerrar();
+  });
+  send.addEventListener("click", () => enviarFotoSeleccionada(archivo, overlay, objectUrl, send, cancel));
+}
+
+async function enviarFotoSeleccionada(archivo, overlay, objectUrl, botonEnviarFoto, botonCancelar) {
+  if (bloqueado || !matchActual || !usuarioActual) return;
+
+  botonEnviarFoto.disabled = true;
+  botonCancelar.disabled = true;
+  botonEnviarFoto.textContent = "Subiendo…";
+  btnAdjuntarFoto.disabled = true;
+  inputMensaje.disabled = true;
+
+  const extension = ({
+    "image/jpeg": "jpg",
+    "image/png": "png",
+    "image/webp": "webp"
+  })[archivo.type];
+
+  const nombreUnico = (typeof crypto !== "undefined" && crypto.randomUUID)
+    ? crypto.randomUUID()
+    : Date.now() + "-" + Math.random().toString(16).slice(2);
+  const ruta = matchActual.id + "/" + usuarioActual.id + "/" + nombreUnico + "." + extension;
+  let subidaCompletada = false;
+
+  try {
+    const { error: errorSubida } = await supabaseClient
+      .storage
+      .from(CHAT_MEDIA_BUCKET)
+      .upload(ruta, archivo, {
+        cacheControl: "3600",
+        contentType: archivo.type,
+        upsert: false
+      });
+
+    if (errorSubida) throw errorSubida;
+    subidaCompletada = true;
+
+    const { data, error } = await supabaseClient
+      .from("messages")
+      .insert({
+        match_id: matchActual.id,
+        sender_id: usuarioActual.id,
+        content: "📷 Foto",
+        message_type: "image",
+        media_path: ruta,
+        media_mime: archivo.type,
+        media_name: String(archivo.name || "foto").slice(0, 180),
+        media_size: archivo.size
+      })
+      .select("id,match_id,sender_id,content,created_at,message_type,media_path,media_mime,media_name,media_size")
+      .single();
+
+    if (error) throw error;
+
+    mostrarMensaje(data);
+    bajarAlFinal();
+    URL.revokeObjectURL(objectUrl);
+    overlay.remove();
+  } catch (error) {
+    console.error("Error enviando foto:", error);
+
+    if (subidaCompletada) {
+      const { error: errorBorrado } = await supabaseClient
+        .storage
+        .from(CHAT_MEDIA_BUCKET)
+        .remove([ruta]);
+      if (errorBorrado) console.warn("No se pudo limpiar la foto que no llegó a enviarse:", errorBorrado);
+    }
+
+    const textoError = [
+      error?.message, error?.details, error?.hint, error?.code
+    ].filter(Boolean).join(" ").toLowerCase();
+
+    const esLimitePremium =
+      textoError.includes("free_message_limit") ||
+      textoError.includes("free message limit") ||
+      textoError.includes("free-message-limit") ||
+      textoError.includes("alcanzaste el límite") ||
+      textoError.includes("mensajes gratuitos") ||
+      error?.code === "P0001";
+
+    if (esLimitePremium) {
+      URL.revokeObjectURL(objectUrl);
+      overlay.remove();
+      mostrarPremiumLimitPrompt();
+    } else {
+      alert("No se pudo enviar la foto. " + (error?.message || "Revisá tu conexión e intentá nuevamente."));
+      botonEnviarFoto.disabled = false;
+      botonCancelar.disabled = false;
+      botonEnviarFoto.textContent = "Reintentar envío";
+    }
+  } finally {
+    if (!bloqueado) {
+      inputMensaje.disabled = false;
+      btnAdjuntarFoto.disabled = false;
+    }
+    actualizarEstadoBotonEnviar();
+  }
+}
+
+function renderizarFotoMensaje(mensaje, contenedor) {
+  const wrap = document.createElement("div");
+  wrap.className = "chat-photo-wrap";
+
+  const loading = document.createElement("div");
+  loading.className = "chat-photo-loading";
+  loading.textContent = "Cargando foto…";
+
+  const imagen = document.createElement("img");
+  imagen.className = "chat-photo";
+  imagen.alt = "Foto compartida en EmiMatch";
+  imagen.loading = "lazy";
+  imagen.decoding = "async";
+  imagen.style.display = "none";
+
+  wrap.append(loading, imagen);
+  contenedor.appendChild(wrap);
+
+  imagen.addEventListener("load", () => {
+    loading.remove();
+    imagen.style.display = "block";
+  }, { once: true });
+
+  imagen.addEventListener("error", () => {
+    loading.textContent = "No se pudo cargar esta foto.";
+    imagen.remove();
+  }, { once: true });
+
+  imagen.addEventListener("click", () => abrirFotoAmpliada(imagen.src), { once: false });
+
+  (async () => {
+    const { data, error } = await supabaseClient
+      .storage
+      .from(CHAT_MEDIA_BUCKET)
+      .createSignedUrl(mensaje.media_path, 600);
+
+    if (error || !data?.signedUrl) {
+      loading.textContent = "Foto privada no disponible.";
+      return;
+    }
+
+    imagen.src = data.signedUrl;
+  })().catch((error) => {
+    console.warn("No se pudo preparar la foto del chat:", error);
+    loading.textContent = "No se pudo cargar esta foto.";
+  });
+}
+
+function abrirFotoAmpliada(url) {
+  if (!url) return;
+
+  const overlay = document.createElement("div");
+  overlay.className = "em-photo-overlay";
+  overlay.setAttribute("role", "dialog");
+  overlay.setAttribute("aria-modal", "true");
+  overlay.setAttribute("aria-label", "Foto ampliada");
+
+  const close = document.createElement("button");
+  close.className = "em-photo-close";
+  close.type = "button";
+  close.setAttribute("aria-label", "Cerrar foto");
+  close.textContent = "×";
+
+  const image = document.createElement("img");
+  image.className = "em-photo-full";
+  image.src = url;
+  image.alt = "Foto compartida en la conversación";
+
+  const cerrar = () => overlay.remove();
+  close.addEventListener("click", cerrar);
+  overlay.addEventListener("click", (event) => {
+    if (event.target === overlay) cerrar();
+  });
+
+  overlay.append(close, image);
+  document.body.appendChild(overlay);
+  close.focus();
+}
+
 /* =========================================================
    INPUT
 ========================================================= */
 
 function activarInputMensaje() {
+
+  btnAdjuntarFoto.addEventListener("click", () => {
+    if (!bloqueado && matchActual && usuarioActual) {
+      inputFoto.click();
+    }
+  });
+
+  inputFoto.addEventListener("change", () => {
+    const archivo = inputFoto.files && inputFoto.files[0];
+    if (archivo) {
+      abrirVistaPreviaFoto(archivo);
+    }
+    inputFoto.value = "";
+  });
 
   inputMensaje.addEventListener(
     "input",
@@ -1301,7 +1715,7 @@ async function enviarMensaje() {
             contenido
         })
         .select(
-          "id,match_id,sender_id,content,created_at"
+          "id,match_id,sender_id,content,created_at,message_type,media_path,media_mime,media_name,media_size"
         )
         .single();
 
@@ -1719,6 +2133,9 @@ async function bloquearUsuario() {
     btnEnviar.disabled =
       true;
 
+    btnAdjuntarFoto.disabled =
+      true;
+
     mostrarAvisoBloqueado();
 
     actualizarEstadoUsuario();
@@ -1757,6 +2174,9 @@ function desactivarChat() {
     true;
 
   btnBloquear.disabled =
+    true;
+
+  btnAdjuntarFoto.disabled =
     true;
 }
 
