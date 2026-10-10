@@ -1352,25 +1352,16 @@ async function openConversation(
     return;
   }
 
-  // Marcar los mensajes recibidos antes de salir de la lista.
-  // Así el contador queda actualizado incluso si el chat tarda en cargar.
+  // Usar la función segura de Supabase para marcar solo mensajes recibidos.
   if(currentUser && matchId){
     try{
-      const { data, error } = await client
-        .from("messages")
-        .update({ read_at: new Date().toISOString() })
-        .eq("match_id", matchId)
-        .neq("sender_id", currentUser.id)
-        .is("read_at", null)
-        .select("id");
-
-      if(error){
-        console.warn("No se pudieron marcar mensajes como leídos al abrir el chat:", error);
-      } else {
-        console.log("Mensajes marcados como leídos al abrir:", data?.length || 0);
-      }
+      const { data, error } = await client.rpc("mark_match_messages_read", {
+        p_match_id: matchId
+      });
+      if(error) throw error;
+      console.log("Mensajes recibidos marcados como leídos:", data || 0);
     }catch(error){
-      console.warn("Error marcando mensajes al abrir el chat:", error);
+      console.error("No se pudieron marcar mensajes al abrir la conversación:", error);
     }
   }
 
@@ -1440,25 +1431,10 @@ async function markAllAsRead(){
 
     for(const match of matches){
 
-      const {
-        error
-      } = await client
-        .from("messages")
-        .update({
-          read_at: now
-        })
-        .eq(
-          "match_id",
-          match.id
-        )
-        .neq(
-          "sender_id",
-          currentUser.id
-        )
-        .is(
-          "read_at",
-          null
-        );
+      const { error } = await client.rpc(
+        "mark_match_messages_read",
+        { p_match_id: match.id }
+      );
 
       if(error){
         console.warn(
