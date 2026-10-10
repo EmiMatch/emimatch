@@ -739,6 +739,8 @@
     hidden
   >
 
+  <input id="inputArchivo" type="file" accept=".pdf,.txt,.csv,.doc,.docx,.xls,.xlsx,.ppt,.pptx" hidden>
+
   <div class="composer">
 
     <button
@@ -749,6 +751,8 @@
       title="Enviar foto"
       disabled
     >＋</button>
+
+    <button id="btnAdjuntarArchivo" class="attach-photo" type="button" aria-label="Adjuntar archivo" title="Enviar archivo" disabled>📎</button>
 
     <button id="btnGrabarAudio" class="record-audio" type="button" aria-label="Grabar mensaje de voz" title="Grabar mensaje de voz" disabled>🎙️</button>
 
@@ -822,6 +826,9 @@ const btnAdjuntarFoto =
 
 const inputFoto =
   document.getElementById("inputFoto");
+
+const inputArchivo = document.getElementById("inputArchivo");
+const btnAdjuntarArchivo = document.getElementById("btnAdjuntarArchivo");
 
 const btnGrabarAudio = document.getElementById("btnGrabarAudio");
 
@@ -1170,6 +1177,7 @@ async function cargarMensajes() {
 
     inputMensaje.disabled = false;
     btnGrabarAudio.disabled = false;
+    btnAdjuntarArchivo.disabled = false;
   }
 
   actualizarEstadoBotonEnviar();
@@ -1228,6 +1236,8 @@ function mostrarMensaje(mensaje) {
 
   if (mensaje.message_type === "image" && mensaje.media_path) {
     renderizarFotoMensaje(mensaje, contenido);
+  } else if (mensaje.message_type === "file" && mensaje.media_path) {
+    renderizarArchivoMensaje(mensaje, contenido);
   } else if (mensaje.message_type === "audio" && mensaje.media_path) {
     renderizarAudioMensaje(mensaje, contenido);
   } else {
@@ -1358,6 +1368,9 @@ function mostrarMensaje(mensaje) {
 const CHAT_MEDIA_BUCKET = "chat-media";
 const CHAT_IMAGE_MAX_BYTES = 8 * 1024 * 1024;
 const CHAT_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const CHAT_FILES_BUCKET = "chat-files";
+const CHAT_FILE_MAX_BYTES = 20 * 1024 * 1024;
+const CHAT_FILE_TYPES = ["application/pdf","text/plain","text/csv","application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document","application/vnd.ms-excel","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","application/vnd.ms-powerpoint","application/vnd.openxmlformats-officedocument.presentationml.presentation"];
 const CHAT_AUDIO_BUCKET = "chat-audio";
 const CHAT_AUDIO_MAX_BYTES = 12 * 1024 * 1024;
 const CHAT_AUDIO_MIMES = ["audio/webm","audio/mp4","audio/ogg","audio/mpeg","audio/wav","audio/aac","audio/3gpp"];
@@ -1610,6 +1623,64 @@ async function abrirFotoUnaVez(mensaje, wrap, boton) {
     alert("No se pudo abrir la foto. " + (error && error.message ? error.message : "Intenta nuevamente."));
   }
 }
+async function enviarArchivoSeleccionado(archivo) {
+  if (bloqueado || !matchActual || !usuarioActual) return;
+  const nombre = String(archivo.name || "archivo").slice(0, 180);
+  if (!CHAT_FILE_TYPES.includes(archivo.type)) { alert("Tipo de archivo no permitido. Podés enviar PDF, TXT, CSV, Word, Excel o PowerPoint."); return; }
+  if (archivo.size < 1 || archivo.size > CHAT_FILE_MAX_BYTES) { alert("El archivo debe pesar como máximo 20 MB."); return; }
+  btnAdjuntarArchivo.disabled = true; btnAdjuntarFoto.disabled = true; btnGrabarAudio.disabled = true; inputMensaje.disabled = true;
+  const extension = (nombre.includes(".") ? nombre.split(".").pop() : "file").toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 10) || "file";
+  const unique = (typeof crypto !== "undefined" && crypto.randomUUID) ? crypto.randomUUID() : Date.now() + "-" + Math.random().toString(16).slice(2);
+  const path = matchActual.id + "/" + usuarioActual.id + "/" + unique + "." + extension;
+  let uploaded = false;
+  try {
+    const up = await supabaseClient.storage.from(CHAT_FILES_BUCKET).upload(path, archivo, { cacheControl: "3600", contentType: archivo.type, upsert: false });
+    if (up.error) throw up.error;
+    uploaded = true;
+    const result = await supabaseClient.from("messages").insert({ match_id: matchActual.id, sender_id: usuarioActual.id, content: "📎 " + nombre, message_type: "file", media_path: path, media_mime: archivo.type, media_name: nombre, media_size: archivo.size }).select("id,match_id,sender_id,content,created_at,message_type,media_path,media_mime,media_name,media_size,is_view_once,opened_at").single();
+    if (result.error) throw result.error;
+    mostrarMensaje(result.data); bajarAlFinal();
+  } catch (error) {
+    console.error("Error enviando archivo:", error);
+    if (uploaded) { const cleanup = await supabaseClient.storage.from(CHAT_FILES_BUCKET).remove([path]); if (cleanup.error) console.warn("No se pudo limpiar el archivo fallido:", cleanup.error); }
+    const detail = [error && error.message, error && error.details, error && error.hint, error && error.code].filter(Boolean).join(" ").toLowerCase();
+    if (detail.includes("free_message_limit") || detail.includes("free message limit") || detail.includes("mensajes gratuitos") || error.code === "P0001") mostrarPremiumLimitPrompt();
+    else alert("No se pudo enviar el archivo. " + (error && error.message ? error.message : "Revisá tu conexión e intentá nuevamente."));
+  } finally {
+    if (!bloqueado) { btnAdjuntarArchivo.disabled = false; btnAdjuntarFoto.disabled = false; btnGrabarAudio.disabled = false; inputMensaje.disabled = false; }
+    actualizarEstadoBotonEnviar();
+  }
+}
+
+function formatearTamanoArchivo(bytes) {
+  if (!Number.isFinite(bytes) || bytes < 0) return "";
+  return bytes < 1048576 ? Math.max(1, Math.round(bytes / 1024)) + " KB" : (bytes / 1048576).toFixed(1) + " MB";
+}
+
+function renderizarArchivoMensaje(mensaje, contenedor) {
+  const card = document.createElement("div");
+  card.style.cssText = "display:flex;align-items:center;gap:10px;max-width:100%;padding:12px;border:1px solid rgba(100,116,139,.22);border-radius:14px;background:rgba(255,255,255,.78);";
+  const icon = document.createElement("span"); icon.textContent = mensaje.media_mime === "application/pdf" ? "📕" : "📄"; icon.style.fontSize = "26px";
+  const details = document.createElement("div"); details.style.cssText = "min-width:0;flex:1;";
+  const name = document.createElement("div"); name.textContent = mensaje.media_name || "Archivo adjunto"; name.style.cssText = "font-weight:700;overflow-wrap:anywhere;";
+  const size = document.createElement("small"); size.textContent = formatearTamanoArchivo(Number(mensaje.media_size)) + " · Archivo privado"; size.style.cssText = "display:block;opacity:.7;margin-top:3px;";
+  const status = document.createElement("small"); status.textContent = "Preparando descarga..."; status.style.cssText = "display:block;opacity:.75;margin-top:4px;";
+  details.append(name, size, status);
+  const download = document.createElement("button"); download.type = "button"; download.textContent = "↓"; download.title = "Descargar archivo"; download.setAttribute("aria-label", "Descargar archivo"); download.style.cssText = "flex-shrink:0;border:0;border-radius:10px;padding:9px 12px;background:#dce6fb;color:#123b91;font-size:20px;font-weight:800;"; download.disabled = true;
+  download.addEventListener("click", async () => {
+    download.disabled = true;
+    try {
+      const result = await supabaseClient.storage.from(CHAT_FILES_BUCKET).createSignedUrl(mensaje.media_path, 120, { download: mensaje.media_name || true });
+      if (result.error || !result.data || !result.data.signedUrl) throw result.error || new Error("No se pudo preparar la descarga.");
+      const link = document.createElement("a"); link.href = result.data.signedUrl; link.download = mensaje.media_name || "archivo"; link.rel = "noopener"; document.body.appendChild(link); link.click(); link.remove(); status.textContent = "Descarga iniciada."; 
+    } catch (error) { console.error("Error descargando archivo del chat:", error); status.textContent = "No se pudo descargar. Intentá otra vez."; }
+    finally { download.disabled = false; }
+  });
+  card.append(icon, details, download); contenedor.appendChild(card);
+  supabaseClient.storage.from(CHAT_FILES_BUCKET).createSignedUrl(mensaje.media_path, 60).then((result) => { if (result.error || !result.data || !result.data.signedUrl) { status.textContent = "Archivo privado no disponible."; return; } status.textContent = "Listo para descargar"; download.disabled = false; }).catch((error) => { console.warn("No se pudo preparar el archivo:", error); status.textContent = "Archivo no disponible."; });
+}
+
+
 function renderizarAudioMensaje(mensaje, contenedor) {
   const label=document.createElement("div");label.className="audio-message-label";label.textContent="🎙️ Mensaje de voz";
   const loading=document.createElement("div");loading.className="chat-photo-loading";loading.textContent="Preparando audio…";
@@ -1673,6 +1744,9 @@ function activarInputMensaje() {
     }
     inputFoto.value = "";
   });
+
+  btnAdjuntarArchivo.addEventListener("click", () => { if (!bloqueado && matchActual && usuarioActual) inputArchivo.click(); });
+  inputArchivo.addEventListener("change", () => { const archivo = inputArchivo.files && inputArchivo.files[0]; if (archivo) enviarArchivoSeleccionado(archivo); inputArchivo.value = ""; });
 
   inputMensaje.addEventListener(
     "input",
@@ -2324,6 +2398,7 @@ function desactivarChat() {
   btnAdjuntarFoto.disabled =
     true;
 
+  btnAdjuntarArchivo.disabled = true;
   btnGrabarAudio.disabled = true;
 }
 
