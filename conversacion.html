@@ -1625,11 +1625,17 @@ async function abrirFotoUnaVez(mensaje, wrap, boton) {
 }
 async function enviarArchivoSeleccionado(archivo) {
   if (bloqueado || !matchActual || !usuarioActual) return;
-  const nombre = String(archivo.name || "archivo").slice(0, 180);
-  if (!CHAT_FILE_TYPES.includes(archivo.type)) { alert("Tipo de archivo no permitido. Podés enviar PDF, TXT, CSV, Word, Excel o PowerPoint."); return; }
+  const nombre = String(archivo.name || "archivo").replace(/[\\/\\u0000-\\u001f]/g, "_").trim().slice(0, 180) || "archivo";
+  const extension = (nombre.includes(".") ? nombre.split(".").pop() : "").toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 10);
+  const extensionesPermitidas = {
+    pdf: ["application/pdf"], txt: ["text/plain"], csv: ["text/csv", "text/plain"],
+    doc: ["application/msword"], docx: ["application/vnd.openxmlformats-officedocument.wordprocessingml.document"],
+    xls: ["application/vnd.ms-excel"], xlsx: ["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"],
+    ppt: ["application/vnd.ms-powerpoint"], pptx: ["application/vnd.openxmlformats-officedocument.presentationml.presentation"]
+  };
+  if (!CHAT_FILE_TYPES.includes(archivo.type) || !extensionesPermitidas[extension] || !extensionesPermitidas[extension].includes(archivo.type)) { alert("El formato del archivo no coincide con su extensión. Usá PDF, TXT, CSV, Word, Excel o PowerPoint con su extensión correcta."); return; }
   if (archivo.size < 1 || archivo.size > CHAT_FILE_MAX_BYTES) { alert("El archivo debe pesar como máximo 20 MB."); return; }
   btnAdjuntarArchivo.disabled = true; btnAdjuntarFoto.disabled = true; btnGrabarAudio.disabled = true; inputMensaje.disabled = true;
-  const extension = (nombre.includes(".") ? nombre.split(".").pop() : "file").toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 10) || "file";
   const unique = (typeof crypto !== "undefined" && crypto.randomUUID) ? crypto.randomUUID() : Date.now() + "-" + Math.random().toString(16).slice(2);
   const path = matchActual.id + "/" + usuarioActual.id + "/" + unique + "." + extension;
   let uploaded = false;
