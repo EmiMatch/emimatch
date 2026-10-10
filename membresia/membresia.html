@@ -500,10 +500,10 @@
       </div>
 
       <ul class="benefits">
-        <li>Experiencia Premium de EmiMatch</li>
-        <li>Más posibilidades de conexión</li>
-        <li>Funciones Premium exclusivas</li>
-        <li>Cuenta protegida y segura</li>
+        <li>Mensajes ilimitados, sin el límite diario de la cuenta gratuita</li>
+        <li>Ver quién te dio Me gusta y elegir si también querés conectar</li>
+        <li>Acceso a una experiencia de conexión más completa</li>
+        <li>La membresía se activa cuando Mercado Pago confirma el pago</li>
       </ul>
 
       <button id="premiumButton">
@@ -656,6 +656,13 @@
             }
           );
 
+          return;
+        }
+
+        if (data.already_active === true) {
+          status.textContent =
+            "Tu cuenta ya tiene EmiMatch Premium activo. ¡Disfrutalo!";
+          button.textContent = "Premium activo";
           return;
         }
 
