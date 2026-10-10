@@ -529,15 +529,42 @@
   </style>
 <style id="emimatch-black-gold-refresh">
 body { background:radial-gradient(ellipse at 50% 0%,rgba(228,195,109,.10),transparent 42%),#080808!important;color:#f7f3e9!important }
-.auth-section { background:radial-gradient(ellipse at 50% 0%,rgba(228,195,109,.09),transparent 45%),linear-gradient(150deg,#080808,#15120c 55%,#080808)!important }\n.hero { background:linear-gradient(180deg,rgba(8,8,8,.18) 0%,rgba(8,8,8,.34) 38%,rgba(8,8,8,.88) 100%),linear-gradient(90deg,rgba(8,8,8,.46),rgba(8,8,8,.05) 75%),url("assets/images/0b8840566944e40f0e1640397835d931.jpg") center 42% / cover no-repeat!important; }\n.hero::before { background:radial-gradient(ellipse at 50% 35%,transparent 0%,rgba(8,8,8,.08) 48%,rgba(8,8,8,.48) 100%)!important; }
-.brand,.hero h1,.auth-card h2 { color:#f7f0dc!important }
-.brand-mark,.auth-logo { background:linear-gradient(135deg,#b9913d,#f0d88b)!important;color:#17130a!important;border-color:rgba(228,195,109,.7)!important;box-shadow:0 0 28px rgba(228,195,109,.12)!important }
-.primary,.form-submit { background:linear-gradient(135deg,#b9913d,#f0d88b)!important;color:#17130a!important;border:1px solid rgba(255,240,190,.6)!important;box-shadow:0 12px 28px rgba(0,0,0,.35)!important }
-.secondary { color:#f0d88b!important;background:#151515!important;border-color:rgba(228,195,109,.35)!important }
-.feature-pill,.eyebrow { color:#e4c36d!important;background:rgba(228,195,109,.07)!important;border-color:rgba(228,195,109,.24)!important }
+.auth-section { background:radial-gradient(ellipse at 50% 0%,rgba(228,195,109,.09),transparent 45%),linear-gradient(150deg,#080808,#15120c 55%,#080808)!important }
+/* Foto protagonista: menos oscurecimiento y encuadre elevado */
+.hero {
+  background:
+    linear-gradient(180deg,rgba(8,8,8,.05) 0%,rgba(8,8,8,.10) 34%,rgba(8,8,8,.50) 72%,rgba(8,8,8,.82) 100%),
+    linear-gradient(90deg,rgba(8,8,8,.16),rgba(8,8,8,.02) 75%),
+    url("assets/images/0b8840566944e40f0e1640397835d931.jpg") center 28% / cover no-repeat!important;
+}
+.hero::before {
+  background:radial-gradient(ellipse at 50% 32%,transparent 0%,rgba(8,8,8,.02) 58%,rgba(8,8,8,.25) 100%)!important;
+  pointer-events:none!important;
+}
+.hero-inner { position:relative!important; z-index:1!important; }
+.brand,.hero h1,.auth-card h2 { color:#fff7df!important;text-shadow:0 2px 22px rgba(0,0,0,.45)!important }
+.brand-mark,.auth-logo { background:linear-gradient(135deg,#c9a24b,#ffe6a0)!important;color:#17130a!important;border-color:rgba(255,235,170,.85)!important;box-shadow:0 0 28px rgba(228,195,109,.22)!important }
+.hero-button.primary,.primary,.form-submit {
+  background:linear-gradient(135deg,#d1aa4f,#ffe8a3)!important;
+  color:#17120a!important;border:1px solid #fff0be!important;
+  box-shadow:0 10px 30px rgba(0,0,0,.35),0 0 20px rgba(228,195,109,.18)!important;
+  font-weight:800!important;
+}
+.hero-button.secondary,.secondary {
+  color:#fff2c9!important;background:rgba(15,13,10,.72)!important;
+  border:1px solid rgba(255,226,145,.88)!important;
+  box-shadow:0 8px 24px rgba(0,0,0,.24)!important;
+  backdrop-filter:blur(8px)!important;
+}
+.feature-pill,.eyebrow { color:#ffe5a0!important;background:rgba(20,16,9,.55)!important;border-color:rgba(255,226,145,.45)!important;backdrop-filter:blur(8px)!important }
 .auth-card { background:linear-gradient(145deg,#171510,#0d0d0d)!important;border-color:rgba(228,195,109,.24)!important;box-shadow:0 28px 70px rgba(0,0,0,.48)!important }
 input,textarea,select { background:#101010!important;color:#f7f3e9!important;border-color:rgba(228,195,109,.25)!important }
-a:focus-visible,button:focus-visible,input:focus-visible { outline:2px solid #e4c36d!important;outline-offset:3px }
+a:focus-visible,button:focus-visible,input:focus-visible { outline:2px solid #ffe6a0!important;outline-offset:3px }
+@media(max-width:600px) {
+  .hero { background-position:center 24%!important; }
+  .hero-title { text-shadow:0 2px 22px rgba(0,0,0,.55)!important; }
+  .hero-button.primary,.hero-button.secondary { min-height:52px!important; }
+}
 </style>
 </head>
 
