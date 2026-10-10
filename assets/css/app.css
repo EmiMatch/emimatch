@@ -183,6 +183,34 @@
 }
 
 
+
+/* ---------------------------------------------------------
+   IDENTIDAD ROMÁNTICA · ROSA EMPOLVADO Y CHAMPÁN
+   --------------------------------------------------------- */
+.em-global-header {
+  background: rgba(27, 18, 32, .94);
+  border-bottom-color: rgba(232, 203, 145, .13);
+}
+.em-header-notifications {
+  background: rgba(217, 138, 155, .10);
+  border: 1px solid rgba(232, 203, 145, .12);
+}
+.em-header-notifications:hover {
+  background: rgba(217, 138, 155, .18);
+}
+.em-bottom-nav {
+  background: rgba(27, 18, 32, .96);
+  border-color: rgba(232, 203, 145, .18);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, .38), 0 0 32px rgba(217, 138, 155, .06);
+}
+.em-bottom-nav a:hover {
+  background: rgba(217, 138, 155, .09);
+}
+.em-bottom-nav a.active {
+  color: #f0b9bd;
+  background: rgba(217, 138, 155, .14);
+}
+
 /* ---------------------------------------------------------
    REDUCCIÓN DE MOVIMIENTO
    --------------------------------------------------------- */
