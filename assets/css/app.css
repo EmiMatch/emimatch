@@ -223,3 +223,100 @@
   }
 
    }
+
+
+/* =========================================================
+   EMIMATCH — BLACK & GOLD PREMIUM THEME
+   Global visual refresh; keeps existing page logic untouched.
+   ========================================================= */
+:root {
+  --em-bg: #080808;
+  --em-surface: #111111;
+  --em-surface-raised: #181818;
+  --em-primary: #d9b45b;
+  --em-gold: #e4c36d;
+  --em-gold-soft: rgba(228, 195, 109, .14);
+  --em-text: #f7f3e9;
+  --em-muted: #aaa49a;
+  --em-border: rgba(228, 195, 109, .22);
+  --em-danger: #ff334f;
+  --em-transition: .22s ease;
+  color-scheme: dark;
+}
+html { background: #080808; }
+body {
+  background-color: #080808;
+  color: var(--em-text);
+}
+.em-global-header {
+  background: rgba(8, 8, 8, .94) !important;
+  border-bottom: 1px solid rgba(228, 195, 109, .22) !important;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, .32);
+}
+.em-global-header .em-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--em-gold);
+  font-weight: 800;
+  letter-spacing: .2px;
+}
+.em-global-header .em-brand-mark {
+  color: var(--em-gold);
+  filter: drop-shadow(0 0 8px rgba(228, 195, 109, .24));
+}
+.em-header-notifications {
+  position: relative;
+  color: var(--em-gold) !important;
+  background: #171512 !important;
+  border: 1px solid rgba(228, 195, 109, .32) !important;
+}
+.em-header-notifications::after {
+  content: "";
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #ff304f;
+  border: 2px solid #080808;
+  box-shadow: 0 0 10px rgba(255, 48, 79, .4);
+}
+.em-header-notifications:hover {
+  background: #242017 !important;
+  transform: translateY(-2px);
+}
+.em-bottom-nav {
+  background: rgba(12, 12, 12, .97) !important;
+  border: 1px solid rgba(228, 195, 109, .24) !important;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, .58), 0 0 24px rgba(228, 195, 109, .045) !important;
+}
+.em-bottom-nav a { color: #aaa49a !important; }
+.em-bottom-nav a:hover {
+  color: #fff5d7 !important;
+  background: rgba(228, 195, 109, .08) !important;
+}
+.em-bottom-nav a.active {
+  color: #f0d17d !important;
+  background: rgba(228, 195, 109, .13) !important;
+}
+.em-bottom-nav a.active span {
+  filter: drop-shadow(0 0 7px rgba(228, 195, 109, .22));
+}
+/* Shared surfaces on pages that use common component classes */
+.card, .panel, .modal-content, .profile-card, .settings-card,
+.menu-card, .notification-card, .match-card, .message-card {
+  border-color: rgba(228, 195, 109, .17);
+}
+button, .btn, [role="button"] {
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+button:focus-visible, a:focus-visible, input:focus-visible,
+textarea:focus-visible, select:focus-visible {
+  outline: 2px solid #e4c36d;
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+}
