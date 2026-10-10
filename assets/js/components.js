@@ -71,7 +71,7 @@
           class="em-brand"
           aria-label="EmiMatch"
         >
-          <span class="em-brand-mark">♥</span>
+          <span class="em-brand-mark">🫰</span>
           <span>EmiMatch</span>
         </a>
 
