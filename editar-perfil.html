@@ -421,6 +421,12 @@
 input,textarea,select { background:#111!important;color:#f7f3e9!important;border-color:rgba(228,195,109,.25)!important }
 button.save,.save { background:linear-gradient(135deg,#b9913d,#f0d88b)!important;color:#17130a!important;border-color:#e4c36d!important }
 </style>
+<style id="emimatch-interest-social-premium">
+  #interestsSocialSection .section-title h2 { color:#f5df9d; }
+  #interestsSocialSection .field label { color:#f4ead1; }
+  #interestsSocialSection .help { color:#b8ae97; }
+  #interestsSocialSection input:focus { border-color:rgba(240,216,139,.75); box-shadow:0 0 0 3px rgba(217,180,91,.13); }
+</style>
 </head>
 
 <body>
@@ -545,6 +551,38 @@ button.save,.save { background:linear-gradient(135deg,#b9913d,#f0d88b)!important
         </div>
 
 
+        <section class="section" id="interestsSocialSection">
+          <div class="section-title">
+            <h2>✨ Mis intereses</h2>
+            <p>Elegí o escribí lo que te gusta. Separá cada interés con una coma.</p>
+          </div>
+          <div class="field">
+            <label for="intereses">Intereses</label>
+            <input id="intereses" type="text" maxlength="300"
+              placeholder="Música, viajes, películas, cocina...">
+            <div class="help">Ejemplo: música, viajar, series, mascotas.</div>
+          </div>
+          <div class="section-title" style="margin-top:22px;">
+            <h2>🌐 Mis redes sociales</h2>
+            <p>Opcional. Agregá un enlace o tu usuario para que puedan encontrarte.</p>
+          </div>
+          <div class="field">
+            <label for="facebook">Facebook</label>
+            <input id="facebook" type="text" maxlength="200" autocomplete="url"
+              placeholder="Tu usuario o enlace de Facebook">
+          </div>
+          <div class="field">
+            <label for="instagram">Instagram</label>
+            <input id="instagram" type="text" maxlength="200" autocomplete="url"
+              placeholder="@tuusuario o enlace de Instagram">
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label for="twitter">Twitter / X</label>
+            <input id="twitter" type="text" maxlength="200" autocomplete="url"
+              placeholder="@tuusuario o enlace de X">
+          </div>
+        </section>
+
         <!-- FOTO DE PERFIL -->
 
         <section class="section">
@@ -616,7 +654,7 @@ button.save,.save { background:linear-gradient(135deg,#b9913d,#f0d88b)!important
               </h2>
 
               <p>
-                Agregá hasta 20 fotos para mostrar más de vos.
+                Agregá hasta 6 fotos para mostrar más de vos.
               </p>
 
             </div>
@@ -625,7 +663,7 @@ button.save,.save { background:linear-gradient(135deg,#b9913d,#f0d88b)!important
               id="albumCount"
               class="album-count"
             >
-              0/20
+              0/6
             </span>
 
           </div>
@@ -713,7 +751,7 @@ button.save,.save { background:linear-gradient(135deg,#b9913d,#f0d88b)!important
     let user = null;
 
 
-    const MAX_PHOTOS = 20;
+    const MAX_PHOTOS = 6;
     const MAX_FILE_SIZE = 8 * 1024 * 1024;
 
     const ALLOWED_TYPES = [
@@ -879,7 +917,7 @@ button.save,.save { background:linear-gradient(135deg,#b9913d,#f0d88b)!important
         await supabase
           .from("profiles")
           .select(
-            "id,nombre,edad,ciudad,descripcion,foto_url"
+            "id,nombre,edad,ciudad,descripcion,foto_url,intereses,facebook,instagram,twitter"
           )
           .eq("id", user.id)
           .maybeSingle();
@@ -903,6 +941,18 @@ button.save,.save { background:linear-gradient(135deg,#b9913d,#f0d88b)!important
 
         $("descripcion").value =
           data.descripcion || "";
+
+        $("intereses").value =
+          data.intereses || "";
+
+        $("facebook").value =
+          data.facebook || "";
+
+        $("instagram").value =
+          data.instagram || "";
+
+        $("twitter").value =
+          data.twitter || "";
 
 
         if (data.foto_url) {
@@ -953,6 +1003,15 @@ button.save,.save { background:linear-gradient(135deg,#b9913d,#f0d88b)!important
 
       const descripcion =
         $("descripcion").value.trim();
+
+      const intereses =
+        [...new Set($("intereses").value.split(/[,;|]/).map(v => v.trim()).filter(Boolean))]
+          .slice(0, 20)
+          .join(", ");
+
+      const facebook = $("facebook").value.trim();
+      const instagram = $("instagram").value.trim();
+      const twitter = $("twitter").value.trim();
 
       const edad =
         Number($("edad").value);
@@ -1012,7 +1071,11 @@ button.save,.save { background:linear-gradient(135deg,#b9913d,#f0d88b)!important
               nombre,
               edad,
               ciudad,
-              descripcion
+              descripcion,
+              intereses,
+              facebook,
+              instagram,
+              twitter
             })
             .eq("id", user.id);
 
