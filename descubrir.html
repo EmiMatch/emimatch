@@ -205,6 +205,10 @@ body{
 
   <h1>💕 Descubrir</h1>
 
+  <div id="likeQuota" class="status" aria-live="polite">
+    Comprobando tus Me gusta...
+  </div>
+
   <section class="filters">
 
     <input
@@ -339,6 +343,7 @@ async function start() {
 
     user = session.user;
 
+    await refreshLikeQuota();
     await load();
 
   } catch (error) {
@@ -478,7 +483,46 @@ async function load() {
 
   index = 0;
 
+  await refreshLikeQuota();
   render();
+}
+
+
+/* =========================
+   ACTUALIZAR CUOTA DE ME GUSTA
+========================= */
+
+async function refreshLikeQuota() {
+  const quotaEl = $("likeQuota");
+  if (!quotaEl || !client || !user) return;
+
+  const { data, error } = await client.rpc("can_send_like");
+
+  if (error) {
+    console.error("Error consultando cuota de likes:", error);
+    quotaEl.textContent = "No se pudo consultar tu límite de Me gusta.";
+    return;
+  }
+
+  if (data?.is_premium === true) {
+    quotaEl.textContent = "💎 Premium activo · Me gusta ilimitados";
+    return;
+  }
+
+  const remaining = Math.max(0, Number(data?.remaining ?? 0));
+  quotaEl.textContent = remaining > 0
+    ? `❤️ Te quedan ${remaining} de 30 Me gusta gratuitos hoy.`
+    : "❤️ Llegaste al límite diario de 30 Me gusta gratuitos. Premium ofrece likes ilimitados.";
+
+  if (remaining === 0) {
+    const link = document.createElement("a");
+    link.href = "membresia/membresia.html";
+    link.textContent = " Conocer Premium";
+    link.style.color = "#f0d88b";
+    link.style.fontWeight = "bold";
+    link.style.marginLeft = "6px";
+    quotaEl.appendChild(link);
+  }
 }
 
 
@@ -641,6 +685,29 @@ async function swipe(action) {
 
 
   /* =========================
+     COMPROBAR CUOTA EN SERVIDOR
+  ========================= */
+
+  if (action === "like") {
+    const {
+      data: quota,
+      error: quotaError
+    } = await client.rpc("can_send_like");
+
+    if (quotaError) {
+      console.error("No se pudo comprobar la cuota:", quotaError);
+      alert("No se pudo verificar tu límite de Me gusta. Intentá nuevamente.");
+      return;
+    }
+
+    if (quota?.allowed !== true) {
+      await refreshLikeQuota();
+      alert("Llegaste a tus 30 Me gusta gratuitos de hoy. Con EmiMatch Premium tenés likes ilimitados.");
+      return;
+    }
+  }
+
+  /* =========================
      GUARDAR SWIPE
   ========================= */
 
@@ -664,14 +731,24 @@ async function swipe(action) {
 
     console.error(swipeError);
 
-    alert(
-      "No se pudo guardar la acción: " +
-      swipeError.message
-    );
+    if (
+      String(swipeError.message || "").includes("FREE_LIKE_LIMIT")
+    ) {
+      await refreshLikeQuota();
+      alert("Llegaste a tus 30 Me gusta gratuitos de hoy. Con EmiMatch Premium tenés likes ilimitados.");
+    } else {
+      alert(
+        "No se pudo guardar la acción: " +
+        swipeError.message
+      );
+    }
 
     return;
   }
 
+  if (action === "like") {
+    await refreshLikeQuota();
+  }
 
   /* =========================
      SI ES LIKE:
