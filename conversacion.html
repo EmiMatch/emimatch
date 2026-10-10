@@ -1508,16 +1508,18 @@ function renderizarFotoMensaje(mensaje, contenedor) {
   const imagen = document.createElement("img");
   imagen.className = "chat-photo";
   imagen.alt = "Foto compartida en EmiMatch";
-  imagen.loading = "lazy";
+  // No usar lazy + display:none: algunos navegadores no disparan la carga.
+  imagen.loading = "eager";
   imagen.decoding = "async";
-  imagen.style.display = "none";
+  imagen.style.display = "block";
+  imagen.style.visibility = "hidden";
 
   wrap.append(loading, imagen);
   contenedor.appendChild(wrap);
 
   imagen.addEventListener("load", () => {
     loading.remove();
-    imagen.style.display = "block";
+    imagen.style.visibility = "visible";
   }, { once: true });
 
   imagen.addEventListener("error", () => {
