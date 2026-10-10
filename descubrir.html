@@ -683,13 +683,9 @@ async function swipe(action) {
     const {
       data: reverseLike,
       error: reverseError
-    } = await client
-      .from("swipes")
-      .select("id")
-      .eq("user_id", profile.id)
-      .eq("target_user_id", user.id)
-      .eq("action", "like")
-      .maybeSingle();
+    } = await client.rpc("has_mutual_like", {
+      p_other_user_id: profile.id
+    });
 
 
     if (reverseError) {
@@ -709,7 +705,7 @@ async function swipe(action) {
        MATCH
     ========================= */
 
-    if (reverseLike) {
+    if (reverseLike === true) {
 
       const ids =
         [user.id, profile.id].sort();
