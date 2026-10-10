@@ -1122,7 +1122,7 @@ async function cargarMensajes() {
     await supabaseClient
       .from("messages")
       .select(
-        "id,match_id,sender_id,content,created_at,message_type,media_path,media_mime,media_name,media_size"
+        "id,match_id,sender_id,content,created_at,message_type,media_path,media_mime,media_name,media_size,is_view_once,opened_at"
       )
       .eq(
         "match_id",
@@ -1389,6 +1389,13 @@ function abrirVistaPreviaFoto(archivo) {
   title.textContent = "Enviar foto";
   const note = document.createElement("p");
   note.textContent = "La foto se compartirá únicamente dentro de esta conversación.";
+  const onceLabel = document.createElement("label");
+  onceLabel.style.cssText = "display:flex;align-items:center;gap:9px;margin:0 0 14px;font-weight:700;";
+  const onceToggle = document.createElement("input");
+  onceToggle.type = "checkbox";
+  const onceText = document.createElement("span");
+  onceText.textContent = "Ver una sola vez";
+  onceLabel.append(onceToggle, onceText);
   const preview = document.createElement("img");
   preview.className = "em-photo-preview";
   preview.src = objectUrl;
@@ -1405,7 +1412,7 @@ function abrirVistaPreviaFoto(archivo) {
   send.textContent = "Enviar foto";
 
   actions.append(cancel, send);
-  dialog.append(title, note, preview, actions);
+  dialog.append(title, note, onceLabel, preview, actions);
   overlay.appendChild(dialog);
   document.body.appendChild(overlay);
 
@@ -1418,10 +1425,10 @@ function abrirVistaPreviaFoto(archivo) {
   overlay.addEventListener("click", (event) => {
     if (event.target === overlay && !send.disabled) cerrar();
   });
-  send.addEventListener("click", () => enviarFotoSeleccionada(archivo, overlay, objectUrl, send, cancel));
+  send.addEventListener("click", () => enviarFotoSeleccionada(archivo, overlay, objectUrl, send, cancel, onceToggle.checked));
 }
 
-async function enviarFotoSeleccionada(archivo, overlay, objectUrl, botonEnviarFoto, botonCancelar) {
+async function enviarFotoSeleccionada(archivo, overlay, objectUrl, botonEnviarFoto, botonCancelar, verUnaVez = false) {
   if (bloqueado || !matchActual || !usuarioActual) return;
 
   botonEnviarFoto.disabled = true;
@@ -1465,9 +1472,11 @@ async function enviarFotoSeleccionada(archivo, overlay, objectUrl, botonEnviarFo
         media_path: ruta,
         media_mime: archivo.type,
         media_name: String(archivo.name || "foto").slice(0, 180),
-        media_size: archivo.size
+        media_size: archivo.size,
+        is_view_once: verUnaVez,
+        opened_at: null
       })
-      .select("id,match_id,sender_id,content,created_at,message_type,media_path,media_mime,media_name,media_size")
+      .select("id,match_id,sender_id,content,created_at,message_type,media_path,media_mime,media_name,media_size,is_view_once,opened_at")
       .single();
 
     if (error) throw error;
@@ -1521,53 +1530,86 @@ async function enviarFotoSeleccionada(archivo, overlay, objectUrl, botonEnviarFo
 function renderizarFotoMensaje(mensaje, contenedor) {
   const wrap = document.createElement("div");
   wrap.className = "chat-photo-wrap";
-
+  if (mensaje.is_view_once) {
+    const status = document.createElement("div");
+    status.className = "chat-photo-loading";
+    status.textContent = mensaje.opened_at ? "Foto de una sola vista: ya abierta" : (mensaje.sender_id === usuarioActual.id ? "Foto de una sola vista enviada" : "Foto para ver una sola vez");
+    wrap.appendChild(status);
+    if (!mensaje.opened_at && mensaje.sender_id !== usuarioActual.id) {
+      const open = document.createElement("button");
+      open.type = "button";
+      open.textContent = "Abrir foto";
+      open.addEventListener("click", () => abrirFotoUnaVez(mensaje, wrap, open));
+      wrap.appendChild(open);
+    }
+    contenedor.appendChild(wrap);
+    return;
+  }
   const loading = document.createElement("div");
   loading.className = "chat-photo-loading";
-  loading.textContent = "Cargando foto…";
-
+  loading.textContent = "Cargando foto...";
   const imagen = document.createElement("img");
   imagen.className = "chat-photo";
   imagen.alt = "Foto compartida en EmiMatch";
-  // No usar lazy + display:none: algunos navegadores no disparan la carga.
   imagen.loading = "eager";
   imagen.decoding = "async";
   imagen.style.display = "block";
   imagen.style.visibility = "hidden";
-
   wrap.append(loading, imagen);
   contenedor.appendChild(wrap);
-
-  imagen.addEventListener("load", () => {
-    loading.remove();
-    imagen.style.visibility = "visible";
-  }, { once: true });
-
-  imagen.addEventListener("error", () => {
-    loading.textContent = "No se pudo cargar esta foto.";
-    imagen.remove();
-  }, { once: true });
-
-  imagen.addEventListener("click", () => abrirFotoAmpliada(imagen.src), { once: false });
-
+  imagen.addEventListener("load", () => { loading.remove(); imagen.style.visibility = "visible"; }, { once: true });
+  imagen.addEventListener("error", () => { loading.textContent = "No se pudo cargar esta foto."; imagen.remove(); }, { once: true });
+  imagen.addEventListener("click", () => abrirFotoAmpliada(imagen.src));
   (async () => {
-    const { data, error } = await supabaseClient
-      .storage
-      .from(CHAT_MEDIA_BUCKET)
-      .createSignedUrl(mensaje.media_path, 600);
-
-    if (error || !data?.signedUrl) {
-      loading.textContent = "Foto privada no disponible.";
-      return;
-    }
-
+    const { data, error } = await supabaseClient.storage.from(CHAT_MEDIA_BUCKET).createSignedUrl(mensaje.media_path, 600);
+    if (error || !data || !data.signedUrl) { loading.textContent = "Foto privada no disponible."; return; }
     imagen.src = data.signedUrl;
-  })().catch((error) => {
-    console.warn("No se pudo preparar la foto del chat:", error);
-    loading.textContent = "No se pudo cargar esta foto.";
-  });
+  })().catch((error) => { console.warn("No se pudo preparar la foto del chat:", error); loading.textContent = "No se pudo cargar esta foto."; });
 }
 
+async function abrirFotoUnaVez(mensaje, wrap, boton) {
+  if (bloqueado || !mensaje || !mensaje.is_view_once || mensaje.opened_at || mensaje.sender_id === usuarioActual.id) return;
+  boton.disabled = true;
+  boton.textContent = "Abriendo...";
+  try {
+    const { data: row, error: markError } = await supabaseClient.from("messages").update({ opened_at: new Date().toISOString() }).eq("id", mensaje.id).is("opened_at", null).select("id,opened_at").maybeSingle();
+    if (markError) throw markError;
+    if (!row) { wrap.textContent = "Esta foto ya fue abierta y no se puede volver a ver."; return; }
+    mensaje.opened_at = row.opened_at;
+    const { data, error } = await supabaseClient.storage.from(CHAT_MEDIA_BUCKET).createSignedUrl(mensaje.media_path, 120);
+    if (error || !data || !data.signedUrl) throw error || new Error("No se pudo abrir la foto.");
+    const overlay = document.createElement("div");
+    overlay.className = "em-photo-overlay";
+    overlay.setAttribute("role", "dialog");
+    overlay.setAttribute("aria-modal", "true");
+    const img = document.createElement("img");
+    img.className = "em-photo-full";
+    img.alt = "Foto de visualizacion unica";
+    const close = document.createElement("button");
+    close.type = "button";
+    close.className = "em-photo-close";
+    close.textContent = "x";
+    let finished = false;
+    const finish = async () => {
+      if (finished) return;
+      finished = true;
+      overlay.remove();
+      wrap.textContent = "Foto de una sola vista: ya abierta";
+      const { error: removeError } = await supabaseClient.storage.from(CHAT_MEDIA_BUCKET).remove([mensaje.media_path]);
+      if (removeError) console.warn("No se pudo borrar la foto vista una vez:", removeError);
+    };
+    close.addEventListener("click", finish);
+    overlay.addEventListener("click", (event) => { if (event.target === overlay) finish(); });
+    overlay.append(img, close);
+    document.body.appendChild(overlay);
+    img.src = data.signedUrl;
+  } catch (error) {
+    console.error("Error abriendo foto de una sola vista:", error);
+    boton.disabled = false;
+    boton.textContent = "Reintentar abrir";
+    alert("No se pudo abrir la foto. " + (error && error.message ? error.message : "Intenta nuevamente."));
+  }
+}
 function renderizarAudioMensaje(mensaje, contenedor) {
   const label=document.createElement("div");label.className="audio-message-label";label.textContent="🎙️ Mensaje de voz";
   const loading=document.createElement("div");loading.className="chat-photo-loading";loading.textContent="Preparando audio…";
@@ -1722,7 +1764,7 @@ async function enviarAudioGrabado(blob,mime,extension,overlay,url,send,cancel){
     const uid=crypto.randomUUID?crypto.randomUUID():Date.now()+"-"+Math.random().toString(16).slice(2);
     path=matchActual.id+"/"+usuarioActual.id+"/"+uid+"."+extension;
     const up=await supabaseClient.storage.from(CHAT_AUDIO_BUCKET).upload(path,blob,{cacheControl:"3600",contentType:mime,upsert:false});if(up.error)throw up.error;uploaded=true;
-    const res=await supabaseClient.from("messages").insert({match_id:matchActual.id,sender_id:usuarioActual.id,content:"🎙️ Mensaje de voz",message_type:"audio",media_path:path,media_mime:mime,media_name:"mensaje-de-voz."+extension,media_size:blob.size}).select("id,match_id,sender_id,content,created_at,message_type,media_path,media_mime,media_name,media_size").single();
+    const res=await supabaseClient.from("messages").insert({match_id:matchActual.id,sender_id:usuarioActual.id,content:"🎙️ Mensaje de voz",message_type:"audio",media_path:path,media_mime:mime,media_name:"mensaje-de-voz."+extension,media_size:blob.size}).select("id,match_id,sender_id,content,created_at,message_type,media_path,media_mime,media_name,media_size,is_view_once,opened_at").single();
     if(res.error)throw res.error;mostrarMensaje(res.data);bajarAlFinal();URL.revokeObjectURL(url);overlay.remove();
   }catch(error){
     console.error("Error enviando audio:",error);
@@ -1818,7 +1860,7 @@ async function enviarMensaje() {
             contenido
         })
         .select(
-          "id,match_id,sender_id,content,created_at,message_type,media_path,media_mime,media_name,media_size"
+          "id,match_id,sender_id,content,created_at,message_type,media_path,media_mime,media_name,media_size,is_view_once,opened_at"
         )
         .single();
 
