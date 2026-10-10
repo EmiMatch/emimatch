@@ -1300,7 +1300,8 @@ function renderAvatar(profile){
         () => {
 
           openConversation(
-            item.otherUserId
+            item.otherUserId,
+            item.match?.id
           );
 
         }
