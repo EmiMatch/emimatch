@@ -493,7 +493,7 @@
         </div>
 
         <div class="price">
-          $10.000 ARS
+          $1.000 ARS
           <span>/ mes</span>
         </div>
 
@@ -668,26 +668,15 @@
         }
 
         /*
-         * Mercado Pago - producción
-         */
-
-        if (data.init_point) {
-          status.textContent =
-            "Suscripción preparada. Redirigiendo a Mercado Pago...";
-
-          window.location.href =
-            data.init_point;
-
-          return;
-        }
-
-        /*
-         * Mercado Pago - sandbox/pruebas
+         * MODO SEGURO DE PRUEBA:
+         * No redirigir al enlace de producción.
+         * Solo continuar si Mercado Pago devuelve
+         * un enlace explícito de sandbox/prueba.
          */
 
         if (data.sandbox_init_point) {
           status.textContent =
-            "Suscripción de prueba preparada. Redirigiendo a Mercado Pago...";
+            "Suscripción de prueba preparada. Abriendo el entorno de prueba de Mercado Pago...";
 
           window.location.href =
             data.sandbox_init_point;
@@ -696,11 +685,13 @@
         }
 
         /*
-         * Respuesta correcta pero sin enlace de pago.
+         * Si no hay enlace sandbox, detener el flujo.
+         * No usar init_point como alternativa porque
+         * podría llevar a un cobro real.
          */
 
         status.textContent =
-          "Suscripción Premium preparada. Mercado Pago todavía no confirmó el pago.";
+          "Por seguridad, no se abrió el pago: Mercado Pago no devolvió un enlace de prueba. No se realizó ningún cobro.";
 
       } catch (error) {
 
