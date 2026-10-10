@@ -11,6 +11,9 @@ create table if not exists public.like_events (
 create index if not exists like_events_user_created_idx
   on public.like_events (user_id, created_at desc);
 
+create index if not exists like_events_target_created_idx
+  on public.like_events (target_user_id, created_at desc);
+
 alter table public.like_events enable row level security;
 revoke all on table public.like_events from public, anon, authenticated;
 
