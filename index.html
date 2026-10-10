@@ -496,6 +496,37 @@
     }
   </style>
 
+  <style id="emimatch-romantic-polish">
+    /* Hero cinematográfico inspirado en el diseño de referencia */
+    .hero {
+      position: relative !important;
+      min-height: 100svh !important;
+      padding: 115px 22px 58px !important;
+      isolation: isolate !important;
+      background:
+        linear-gradient(180deg, rgba(15,9,19,.30) 0%, rgba(19,10,21,.48) 36%, rgba(18,10,20,.94) 100%),
+        linear-gradient(90deg, rgba(18,10,20,.55), rgba(18,10,20,.08) 70%),
+        url("assets/images/0b5083b19e534a3d8f797121ed2060d8.jpg") center 42% / cover no-repeat !important;
+    }
+    .hero::before {
+      content: "" !important; position:absolute !important; inset:0 !important; z-index:-1 !important;
+      background: radial-gradient(ellipse at 50% 35%, transparent 0%, rgba(18,10,20,.12) 48%, rgba(12,7,15,.72) 100%) !important;
+      pointer-events:none !important;
+    }
+    .hero-inner { position:relative !important; z-index:1 !important; padding-top:clamp(35px,8vh,95px) !important; }
+    .photo-frame { display:none !important; }
+    .hero-title { max-width:900px !important; font-size:clamp(44px,7vw,82px) !important; }
+    .hero-description { color:#f0dfe7 !important; max-width:640px !important; }
+    .topbar { z-index:20 !important; }
+    .brand { text-shadow:0 2px 18px rgba(0,0,0,.55) !important; }
+    .eyebrow { background:rgba(39,19,35,.55) !important; backdrop-filter:blur(12px) !important; }
+    @media(max-width:600px) {
+      .hero { min-height:100svh !important; padding:105px 18px 46px !important; background-position:58% center !important; }
+      .hero-inner { padding-top:clamp(30px,7vh,70px) !important; }
+      .hero-title { font-size:clamp(43px,12vw,60px) !important; }
+    }
+
+  </style>
 </head>
 
 <body>
