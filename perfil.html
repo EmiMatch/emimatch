@@ -662,6 +662,149 @@
     }
   </style>
 
+
+  <style id="emimatch-profile-photo-hero">
+    /* Perfil premium negro y dorado: foto principal amplia, sin tocar la lógica */
+    .profile-card {
+      background: linear-gradient(160deg, #17140e, #090909 70%) !important;
+      border-color: rgba(240,209,138,.30) !important;
+    }
+    .cover {
+      height: 190px !important;
+      background:
+        radial-gradient(ellipse at 18% 45%, rgba(240,209,138,.26), transparent 28%),
+        radial-gradient(ellipse at 82% 20%, rgba(240,209,138,.15), transparent 25%),
+        linear-gradient(125deg,#392e18 0%,#17140e 55%,#090909 100%) !important;
+    }
+    .avatar-wrap {
+      width: calc(100% + 48px) !important;
+      height: clamp(320px, 78vw, 490px) !important;
+      margin: -190px -24px 0 !important;
+      position: relative !important;
+      overflow: hidden;
+      border-radius: 0 !important;
+      background: linear-gradient(145deg,#302718,#11100c) !important;
+    }
+    .avatar-wrap::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(180deg,rgba(0,0,0,.04) 45%,rgba(0,0,0,.12) 62%,rgba(8,8,8,.88) 100%);
+    }
+    .avatar, .avatar-placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100% !important;
+      height: 100% !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      outline: 0 !important;
+      outline-offset: 0 !important;
+      box-shadow: none !important;
+      object-fit: cover;
+    }
+    .avatar-placeholder {
+      color: #f0d18a !important;
+      font-size: clamp(58px, 13vw, 88px) !important;
+    }
+    #profileAvatar:not(.hidden) {
+      display: block !important;
+      object-position: center 35%;
+    }
+    .verified-badge {
+      z-index: 2;
+      right: 18px !important;
+      bottom: 18px !important;
+      width: 34px !important;
+      height: 34px !important;
+    }
+    .profile-content { padding-top: 0 !important; }
+    .profile-name {
+      margin-top: 21px !important;
+      font-size: clamp(28px, 5vw, 36px) !important;
+      color: #fff8e8 !important;
+    }
+    .profile-meta { color: #d5c39a !important; }
+    .profile-description {
+      padding: 15px 16px;
+      border-left: 2px solid rgba(240,209,138,.68);
+      border-radius: 0 12px 12px 0;
+      background: rgba(240,209,138,.045);
+      color: #eee7d8 !important;
+    }
+    .info-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    .info-box {
+      background: linear-gradient(145deg,#1a1813,#10100e) !important;
+      border-color: rgba(240,209,138,.18) !important;
+    }
+    .info-label { color: #b9a779 !important; }
+    .info-value { color: #fff4d8 !important; }
+    .interest-tag {
+      color: #f5dfaa !important;
+      border-color: rgba(240,209,138,.30) !important;
+      background: rgba(240,209,138,.075) !important;
+    }
+    .section-title { color: #f6e5b6 !important; }
+    .section-subtitle { color: #bcb5a4 !important; }
+    .album-item {
+      border-color: rgba(240,209,138,.25) !important;
+      background: #15130f !important;
+    }
+    .album-empty {
+      color: #c9bea4 !important;
+      border-color: rgba(240,209,138,.32) !important;
+      background: rgba(240,209,138,.035) !important;
+    }
+    .upload-box {
+      border-color: rgba(240,209,138,.2) !important;
+      background: #12110e !important;
+    }
+    .upload-label {
+      color: #171207 !important;
+      background: linear-gradient(115deg,#d2ad53,#f5df9d) !important;
+      box-shadow: 0 10px 28px rgba(210,173,83,.16) !important;
+    }
+    .upload-info { color: #b8ae97 !important; }
+    .action-button {
+      color: #f4ead1 !important;
+      border-color: rgba(240,209,138,.24) !important;
+      background: linear-gradient(145deg,#1b1914,#10100e) !important;
+    }
+    .action-button:hover {
+      background: rgba(240,209,138,.09) !important;
+      border-color: rgba(240,209,138,.48) !important;
+    }
+    .action-button.primary {
+      color: #171207 !important;
+      background: linear-gradient(115deg,#d2ad53,#f5df9d) !important;
+      border-color: rgba(255,239,190,.65) !important;
+      box-shadow: 0 12px 28px rgba(210,173,83,.17) !important;
+    }
+    .action-button.danger {
+      color: #ffb8bd !important;
+      background: rgba(150,36,49,.13) !important;
+      border-color: rgba(255,130,143,.24) !important;
+    }
+    .status, .album-status { color: #d2c7ad !important; }
+    @media (max-width: 520px) {
+      .profile-page { padding: 12px 10px 110px !important; }
+      .profile-content { padding: 0 16px 22px !important; }
+      .cover { height: 160px !important; }
+      .avatar-wrap {
+        width: calc(100% + 32px) !important;
+        height: clamp(300px, 98vw, 390px) !important;
+        margin: -160px -16px 0 !important;
+      }
+      .profile-name { margin-top: 19px !important; }
+      .verified-badge { right: 14px !important; bottom: 14px !important; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .avatar-wrap, .action-button { transition: none !important; }
+    }
+  </style>
+
 </head>
 <body>
 
