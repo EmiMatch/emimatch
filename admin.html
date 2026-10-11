@@ -821,6 +821,17 @@
         </div>
 
         <div class="premium-section-gap">
+          <h3 class="section-title">📅 Resumen mensual (últimos 12 meses)</h3>
+          <p class="section-description">Nuevas suscripciones y pagos aprobados por mes. Los importes están separados por moneda.</p>
+          <div class="premium-table-wrap">
+            <table class="premium-table">
+              <thead><tr><th>Mes</th><th>Nuevas suscripciones</th><th>Pagos aprobados</th><th>Importes aprobados</th></tr></thead>
+              <tbody id="premiumMonthlyBody"><tr><td colspan="4" class="premium-empty">Cargando resumen mensual…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="premium-section-gap">
           <h3 class="section-title">Personas con suscripción</h3>
           <div class="premium-table-wrap">
             <table class="premium-table">
@@ -1157,6 +1168,28 @@
             .join(" · ")
         : "—";
       setText("premiumRevenueCount", revenueText);
+
+      const monthlyBody = document.getElementById("premiumMonthlyBody");
+      const monthlySummary = Array.isArray(data.monthlySummary) ? data.monthlySummary : [];
+      if (monthlyBody) {
+        monthlyBody.innerHTML = monthlySummary.length
+          ? monthlySummary.map(item => {
+              const revenueByCurrency = item.revenueByCurrency || {};
+              const revenue = Object.keys(revenueByCurrency).length
+                ? Object.entries(revenueByCurrency).map(([currency, amount]) => formatMoney(amount, currency)).join(" · ")
+                : "—";
+              const monthLabel = item.month
+                ? new Date(item.month + "-01T00:00:00Z").toLocaleDateString("es-AR", { month: "long", year: "numeric", timeZone: "UTC" })
+                : "—";
+              return "<tr>" +
+                "<td>" + escapeHtml(monthLabel) + "</td>" +
+                "<td>" + escapeHtml(formatNumber(item.newSubscriptions)) + "</td>" +
+                "<td>" + escapeHtml(formatNumber(item.approvedPayments)) + "</td>" +
+                "<td>" + escapeHtml(revenue) + "</td>" +
+                "</tr>";
+            }).join("")
+          : '<tr><td colspan="4" class="premium-empty">Todavía no hay datos mensuales.</td></tr>';
+      }
 
       const subscriptionsBody = document.getElementById("premiumSubscriptionsBody");
       const subscriptions = Array.isArray(data.subscriptions) ? data.subscriptions : [];
