@@ -240,6 +240,45 @@ if (exists("supabase/functions/delete-account/index.ts")) {
   );
 }
 
+/* 8. HIGIENE DEL REPOSITORIO Y SECRETOS */
+
+console.log("");
+console.log("🛡️ HIGIENE DEL REPOSITORIO");
+
+const forbiddenFiles = [
+  "android/keystore.properties",
+  "android-backup/keystore.properties",
+  "emimatch-release.jks",
+  "android/local.properties"
+];
+
+for (const file of forbiddenFiles) {
+  if (exists(file)) {
+    error(`Archivo sensible o local versionado: ${file}`);
+  } else {
+    ok(`${file}: no está en la versión actual`);
+  }
+}
+
+if (exists("node_modules")) {
+  error("node_modules no debe estar versionado");
+} else {
+  ok("node_modules no está en la versión actual");
+}
+
+if (exists(".gitignore")) {
+  const ignore = read(".gitignore");
+  for (const pattern of ["node_modules/", "*.jks", "**/keystore.properties", "android/local.properties"]) {
+    if (ignore.includes(pattern)) {
+      ok(`.gitignore protege ${pattern}`);
+    } else {
+      error(`.gitignore no protege ${pattern}`);
+    }
+  }
+} else {
+  error("Falta .gitignore en la raíz");
+}
+
 /* RESULTADO */
 
 console.log("");
