@@ -180,58 +180,46 @@ async function loadReceivedMessages(matches) {
 
   const matchIds = matches.map(match => match.id);
 
+  // No consultamos ni mostramos el contenido privado de los mensajes.
   const { data, error } = await client
     .from("messages")
-    .select("id, match_id, sender_id, content, created_at, read_at")
+    .select("id, match_id, sender_id, created_at, read_at")
     .in("match_id", matchIds)
     .neq("sender_id", currentUser.id)
     .order("created_at", { ascending: false })
-    .limit(50);
+    .limit(100);
 
   if (error) throw error;
 
-  const messages = data || [];
-  const senderIds = [...new Set(
-    messages.map(message => message.sender_id).filter(Boolean)
-  )];
+  // Una sola notificación por persona, aunque haya enviado varios mensajes.
+  const bySender = new Map();
 
-  let profilesById = {};
+  for (const message of data || []) {
+    if (!message.sender_id) continue;
 
-  if (senderIds.length) {
-    // Si falla la consulta de perfiles, los mensajes siguen apareciendo.
-    try {
-      const { data: profiles, error: profileError } = await client
-        .from("profiles")
-        .select("id, nombre")
-        .in("id", senderIds);
-
-      if (profileError) throw profileError;
-
-      profilesById = Object.fromEntries(
-        (profiles || []).map(profile => [profile.id, profile])
-      );
-    } catch (profileError) {
-      console.warn("No se pudieron cargar los nombres de los perfiles:", profileError);
+    const existing = bySender.get(message.sender_id);
+    if (!existing) {
+      bySender.set(message.sender_id, {
+        senderId: message.sender_id,
+        createdAt: message.created_at,
+        unread: !message.read_at
+      });
+    } else if (!message.read_at) {
+      existing.unread = true;
     }
   }
 
-  return messages.map(message => {
-    const name = profilesById[message.sender_id]?.nombre || "Tu match";
-
-    return {
-      id: `message-${message.id}`,
-      type: "message",
-      userId: message.sender_id,
-      createdAt: message.created_at,
-      unread: !message.read_at,
-      title: message.read_at
-        ? `Mensaje de ${name}`
-        : `Nuevo mensaje de ${name}`,
-      text: message.content || "Te envió un mensaje.",
-      icon: "💬",
-      href: `conversacion.html?user=${encodeURIComponent(message.sender_id)}`
-    };
-  });
+  return [...bySender.values()].map(item => ({
+    id: `message-user-${item.senderId}`,
+    type: "message",
+    userId: item.senderId,
+    createdAt: item.createdAt,
+    unread: item.unread,
+    title: "Tenés un mensaje",
+    text: "Entrá a EmiMatch para leerlo.",
+    icon: "💬",
+    href: `conversacion.html?user=${encodeURIComponent(item.senderId)}`
+  }));
 }
 
 async function loadMatchNotifications(matches) {
