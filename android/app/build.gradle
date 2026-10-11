@@ -1,4 +1,10 @@
 apply plugin: 'com.android.application'
+
+def emimatchReleaseKeystorePath = System.getenv("EMIMATCH_KEYSTORE_PATH")
+def emimatchReleaseStorePassword = System.getenv("EMIMATCH_KEYSTORE_PASSWORD")
+def emimatchReleaseKeyAlias = System.getenv("EMIMATCH_KEY_ALIAS")
+def emimatchReleaseKeyPassword = System.getenv("EMIMATCH_KEY_PASSWORD")
+
 android {
     namespace = "com.emimatch.app"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -15,10 +21,23 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        release {
+            if (emimatchReleaseKeystorePath && emimatchReleaseStorePassword && emimatchReleaseKeyAlias && emimatchReleaseKeyPassword) {
+                storeFile file(emimatchReleaseKeystorePath)
+                storePassword emimatchReleaseStorePassword
+                keyAlias emimatchReleaseKeyAlias
+                keyPassword emimatchReleaseKeyPassword
+            }
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (emimatchReleaseKeystorePath && emimatchReleaseStorePassword && emimatchReleaseKeyAlias && emimatchReleaseKeyPassword) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 }
