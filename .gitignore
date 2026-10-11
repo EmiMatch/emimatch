@@ -1,0 +1,27 @@
+# Local secrets and environment configuration
+.env
+.env.*
+!.env.example
+**/keystore.properties
+*.jks
+*.keystore
+android/local.properties
+
+# Dependencies and generated build output
+node_modules/
+**/node_modules/
+android/.gradle/
+android/build/
+android/app/build/
+android-backup/.gradle/
+android-backup/build/
+android-backup/app/build/
+dist/
+coverage/
+*.apk
+*.aab
+
+# Local editor / OS files
+.DS_Store
+Thumbs.db
+.vscode/
