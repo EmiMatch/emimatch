@@ -10,9 +10,9 @@ permissions:
 
 jobs:
   build-apk:
-    name: Auditar y compilar APK de prueba
+    name: Auditar y compilar APK Android
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
 
     steps:
       - name: Descargar repositorio
@@ -32,8 +32,14 @@ jobs:
 
       - name: Configurar Android SDK
         uses: android-actions/setup-android@v4
-        with:
-          packages: 'platform-tools,platforms;android-36,build-tools;36.0.0'
+
+      - name: Instalar paquetes Android SDK
+        shell: bash
+        run: |
+          set -euo pipefail
+          yes | sdkmanager --licenses >/dev/null
+          sdkmanager --install "platform-tools" "platforms;android-36" "build-tools;36.0.0"
+          sdkmanager --list_installed
 
       - name: Instalar dependencias
         run: npm ci
@@ -62,16 +68,25 @@ jobs:
       - name: Sincronizar Capacitor con Android
         run: npx cap sync android
 
-      - name: Compilar APK debug
+      - name: Verificar configuración Android
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'applicationId "com.emimatch.app"' android/app/build.gradle
+          grep -q 'versionCode 2' android/app/build.gradle
+          grep -q 'versionName "1.1.0"' android/app/build.gradle
+          test -s android/app/src/main/AndroidManifest.xml
+
+      - name: Compilar APK Android
         run: |
           chmod +x android/gradlew
           cd android
-          ./gradlew --no-daemon assembleDebug
+          ./gradlew --no-daemon clean assembleDebug
 
-      - name: Publicar APK como artefacto
+      - name: Publicar APK Android
         uses: actions/upload-artifact@v4
         with:
-          name: EmiMatch-APK-debug
+          name: EmiMatch-APK-Android-v1.1.0-debug
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 14
