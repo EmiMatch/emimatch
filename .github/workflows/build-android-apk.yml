@@ -1,0 +1,75 @@
+name: EmiMatch - APK Android
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-apk:
+    name: Auditar y compilar APK de prueba
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Configurar Java para Android
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Configurar Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Ejecutar auditoría del proyecto
+        run: npm test
+
+      - name: Preparar archivos web actuales para Android
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf www
+          mkdir -p www
+          cp -a ./*.html www/
+          cp -a assets www/
+          for item in images img icons fonts manifest.json manifest.webmanifest service-worker.js sw.js favicon.ico; do
+            if [ -e "$item" ]; then
+              cp -a "$item" www/
+            fi
+          done
+          test -s www/index.html
+          test -s www/assets/js/app.js
+          test -s www/assets/js/components.js
+          test -s www/assets/js/config.js
+
+      - name: Sincronizar Capacitor con Android
+        run: npx cap sync android
+
+      - name: Compilar APK debug
+        run: |
+          chmod +x android/gradlew
+          cd android
+          ./gradlew --no-daemon assembleDebug
+
+      - name: Publicar APK como artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: EmiMatch-APK-debug
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14
