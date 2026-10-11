@@ -994,13 +994,9 @@ async function getProfile(userId){
     throw error;
   }
 
-  return data || {
-    id:userId,
-    // Distingue cuentas sin perfil cargado para no mostrar varias
-    // conversaciones indistinguibles como "Usuario".
-    nombre:"Usuario · " + String(userId).slice(0, 4).toUpperCase(),
-    foto_url:""
-  };
+  // No inventamos nombres ni mostramos UUID como si fueran perfiles.
+  // Si no hay perfil, buildConversations omitirá ese match antiguo.
+  return data || null;
 }
 
 
@@ -1038,10 +1034,11 @@ async function buildConversations(){
       ]);
 
     /*
-     * No mostramos matches que todavía
-     * no tienen ningún mensaje.
+     * No mostramos matches que todavía no tienen mensajes
+     * ni matches huérfanos de cuentas eliminadas/sin perfil.
+     * Los mensajes se conservan en la base de datos.
      */
-    if(!lastMessage){
+    if(!lastMessage || !profile || !profile.id){
       continue;
     }
 
