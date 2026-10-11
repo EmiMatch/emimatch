@@ -124,7 +124,7 @@ jobs:
           retention-days: 14
 
       - name: Publicar APK release firmado
-        if: ${{ env.EMIMATCH_RELEASE_READY == 'true' }}
+        if: ${{ steps.prepare-signing.outputs.release_ready == 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: EmiMatch-APK-Android-v1.1.0-release
