@@ -406,6 +406,66 @@
       font-size: 12px;
     }
 
+
+    .premium-table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      margin-top: 14px;
+    }
+
+    .premium-table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .premium-table th,
+    .premium-table td {
+      padding: 13px 14px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      vertical-align: top;
+    }
+
+    .premium-table th {
+      color: #f5c451;
+      background: rgba(255,255,255,0.035);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .premium-table td {
+      color: #e1e2f3;
+    }
+
+    .premium-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .premium-empty {
+      padding: 18px !important;
+      color: #aeb2cf !important;
+      text-align: center !important;
+    }
+
+    .premium-section-gap {
+      margin-top: 22px;
+    }
+
+    .premium-note {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-radius: 13px;
+      background: rgba(245,196,81,0.07);
+      border: 1px solid rgba(245,196,81,0.15);
+      color: #d8d2b8;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
     @media (max-width: 800px) {
 
       .metrics {
@@ -731,6 +791,81 @@
       </section>
 
 
+      <section class="card premium-section-gap" id="premiumControlSection">
+        <h2 class="section-title">💎 Control Premium</h2>
+        <p class="section-description">
+          Suscripciones, estados y pagos registrados por EmiMatch. Vista exclusiva de administración y solo lectura.
+        </p>
+
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-label">Suscripciones registradas</div>
+            <div id="premiumSubscriptionsCount" class="metric-value">—</div>
+            <div class="metric-note">Total histórico registrado</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Premium activas</div>
+            <div id="premiumActiveCount" class="metric-value">—</div>
+            <div class="metric-note">Estado actual de suscripción</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Pagos aprobados</div>
+            <div id="premiumApprovedPaymentsCount" class="metric-value">—</div>
+            <div class="metric-note">Pagos marcados como aprobados</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Ingresos aprobados registrados</div>
+            <div id="premiumRevenueCount" class="metric-value">—</div>
+            <div class="metric-note">Suma de pagos aprobados en la base</div>
+          </div>
+        </div>
+
+        <div class="premium-section-gap">
+          <h3 class="section-title">Personas con suscripción</h3>
+          <div class="premium-table-wrap">
+            <table class="premium-table">
+              <thead>
+                <tr>
+                  <th>Usuario</th>
+                  <th>Plan</th>
+                  <th>Estado</th>
+                  <th>Fin del período</th>
+                  <th>Último pago registrado</th>
+                </tr>
+              </thead>
+              <tbody id="premiumSubscriptionsBody">
+                <tr><td colspan="5" class="premium-empty">Cargando suscripciones…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="premium-section-gap">
+          <h3 class="section-title">Últimos pagos registrados</h3>
+          <div class="premium-table-wrap">
+            <table class="premium-table">
+              <thead>
+                <tr>
+                  <th>Usuario</th>
+                  <th>Importe</th>
+                  <th>Estado</th>
+                  <th>Fecha de pago</th>
+                  <th>Proveedor</th>
+                </tr>
+              </thead>
+              <tbody id="premiumPaymentsBody">
+                <tr><td colspan="5" class="premium-empty">Cargando pagos…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="premium-note">
+          <strong>🔒 Solo lectura:</strong> este apartado no crea, modifica ni cancela suscripciones.
+          “Ingresos aprobados” suma los pagos marcados como aprobados en la base de EmiMatch; para confirmar el dinero efectivamente acreditado, compará también con la actividad de Mercado Pago.
+        </div>
+      </section>
+
       <div class="footer-note">
         EmiMatch · Panel de administración · Solo lectura
       </div>
@@ -955,6 +1090,114 @@
     }
 
 
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function formatDateTime(value) {
+      if (!value) return "—";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "—";
+      return date.toLocaleString("es-AR", {
+        dateStyle: "short",
+        timeStyle: "short"
+      });
+    }
+
+    function formatMoney(value, currency = "ARS") {
+      if (value === null || value === undefined || value === "") return "—";
+      const code = String(currency || "ARS").toUpperCase();
+      try {
+        return Number(value).toLocaleString("es-AR", {
+          style: "currency",
+          currency: code
+        });
+      } catch {
+        return code + " " + Number(value).toLocaleString("es-AR");
+      }
+    }
+
+    function premiumStatusLabel(status) {
+      const labels = {
+        active: "Activa",
+        pending: "Pendiente",
+        paused: "Pausada",
+        past_due: "Pago pendiente",
+        cancelled: "Cancelada",
+        expired: "Vencida",
+        approved: "Aprobado",
+        rejected: "Rechazado",
+        refunded: "Reintegrado",
+        cancelled_payment: "Cancelado",
+        sin_registro: "Sin registro"
+      };
+      return labels[String(status || "").toLowerCase()] || String(status || "Sin dato");
+    }
+
+    function renderPremium(premium) {
+      const data = premium || {};
+      const setText = (id, value) => {
+        const element = document.getElementById(id);
+        if (element) element.textContent = value;
+      };
+
+      setText("premiumSubscriptionsCount", formatNumber(data.totalSubscriptions));
+      setText("premiumActiveCount", formatNumber(data.activeSubscriptions));
+      setText("premiumApprovedPaymentsCount", formatNumber(data.approvedPayments));
+
+      const revenue = data.revenueByCurrency || {};
+      const revenueText = Object.keys(revenue).length
+        ? Object.entries(revenue)
+            .map(([currency, amount]) => formatMoney(amount, currency))
+            .join(" · ")
+        : "—";
+      setText("premiumRevenueCount", revenueText);
+
+      const subscriptionsBody = document.getElementById("premiumSubscriptionsBody");
+      const subscriptions = Array.isArray(data.subscriptions) ? data.subscriptions : [];
+      if (subscriptionsBody) {
+        subscriptionsBody.innerHTML = subscriptions.length
+          ? subscriptions.map(item => {
+              const latestPayment = item.latest_payment_status === "sin_registro"
+                ? "Sin registro"
+                : premiumStatusLabel(item.latest_payment_status) +
+                  (item.latest_payment_amount !== null && item.latest_payment_amount !== undefined
+                    ? " · " + formatMoney(item.latest_payment_amount, item.latest_payment_currency)
+                    : "");
+              return "<tr>" +
+                "<td>" + escapeHtml(item.user_name || "Perfil sin nombre") + "</td>" +
+                "<td>" + escapeHtml(item.plan_name || "EmiMatch Premium") + "</td>" +
+                "<td>" + escapeHtml(premiumStatusLabel(item.status)) + "</td>" +
+                "<td>" + escapeHtml(formatDateTime(item.current_period_end)) + "</td>" +
+                "<td>" + escapeHtml(latestPayment) + "</td>" +
+                "</tr>";
+            }).join("")
+          : '<tr><td colspan="5" class="premium-empty">Todavía no hay suscripciones registradas.</td></tr>';
+      }
+
+      const paymentsBody = document.getElementById("premiumPaymentsBody");
+      const payments = Array.isArray(data.payments) ? data.payments : [];
+      if (paymentsBody) {
+        paymentsBody.innerHTML = payments.length
+          ? payments.map(item => {
+              const date = item.paid_at || item.created_at;
+              return "<tr>" +
+                "<td>" + escapeHtml(item.user_name || "Perfil sin nombre") + "</td>" +
+                "<td>" + escapeHtml(formatMoney(item.amount, item.currency)) + "</td>" +
+                "<td>" + escapeHtml(premiumStatusLabel(item.status)) + "</td>" +
+                "<td>" + escapeHtml(formatDateTime(date)) + "</td>" +
+                "<td>" + escapeHtml(item.provider || "—") + "</td>" +
+                "</tr>";
+            }).join("")
+          : '<tr><td colspan="5" class="premium-empty">Todavía no hay pagos registrados.</td></tr>';
+      }
+    }
+
     /* ==========================================
        CARGAR ESTADÍSTICAS
        ========================================== */
@@ -1079,6 +1322,8 @@
         formatNumber(
           statistics.blocks
         );
+
+      renderPremium(data.premium || {});
 
     }
 
