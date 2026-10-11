@@ -988,8 +988,8 @@ a:focus-visible,button:focus-visible,input:focus-visible { outline:2px solid #ff
     </main>
     <style>
 
-  .auth-section {
-    display: none;
+  #authSection:not(.active) {
+    display: none !important;
     min-height: 100vh;
     padding: 105px 18px 55px;
     background:
@@ -1001,8 +1001,8 @@ a:focus-visible,button:focus-visible,input:focus-visible { outline:2px solid #ff
       #070b18;
   }
 
-  .auth-section.active {
-    display: block;
+  #authSection.active {
+    display: block !important;
   }
 
   .auth-container {
