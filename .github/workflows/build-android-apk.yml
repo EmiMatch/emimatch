@@ -77,11 +77,44 @@ jobs:
           grep -q 'versionName "1.1.0"' android/app/build.gradle
           test -s android/app/src/main/AndroidManifest.xml
 
+      - name: Preparar firma privada de publicación si está configurada
+        shell: bash
+        env:
+          EMIMATCH_KEYSTORE_BASE64: ${{ secrets.EMIMATCH_KEYSTORE_BASE64 }}
+          EMIMATCH_KEYSTORE_PASSWORD: ${{ secrets.EMIMATCH_KEYSTORE_PASSWORD }}
+          EMIMATCH_KEY_ALIAS: ${{ secrets.EMIMATCH_KEY_ALIAS }}
+          EMIMATCH_KEY_PASSWORD: ${{ secrets.EMIMATCH_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          if [[ -n "${EMIMATCH_KEYSTORE_BASE64:-}" && -n "${EMIMATCH_KEYSTORE_PASSWORD:-}" && -n "${EMIMATCH_KEY_ALIAS:-}" && -n "${EMIMATCH_KEY_PASSWORD:-}" ]]; then
+            printf '%s' "$EMIMATCH_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/emimatch-release.jks"
+            test -s "$RUNNER_TEMP/emimatch-release.jks"
+            echo "EMIMATCH_RELEASE_READY=true" >> "$GITHUB_ENV"
+            echo "EMIMATCH_KEYSTORE_PATH=$RUNNER_TEMP/emimatch-release.jks" >> "$GITHUB_ENV"
+            echo "Firma privada configurada; se generará también el APK release firmado."
+          else
+            echo "EMIMATCH_RELEASE_READY=false" >> "$GITHUB_ENV"
+            echo "No se configuró una clave privada de publicación; se generará el APK debug y se omitirá release."
+          fi
+
       - name: Compilar APK Android
         run: |
           chmod +x android/gradlew
           cd android
           ./gradlew --no-daemon clean assembleDebug
+
+      - name: Compilar APK release firmado
+        if: ${{ env.EMIMATCH_RELEASE_READY == 'true' }}
+        env:
+          EMIMATCH_KEYSTORE_PATH: ${{ env.EMIMATCH_KEYSTORE_PATH }}
+          EMIMATCH_KEYSTORE_PASSWORD: ${{ secrets.EMIMATCH_KEYSTORE_PASSWORD }}
+          EMIMATCH_KEY_ALIAS: ${{ secrets.EMIMATCH_KEY_ALIAS }}
+          EMIMATCH_KEY_PASSWORD: ${{ secrets.EMIMATCH_KEY_PASSWORD }}
+        run: |
+          chmod +x android/gradlew
+          cd android
+          ./gradlew --no-daemon assembleRelease
+          test -s app/build/outputs/apk/release/app-release.apk
 
       - name: Publicar APK Android
         uses: actions/upload-artifact@v4
@@ -90,3 +123,12 @@ jobs:
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 14
+
+      - name: Publicar APK release firmado
+        if: ${{ env.EMIMATCH_RELEASE_READY == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: EmiMatch-APK-Android-v1.1.0-release
+          path: android/app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: error
+          retention-days: 30
