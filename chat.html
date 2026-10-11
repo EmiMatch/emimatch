@@ -996,7 +996,9 @@ async function getProfile(userId){
 
   return data || {
     id:userId,
-    nombre:"Usuario",
+    // Distingue cuentas sin perfil cargado para no mostrar varias
+    // conversaciones indistinguibles como "Usuario".
+    nombre:"Usuario · " + String(userId).slice(0, 4).toUpperCase(),
     foto_url:""
   };
 }
