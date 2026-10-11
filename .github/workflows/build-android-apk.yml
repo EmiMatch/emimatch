@@ -82,11 +82,11 @@ jobs:
         env:
           EMIMATCH_KEYSTORE_BASE64: ${{ secrets.EMIMATCH_KEYSTORE_BASE64 }}
           EMIMATCH_KEYSTORE_PASSWORD: ${{ secrets.EMIMATCH_KEYSTORE_PASSWORD }}
-          EMIMATCH_KEY_ALIAS: ${{ secrets.EMIMATCH_KEY_ALIAS }}
-          EMIMATCH_KEY_PASSWORD: ${{ secrets.EMIMATCH_KEY_PASSWORD }}
+          EMIMATCH_KEY_ALIAS: emimatch
+          EMIMATCH_KEY_PASSWORD: ${{ secrets.EMIMATCH_KEYSTORE_PASSWORD }}
         run: |
           set -euo pipefail
-          if [[ -n "${EMIMATCH_KEYSTORE_BASE64:-}" && -n "${EMIMATCH_KEYSTORE_PASSWORD:-}" && -n "${EMIMATCH_KEY_ALIAS:-}" && -n "${EMIMATCH_KEY_PASSWORD:-}" ]]; then
+          if [[ -n "${EMIMATCH_KEYSTORE_BASE64:-}" && -n "${EMIMATCH_KEYSTORE_PASSWORD:-}" ]]; then
             printf '%s' "$EMIMATCH_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/emimatch-release.jks"
             test -s "$RUNNER_TEMP/emimatch-release.jks"
             echo "release_ready=true" >> "$GITHUB_OUTPUT"
@@ -107,8 +107,8 @@ jobs:
         env:
           EMIMATCH_KEYSTORE_PATH: ${{ runner.temp }}/emimatch-release.jks
           EMIMATCH_KEYSTORE_PASSWORD: ${{ secrets.EMIMATCH_KEYSTORE_PASSWORD }}
-          EMIMATCH_KEY_ALIAS: ${{ secrets.EMIMATCH_KEY_ALIAS }}
-          EMIMATCH_KEY_PASSWORD: ${{ secrets.EMIMATCH_KEY_PASSWORD }}
+          EMIMATCH_KEY_ALIAS: emimatch
+          EMIMATCH_KEY_PASSWORD: ${{ secrets.EMIMATCH_KEYSTORE_PASSWORD }}
         run: |
           chmod +x android/gradlew
           cd android
