@@ -191,35 +191,33 @@ async function loadReceivedMessages(matches) {
 
   if (error) throw error;
 
-  // Una sola notificación por persona, aunque haya enviado varios mensajes.
-  const bySender = new Map();
+  // Agrupa los mensajes recibidos en un único aviso, en lugar de
+  // crear una notificación independiente por cada persona o mensaje.
+  const received = (data || []).filter(message => message.sender_id);
+  if (!received.length) return [];
 
-  for (const message of data || []) {
-    if (!message.sender_id) continue;
+  const unreadCount = received.filter(message => !message.read_at).length;
+  const peopleCount = new Set(received.map(message => message.sender_id)).size;
+  const latest = received.reduce((newest, message) => {
+    if (!newest) return message;
+    return new Date(message.created_at || 0) > new Date(newest.created_at || 0)
+      ? message
+      : newest;
+  }, null);
 
-    const existing = bySender.get(message.sender_id);
-    if (!existing) {
-      bySender.set(message.sender_id, {
-        senderId: message.sender_id,
-        createdAt: message.created_at,
-        unread: !message.read_at
-      });
-    } else if (!message.read_at) {
-      existing.unread = true;
-    }
-  }
-
-  return [...bySender.values()].map(item => ({
-    id: `message-user-${item.senderId}`,
+  return [{
+    id: "message-summary",
     type: "message",
-    userId: item.senderId,
-    createdAt: item.createdAt,
-    unread: item.unread,
-    title: "Tenés un mensaje",
-    text: "Entrá a EmiMatch para leerlo.",
+    userId: null,
+    createdAt: latest?.created_at || null,
+    unread: unreadCount > 0,
+    title: unreadCount > 0
+      ? `Tenés ${unreadCount} mensaje${unreadCount === 1 ? "" : "s"} sin leer`
+      : "Tus mensajes",
+    text: `${received.length} mensaje${received.length === 1 ? "" : "s"} de ${peopleCount} persona${peopleCount === 1 ? "" : "s"}. Tocá para abrir Mis mensajes.`,
     icon: "💬",
-    href: `conversacion.html?user=${encodeURIComponent(item.senderId)}`
-  }));
+    href: "chat.html"
+  }];
 }
 
 async function loadMatchNotifications(matches) {
