@@ -260,10 +260,25 @@ for (const file of forbiddenFiles) {
   }
 }
 
-if (exists("node_modules")) {
-  error("node_modules no debe estar versionado");
+const trackedNodeModules = spawnSync(
+  "git",
+  ["ls-files", "--", "node_modules/"],
+  {
+    cwd: ROOT,
+    encoding: "utf8"
+  }
+);
+
+if (trackedNodeModules.status === 0) {
+  if (trackedNodeModules.stdout.trim()) {
+    error("node_modules no debe estar versionado");
+  } else {
+    ok("node_modules no está versionado");
+  }
+} else if (exists(".gitignore") && read(".gitignore").includes("node_modules/")) {
+  ok("node_modules está excluido por .gitignore (Git no disponible para verificar el índice)");
 } else {
-  ok("node_modules no está en la versión actual");
+  error("No se pudo verificar si node_modules está versionado");
 }
 
 if (exists(".gitignore")) {
