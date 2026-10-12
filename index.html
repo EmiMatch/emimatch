@@ -909,6 +909,21 @@ a:focus-visible,button:focus-visible,input:focus-visible { outline:2px solid #ff
                 Usá al menos 6 caracteres.
               </div>
 
+              <div class="adult-consent" style="display:flex;align-items:flex-start;gap:10px;margin:18px 0 20px;color:#f7e9d8;font-size:13px;line-height:1.55;text-align:left;">
+                <input
+                  id="registerAdult"
+                  type="checkbox"
+                  required
+                  style="width:18px;height:18px;flex:0 0 18px;margin-top:2px;accent-color:#d1aa4f;"
+                >
+                <label for="registerAdult">
+                  Confirmo que tengo 18 años o más y acepto los
+                  <a href="terminos.html" target="_blank" rel="noopener noreferrer" style="color:#ffe6a0;text-decoration:underline;">Términos y Condiciones</a>
+                  y la
+                  <a href="privacidad.html" target="_blank" rel="noopener noreferrer" style="color:#ffe6a0;text-decoration:underline;">Política de Privacidad</a>.
+                </label>
+              </div>
+
               <button
                 type="submit"
                 class="form-submit"
@@ -1846,6 +1861,18 @@ a:focus-visible,button:focus-visible,input:focus-visible { outline:2px solid #ff
           "error"
         );
 
+        return;
+      }
+
+      const adultConfirmation =
+        document.getElementById("registerAdult");
+
+      if (!adultConfirmation || !adultConfirmation.checked) {
+        showMessage(
+          registerMessage,
+          "Para crear una cuenta, confirmá que tenés 18 años o más y aceptá los Términos y la Política de Privacidad.",
+          "error"
+        );
         return;
       }
 
