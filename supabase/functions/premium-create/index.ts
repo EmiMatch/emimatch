@@ -137,11 +137,7 @@ throw new Error(
 );
 }
 
-if (!MERCADOPAGO_ACCESS_TOKEN) {
-throw new Error(
-"Falta MERCADOPAGO_ACCESS_TOKEN.",
-);
-}
+
 
 const authorization =
 request.headers.get(
@@ -224,9 +220,30 @@ error:
 const user =
 userData.user;
 
-const userId =
-user.id;
+const userId = user.id;
 
+// Premium permanente para la cuenta registrada en admin_users.
+// Se comprueba en servidor con la clave de servicio; no depende del navegador.
+const { data: adminRecord, error: adminLookupError } = await supabase
+  .from("admin_users")
+  .select("user_id")
+  .eq("user_id", userId)
+  .maybeSingle();
+
+if (adminLookupError) {
+  console.error("Admin lookup error:", adminLookupError);
+  throw new Error("No se pudo verificar el permiso de administrador.");
+}
+
+if (adminRecord) {
+  return jsonResponse({
+    success: true,
+    already_active: true,
+    admin_premium: true,
+    status: "active",
+    message: "Tu cuenta de administrador tiene Premium permanente sin costo.",
+  });
+}
 /*
 * Buscar el email real del usuario.
 */
@@ -504,6 +521,10 @@ if (subscription.provider_subscription_id) {
 /*
 * Crear suscripción en Mercado Pago.
 */
+if (!MERCADOPAGO_ACCESS_TOKEN) {
+  throw new Error("Falta MERCADOPAGO_ACCESS_TOKEN.");
+}
+
 const mercadoPagoPayload = {
 reason:
 "EmiMatch Premium",
