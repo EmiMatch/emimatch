@@ -707,10 +707,43 @@
       }
     }
 
+    // Mostrar el beneficio automáticamente si la cuenta ya tiene Premium.
+    // No modifica el flujo de compra para usuarios gratuitos.
+    async function mostrarPremiumActivo() {
+      try {
+        const { data: sessionData, error: sessionError } =
+          await supabaseClient.auth.getSession();
+
+        if (sessionError || !sessionData?.session) {
+          return;
+        }
+
+        const { data, error } =
+          await supabaseClient.rpc("get_premium_status");
+
+        if (error) {
+          console.warn("No se pudo consultar el estado Premium:", error);
+          return;
+        }
+
+        if (data?.is_premium === true) {
+          status.textContent = data.is_admin === true
+            ? "Tu cuenta de administrador tiene Premium permanente sin costo."
+            : "Tu cuenta ya tiene EmiMatch Premium activo. ¡Disfrutalo!";
+          button.textContent = "Premium activo";
+          button.disabled = true;
+        }
+      } catch (error) {
+        console.warn("No se pudo consultar el estado Premium:", error);
+      }
+    }
+
     button.addEventListener(
       "click",
       iniciarPremium
     );
+
+    void mostrarPremiumActivo();
 
   </script>
 
