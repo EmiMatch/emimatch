@@ -294,6 +294,39 @@ if (exists(".gitignore")) {
   error("Falta .gitignore en la raíz");
 }
 
+/* 9. REQUISITOS DE REGISTRO PARA PUBLICACIÓN */
+
+console.log("");
+console.log("🔞 EDAD MÍNIMA Y DOCUMENTOS LEGALES");
+
+if (exists("index.html")) {
+  const html = read("index.html");
+
+  if (html.includes('id="registerAdult"')) {
+    ok("Confirmación de mayoría de edad presente");
+  } else {
+    error("Falta la confirmación de mayoría de edad en el registro");
+  }
+
+  if (html.includes('if (!adultConfirmation || !adultConfirmation.checked)')) {
+    ok("El registro valida la confirmación de mayoría de edad");
+  } else {
+    error("El registro no valida la confirmación de mayoría de edad");
+  }
+
+  if (html.includes('href="terminos.html" target="_blank"')) {
+    ok("Términos y Condiciones accesibles desde el registro");
+  } else {
+    error("Falta el enlace a Términos y Condiciones en el registro");
+  }
+
+  if (html.includes('href="privacidad.html" target="_blank"')) {
+    ok("Política de Privacidad accesible desde el registro");
+  } else {
+    error("Falta el enlace a la Política de Privacidad en el registro");
+  }
+}
+
 /* RESULTADO */
 
 console.log("");
