@@ -87,11 +87,18 @@ jobs:
         run: |
           set -euo pipefail
           if [[ -n "${EMIMATCH_KEYSTORE_BASE64:-}" && -n "${EMIMATCH_KEYSTORE_PASSWORD:-}" ]]; then
-            printf '%s' "$EMIMATCH_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/emimatch-release.jks"
-            test -s "$RUNNER_TEMP/emimatch-release.jks"
-            keytool -list -keystore "$RUNNER_TEMP/emimatch-release.jks" -storepass "$EMIMATCH_KEYSTORE_PASSWORD" -alias "$EMIMATCH_KEY_ALIAS" >/dev/null
-            echo "release_ready=true" >> "$GITHUB_OUTPUT"
-            echo "Clave privada validada; se generará también el APK release firmado."
+            if printf '%s' "$EMIMATCH_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/emimatch-release.jks" 2>/dev/null && test -s "$RUNNER_TEMP/emimatch-release.jks"; then
+              if keytool -list -keystore "$RUNNER_TEMP/emimatch-release.jks" -storepass "$EMIMATCH_KEYSTORE_PASSWORD" -alias "$EMIMATCH_KEY_ALIAS" >/dev/null 2>&1; then
+                echo "release_ready=true" >> "$GITHUB_OUTPUT"
+                echo "Clave privada validada; se generará también el APK release firmado."
+              else
+                echo "release_ready=false" >> "$GITHUB_OUTPUT"
+                echo "::warning::No se pudo validar la clave de publicación (contraseña o alias incorrectos). Se continuará con el APK debug."
+              fi
+            else
+              echo "release_ready=false" >> "$GITHUB_OUTPUT"
+              echo "::warning::La clave guardada no es Base64 válido o está incompleta. Se continuará con el APK debug."
+            fi
           else
             echo "release_ready=false" >> "$GITHUB_OUTPUT"
             echo "No se configuró una clave privada de publicación; se generará el APK debug y se omitirá release."
