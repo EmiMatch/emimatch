@@ -89,8 +89,9 @@ jobs:
           if [[ -n "${EMIMATCH_KEYSTORE_BASE64:-}" && -n "${EMIMATCH_KEYSTORE_PASSWORD:-}" ]]; then
             printf '%s' "$EMIMATCH_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/emimatch-release.jks"
             test -s "$RUNNER_TEMP/emimatch-release.jks"
+            keytool -list -keystore "$RUNNER_TEMP/emimatch-release.jks" -storepass "$EMIMATCH_KEYSTORE_PASSWORD" -alias "$EMIMATCH_KEY_ALIAS" >/dev/null
             echo "release_ready=true" >> "$GITHUB_OUTPUT"
-            echo "Firma privada configurada; se generará también el APK release firmado."
+            echo "Clave privada validada; se generará también el APK release firmado."
           else
             echo "release_ready=false" >> "$GITHUB_OUTPUT"
             echo "No se configuró una clave privada de publicación; se generará el APK debug y se omitirá release."
