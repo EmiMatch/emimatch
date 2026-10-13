@@ -82,27 +82,48 @@ jobs:
         env:
           EMIMATCH_KEYSTORE_BASE64: ${{ secrets.EMIMATCH_KEYSTORE_BASE64 }}
           EMIMATCH_KEYSTORE_PASSWORD: ${{ secrets.EMIMATCH_KEYSTORE_PASSWORD }}
-          EMIMATCH_KEY_ALIAS: emimatch
-          EMIMATCH_KEY_PASSWORD: ${{ secrets.EMIMATCH_KEYSTORE_PASSWORD }}
+          EMIMATCH_KEY_ALIAS_OVERRIDE: ${{ secrets.EMIMATCH_KEY_ALIAS }}
+          EMIMATCH_KEY_PASSWORD_SECRET: ${{ secrets.EMIMATCH_KEY_PASSWORD }}
         run: |
           set -euo pipefail
-          if [[ -n "${EMIMATCH_KEYSTORE_BASE64:-}" && -n "${EMIMATCH_KEYSTORE_PASSWORD:-}" ]]; then
-            if printf '%s' "$EMIMATCH_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/emimatch-release.jks" 2>/dev/null && test -s "$RUNNER_TEMP/emimatch-release.jks"; then
-              if keytool -list -keystore "$RUNNER_TEMP/emimatch-release.jks" -storepass "$EMIMATCH_KEYSTORE_PASSWORD" -alias "$EMIMATCH_KEY_ALIAS" >/dev/null 2>&1; then
-                echo "release_ready=true" >> "$GITHUB_OUTPUT"
-                echo "Clave privada validada; se generará también el APK release firmado."
-              else
-                echo "release_ready=false" >> "$GITHUB_OUTPUT"
-                echo "::warning::No se pudo validar la clave de publicación (contraseña o alias incorrectos). Se continuará con el APK debug."
-              fi
-            else
-              echo "release_ready=false" >> "$GITHUB_OUTPUT"
-              echo "::warning::La clave guardada no es Base64 válido o está incompleta. Se continuará con el APK debug."
-            fi
-          else
-            echo "release_ready=false" >> "$GITHUB_OUTPUT"
-            echo "No se configuró una clave privada de publicación; se generará el APK debug y se omitirá release."
+          echo "release_ready=false" >> "$GITHUB_OUTPUT"
+          if [[ -z "${EMIMATCH_KEYSTORE_BASE64:-}" || -z "${EMIMATCH_KEYSTORE_PASSWORD:-}" ]]; then
+            echo "No se configuró la clave privada completa; se generará el APK debug."
+            exit 0
           fi
+
+          if ! printf '%s' "$EMIMATCH_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/emimatch-release.jks" 2>/dev/null || ! test -s "$RUNNER_TEMP/emimatch-release.jks"; then
+            echo "::error::EMIMATCH_KEYSTORE_BASE64 no se pudo decodificar. Volvé a guardar el Base64 del archivo .jks completo."
+            exit 0
+          fi
+
+          if ! keytool -list -keystore "$RUNNER_TEMP/emimatch-release.jks" -storepass "$EMIMATCH_KEYSTORE_PASSWORD" >/dev/null 2>&1; then
+            echo "::error::El archivo .jks se decodificó, pero la contraseña EMIMATCH_KEYSTORE_PASSWORD no permite abrirlo. Revisá ese secreto; no compartas la contraseña en el chat."
+            exit 0
+          fi
+
+          if [[ -n "${EMIMATCH_KEY_ALIAS_OVERRIDE:-}" ]]; then
+            KEY_ALIAS="$EMIMATCH_KEY_ALIAS_OVERRIDE"
+          else
+            # Detecta automáticamente el alias si el almacén contiene una sola clave privada.
+            keytool -list -v -keystore "$RUNNER_TEMP/emimatch-release.jks" -storepass "$EMIMATCH_KEYSTORE_PASSWORD" 2>/dev/null > "$RUNNER_TEMP/emimatch-keytool-list.txt"
+            mapfile -t KEY_ALIASES < <(awk -F': ' '/^Alias name: / { alias=$2 } /^Entry type: PrivateKeyEntry/ { if (alias != "") print alias; alias="" }' "$RUNNER_TEMP/emimatch-keytool-list.txt")
+            if [[ "${#KEY_ALIASES[@]}" -ne 1 ]]; then
+              echo "::error::El almacén se abre correctamente, pero no se pudo elegir un único alias de clave privada. Agregá el secreto EMIMATCH_KEY_ALIAS con el alias correcto."
+              exit 0
+            fi
+            KEY_ALIAS="${KEY_ALIASES[0]}"
+          fi
+
+          if ! keytool -list -keystore "$RUNNER_TEMP/emimatch-release.jks" -storepass "$EMIMATCH_KEYSTORE_PASSWORD" -alias "$KEY_ALIAS" >/dev/null 2>&1; then
+            echo "::error::La contraseña del almacén es correcta, pero el alias configurado no existe. Revisá EMIMATCH_KEY_ALIAS."
+            exit 0
+          fi
+
+          KEY_PASSWORD="${EMIMATCH_KEY_PASSWORD_SECRET:-$EMIMATCH_KEYSTORE_PASSWORD}"
+          echo "release_ready=true" >> "$GITHUB_OUTPUT"
+          echo "EMIMATCH_KEY_ALIAS=$KEY_ALIAS" >> "$GITHUB_OUTPUT"
+          echo "La contraseña del almacén y el alias fueron validados. Se intentará compilar el APK release firmado."
 
       - name: Compilar APK Android
         run: |
@@ -115,9 +136,11 @@ jobs:
         env:
           EMIMATCH_KEYSTORE_PATH: ${{ runner.temp }}/emimatch-release.jks
           EMIMATCH_KEYSTORE_PASSWORD: ${{ secrets.EMIMATCH_KEYSTORE_PASSWORD }}
-          EMIMATCH_KEY_ALIAS: emimatch
-          EMIMATCH_KEY_PASSWORD: ${{ secrets.EMIMATCH_KEYSTORE_PASSWORD }}
+          EMIMATCH_KEY_ALIAS: ${{ steps.prepare-signing.outputs.EMIMATCH_KEY_ALIAS }}
+          EMIMATCH_KEY_PASSWORD_SECRET: ${{ secrets.EMIMATCH_KEY_PASSWORD }}
         run: |
+          set -euo pipefail
+          export EMIMATCH_KEY_PASSWORD="${EMIMATCH_KEY_PASSWORD_SECRET:-$EMIMATCH_KEYSTORE_PASSWORD}"
           chmod +x android/gradlew
           cd android
           ./gradlew --no-daemon assembleRelease
