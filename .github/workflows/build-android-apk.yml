@@ -147,6 +147,23 @@ jobs:
           ./gradlew --no-daemon assembleRelease
           test -s app/build/outputs/apk/release/app-release.apk
 
+      - name: Verificar firma del APK release
+        if: ${{ steps.prepare-signing.outputs.release_ready == 'true' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="android/app/build/outputs/apk/release/app-release.apk"
+          test -s "$APK"
+          APKSIGNER="$ANDROID_HOME/build-tools/36.0.0/apksigner"
+          test -x "$APKSIGNER"
+          "$APKSIGNER" verify --verbose --print-certs "$APK" 2>&1 | tee "$RUNNER_TEMP/emimatch-apk-signature.txt"
+          grep -q "Signer #1 certificate SHA-256 digest:" "$RUNNER_TEMP/emimatch-apk-signature.txt"
+          if grep -qi "CN=Android Debug" "$RUNNER_TEMP/emimatch-apk-signature.txt"; then
+            echo "::error::El APK release está firmado con el certificado de depuración, no con la firma de publicación."
+            exit 1
+          fi
+          echo "Firma del APK release verificada; certificado SHA-256 presente y no corresponde a Android Debug."
+
       - name: Publicar APK Android
         uses: actions/upload-artifact@v4
         with:
