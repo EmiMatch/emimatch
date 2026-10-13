@@ -92,7 +92,8 @@ jobs:
             exit 0
           fi
 
-          if ! printf '%s' "$EMIMATCH_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/emimatch-release.jks" 2>/dev/null || ! test -s "$RUNNER_TEMP/emimatch-release.jks"; then
+          # Normaliza espacios y saltos de línea por si el secreto se pegó con formato.
+          if ! printf '%s' "$EMIMATCH_KEYSTORE_BASE64" | tr -d '[:space:]' | base64 --decode > "$RUNNER_TEMP/emimatch-release.jks" 2>/dev/null || ! test -s "$RUNNER_TEMP/emimatch-release.jks"; then
             echo "::error::EMIMATCH_KEYSTORE_BASE64 no se pudo decodificar. Volvé a guardar el Base64 del archivo .jks completo."
             exit 0
           fi
