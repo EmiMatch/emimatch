@@ -1,0 +1,48 @@
+name: Publicar EmiMatch APK Release
+
+on:
+  workflow_run:
+    workflows: ["EmiMatch - APK Android"]
+    types: [completed]
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  publicar-release:
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar APK release firmado del flujo terminado
+        uses: actions/download-artifact@v4
+        with:
+          name: EmiMatch-APK-Android-v1.1.0-release
+          path: release
+          repository: ${{ github.repository }}
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Comprobar que existe el APK firmado
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s release/app-release.apk
+          echo "APK release encontrado."
+          sha256sum release/app-release.apk
+
+      - name: Crear o actualizar GitHub Release público
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.1.0
+          name: EmiMatch v1.1.0
+          body: |
+            **EmiMatch v1.1.0 para Android**
+
+            Descargá `EmiMatch-v1.1.0-release.apk` en tu teléfono Android y abrí el archivo para instalarlo.
+            Si Android muestra una advertencia, permití la instalación desde esa fuente solo si confías en el archivo que descargaste.
+
+            Web oficial: https://emimatch.github.io/emimatch/
+          files: release/app-release.apk
+          fail_on_unmatched_files: true
+          make_latest: true
