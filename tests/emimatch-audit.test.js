@@ -327,6 +327,103 @@ if (exists("index.html")) {
   }
 }
 
+/* 10. RENOVACIÓN PREMIUM — COMPROBACIONES ESTÁTICAS */
+
+console.log("");
+console.log("✨ RENOVACIÓN PREMIUM — COMPROBACIONES ESTÁTICAS");
+
+const refreshPages = [
+  "index.html",
+  "perfil.html",
+  "editar-perfil.html",
+  "descubrir.html",
+  "matches.html",
+  "chat.html",
+  "conversacion.html",
+  "notificaciones.html",
+  "menu.html",
+  "configuracion.html",
+  "admin.html",
+  "likes.html",
+  "perfil-usuario.html",
+  "privacidad.html",
+  "terminos.html",
+  "recuperar.html",
+  "restablecer.html",
+  "membresia/membresia.html",
+  "membresía/membresía.html"
+];
+
+if (exists("assets/css/premium-refresh.css")) {
+  ok("Hoja de estilos premium presente");
+} else {
+  error("Falta assets/css/premium-refresh.css");
+}
+
+for (const page of refreshPages) {
+  if (!exists(page)) {
+    warning(`${page}: página no encontrada para verificar el estilo premium`);
+    continue;
+  }
+
+  const html = read(page);
+  const expectedPath = page.includes("/") ? "../assets/css/premium-refresh.css" : "assets/css/premium-refresh.css";
+  if (html.includes(expectedPath)) {
+    ok(`${page}: estilo premium enlazado con ruta relativa correcta`);
+  } else {
+    error(`${page}: falta el estilo premium o su ruta relativa no coincide`);
+  }
+}
+
+if (exists("index.html")) {
+  const html = read("index.html");
+  if (html.includes('window.location.replace("perfil.html")')) {
+    ok("La página de acceso contempla restauración de sesión activa");
+  } else {
+    error("No se encontró la navegación para sesión activa");
+  }
+}
+
+if (exists("chat.html")) {
+  const html = read("chat.html");
+  for (const [label, pattern] of [
+    ["menú de acciones de conversación", "conversation-menu-button"],
+    ["acceso al perfil desde la lista de mensajes", "perfil-usuario.html?user="],
+    ["acción de ocultar conversación solo local", "hideConversationForMe"],
+    ["aviso de que no se borran los mensajes del servidor", "Los mensajes no se borrarán del servidor"]
+  ]) {
+    if (html.includes(pattern)) ok(`Mensajes: ${label} presente`);
+    else error(`Mensajes: falta ${label}`);
+  }
+}
+
+if (exists("conversacion.html")) {
+  const html = read("conversacion.html");
+  if (html.includes("profileAvatarLink") && html.includes("profileNameLink")) {
+    ok("El encabezado del chat permite abrir el perfil");
+  } else {
+    error("Falta el acceso al perfil desde el encabezado del chat");
+  }
+}
+
+if (exists("assets/js/components.js")) {
+  const js = read("assets/js/components.js");
+  if (js.includes("em-nav-icon") && js.includes("<svg")) {
+    ok("La navegación usa iconos vectoriales");
+  } else {
+    error("No se encontraron iconos vectoriales en la navegación");
+  }
+}
+
+if (exists("notificaciones.html")) {
+  const html = read("notificaciones.html");
+  if (html.includes("notificationIconMarkup") && html.includes("perfil-usuario.html?user=")) {
+    ok("Notificaciones: iconos consistentes y acceso al perfil del visitante");
+  } else {
+    error("Notificaciones: falta el sistema de iconos o el acceso al visitante");
+  }
+}
+
 /* RESULTADO */
 
 console.log("");
