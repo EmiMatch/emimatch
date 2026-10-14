@@ -54,6 +54,9 @@ jobs:
           mkdir -p www
           cp -a ./*.html www/
           cp -a assets www/
+          # La página Premium vive en una carpeta anidada; copiar ambas rutas para compatibilidad.
+          cp -a membresia www/
+          if [ -d "membresía" ]; then cp -a "membresía" www/; fi
           for item in images img icons fonts manifest.json manifest.webmanifest service-worker.js sw.js favicon.ico; do
             if [ -e "$item" ]; then
               cp -a "$item" www/
@@ -63,6 +66,8 @@ jobs:
           test -s www/assets/js/app.js
           test -s www/assets/js/components.js
           test -s www/assets/js/config.js
+          test -s www/membresia/membresia.html
+          test -s "www/membresía/membresía.html"
 
       - name: Sincronizar Capacitor con Android
         run: npx cap sync android
@@ -72,8 +77,8 @@ jobs:
         run: |
           set -euo pipefail
           grep -q 'applicationId "com.emimatch.app"' android/app/build.gradle
-          grep -q 'versionCode 2' android/app/build.gradle
-          grep -q 'versionName "1.1.0"' android/app/build.gradle
+          grep -q 'versionCode 3' android/app/build.gradle
+          grep -q 'versionName "1.1.1"' android/app/build.gradle
           test -s android/app/src/main/AndroidManifest.xml
 
       - name: Preparar firma privada de publicación si está configurada
@@ -167,7 +172,7 @@ jobs:
       - name: Publicar APK Android
         uses: actions/upload-artifact@v4
         with:
-          name: EmiMatch-APK-Android-v1.1.0-debug
+          name: EmiMatch-APK-Android-v1.1.1-debug
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 14
@@ -176,7 +181,7 @@ jobs:
         if: ${{ steps.prepare-signing.outputs.release_ready == 'true' }}
         uses: actions/upload-artifact@v4
         with:
-          name: EmiMatch-APK-Android-v1.1.0-release
+          name: EmiMatch-APK-Android-v1.1.1-release
           path: android/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
           retention-days: 30
