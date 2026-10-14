@@ -157,3 +157,11 @@ button:hover, .button:hover, .btn:hover, .form-submit:hover, .discover-btn:hover
 .header-profile-link:hover { color:var(--emx-gold) !important; }
 .header-profile-link .avatar { transition:transform .2s ease, border-color .2s ease; }
 .header-profile-link:hover .avatar { transform:scale(1.035); border-color:var(--emx-gold) !important; }
+
+.notification-icon svg, .header-icon svg, .empty-icon svg {
+  display:block; width:25px; height:25px; stroke:currentColor; fill:none;
+  stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round;
+}
+.notification-icon svg { color:var(--emx-gold); }
+.header-icon svg { color:var(--emx-gold); }
+.empty-icon svg { width:38px; height:38px; color:var(--emx-gold); margin:0 auto; }
