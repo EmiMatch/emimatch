@@ -815,6 +815,281 @@
   </style>
 
   <link rel="stylesheet" href="assets/css/premium-refresh.css?v=20261014">
+
+  <style id="emimatch-profile-organized-20261014">
+    /* Ajuste visual del perfil: no modifica consultas, eventos ni lógica de Supabase. */
+    :root {
+      color-scheme: dark;
+      --profile-gold: #e8c978;
+      --profile-gold-soft: rgba(232,201,120,.22);
+      --profile-black: #090909;
+    }
+    body {
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(232,201,120,.10), transparent 38%),
+        linear-gradient(155deg, #080808 0%, #15130e 52%, #080808 100%) !important;
+      color: #f7f2e6 !important;
+    }
+    .profile-page { max-width: 760px !important; }
+    .top-bar { align-items:center; margin-bottom:16px !important; }
+    .brand { color:#f1d995 !important; }
+    .back-button {
+      color:#f7f0df !important;
+      border:1px solid rgba(232,201,120,.24) !important;
+      background:rgba(255,255,255,.045) !important;
+      border-radius:12px !important;
+    }
+    .profile-card {
+      background:linear-gradient(165deg,#17150f 0%,#0b0b0a 55%,#10100d 100%) !important;
+      border:1px solid rgba(232,201,120,.28) !important;
+      border-radius:24px !important;
+      overflow:hidden !important;
+      box-shadow:0 24px 65px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.035) !important;
+    }
+    .cover {
+      height:170px !important;
+      background:
+        radial-gradient(ellipse at 18% 45%,rgba(232,201,120,.20),transparent 28%),
+        radial-gradient(ellipse at 82% 20%,rgba(232,201,120,.13),transparent 25%),
+        linear-gradient(125deg,#302819 0%,#17140e 55%,#090909 100%) !important;
+    }
+    .avatar-wrap {
+      width:calc(100% + 48px) !important;
+      height:clamp(270px,70vw,430px) !important;
+      margin:-170px -24px 0 !important;
+      border-radius:0 !important;
+      overflow:hidden !important;
+      background:linear-gradient(145deg,#302718,#11100c) !important;
+      position:relative !important;
+    }
+    .avatar-wrap::after {
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background:linear-gradient(180deg,rgba(0,0,0,.02) 40%,rgba(0,0,0,.18) 63%,#0b0b0a 100%) !important;
+    }
+    .avatar,.avatar-placeholder {
+      width:100% !important;
+      height:100% !important;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      object-fit:cover;
+      border:0 !important;
+      border-radius:0 !important;
+      outline:0 !important;
+      box-shadow:none !important;
+      background:transparent !important;
+    }
+    #profileAvatar:not(.hidden) { display:block !important; object-position:center 35%; }
+    .avatar-placeholder { color:var(--profile-gold) !important; font-size:clamp(54px,12vw,78px) !important; }
+    .verified-badge {
+      z-index:2;
+      right:18px !important;
+      bottom:18px !important;
+      color:#17130a !important;
+      background:linear-gradient(135deg,#c5a14c,#f0d995) !important;
+      border:3px solid #10100d !important;
+    }
+    .profile-content {
+      display:flex !important;
+      flex-direction:column !important;
+      padding:0 24px 26px !important;
+    }
+    .profile-content > .avatar-wrap { order:1; }
+    .profile-content > #profileName { order:2; }
+    .profile-content > #profileMeta { order:3; }
+    .profile-content > #profileDescription { order:4; }
+    .profile-content > .info-grid { order:5; }
+    .profile-content > #photosSection { order:6; }
+    .profile-content > #socialLinksSection { order:7; }
+    .profile-content > .actions { order:8; }
+    .profile-content > #deleteStatus { order:9; }
+    .profile-content > #profileStatus { order:10; }
+    .profile-name {
+      margin:17px 0 0 !important;
+      color:#fff8e8 !important;
+      font-family:Georgia,"Times New Roman",serif !important;
+      font-size:clamp(29px,5vw,36px) !important;
+      font-weight:600 !important;
+      letter-spacing:-.3px !important;
+      line-height:1.15 !important;
+    }
+    .profile-meta { margin-top:7px !important; color:#d4c39b !important; font-size:14px !important; }
+    .profile-description {
+      margin:18px 0 0 !important;
+      padding:15px 16px 15px 17px !important;
+      border:1px solid rgba(232,201,120,.14) !important;
+      border-left:3px solid var(--profile-gold) !important;
+      border-radius:0 13px 13px 0 !important;
+      background:rgba(232,201,120,.045) !important;
+      color:#e9e2d4 !important;
+      line-height:1.65 !important;
+    }
+    .profile-description::before {
+      content:"Sobre mí";
+      display:block;
+      margin-bottom:6px;
+      color:#f0d995;
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+    }
+    .info-grid {
+      grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+      gap:9px !important;
+      margin-top:17px !important;
+    }
+    .info-box {
+      min-width:0;
+      padding:13px 14px !important;
+      background:linear-gradient(145deg,#1b1914,#10100e) !important;
+      border:1px solid rgba(232,201,120,.17) !important;
+      border-radius:14px !important;
+      box-shadow:none !important;
+    }
+    .info-label { color:#b9a779 !important; font-size:11px !important; letter-spacing:.025em; }
+    .info-value { color:#fff4d8 !important; font-size:14px; }
+    .interest-tags { gap:6px !important; margin-top:4px !important; }
+    .interest-tag {
+      padding:6px 9px !important;
+      color:#f5dfaa !important;
+      background:rgba(232,201,120,.07) !important;
+      border:1px solid rgba(232,201,120,.24) !important;
+      font-size:12px !important;
+    }
+    .profile-content > .section {
+      width:100%;
+      margin-top:24px !important;
+      padding:0 !important;
+      background:transparent !important;
+      border:0 !important;
+      box-shadow:none !important;
+    }
+    .section-title {
+      margin:0 0 6px !important;
+      color:#f2dfae !important;
+      font-size:20px !important;
+      font-family:Georgia,"Times New Roman",serif !important;
+      font-weight:600 !important;
+    }
+    .section-subtitle { margin-bottom:13px !important; color:#b9b09d !important; line-height:1.5 !important; }
+    .album-grid { gap:9px !important; }
+    .album-item {
+      aspect-ratio:4 / 5 !important;
+      border:1px solid rgba(232,201,120,.22) !important;
+      border-radius:13px !important;
+      background:#14130f !important;
+      box-shadow:0 7px 20px rgba(0,0,0,.18) !important;
+    }
+    .photo-main-badge {
+      top:7px !important;
+      left:7px !important;
+      padding:5px 7px !important;
+      color:#17130a !important;
+      background:linear-gradient(115deg,#d2ad53,#f5df9d) !important;
+      border-radius:7px !important;
+      font-size:10px !important;
+    }
+    .photo-actions { right:6px !important; bottom:6px !important; gap:4px !important; }
+    .photo-action {
+      padding:6px 7px !important;
+      border:1px solid rgba(255,255,255,.13) !important;
+      border-radius:7px !important;
+      background:rgba(0,0,0,.78) !important;
+      color:#fff6e2 !important;
+      font-size:10px !important;
+    }
+    .album-empty {
+      color:#c9bea4 !important;
+      background:rgba(232,201,120,.035) !important;
+      border:1px dashed rgba(232,201,120,.28) !important;
+      border-radius:14px !important;
+    }
+    .upload-box {
+      margin-top:12px !important;
+      padding:12px !important;
+      border:1px solid rgba(232,201,120,.17) !important;
+      border-radius:14px !important;
+      background:#11100d !important;
+    }
+    .upload-label {
+      min-height:48px !important;
+      color:#171207 !important;
+      background:linear-gradient(115deg,#d2ad53,#f5df9d) !important;
+      border-radius:11px !important;
+      box-shadow:0 8px 22px rgba(210,173,83,.12) !important;
+    }
+    .upload-info { color:#b8ae97 !important; font-size:11px !important; }
+    .social-links-list { display:flex; flex-wrap:wrap; gap:8px !important; }
+    .social-link {
+      min-height:40px !important;
+      padding:9px 12px !important;
+      color:#f5dfaa !important;
+      background:linear-gradient(145deg,#1b1914,#10100e) !important;
+      border:1px solid rgba(232,201,120,.23) !important;
+      border-radius:11px !important;
+      font-size:13px !important;
+    }
+    .actions {
+      grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+      gap:9px !important;
+      margin-top:24px !important;
+      padding-top:18px;
+      border-top:1px solid rgba(232,201,120,.16);
+    }
+    .action-button {
+      min-width:0;
+      min-height:49px !important;
+      padding:11px 9px !important;
+      color:#f4ead1 !important;
+      background:linear-gradient(145deg,#1b1914,#10100e) !important;
+      border:1px solid rgba(232,201,120,.2) !important;
+      border-radius:12px !important;
+      font-size:13px !important;
+      line-height:1.3;
+      text-align:center;
+      transition:background .18s ease,border-color .18s ease,transform .18s ease;
+    }
+    .action-button:hover {
+      background:rgba(232,201,120,.08) !important;
+      border-color:rgba(232,201,120,.45) !important;
+      transform:translateY(-1px);
+    }
+    .action-button.primary {
+      color:#171207 !important;
+      background:linear-gradient(115deg,#d2ad53,#f5df9d) !important;
+      border-color:rgba(255,239,190,.65) !important;
+      box-shadow:0 9px 22px rgba(210,173,83,.13) !important;
+    }
+    .actions > .danger { grid-column:1 / -1; }
+    .status,.album-status { color:#c8bea8 !important; font-size:12px !important; }
+    @media (max-width:520px) {
+      .profile-page { padding:11px 10px 110px !important; }
+      .profile-content { padding:0 15px 22px !important; }
+      .cover { height:145px !important; }
+      .avatar-wrap {
+        width:calc(100% + 30px) !important;
+        height:clamp(250px,82vw,360px) !important;
+        margin:-145px -15px 0 !important;
+      }
+      .profile-name { margin-top:15px !important; }
+      .info-grid { gap:8px !important; }
+      .info-box { padding:11px !important; }
+      .album-grid { gap:7px !important; }
+      .photo-actions { flex-direction:column; }
+      .photo-action { padding:5px 6px !important; font-size:9px !important; }
+      .actions { gap:8px !important; }
+      .action-button { min-height:47px !important; padding:10px 6px !important; font-size:12px !important; }
+      .social-link { flex:1 1 auto; }
+    }
+    @media (prefers-reduced-motion:reduce) {
+      .action-button { transition:none !important; }
+    }
+  </style>
+
 </head>
 <body>
 
