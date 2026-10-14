@@ -2156,5 +2156,98 @@ a:focus-visible,button:focus-visible,input:focus-visible { outline:2px solid #ff
 
 </script>
 
+
+<script id="emimatch-update-check">
+(function () {
+  "use strict";
+  var APP_VERSION = "1.2.0";
+  var VERSION_URL = "https://emimatch.github.io/emimatch/app-version.json";
+  function isAndroidApp() {
+    try {
+      return !!(window.Capacitor &&
+        typeof window.Capacitor.isNativePlatform === "function" &&
+        window.Capacitor.isNativePlatform() &&
+        typeof window.Capacitor.getPlatform === "function" &&
+        window.Capacitor.getPlatform() === "android");
+    } catch (_) { return false; }
+  }
+  function versionParts(version) {
+    return String(version || "").split(".").map(function (part) {
+      var n = parseInt(part, 10);
+      return Number.isFinite(n) ? n : 0;
+    });
+  }
+  function isNewerVersion(remote, current) {
+    var a = versionParts(remote), b = versionParts(current);
+    for (var i = 0; i < Math.max(a.length, b.length); i++) {
+      var av = a[i] || 0, bv = b[i] || 0;
+      if (av > bv) return true;
+      if (av < bv) return false;
+    }
+    return false;
+  }
+  function showUpdateDialog(version, downloadUrl) {
+    if (document.getElementById("emimatch-update-overlay")) return;
+    var overlay = document.createElement("div");
+    overlay.id = "emimatch-update-overlay";
+    overlay.setAttribute("role", "dialog");
+    overlay.setAttribute("aria-modal", "true");
+    overlay.setAttribute("aria-labelledby", "emimatch-update-title");
+    overlay.style.cssText = "position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(0,0,0,.78);backdrop-filter:blur(7px);";
+    var card = document.createElement("div");
+    card.style.cssText = "width:100%;max-width:390px;padding:26px 22px;border:1px solid rgba(228,195,109,.45);border-radius:22px;background:linear-gradient(145deg,#19170f,#090909);color:#fff8e5;box-shadow:0 24px 80px rgba(0,0,0,.6);font-family:system-ui,-apple-system,'Segoe UI',sans-serif;text-align:center;";
+    var logo = document.createElement("div");
+    logo.textContent = "🫰";
+    logo.style.cssText = "font-size:42px;margin-bottom:10px;";
+    var title = document.createElement("h2");
+    title.id = "emimatch-update-title";
+    title.textContent = "¡Hay una actualización disponible!";
+    title.style.cssText = "font-size:22px;line-height:1.25;margin:0 0 12px;color:#ffe6a0;";
+    var message = document.createElement("p");
+    message.textContent = "Ya está disponible EmiMatch " + version + ", con mejoras para vos. Actualizá para disfrutar de la última versión.";
+    message.style.cssText = "font-size:15px;line-height:1.55;color:#e8e0cf;margin:0 0 22px;";
+    var update = document.createElement("a");
+    update.href = downloadUrl;
+    update.target = "_blank";
+    update.rel = "noopener noreferrer";
+    update.textContent = "Actualizar ahora";
+    update.style.cssText = "display:block;padding:14px 16px;border-radius:12px;background:linear-gradient(135deg,#d1aa4f,#ffe8a3);color:#17120a;text-decoration:none;font-weight:800;margin-bottom:10px;";
+    var later = document.createElement("button");
+    later.type = "button";
+    later.textContent = "Más tarde";
+    later.style.cssText = "width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,226,145,.35);background:#ffffff08;color:#fff2c9;font-weight:700;";
+    later.addEventListener("click", function () { overlay.remove(); });
+    card.appendChild(logo);
+    card.appendChild(title);
+    card.appendChild(message);
+    card.appendChild(update);
+    card.appendChild(later);
+    overlay.appendChild(card);
+    document.body.appendChild(overlay);
+  }
+  async function checkForUpdate() {
+    if (!isAndroidApp()) return;
+    try {
+      var response = await fetch(VERSION_URL + "?t=" + Date.now(), {
+        method: "GET", cache: "no-store", headers: { "Accept": "application/json" }
+      });
+      if (!response.ok) return;
+      var info = await response.json();
+      if (info && typeof info.latestVersion === "string" &&
+          typeof info.downloadUrl === "string" &&
+          /^https:\/\/github\.com\/EmiMatch\/emimatch\/releases\//i.test(info.downloadUrl) &&
+          isNewerVersion(info.latestVersion, APP_VERSION)) {
+        showUpdateDialog(info.latestVersion, info.downloadUrl);
+      }
+    } catch (error) {
+      console.info("EmiMatch: no se pudo comprobar si hay actualizaciones.", error);
+    }
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", checkForUpdate, { once: true });
+  } else { checkForUpdate(); }
+})();
+</script>
+
 </body>
 </html>

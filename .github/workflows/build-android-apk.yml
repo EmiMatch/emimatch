@@ -2,7 +2,7 @@ name: EmiMatch - APK Android
 
 on:
   push:
-    branches: [main]
+    branches: [main, "feature/actualizacion-en-espanol"]
   workflow_dispatch:
 
 permissions:
@@ -77,8 +77,8 @@ jobs:
         run: |
           set -euo pipefail
           grep -q 'applicationId "com.emimatch.app"' android/app/build.gradle
-          grep -q 'versionCode 3' android/app/build.gradle
-          grep -q 'versionName "1.1.1"' android/app/build.gradle
+          grep -q 'versionCode 4' android/app/build.gradle
+          grep -q 'versionName "1.2.0"' android/app/build.gradle
           test -s android/app/src/main/AndroidManifest.xml
 
       - name: Preparar firma privada de publicación si está configurada
@@ -172,7 +172,7 @@ jobs:
       - name: Publicar APK Android
         uses: actions/upload-artifact@v4
         with:
-          name: EmiMatch-APK-Android-v1.1.1-debug
+          name: EmiMatch-APK-Android-v1.2.0-debug
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 14
@@ -181,7 +181,7 @@ jobs:
         if: ${{ steps.prepare-signing.outputs.release_ready == 'true' }}
         uses: actions/upload-artifact@v4
         with:
-          name: EmiMatch-APK-Android-v1.1.1-release
+          name: EmiMatch-APK-Android-v1.2.0-release
           path: android/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
           retention-days: 30
