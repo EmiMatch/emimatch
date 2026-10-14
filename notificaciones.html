@@ -41,12 +41,13 @@ body{margin:0;min-height:100vh;background:radial-gradient(circle at top,rgba(76,
 .notifications-status,.notification,.notification-unread,.notification-icon,.empty-state { background:linear-gradient(145deg,#171510,#0d0d0d)!important;border-color:rgba(228,195,109,.2)!important;color:#f7f3e9!important }
 .notification-unread { box-shadow:inset 3px 0 #e4c36d!important }
 </style>
+  <link rel="stylesheet" href="assets/css/premium-refresh.css?v=20261014">
 </head>
 <body>
 <main class="notifications-page">
   <header class="notifications-header">
     <a class="back" href="menu.html" aria-label="Volver al menú">←</a>
-    <div class="header-icon">🔔</div>
+    <div class="header-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg></div>
     <div class="header-text">
       <h1>Notificaciones</h1>
       <p>Tus novedades y alertas</p>
@@ -70,7 +71,7 @@ body{margin:0;min-height:100vh;background:radial-gradient(circle at top,rgba(76,
     aria-label="Lista de notificaciones" hidden></section>
 
   <section id="emptyState" class="empty-state" hidden>
-    <div class="empty-icon">🔔</div>
+    <div class="empty-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg></div>
     <h2>No tenés notificaciones</h2>
     <p>Acá vas a recibir avisos de mensajes, nuevos matches y visitas a tu perfil.</p>
   </section>
@@ -94,6 +95,17 @@ let client = null;
 let currentUser = null;
 let realtimeChannel = null;
 let refreshInProgress = false;
+
+function notificationIconMarkup(type) {
+  const paths = {
+    message: '<path d="M21 11.5a8.4 8.4 0 0 1-8.8 8.4 9.4 9.4 0 0 1-4-.9L3 21l1.5-4.7a8.1 8.1 0 1 1 16.5-4.8Z"/><path d="M8 11h8M8 14h5"/>',
+    match: '<path d="M20.8 8.8c0 5.1-8.8 11-8.8 11s-8.8-5.9-8.8-11A4.8 4.8 0 0 1 12 6.4a4.8 4.8 0 0 1 8.8 2.4Z"/>',
+    view: '<path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="2.5"/>',
+    default: '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/>'
+  };
+  return '<svg viewBox="0 0 24 24" aria-hidden="true">' +
+    (paths[type] || paths.default) + '</svg>';
+}
 
 function formatTime(value) {
   if (!value) return "Fecha no disponible";
@@ -298,7 +310,7 @@ async function loadMatchNotifications(matches) {
     title: `${profilesById[view.viewer_id]?.nombre || "Alguien"} visitó tu perfil`,
     text: "¡Quizás sea el comienzo de una nueva conexión!",
     icon: "👀",
-    href: "perfil.html"
+    href: `perfil-usuario.html?user=${encodeURIComponent(view.viewer_id)}`
   }));
 }
 
@@ -331,7 +343,7 @@ function renderNotifications(notifications) {
 
     const icon = document.createElement("div");
     icon.className = "notification-icon";
-    icon.textContent = notification.icon || "🔔";
+    icon.innerHTML = notificationIconMarkup(notification.type);
 
     const content = document.createElement("div");
     content.className = "notification-content";

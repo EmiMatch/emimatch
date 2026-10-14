@@ -460,6 +460,7 @@ body{
   .empty-icon { color:#128c7e !important; }
   @media(max-width:420px) { .messages-page { padding-left:9px !important;padding-right:9px !important; } }
 </style>
+  <link rel="stylesheet" href="assets/css/premium-refresh.css?v=20261014">
 </head>
 
 <body>
@@ -1170,6 +1171,62 @@ function renderAvatar(profile){
     </div>
   `;
   }
+/* =========================================================
+   CONVERSACIONES OCULTAS EN ESTE DISPOSITIVO
+   No elimina mensajes del servidor ni de la otra persona.
+   Un mensaje nuevo vuelve a mostrar la conversación.
+   ========================================================= */
+function hiddenConversationsKey() {
+  return `emimatch:hidden-conversations:${currentUser?.id || "unknown"}`;
+}
+
+function readHiddenConversations() {
+  try {
+    const value = localStorage.getItem(hiddenConversationsKey());
+    const parsed = value ? JSON.parse(value) : {};
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch (error) {
+    console.warn("No se pudo leer la lista de chats ocultos:", error);
+    return {};
+  }
+}
+
+function writeHiddenConversations(value) {
+  try {
+    localStorage.setItem(hiddenConversationsKey(), JSON.stringify(value));
+    return true;
+  } catch (error) {
+    console.error("No se pudo guardar la lista de chats ocultos:", error);
+    return false;
+  }
+}
+
+function hideConversationForMe(userId) {
+  const hidden = readHiddenConversations();
+  hidden[userId] = Date.now();
+  return writeHiddenConversations(hidden);
+}
+
+function filterHiddenConversations(conversations) {
+  const hidden = readHiddenConversations();
+  let changed = false;
+  const visible = (conversations || []).filter(item => {
+    const hiddenAt = Number(hidden[item.otherUserId]);
+    if (!hiddenAt) return true;
+
+    const lastMessageAt = Date.parse(item.lastMessage?.created_at || "");
+    if (Number.isFinite(lastMessageAt) && lastMessageAt > hiddenAt) {
+      delete hidden[item.otherUserId];
+      changed = true;
+      return true;
+    }
+    return false;
+  });
+
+  if (changed) writeHiddenConversations(hidden);
+  return visible;
+}
+
   function renderConversations(
   conversations
 ){
@@ -1320,6 +1377,47 @@ function renderAvatar(profile){
       `;
 
 
+      conversation.insertAdjacentHTML("beforeend", `
+        <div class="conversation-actions">
+          <button class="conversation-menu-button" type="button"
+            aria-label="Opciones de la conversación" aria-expanded="false">⋯</button>
+          <div class="conversation-menu" hidden>
+            <a class="conversation-menu-item" href="perfil-usuario.html?user=${encodeURIComponent(item.otherUserId)}">Ver perfil</a>
+            <button class="conversation-menu-item danger" type="button">Eliminar chat</button>
+          </div>
+        </div>
+      `);
+
+      const optionsButton = conversation.querySelector(".conversation-menu-button");
+      const optionsMenu = conversation.querySelector(".conversation-menu");
+      const profileLink = conversation.querySelector(".conversation-menu-item[href]");
+      const hideButton = conversation.querySelector(".conversation-menu-item.danger");
+
+      optionsButton.addEventListener("click", event => {
+        event.preventDefault();
+        event.stopPropagation();
+        const opening = optionsMenu.hidden;
+        optionsMenu.hidden = !opening;
+        optionsButton.setAttribute("aria-expanded", String(opening));
+      });
+
+      optionsMenu.addEventListener("click", event => event.stopPropagation());
+      profileLink.addEventListener("click", event => event.stopPropagation());
+
+      hideButton.addEventListener("click", event => {
+        event.preventDefault();
+        event.stopPropagation();
+        const confirmed = window.confirm(
+          "¿Eliminar este chat de tu lista? Los mensajes no se borrarán del servidor ni de la otra persona. Si recibís un mensaje nuevo, la conversación volverá a aparecer."
+        );
+        if (!confirmed) return;
+        if (!hideConversationForMe(item.otherUserId)) {
+          window.alert("No se pudo guardar el cambio en este dispositivo. No se eliminó ningún mensaje.");
+          return;
+        }
+        loadConversations();
+      });
+
       conversation.addEventListener(
         "click",
         () => {
@@ -1336,6 +1434,7 @@ function renderAvatar(profile){
       conversation.addEventListener(
         "keydown",
         event => {
+          if (event.target !== conversation) return;
 
           if(
             event.key === "Enter" ||
@@ -1409,7 +1508,7 @@ async function loadConversations(){
       await buildConversations();
 
     renderConversations(
-      conversations
+      filterHiddenConversations(conversations)
     );
 
   }catch(error){

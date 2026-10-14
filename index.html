@@ -632,6 +632,7 @@ a:focus-visible,button:focus-visible,input:focus-visible { outline:2px solid #ff
   }
 </style>
 
+  <link rel="stylesheet" href="assets/css/premium-refresh.css?v=20261014">
 </head>
 
 <body>
@@ -2135,12 +2136,10 @@ a:focus-visible,button:focus-visible,input:focus-visible { outline:2px solid #ff
           data.session &&
           data.session.user
         ) {
-
-          console.log(
-            "EmiMatch: sesión activa.",
-            data.session.user.email
-          );
-
+          // Si la sesión sigue vigente, evitar pedir las credenciales
+          // otra vez y continuar directamente a la aplicación.
+          window.location.replace("perfil.html");
+          return;
         }
 
       } catch (error) {
