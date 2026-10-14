@@ -698,6 +698,22 @@
       .menu-action { gap:11px !important; padding:10px !important; }
       .menu-action-text { font-size:10.5px !important; }
     }
+  
+    /* Tarjeta de bienvenida premium: solo presentación visual. */
+    .menu-welcome-card { padding:22px 18px 18px!important; background:radial-gradient(ellipse at top right,rgba(198,160,82,.12),transparent 58%),linear-gradient(145deg,#151515,#080808 72%)!important; border:1px solid rgba(212,175,95,.42)!important; border-radius:22px!important; box-shadow:0 16px 36px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,224,158,.06)!important; }
+    .menu-welcome-card .menu-welcome-brand { display:flex;align-items:center;justify-content:center;gap:9px;color:#d9bd79;font-size:11px;font-weight:800;letter-spacing:1.35px;text-align:center; }
+    .menu-welcome-symbol { display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border:1px solid rgba(217,189,121,.4);border-radius:11px;background:rgba(217,189,121,.08);font-size:20px;letter-spacing:0; }
+    .menu-welcome-card .menu-profile-name { margin:17px 0 0!important;color:#fff!important;font-size:25px!important;font-weight:800!important;line-height:1.2!important;text-align:center!important; }
+    .menu-welcome-card .menu-profile-description { margin:8px auto 0!important;color:#c9c5bb!important;font-size:13px!important;line-height:1.5!important;text-align:center!important; }
+    .menu-welcome-card .menu-welcome-stats { grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important;margin-top:21px!important; }
+    .menu-welcome-card .menu-welcome-stat { min-width:0;padding:12px 6px!important;border:1px solid rgba(217,189,121,.19)!important;border-radius:13px!important;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.018))!important;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px; }
+    .menu-welcome-card .menu-welcome-label { display:block;min-height:27px;color:#bcb7aa!important;font-size:10px!important;line-height:1.35!important;text-align:center; }
+    .menu-welcome-card .menu-welcome-stat strong { color:#f4dfaa!important;font-size:18px!important;line-height:1.15;font-weight:800!important;overflow-wrap:anywhere; }
+    .menu-welcome-card .menu-welcome-stat .menu-welcome-active { display:flex;align-items:center;gap:5px;color:#e7d29a!important;font-size:13px!important; }
+    .menu-welcome-status-dot { display:inline-block;width:7px;height:7px;flex:0 0 7px;border-radius:50%;background:#75d69a;box-shadow:0 0 9px rgba(117,214,154,.45); }
+    .menu-welcome-card .menu-profile-button { margin-top:17px!important;color:#17130a!important;background:linear-gradient(135deg,#f0d99a,#c9a653)!important;box-shadow:0 8px 22px rgba(201,166,83,.16)!important;border:1px solid rgba(255,231,174,.55)!important; }
+    @media(max-width:380px) { .menu-welcome-card{padding:19px 12px 14px!important}.menu-welcome-card .menu-welcome-stats{gap:5px!important}.menu-welcome-card .menu-welcome-stat{padding:10px 3px!important}.menu-welcome-card .menu-welcome-label{font-size:9px!important}.menu-welcome-card .menu-welcome-stat strong{font-size:16px!important} }
+
   </style>
 </head>
 
@@ -744,101 +760,32 @@
      MI PERFIL
      ========================================================= -->
 
-<div class="menu-profile-card">
+<div class="menu-profile-card menu-welcome-card">
 
-  <div class="menu-profile-cover"></div>
-
-
-  <div class="menu-profile-photo-wrap">
-
-    <div
-      id="menuProfilePlaceholder"
-      class="menu-profile-placeholder"
-    >
-      🫰
-    </div>
-
-
-    <img
-      id="menuProfilePhoto"
-      class="menu-profile-photo"
-      alt="Foto de perfil"
-      hidden
-    >
-
-
-    <div
-      id="menuProfileVerified"
-      class="menu-profile-verified"
-      title="Perfil verificado"
-      hidden
-    >
-      ✓
-    </div>
-
+  <div class="menu-welcome-brand">
+    <span class="menu-welcome-symbol">🫰</span>
+    <span>BIENVENIDO A EMIMATCH</span>
   </div>
 
+  <h2 id="menuProfileName" class="menu-profile-name">Hola 🫰</h2>
+  <p id="menuProfileDescription" class="menu-profile-description">Tu próxima conexión puede empezar hoy.</p>
 
-  <h2
-    id="menuProfileName"
-    class="menu-profile-name"
-  >
-    Mi perfil
-  </h2>
-
-
-  <div
-    id="menuProfileCity"
-    class="menu-profile-city"
-  >
-    Preparando tu perfil...
+  <div class="menu-profile-stats menu-welcome-stats">
+    <div class="menu-profile-stat menu-welcome-stat">
+      <span class="menu-welcome-label">Tus matches</span>
+      <strong id="menuProfileMatches">—</strong>
+    </div>
+    <div class="menu-profile-stat menu-welcome-stat">
+      <span class="menu-welcome-label">Fotos en tu perfil</span>
+      <strong id="menuProfilePhotos">— de 6</strong>
+    </div>
+    <div class="menu-profile-stat menu-welcome-stat">
+      <span class="menu-welcome-label">Tu cuenta</span>
+      <strong class="menu-welcome-active"><span class="menu-welcome-status-dot"></span>Activa</strong>
+    </div>
   </div>
 
-
-  <p
-    id="menuProfileDescription"
-    class="menu-profile-description"
-  >
-    Cargando información...
-  </p>
-
-
-  <div class="menu-profile-stats">
-
-    <div class="menu-profile-stat">
-
-      <strong id="menuProfilePhotos">
-        —
-      </strong>
-
-      <span>
-        Fotos
-      </span>
-
-    </div>
-
-
-    <div class="menu-profile-stat">
-
-      <strong id="menuProfileMatches">
-        —
-      </strong>
-
-      <span>
-        Matches
-      </span>
-
-    </div>
-
-  </div>
-
-
-  <a
-    class="menu-profile-button"
-    href="perfil.html"
-  >
-    👤 Ver mi perfil →
-  </a>
+  <a class="menu-profile-button" href="perfil.html">👤 Ver mi perfil →</a>
 
 </div>
 <!-- =========================================================
@@ -1567,9 +1514,7 @@
         if (nameElement) {
 
           nameElement.textContent =
-            age
-              ? `${name}, ${age}`
-              : name;
+            `Hola, ${name} 🫰`;
 
         }
 
@@ -1593,7 +1538,7 @@
         if (descriptionElement) {
 
           descriptionElement.textContent =
-            description;
+            "Tu próxima conexión puede empezar hoy.";
 
         }
 
@@ -1666,7 +1611,7 @@
           if (photosElement) {
 
             photosElement.textContent =
-              "0";
+              "0 de 6";
 
           }
 
@@ -1681,7 +1626,7 @@
           if (photosElement) {
 
             photosElement.textContent =
-              String(totalPhotos);
+              `${Math.min(totalPhotos, 6)} de 6`;
 
           }
 
