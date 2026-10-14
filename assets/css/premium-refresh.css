@@ -127,3 +127,33 @@ button:hover, .button:hover, .btn:hover, .form-submit:hover, .discover-btn:hover
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
 }
+
+/* Mensajería: acciones de conversación y acceso al perfil */
+.conversation-actions { position:relative; z-index:4; flex:none; align-self:flex-start; margin-left:2px; }
+.conversation-menu-button {
+  display:flex; align-items:center; justify-content:center;
+  width:36px; height:36px; padding:0; border-radius:12px;
+  border:1px solid var(--emx-line); background:rgba(230,200,120,.07);
+  color:var(--emx-gold); font-size:25px; line-height:1; cursor:pointer;
+}
+.conversation-menu-button:hover { background:rgba(230,200,120,.15); }
+.conversation-menu {
+  position:absolute; top:42px; right:0; z-index:30;
+  min-width:174px; padding:6px;
+  border:1px solid var(--emx-line); border-radius:15px;
+  background:rgba(18,17,14,.98); box-shadow:0 16px 40px rgba(0,0,0,.48);
+  backdrop-filter:blur(18px);
+}
+.conversation-menu[hidden] { display:none !important; }
+.conversation-menu-item {
+  display:flex; align-items:center; width:100%; min-height:42px;
+  padding:10px 12px; border:0; border-radius:10px;
+  background:transparent; color:var(--emx-text); text-align:left;
+  text-decoration:none; font-size:13px; font-weight:650; cursor:pointer;
+}
+.conversation-menu-item:hover { background:rgba(230,200,120,.09); }
+.conversation-menu-item.danger { color:#ff9eaa; }
+.header-profile-link { color:inherit !important; text-decoration:none !important; cursor:pointer; }
+.header-profile-link:hover { color:var(--emx-gold) !important; }
+.header-profile-link .avatar { transition:transform .2s ease, border-color .2s ease; }
+.header-profile-link:hover .avatar { transform:scale(1.035); border-color:var(--emx-gold) !important; }
