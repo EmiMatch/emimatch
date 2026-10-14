@@ -167,3 +167,62 @@ button:hover, .button:hover, .btn:hover, .form-submit:hover, .discover-btn:hover
 .notification-icon svg { color:var(--emx-gold); }
 .header-icon svg { color:var(--emx-gold); }
 .empty-icon svg { width:38px; height:38px; color:var(--emx-gold); margin:0 auto; }
+
+/* Superficies y controles: acabado editorial, no genérico */
+.profile-card, .menu-profile-card, .menu-header-card, .menu-section-card,
+.menu-admin-card, .card, .match, .conversation, .notification, .auth-card,
+.settings-card, .notifications-status, .status, .empty-state,
+.messages-header, .notifications-header, .profile-page .section {
+  background: linear-gradient(145deg, rgba(25,24,21,.98), rgba(12,12,12,.98)) !important;
+  border: 1px solid var(--emx-line) !important;
+  color: var(--emx-text) !important;
+}
+.profile-card { box-shadow: 0 24px 64px rgba(0,0,0,.40), inset 0 1px rgba(255,255,255,.025) !important; }
+.profile-content { color: var(--emx-text) !important; }
+.profile-name, .menu-profile-name { color: #fff9eb !important; }
+.profile-meta, .menu-profile-city, .menu-profile-description { color: var(--emx-muted) !important; }
+.profile-page .section { border-radius:20px !important; }
+.menu-action, .menu-secondary {
+  border-color: rgba(230,200,120,.14) !important;
+  background: rgba(255,255,255,.025) !important;
+}
+.menu-action:hover, .menu-secondary:hover {
+  background: rgba(230,200,120,.075) !important;
+  border-color: rgba(230,200,120,.3) !important;
+}
+.menu-action-icon, .menu-secondary-icon {
+  background: linear-gradient(145deg,rgba(230,200,120,.15),rgba(230,200,120,.045)) !important;
+  color: var(--emx-gold) !important;
+}
+.back, .header-icon, .action-btn:not(.primary), .conversation-menu-button,
+.action-button:not(.danger), .photo-button {
+  color: var(--emx-gold) !important;
+  background: linear-gradient(145deg,#1b1914,#101010) !important;
+  border: 1px solid var(--emx-line) !important;
+}
+.field input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+.field textarea, .field select,
+input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+textarea, select {
+  color: var(--emx-text) !important;
+  background: rgba(255,255,255,.045) !important;
+  border-color: rgba(230,200,120,.22) !important;
+  border-radius: 14px;
+}
+.field input::placeholder, .field textarea::placeholder,
+input::placeholder, textarea::placeholder { color: #827d73 !important; }
+.notification-icon, .header-icon, .menu-action-icon, .menu-secondary-icon {
+  color: var(--emx-gold) !important;
+  background: linear-gradient(145deg,rgba(230,200,120,.15),rgba(230,200,120,.04)) !important;
+}
+.profile-page .social-link {
+  border-color: rgba(230,200,120,.18) !important;
+  background: rgba(230,200,120,.055) !important;
+}
+.profile-page .social-link:hover { background: rgba(230,200,120,.12) !important; }
+@media (hover:hover) {
+  .profile-card, .menu-profile-card, .menu-section-card, .card, .match, .notification, .conversation {
+    transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+  }
+  .menu-action:hover, .menu-secondary:hover { transform: translateY(-1px); }
+}
