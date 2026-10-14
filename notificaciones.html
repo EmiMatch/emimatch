@@ -310,7 +310,7 @@ async function loadMatchNotifications(matches) {
     title: `${profilesById[view.viewer_id]?.nombre || "Alguien"} visitó tu perfil`,
     text: "¡Quizás sea el comienzo de una nueva conexión!",
     icon: "👀",
-    href: "perfil.html"
+    href: `perfil-usuario.html?user=${encodeURIComponent(view.viewer_id)}`
   }));
 }
 
