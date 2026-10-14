@@ -708,7 +708,13 @@
       ‹
     </button>
 
-    <div class="avatar-wrap">
+    <a
+      id="profileAvatarLink"
+      class="avatar-wrap header-profile-link"
+      href="#"
+      aria-label="Ver perfil"
+      title="Ver perfil"
+    >
       <img
         id="avatar"
         class="avatar"
@@ -720,10 +726,15 @@
         id="onlineDot"
         class="online-dot"
       ></div>
-    </div>
+    </a>
 
     <div class="header-info">
-      <strong id="nombreUsuario">Cargando...</strong>
+      <a
+        id="profileNameLink"
+        class="header-profile-link"
+        href="#"
+        aria-label="Ver perfil de esta persona"
+      ><strong id="nombreUsuario">Cargando...</strong></a>
 
       <div
         id="estadoUsuario"
@@ -982,6 +993,10 @@ async function cargarUsuario() {
 
   usuarioDestino =
     data;
+
+  const profileHref = `perfil-usuario.html?user=${encodeURIComponent(destinoId)}`;
+  document.getElementById("profileAvatarLink").href = profileHref;
+  document.getElementById("profileNameLink").href = profileHref;
 
   document.getElementById(
     "nombreUsuario"
