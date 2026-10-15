@@ -79,7 +79,7 @@ jobs:
         run: |
           set -euo pipefail
           grep -q 'applicationId "com.emimatch.app"' android/app/build.gradle
-          grep -q 'versionCode 6' android/app/build.gradle
+          grep -q 'versionCode 7' android/app/build.gradle
           grep -q 'versionName "1.1.5"' android/app/build.gradle
           test -s android/app/src/main/AndroidManifest.xml
 
