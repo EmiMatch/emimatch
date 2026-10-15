@@ -19,11 +19,15 @@ Deno.env.get("MERCADOPAGO_ACCESS_TOKEN") ?? "";
 
 const MERCADOPAGO_TEST_MODE =
 (
-Deno.env.get("MERCADOPAGO_TEST_MODE") ?? "false"
-).toLowerCase() === "true";
+  Deno.env.get("MERCADOPAGO_TEST_MODE") ??
+  Deno.env.get("TEST_MODE") ??
+  "false"
+).trim().toLowerCase() === "true";
 
 const MERCADOPAGO_TEST_PAYER_EMAIL =
-Deno.env.get("MERCADOPAGO_TEST_PAYER_EMAIL") ?? "";
+  Deno.env.get("MERCADOPAGO_TEST_PAYER_EMAIL") ??
+  Deno.env.get("TEST_PAYER_EMAIL") ??
+  "";
 
 const BACK_URL =
 "https://emimatch.github.io/emimatch/membresia/membresia.html";
@@ -50,6 +54,17 @@ headers: {
 },
 },
 );
+}
+
+function checkoutForEnvironment(data: any) {
+  const mode = MERCADOPAGO_TEST_MODE ? "test" : "production";
+  const candidate = MERCADOPAGO_TEST_MODE
+    ? data?.sandbox_init_point
+    : data?.init_point;
+  const url = typeof candidate === "string" && candidate.startsWith("https://")
+    ? candidate
+    : null;
+  return { checkout_url: url, checkout_mode: mode };
 }
 
 async function mercadoPagoRequest(
@@ -472,12 +487,20 @@ if (subscription.provider_subscription_id) {
     if (remoteResponse.ok) {
       const remoteStatus = String(remote?.status ?? "").toLowerCase();
       if (remoteStatus !== "cancelled" && remoteStatus !== "canceled") {
+        const checkout = checkoutForEnvironment(remote);
+        if (!checkout.checkout_url) {
+          return jsonResponse({
+            success: false,
+            error: `Mercado Pago no devolvió un enlace de pago válido para el entorno ${checkout.checkout_mode}. No se realizó ningún cobro. Verificá la configuración de prueba/producción e intentá nuevamente.`,
+          }, 502);
+        }
         return jsonResponse({
           success: true,
           already_exists: true,
           subscription_id: subscription.id,
           provider_subscription_id: existingProviderId,
           status: remoteStatus || subscription.status || "pending",
+          ...checkout,
           init_point: remote?.init_point ?? null,
           sandbox_init_point: remote?.sandbox_init_point ?? null,
           message: "Se reutilizó la suscripción Premium existente.",
@@ -678,6 +701,18 @@ eventError,
 }
 
 /*
+* Seleccionar exclusivamente el enlace correspondiente al modo configurado.
+* Nunca abrir un checkout de producción cuando el modo de prueba está activo.
+*/
+const checkout = checkoutForEnvironment(mercadoPago);
+if (!checkout.checkout_url) {
+  return jsonResponse({
+    success: false,
+    error: `Mercado Pago creó la suscripción, pero no devolvió un enlace de pago válido para el entorno ${checkout.checkout_mode}. No se realizó ningún cobro. Revisá las credenciales y el modo configurado antes de volver a intentar.`,
+  }, 502);
+}
+
+/*
 * Devolver los datos necesarios
 * para redirigir al checkout.
 */
@@ -695,6 +730,8 @@ mercadoPago.id,
 status:
 mercadoPago.status ??
 "pending",
+
+...checkout,
 
 init_point:
 mercadoPago.init_point ??
