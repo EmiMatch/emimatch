@@ -1,6 +1,6 @@
 /* =====================================================
    EmiMatch — Núcleo central de aplicación
-   v1.1.2
+   v1.1.4
 ===================================================== */
 
 (() => {
@@ -35,9 +35,9 @@
   window.EmiMatchApp.logUpdate("Núcleo central cargado correctamente.");
 
   // Aviso de nuevas versiones para la app Android. No interfiere con el sitio web.
-  const ANDROID_VERSION = "1.1.2";
+  const ANDROID_VERSION = "1.1.4";
   const VERSION_INFO_URL = "https://emimatch.github.io/emimatch/version.json";
-  const DOWNLOAD_URL = "https://github.com/EmiMatch/emimatch/releases/latest";
+  const DOWNLOAD_URL = "https://github.com/EmiMatch/emimatch/releases/latest/download/app-release.apk";
 
   function compareVersions(current, latest) {
     const a = String(current).split(".").map(Number);
@@ -80,7 +80,7 @@
     link.href = DOWNLOAD_URL;
     link.target = "_blank";
     link.rel = "noopener noreferrer";
-    link.textContent = "Descargar actualización";
+    link.textContent = "Descargar APK";
     const close = document.createElement("button");
     close.type = "button";
     close.textContent = "Más tarde";
