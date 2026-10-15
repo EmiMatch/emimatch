@@ -633,6 +633,17 @@ a:focus-visible,button:focus-visible,input:focus-visible { outline:2px solid #ff
 </style>
 
   <link rel="stylesheet" href="assets/css/premium-refresh.css?v=20261014">
+<style id="emimatch-gender-preferences">
+.gender-preferences{margin:20px 0;padding:18px;border:1px solid rgba(228,195,109,.28);border-radius:20px;background:rgba(228,195,109,.045);text-align:left}
+.gender-preferences h3{margin:0 0 10px;color:#f0d88b;font-size:15px;font-weight:700}
+.gender-preferences h3:not(:first-child){margin-top:20px}
+.gender-preferences select{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(228,195,109,.28);background:#111;color:#f7f3e9}
+.gender-preferences p,.gender-preferences .gender-label{display:block;margin:0 0 10px;color:#d6cbb3;font-size:13px}
+.gender-options{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.gender-options label{display:flex;align-items:center;gap:8px;padding:11px;border:1px solid rgba(228,195,109,.2);border-radius:12px;background:rgba(255,255,255,.025);color:#f7f3e9;font-size:13px}
+.gender-options input{accent-color:#d8b65b;flex:0 0 auto}
+@media(max-width:480px){.gender-options{grid-template-columns:1fr}}
+</style>
 </head>
 
 <body>
@@ -909,6 +920,25 @@ a:focus-visible,button:focus-visible,input:focus-visible { outline:2px solid #ff
               <div class="password-hint">
                 Usá al menos 6 caracteres.
               </div>
+
+
+              <section class="gender-preferences" aria-labelledby="registerGenderTitle">
+                <h3 id="registerGenderTitle">✨ ¿Cómo te identificás?</h3>
+                <label class="gender-label" for="registerGenderIdentity">Mi identidad de género</label>
+                <select id="registerGenderIdentity" required>
+                  <option value="">Elegí una opción</option>
+                  <option value="woman">Mujer</option><option value="man">Hombre</option>
+                  <option value="nonbinary">Persona no binaria</option><option value="another">Otra identidad</option>
+                  <option value="prefer_not_to_say">Prefiero no decirlo</option>
+                </select>
+                <h3>💫 ¿A quién querés conocer?</h3><p>Podés elegir más de una opción.</p>
+                <div class="gender-options">
+                  <label><input type="checkbox" name="preferredGenders" value="women"> Mujeres</label>
+                  <label><input type="checkbox" name="preferredGenders" value="men"> Hombres</label>
+                  <label><input type="checkbox" name="preferredGenders" value="nonbinary"> Personas no binarias</label>
+                  <label><input type="checkbox" name="preferredGenders" value="other"> Otras identidades</label>
+                </div>
+              </section>
 
               <div class="adult-consent" style="display:flex;align-items:flex-start;gap:10px;margin:18px 0 20px;color:#f7e9d8;font-size:13px;line-height:1.55;text-align:left;">
                 <input
@@ -1865,6 +1895,13 @@ a:focus-visible,button:focus-visible,input:focus-visible { outline:2px solid #ff
         return;
       }
 
+      const genderIdentity = document.getElementById("registerGenderIdentity")?.value || "";
+      const preferredGenders = [...document.querySelectorAll('input[name="preferredGenders"]:checked')].map(input => input.value);
+      if (!genderIdentity || preferredGenders.length === 0) {
+        showMessage(registerMessage, "Elegí cómo te identificás y al menos una opción de a quién querés conocer.", "error");
+        return;
+      }
+
       const adultConfirmation =
         document.getElementById("registerAdult");
 
@@ -1909,8 +1946,8 @@ a:focus-visible,button:focus-visible,input:focus-visible { outline:2px solid #ff
             email: email,
             password: password,
             options: {
-              emailRedirectTo:
-                redirectUrl
+              emailRedirectTo: redirectUrl,
+              data: { gender_identity: genderIdentity, preferred_genders: preferredGenders }
             }
           });
 
