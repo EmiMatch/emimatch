@@ -935,7 +935,7 @@ button.save,.save { background:linear-gradient(135deg,#b9913d,#f0d88b)!important
         await supabase
           .from("profiles")
           .select(
-            "id,nombre,edad,ciudad,descripcion,foto_url,intereses,facebook,instagram,twitter,gender_identity,preferred_genders"
+            "id,nombre,edad,ciudad,descripcion,foto_url,intereses,facebook,instagram,twitter,gender_identity"
           )
           .eq("id", user.id)
           .maybeSingle();
@@ -973,8 +973,11 @@ button.save,.save { background:linear-gradient(135deg,#b9913d,#f0d88b)!important
           data.twitter || "";
 
         $("genderIdentity").value = data.gender_identity || "";
+        const { data: preferences, error: preferencesError } = await supabase
+          .from("user_preferences").select("preferred_genders").eq("user_id", user.id).maybeSingle();
+        if (preferencesError) throw preferencesError;
         document.querySelectorAll('input[name="preferredGenders"]').forEach(input => {
-          input.checked = Array.isArray(data.preferred_genders) && data.preferred_genders.includes(input.value);
+          input.checked = Array.isArray(preferences?.preferred_genders) && preferences.preferred_genders.includes(input.value);
         });
 
 
@@ -1106,8 +1109,7 @@ button.save,.save { background:linear-gradient(135deg,#b9913d,#f0d88b)!important
               facebook,
               instagram,
               twitter,
-              gender_identity: genderIdentity,
-              preferred_genders: preferredGenders
+              gender_identity: genderIdentity
             })
             .eq("id", user.id);
 
@@ -1116,6 +1118,10 @@ button.save,.save { background:linear-gradient(135deg,#b9913d,#f0d88b)!important
           throw error;
         }
 
+        const { error: preferencesError } = await supabase
+          .from("user_preferences")
+          .upsert({ user_id: user.id, preferred_genders: preferredGenders }, { onConflict: "user_id" });
+        if (preferencesError) throw preferencesError;
 
         showStatus(
           "Perfil actualizado correctamente.",
