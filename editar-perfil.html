@@ -423,6 +423,11 @@ button.save,.save { background:linear-gradient(135deg,#b9913d,#f0d88b)!important
 </style>
 <style id="emimatch-interest-social-premium">
   #interestsSocialSection .section-title h2 { color:#f5df9d; }
+  #genderPreferencesEditor .gender-options{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  #genderPreferencesEditor .gender-options label{display:flex;align-items:center;gap:8px;padding:11px;border:1px solid rgba(228,195,109,.2);border-radius:12px;background:#101010;color:#f7f3e9;font-size:13px}
+  #genderPreferencesEditor input[type="checkbox"]{accent-color:#d8b65b}
+  #genderPreferencesEditor select{width:100%;padding:12px;border-radius:12px}
+  @media(max-width:480px){#genderPreferencesEditor .gender-options{grid-template-columns:1fr}}
   #interestsSocialSection .field label { color:#f4ead1; }
   #interestsSocialSection .help { color:#b8ae97; }
   #interestsSocialSection input:focus { border-color:rgba(240,216,139,.75); box-shadow:0 0 0 3px rgba(217,180,91,.13); }
@@ -551,6 +556,18 @@ button.save,.save { background:linear-gradient(135deg,#b9913d,#f0d88b)!important
 
         </div>
 
+
+
+        <section class="section gender-preferences" id="genderPreferencesEditor">
+          <div class="section-title"><h2>💫 A quién quiero conocer</h2><p>Elegí cómo te identificás y qué personas querés encontrar.</p></div>
+          <div class="field"><label for="genderIdentity">Mi identidad de género</label>
+            <select id="genderIdentity"><option value="">Elegí una opción</option><option value="woman">Mujer</option><option value="man">Hombre</option><option value="nonbinary">Persona no binaria</option><option value="another">Otra identidad</option><option value="prefer_not_to_say">Prefiero no decirlo</option></select>
+          </div>
+          <div class="gender-options">
+            <label><input type="checkbox" name="preferredGenders" value="women"> Mujeres</label><label><input type="checkbox" name="preferredGenders" value="men"> Hombres</label>
+            <label><input type="checkbox" name="preferredGenders" value="nonbinary"> Personas no binarias</label><label><input type="checkbox" name="preferredGenders" value="other"> Otras identidades</label>
+          </div>
+        </section>
 
         <section class="section" id="interestsSocialSection">
           <div class="section-title">
@@ -918,7 +935,7 @@ button.save,.save { background:linear-gradient(135deg,#b9913d,#f0d88b)!important
         await supabase
           .from("profiles")
           .select(
-            "id,nombre,edad,ciudad,descripcion,foto_url,intereses,facebook,instagram,twitter"
+            "id,nombre,edad,ciudad,descripcion,foto_url,intereses,facebook,instagram,twitter,gender_identity"
           )
           .eq("id", user.id)
           .maybeSingle();
@@ -954,6 +971,17 @@ button.save,.save { background:linear-gradient(135deg,#b9913d,#f0d88b)!important
 
         $("twitter").value =
           data.twitter || "";
+
+        $("genderIdentity").value = data.gender_identity || user?.user_metadata?.gender_identity || "";
+        const { data: preferences, error: preferencesError } = await supabase
+          .from("user_preferences").select("preferred_genders").eq("user_id", user.id).maybeSingle();
+        if (preferencesError) throw preferencesError;
+        const preferredFromMetadata = user?.user_metadata?.preferred_genders;
+        const preferredValues = Array.isArray(preferences?.preferred_genders) && preferences.preferred_genders.length
+          ? preferences.preferred_genders : preferredFromMetadata;
+        document.querySelectorAll('input[name="preferredGenders"]').forEach(input => {
+          input.checked = Array.isArray(preferredValues) && preferredValues.includes(input.value);
+        });
 
 
         if (data.foto_url) {
@@ -1013,10 +1041,17 @@ button.save,.save { background:linear-gradient(135deg,#b9913d,#f0d88b)!important
       const facebook = $("facebook").value.trim();
       const instagram = $("instagram").value.trim();
       const twitter = $("twitter").value.trim();
+      const genderIdentity = $("genderIdentity").value;
+      const preferredGenders = [...document.querySelectorAll('input[name="preferredGenders"]:checked')].map(input => input.value);
 
       const edad =
         Number($("edad").value);
 
+
+      if (!["woman","man","nonbinary","another","prefer_not_to_say"].includes(genderIdentity) || preferredGenders.length === 0) {
+        showStatus("Elegí cómo te identificás y al menos una opción de a quién querés conocer.", "error");
+        return;
+      }
 
       if (!nombre) {
 
@@ -1076,7 +1111,8 @@ button.save,.save { background:linear-gradient(135deg,#b9913d,#f0d88b)!important
               intereses,
               facebook,
               instagram,
-              twitter
+              twitter,
+              gender_identity: genderIdentity
             })
             .eq("id", user.id);
 
@@ -1085,6 +1121,10 @@ button.save,.save { background:linear-gradient(135deg,#b9913d,#f0d88b)!important
           throw error;
         }
 
+        const { error: preferencesError } = await supabase
+          .from("user_preferences")
+          .upsert({ user_id: user.id, preferred_genders: preferredGenders }, { onConflict: "user_id" });
+        if (preferencesError) throw preferencesError;
 
         showStatus(
           "Perfil actualizado correctamente.",
