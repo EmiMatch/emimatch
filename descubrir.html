@@ -407,11 +407,15 @@ function genderGroup(identity) {
   return "other";
 }
 async function loadGenderPreferences() {
-  const { data, error } = await client.from("profiles").select("gender_identity,preferred_genders").eq("id", user.id).maybeSingle();
+  const [{ data, error }, { data: preferenceData, error: preferenceError }] = await Promise.all([
+    client.from("profiles").select("gender_identity").eq("id", user.id).maybeSingle(),
+    client.from("user_preferences").select("preferred_genders").eq("user_id", user.id).maybeSingle()
+  ]);
   if (error) throw error;
+  if (preferenceError) throw preferenceError;
   const metadata = user.user_metadata || {};
   currentGenderIdentity = normalizeGenderIdentity(data?.gender_identity || metadata.gender_identity);
-  const source = Array.isArray(data?.preferred_genders) && data.preferred_genders.length ? data.preferred_genders : metadata.preferred_genders;
+  const source = Array.isArray(preferenceData?.preferred_genders) && preferenceData.preferred_genders.length ? preferenceData.preferred_genders : metadata.preferred_genders;
   currentPreferredGenders = Array.isArray(source) ? [...new Set(source.filter(value => ["women","men","nonbinary","other"].includes(value)))] : [];
   $("genderIdentity").value = currentGenderIdentity;
   document.querySelectorAll('input[name="discoverPreferredGenders"]').forEach(input => { input.checked = currentPreferredGenders.includes(input.value); });
@@ -424,8 +428,10 @@ async function saveGenderPreferences() {
   if (!identity || preferred.length === 0) { status.textContent = "Elegí cómo te identificás y al menos una opción de a quién querés conocer."; return; }
   const button = $("saveGenderPreferences"); button.disabled = true; status.textContent = "Guardando preferencias...";
   try {
-    const { error } = await client.from("profiles").upsert({id:user.id,gender_identity:identity,preferred_genders:preferred},{onConflict:"id"});
-    if (error) throw error;
+    const { error: profileError } = await client.from("profiles").upsert({id:user.id,gender_identity:identity},{onConflict:"id"});
+    if (profileError) throw profileError;
+    const { error: preferencesError } = await client.from("user_preferences").upsert({user_id:user.id,preferred_genders:preferred},{onConflict:"user_id"});
+    if (preferencesError) throw preferencesError;
     currentGenderIdentity = identity; currentPreferredGenders = preferred;
     status.textContent = "Preferencias guardadas. Actualizando tus perfiles…";
     await load();
@@ -561,7 +567,7 @@ async function load() {
       if (blocked.includes(profile.id) || swiped.includes(profile.id)) return false;
       const identity = normalizeGenderIdentity(profile.gender_identity);
       // Los perfiles antiguos sin identidad siguen visibles para no excluir usuarios actuales.
-      if (!identity || currentPreferredGenders.length === 0) return true;
+      if (!identity || identity === "prefer_not_to_say" || currentPreferredGenders.length === 0) return true;
       return currentPreferredGenders.includes(genderGroup(identity));
     });
 
