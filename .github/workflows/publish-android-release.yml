@@ -39,7 +39,7 @@ jobs:
           body: |
             **EmiMatch v1.1.5 para Android**
 
-            Descargá `app-release.apk` en tu teléfono Android y abrí el archivo para instalarlo. Esta versión incluye el Centro de ayuda privado para consultas y respuestas, además de la comprobación de versiones corregida y el descarga integrada del APK dentro de la aplicación, progreso visible y apertura del instalador seguro de Android.
+            Descargá `app-release.apk` en tu teléfono Android y abrí el archivo para instalarlo. Esta versión incluye el Centro de ayuda privado para consultas y respuestas, además de la comprobación de versiones y de la descarga integrada del APK desde la aplicación, con progreso visible y confirmación segura de instalación en Android.
             Si Android muestra una advertencia, permití la instalación desde esa fuente solo si confías en el archivo que descargaste.
 
             Web oficial: https://emimatch.github.io/emimatch/
