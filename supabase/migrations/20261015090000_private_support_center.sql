@@ -11,7 +11,8 @@ create table if not exists public.support_requests (
  responded_at timestamptz,
  created_at timestamptz not null default now(),
  updated_at timestamptz not null default now(),
- constraint support_response_length check (admin_response is null or char_length(admin_response) <= 3000)
+ constraint support_response_length check (admin_response is null or char_length(admin_response) <= 3000),
+ constraint support_responded_has_response check (status <> 'respondida' or (admin_response is not null and char_length(trim(admin_response)) >= 2))
 );
 create index if not exists support_requests_user_created_idx on public.support_requests(user_id,created_at desc);
 create index if not exists support_requests_status_created_idx on public.support_requests(status,created_at desc);
