@@ -130,6 +130,13 @@ on public.profiles as restrictive
 for select to authenticated
 using (public.can_view_profile(id));
 
+-- Los álbumes no deben filtrar fotos de administradores ocultos.
+drop policy if exists profile_photos_admin_visibility_guard on public.profile_photos;
+create policy profile_photos_admin_visibility_guard
+on public.profile_photos as restrictive
+for select to authenticated
+using (public.can_view_profile(user_id));
+
 drop policy if exists matches_admin_visibility_guard on public.matches;
 create policy matches_admin_visibility_guard
 on public.matches as restrictive
