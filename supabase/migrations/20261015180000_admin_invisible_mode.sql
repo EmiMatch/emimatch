@@ -124,6 +124,964 @@ $$;
 revoke all on function public.can_access_match(uuid) from public, anon;
 grant execute on function public.can_access_match(uuid) to authenticated;
 
+-- Mantener bloqueados los archivos de conversaciones cuando se revoca el acceso,
+-- aunque el registro del match y los mensajes históricos se conserven.
+drop policy if exists admin_visibility_chat_storage_select_guard on storage.objects;
+create policy admin_visibility_chat_storage_select_guard
+on storage.objects as restrictive for select to authenticated
+using (
+  case
+    when bucket_id not in ('chat-media','chat-audio','chat-files') then true
+    when (storage.foldername(name))[1] ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}
+create policy profiles_admin_visibility_guard
+on public.profiles as restrictive
+for select to authenticated
+using (public.can_view_profile(id));
+
+-- Los álbumes no deben filtrar fotos de administradores ocultos.
+drop policy if exists profile_photos_admin_visibility_guard on public.profile_photos;
+create policy profile_photos_admin_visibility_guard
+on public.profile_photos as restrictive
+for select to authenticated
+using (public.can_view_profile(user_id));
+
+-- Si el bucket avatars es privado, esta regla también protege las lecturas
+-- autenticadas directas por ruta. Las URLs públicas antiguas requieren
+-- migrar a URLs firmadas antes de poder garantizar privacidad fuera de la app.
+drop policy if exists avatars_admin_visibility_guard on storage.objects;
+create policy avatars_admin_visibility_guard
+on storage.objects as restrictive
+for select to authenticated
+using (
+  bucket_id <> 'avatars'
+  or case
+    when (storage.foldername(name))[1] = 'profiles'
+      and (storage.foldername(name))[2] ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}
+
+drop policy if exists matches_admin_visibility_guard on public.matches;
+create policy matches_admin_visibility_guard
+on public.matches as restrictive
+for select to authenticated
+using (public.can_access_match(id));
+
+drop policy if exists messages_admin_visibility_select_guard on public.messages;
+create policy messages_admin_visibility_select_guard
+on public.messages as restrictive
+for select to authenticated
+using (public.can_access_match(match_id));
+
+drop policy if exists messages_admin_visibility_insert_guard on public.messages;
+create policy messages_admin_visibility_insert_guard
+on public.messages as restrictive
+for insert to authenticated
+with check (public.can_access_match(match_id));
+
+drop policy if exists messages_admin_visibility_update_guard on public.messages;
+create policy messages_admin_visibility_update_guard
+on public.messages as restrictive
+for update to authenticated
+using (public.can_access_match(match_id))
+with check (public.can_access_match(match_id));
+
+create or replace function public.is_admin_user(p_user_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $
+  select exists (
+    select 1 from public.admin_users au where au.user_id = p_user_id
+  );
+$;
+
+revoke all on function public.is_admin_user(uuid) from public, anon;
+grant execute on function public.is_admin_user(uuid) to authenticated;
+
+drop policy if exists profile_views_hide_admin_visitors on public.profile_views;
+create policy profile_views_hide_admin_visitors
+on public.profile_views as restrictive
+for select to authenticated
+using (viewer_id is null or not public.is_admin_user(viewer_id));
+
+comment on table public.admin_profile_visibility is
+  'Permisos privados que habilitan a usuarios elegidos a ver el perfil y conversar con una cuenta administradora.';
+
+      then public.can_view_profile(((storage.foldername(name))[2])::uuid)
+    when (storage.foldername(name))[1] ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}
+
+drop policy if exists matches_admin_visibility_guard on public.matches;
+create policy matches_admin_visibility_guard
+on public.matches as restrictive
+for select to authenticated
+using (public.can_access_match(id));
+
+drop policy if exists messages_admin_visibility_select_guard on public.messages;
+create policy messages_admin_visibility_select_guard
+on public.messages as restrictive
+for select to authenticated
+using (public.can_access_match(match_id));
+
+drop policy if exists messages_admin_visibility_insert_guard on public.messages;
+create policy messages_admin_visibility_insert_guard
+on public.messages as restrictive
+for insert to authenticated
+with check (public.can_access_match(match_id));
+
+drop policy if exists messages_admin_visibility_update_guard on public.messages;
+create policy messages_admin_visibility_update_guard
+on public.messages as restrictive
+for update to authenticated
+using (public.can_access_match(match_id))
+with check (public.can_access_match(match_id));
+
+create or replace function public.is_admin_user(p_user_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $
+  select exists (
+    select 1 from public.admin_users au where au.user_id = p_user_id
+  );
+$;
+
+revoke all on function public.is_admin_user(uuid) from public, anon;
+grant execute on function public.is_admin_user(uuid) to authenticated;
+
+drop policy if exists profile_views_hide_admin_visitors on public.profile_views;
+create policy profile_views_hide_admin_visitors
+on public.profile_views as restrictive
+for select to authenticated
+using (viewer_id is null or not public.is_admin_user(viewer_id));
+
+comment on table public.admin_profile_visibility is
+  'Permisos privados que habilitan a usuarios elegidos a ver el perfil y conversar con una cuenta administradora.';
+
+      then public.can_view_profile(((storage.foldername(name))[1])::uuid)
+    else false
+  end
+);
+
+drop policy if exists matches_admin_visibility_guard on public.matches;
+create policy matches_admin_visibility_guard
+on public.matches as restrictive
+for select to authenticated
+using (public.can_access_match(id));
+
+drop policy if exists messages_admin_visibility_select_guard on public.messages;
+create policy messages_admin_visibility_select_guard
+on public.messages as restrictive
+for select to authenticated
+using (public.can_access_match(match_id));
+
+drop policy if exists messages_admin_visibility_insert_guard on public.messages;
+create policy messages_admin_visibility_insert_guard
+on public.messages as restrictive
+for insert to authenticated
+with check (public.can_access_match(match_id));
+
+drop policy if exists messages_admin_visibility_update_guard on public.messages;
+create policy messages_admin_visibility_update_guard
+on public.messages as restrictive
+for update to authenticated
+using (public.can_access_match(match_id))
+with check (public.can_access_match(match_id));
+
+create or replace function public.is_admin_user(p_user_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $
+  select exists (
+    select 1 from public.admin_users au where au.user_id = p_user_id
+  );
+$;
+
+revoke all on function public.is_admin_user(uuid) from public, anon;
+grant execute on function public.is_admin_user(uuid) to authenticated;
+
+drop policy if exists profile_views_hide_admin_visitors on public.profile_views;
+create policy profile_views_hide_admin_visitors
+on public.profile_views as restrictive
+for select to authenticated
+using (viewer_id is null or not public.is_admin_user(viewer_id));
+
+comment on table public.admin_profile_visibility is
+  'Permisos privados que habilitan a usuarios elegidos a ver el perfil y conversar con una cuenta administradora.';
+
+      then public.can_access_match(((storage.foldername(name))[1])::uuid)
+    else false
+  end
+);
+
+drop policy if exists admin_visibility_chat_storage_insert_guard on storage.objects;
+create policy admin_visibility_chat_storage_insert_guard
+on storage.objects as restrictive for insert to authenticated
+with check (
+  case
+    when bucket_id not in ('chat-media','chat-audio','chat-files') then true
+    when (storage.foldername(name))[1] ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}
+create policy profiles_admin_visibility_guard
+on public.profiles as restrictive
+for select to authenticated
+using (public.can_view_profile(id));
+
+-- Los álbumes no deben filtrar fotos de administradores ocultos.
+drop policy if exists profile_photos_admin_visibility_guard on public.profile_photos;
+create policy profile_photos_admin_visibility_guard
+on public.profile_photos as restrictive
+for select to authenticated
+using (public.can_view_profile(user_id));
+
+-- Si el bucket avatars es privado, esta regla también protege las lecturas
+-- autenticadas directas por ruta. Las URLs públicas antiguas requieren
+-- migrar a URLs firmadas antes de poder garantizar privacidad fuera de la app.
+drop policy if exists avatars_admin_visibility_guard on storage.objects;
+create policy avatars_admin_visibility_guard
+on storage.objects as restrictive
+for select to authenticated
+using (
+  bucket_id <> 'avatars'
+  or case
+    when (storage.foldername(name))[1] = 'profiles'
+      and (storage.foldername(name))[2] ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}
+
+drop policy if exists matches_admin_visibility_guard on public.matches;
+create policy matches_admin_visibility_guard
+on public.matches as restrictive
+for select to authenticated
+using (public.can_access_match(id));
+
+drop policy if exists messages_admin_visibility_select_guard on public.messages;
+create policy messages_admin_visibility_select_guard
+on public.messages as restrictive
+for select to authenticated
+using (public.can_access_match(match_id));
+
+drop policy if exists messages_admin_visibility_insert_guard on public.messages;
+create policy messages_admin_visibility_insert_guard
+on public.messages as restrictive
+for insert to authenticated
+with check (public.can_access_match(match_id));
+
+drop policy if exists messages_admin_visibility_update_guard on public.messages;
+create policy messages_admin_visibility_update_guard
+on public.messages as restrictive
+for update to authenticated
+using (public.can_access_match(match_id))
+with check (public.can_access_match(match_id));
+
+create or replace function public.is_admin_user(p_user_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $
+  select exists (
+    select 1 from public.admin_users au where au.user_id = p_user_id
+  );
+$;
+
+revoke all on function public.is_admin_user(uuid) from public, anon;
+grant execute on function public.is_admin_user(uuid) to authenticated;
+
+drop policy if exists profile_views_hide_admin_visitors on public.profile_views;
+create policy profile_views_hide_admin_visitors
+on public.profile_views as restrictive
+for select to authenticated
+using (viewer_id is null or not public.is_admin_user(viewer_id));
+
+comment on table public.admin_profile_visibility is
+  'Permisos privados que habilitan a usuarios elegidos a ver el perfil y conversar con una cuenta administradora.';
+
+      then public.can_view_profile(((storage.foldername(name))[2])::uuid)
+    when (storage.foldername(name))[1] ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}
+
+drop policy if exists matches_admin_visibility_guard on public.matches;
+create policy matches_admin_visibility_guard
+on public.matches as restrictive
+for select to authenticated
+using (public.can_access_match(id));
+
+drop policy if exists messages_admin_visibility_select_guard on public.messages;
+create policy messages_admin_visibility_select_guard
+on public.messages as restrictive
+for select to authenticated
+using (public.can_access_match(match_id));
+
+drop policy if exists messages_admin_visibility_insert_guard on public.messages;
+create policy messages_admin_visibility_insert_guard
+on public.messages as restrictive
+for insert to authenticated
+with check (public.can_access_match(match_id));
+
+drop policy if exists messages_admin_visibility_update_guard on public.messages;
+create policy messages_admin_visibility_update_guard
+on public.messages as restrictive
+for update to authenticated
+using (public.can_access_match(match_id))
+with check (public.can_access_match(match_id));
+
+create or replace function public.is_admin_user(p_user_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $
+  select exists (
+    select 1 from public.admin_users au where au.user_id = p_user_id
+  );
+$;
+
+revoke all on function public.is_admin_user(uuid) from public, anon;
+grant execute on function public.is_admin_user(uuid) to authenticated;
+
+drop policy if exists profile_views_hide_admin_visitors on public.profile_views;
+create policy profile_views_hide_admin_visitors
+on public.profile_views as restrictive
+for select to authenticated
+using (viewer_id is null or not public.is_admin_user(viewer_id));
+
+comment on table public.admin_profile_visibility is
+  'Permisos privados que habilitan a usuarios elegidos a ver el perfil y conversar con una cuenta administradora.';
+
+      then public.can_view_profile(((storage.foldername(name))[1])::uuid)
+    else false
+  end
+);
+
+drop policy if exists matches_admin_visibility_guard on public.matches;
+create policy matches_admin_visibility_guard
+on public.matches as restrictive
+for select to authenticated
+using (public.can_access_match(id));
+
+drop policy if exists messages_admin_visibility_select_guard on public.messages;
+create policy messages_admin_visibility_select_guard
+on public.messages as restrictive
+for select to authenticated
+using (public.can_access_match(match_id));
+
+drop policy if exists messages_admin_visibility_insert_guard on public.messages;
+create policy messages_admin_visibility_insert_guard
+on public.messages as restrictive
+for insert to authenticated
+with check (public.can_access_match(match_id));
+
+drop policy if exists messages_admin_visibility_update_guard on public.messages;
+create policy messages_admin_visibility_update_guard
+on public.messages as restrictive
+for update to authenticated
+using (public.can_access_match(match_id))
+with check (public.can_access_match(match_id));
+
+create or replace function public.is_admin_user(p_user_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $
+  select exists (
+    select 1 from public.admin_users au where au.user_id = p_user_id
+  );
+$;
+
+revoke all on function public.is_admin_user(uuid) from public, anon;
+grant execute on function public.is_admin_user(uuid) to authenticated;
+
+drop policy if exists profile_views_hide_admin_visitors on public.profile_views;
+create policy profile_views_hide_admin_visitors
+on public.profile_views as restrictive
+for select to authenticated
+using (viewer_id is null or not public.is_admin_user(viewer_id));
+
+comment on table public.admin_profile_visibility is
+  'Permisos privados que habilitan a usuarios elegidos a ver el perfil y conversar con una cuenta administradora.';
+
+      then public.can_access_match(((storage.foldername(name))[1])::uuid)
+    else false
+  end
+);
+
+drop policy if exists admin_visibility_chat_storage_update_guard on storage.objects;
+create policy admin_visibility_chat_storage_update_guard
+on storage.objects as restrictive for update to authenticated
+using (
+  case
+    when bucket_id not in ('chat-media','chat-audio','chat-files') then true
+    when (storage.foldername(name))[1] ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}
+create policy profiles_admin_visibility_guard
+on public.profiles as restrictive
+for select to authenticated
+using (public.can_view_profile(id));
+
+-- Los álbumes no deben filtrar fotos de administradores ocultos.
+drop policy if exists profile_photos_admin_visibility_guard on public.profile_photos;
+create policy profile_photos_admin_visibility_guard
+on public.profile_photos as restrictive
+for select to authenticated
+using (public.can_view_profile(user_id));
+
+-- Si el bucket avatars es privado, esta regla también protege las lecturas
+-- autenticadas directas por ruta. Las URLs públicas antiguas requieren
+-- migrar a URLs firmadas antes de poder garantizar privacidad fuera de la app.
+drop policy if exists avatars_admin_visibility_guard on storage.objects;
+create policy avatars_admin_visibility_guard
+on storage.objects as restrictive
+for select to authenticated
+using (
+  bucket_id <> 'avatars'
+  or case
+    when (storage.foldername(name))[1] = 'profiles'
+      and (storage.foldername(name))[2] ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}
+
+drop policy if exists matches_admin_visibility_guard on public.matches;
+create policy matches_admin_visibility_guard
+on public.matches as restrictive
+for select to authenticated
+using (public.can_access_match(id));
+
+drop policy if exists messages_admin_visibility_select_guard on public.messages;
+create policy messages_admin_visibility_select_guard
+on public.messages as restrictive
+for select to authenticated
+using (public.can_access_match(match_id));
+
+drop policy if exists messages_admin_visibility_insert_guard on public.messages;
+create policy messages_admin_visibility_insert_guard
+on public.messages as restrictive
+for insert to authenticated
+with check (public.can_access_match(match_id));
+
+drop policy if exists messages_admin_visibility_update_guard on public.messages;
+create policy messages_admin_visibility_update_guard
+on public.messages as restrictive
+for update to authenticated
+using (public.can_access_match(match_id))
+with check (public.can_access_match(match_id));
+
+create or replace function public.is_admin_user(p_user_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $
+  select exists (
+    select 1 from public.admin_users au where au.user_id = p_user_id
+  );
+$;
+
+revoke all on function public.is_admin_user(uuid) from public, anon;
+grant execute on function public.is_admin_user(uuid) to authenticated;
+
+drop policy if exists profile_views_hide_admin_visitors on public.profile_views;
+create policy profile_views_hide_admin_visitors
+on public.profile_views as restrictive
+for select to authenticated
+using (viewer_id is null or not public.is_admin_user(viewer_id));
+
+comment on table public.admin_profile_visibility is
+  'Permisos privados que habilitan a usuarios elegidos a ver el perfil y conversar con una cuenta administradora.';
+
+      then public.can_view_profile(((storage.foldername(name))[2])::uuid)
+    when (storage.foldername(name))[1] ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}
+
+drop policy if exists matches_admin_visibility_guard on public.matches;
+create policy matches_admin_visibility_guard
+on public.matches as restrictive
+for select to authenticated
+using (public.can_access_match(id));
+
+drop policy if exists messages_admin_visibility_select_guard on public.messages;
+create policy messages_admin_visibility_select_guard
+on public.messages as restrictive
+for select to authenticated
+using (public.can_access_match(match_id));
+
+drop policy if exists messages_admin_visibility_insert_guard on public.messages;
+create policy messages_admin_visibility_insert_guard
+on public.messages as restrictive
+for insert to authenticated
+with check (public.can_access_match(match_id));
+
+drop policy if exists messages_admin_visibility_update_guard on public.messages;
+create policy messages_admin_visibility_update_guard
+on public.messages as restrictive
+for update to authenticated
+using (public.can_access_match(match_id))
+with check (public.can_access_match(match_id));
+
+create or replace function public.is_admin_user(p_user_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $
+  select exists (
+    select 1 from public.admin_users au where au.user_id = p_user_id
+  );
+$;
+
+revoke all on function public.is_admin_user(uuid) from public, anon;
+grant execute on function public.is_admin_user(uuid) to authenticated;
+
+drop policy if exists profile_views_hide_admin_visitors on public.profile_views;
+create policy profile_views_hide_admin_visitors
+on public.profile_views as restrictive
+for select to authenticated
+using (viewer_id is null or not public.is_admin_user(viewer_id));
+
+comment on table public.admin_profile_visibility is
+  'Permisos privados que habilitan a usuarios elegidos a ver el perfil y conversar con una cuenta administradora.';
+
+      then public.can_view_profile(((storage.foldername(name))[1])::uuid)
+    else false
+  end
+);
+
+drop policy if exists matches_admin_visibility_guard on public.matches;
+create policy matches_admin_visibility_guard
+on public.matches as restrictive
+for select to authenticated
+using (public.can_access_match(id));
+
+drop policy if exists messages_admin_visibility_select_guard on public.messages;
+create policy messages_admin_visibility_select_guard
+on public.messages as restrictive
+for select to authenticated
+using (public.can_access_match(match_id));
+
+drop policy if exists messages_admin_visibility_insert_guard on public.messages;
+create policy messages_admin_visibility_insert_guard
+on public.messages as restrictive
+for insert to authenticated
+with check (public.can_access_match(match_id));
+
+drop policy if exists messages_admin_visibility_update_guard on public.messages;
+create policy messages_admin_visibility_update_guard
+on public.messages as restrictive
+for update to authenticated
+using (public.can_access_match(match_id))
+with check (public.can_access_match(match_id));
+
+create or replace function public.is_admin_user(p_user_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $
+  select exists (
+    select 1 from public.admin_users au where au.user_id = p_user_id
+  );
+$;
+
+revoke all on function public.is_admin_user(uuid) from public, anon;
+grant execute on function public.is_admin_user(uuid) to authenticated;
+
+drop policy if exists profile_views_hide_admin_visitors on public.profile_views;
+create policy profile_views_hide_admin_visitors
+on public.profile_views as restrictive
+for select to authenticated
+using (viewer_id is null or not public.is_admin_user(viewer_id));
+
+comment on table public.admin_profile_visibility is
+  'Permisos privados que habilitan a usuarios elegidos a ver el perfil y conversar con una cuenta administradora.';
+
+      then public.can_access_match(((storage.foldername(name))[1])::uuid)
+    else false
+  end
+)
+with check (
+  case
+    when bucket_id not in ('chat-media','chat-audio','chat-files') then true
+    when (storage.foldername(name))[1] ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}
+create policy profiles_admin_visibility_guard
+on public.profiles as restrictive
+for select to authenticated
+using (public.can_view_profile(id));
+
+-- Los álbumes no deben filtrar fotos de administradores ocultos.
+drop policy if exists profile_photos_admin_visibility_guard on public.profile_photos;
+create policy profile_photos_admin_visibility_guard
+on public.profile_photos as restrictive
+for select to authenticated
+using (public.can_view_profile(user_id));
+
+-- Si el bucket avatars es privado, esta regla también protege las lecturas
+-- autenticadas directas por ruta. Las URLs públicas antiguas requieren
+-- migrar a URLs firmadas antes de poder garantizar privacidad fuera de la app.
+drop policy if exists avatars_admin_visibility_guard on storage.objects;
+create policy avatars_admin_visibility_guard
+on storage.objects as restrictive
+for select to authenticated
+using (
+  bucket_id <> 'avatars'
+  or case
+    when (storage.foldername(name))[1] = 'profiles'
+      and (storage.foldername(name))[2] ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}
+
+drop policy if exists matches_admin_visibility_guard on public.matches;
+create policy matches_admin_visibility_guard
+on public.matches as restrictive
+for select to authenticated
+using (public.can_access_match(id));
+
+drop policy if exists messages_admin_visibility_select_guard on public.messages;
+create policy messages_admin_visibility_select_guard
+on public.messages as restrictive
+for select to authenticated
+using (public.can_access_match(match_id));
+
+drop policy if exists messages_admin_visibility_insert_guard on public.messages;
+create policy messages_admin_visibility_insert_guard
+on public.messages as restrictive
+for insert to authenticated
+with check (public.can_access_match(match_id));
+
+drop policy if exists messages_admin_visibility_update_guard on public.messages;
+create policy messages_admin_visibility_update_guard
+on public.messages as restrictive
+for update to authenticated
+using (public.can_access_match(match_id))
+with check (public.can_access_match(match_id));
+
+create or replace function public.is_admin_user(p_user_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $
+  select exists (
+    select 1 from public.admin_users au where au.user_id = p_user_id
+  );
+$;
+
+revoke all on function public.is_admin_user(uuid) from public, anon;
+grant execute on function public.is_admin_user(uuid) to authenticated;
+
+drop policy if exists profile_views_hide_admin_visitors on public.profile_views;
+create policy profile_views_hide_admin_visitors
+on public.profile_views as restrictive
+for select to authenticated
+using (viewer_id is null or not public.is_admin_user(viewer_id));
+
+comment on table public.admin_profile_visibility is
+  'Permisos privados que habilitan a usuarios elegidos a ver el perfil y conversar con una cuenta administradora.';
+
+      then public.can_view_profile(((storage.foldername(name))[2])::uuid)
+    when (storage.foldername(name))[1] ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}
+
+drop policy if exists matches_admin_visibility_guard on public.matches;
+create policy matches_admin_visibility_guard
+on public.matches as restrictive
+for select to authenticated
+using (public.can_access_match(id));
+
+drop policy if exists messages_admin_visibility_select_guard on public.messages;
+create policy messages_admin_visibility_select_guard
+on public.messages as restrictive
+for select to authenticated
+using (public.can_access_match(match_id));
+
+drop policy if exists messages_admin_visibility_insert_guard on public.messages;
+create policy messages_admin_visibility_insert_guard
+on public.messages as restrictive
+for insert to authenticated
+with check (public.can_access_match(match_id));
+
+drop policy if exists messages_admin_visibility_update_guard on public.messages;
+create policy messages_admin_visibility_update_guard
+on public.messages as restrictive
+for update to authenticated
+using (public.can_access_match(match_id))
+with check (public.can_access_match(match_id));
+
+create or replace function public.is_admin_user(p_user_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $
+  select exists (
+    select 1 from public.admin_users au where au.user_id = p_user_id
+  );
+$;
+
+revoke all on function public.is_admin_user(uuid) from public, anon;
+grant execute on function public.is_admin_user(uuid) to authenticated;
+
+drop policy if exists profile_views_hide_admin_visitors on public.profile_views;
+create policy profile_views_hide_admin_visitors
+on public.profile_views as restrictive
+for select to authenticated
+using (viewer_id is null or not public.is_admin_user(viewer_id));
+
+comment on table public.admin_profile_visibility is
+  'Permisos privados que habilitan a usuarios elegidos a ver el perfil y conversar con una cuenta administradora.';
+
+      then public.can_view_profile(((storage.foldername(name))[1])::uuid)
+    else false
+  end
+);
+
+drop policy if exists matches_admin_visibility_guard on public.matches;
+create policy matches_admin_visibility_guard
+on public.matches as restrictive
+for select to authenticated
+using (public.can_access_match(id));
+
+drop policy if exists messages_admin_visibility_select_guard on public.messages;
+create policy messages_admin_visibility_select_guard
+on public.messages as restrictive
+for select to authenticated
+using (public.can_access_match(match_id));
+
+drop policy if exists messages_admin_visibility_insert_guard on public.messages;
+create policy messages_admin_visibility_insert_guard
+on public.messages as restrictive
+for insert to authenticated
+with check (public.can_access_match(match_id));
+
+drop policy if exists messages_admin_visibility_update_guard on public.messages;
+create policy messages_admin_visibility_update_guard
+on public.messages as restrictive
+for update to authenticated
+using (public.can_access_match(match_id))
+with check (public.can_access_match(match_id));
+
+create or replace function public.is_admin_user(p_user_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $
+  select exists (
+    select 1 from public.admin_users au where au.user_id = p_user_id
+  );
+$;
+
+revoke all on function public.is_admin_user(uuid) from public, anon;
+grant execute on function public.is_admin_user(uuid) to authenticated;
+
+drop policy if exists profile_views_hide_admin_visitors on public.profile_views;
+create policy profile_views_hide_admin_visitors
+on public.profile_views as restrictive
+for select to authenticated
+using (viewer_id is null or not public.is_admin_user(viewer_id));
+
+comment on table public.admin_profile_visibility is
+  'Permisos privados que habilitan a usuarios elegidos a ver el perfil y conversar con una cuenta administradora.';
+
+      then public.can_access_match(((storage.foldername(name))[1])::uuid)
+    else false
+  end
+);
+
+drop policy if exists admin_visibility_chat_storage_delete_guard on storage.objects;
+create policy admin_visibility_chat_storage_delete_guard
+on storage.objects as restrictive for delete to authenticated
+using (
+  case
+    when bucket_id not in ('chat-media','chat-audio','chat-files') then true
+    when (storage.foldername(name))[1] ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}
+create policy profiles_admin_visibility_guard
+on public.profiles as restrictive
+for select to authenticated
+using (public.can_view_profile(id));
+
+-- Los álbumes no deben filtrar fotos de administradores ocultos.
+drop policy if exists profile_photos_admin_visibility_guard on public.profile_photos;
+create policy profile_photos_admin_visibility_guard
+on public.profile_photos as restrictive
+for select to authenticated
+using (public.can_view_profile(user_id));
+
+-- Si el bucket avatars es privado, esta regla también protege las lecturas
+-- autenticadas directas por ruta. Las URLs públicas antiguas requieren
+-- migrar a URLs firmadas antes de poder garantizar privacidad fuera de la app.
+drop policy if exists avatars_admin_visibility_guard on storage.objects;
+create policy avatars_admin_visibility_guard
+on storage.objects as restrictive
+for select to authenticated
+using (
+  bucket_id <> 'avatars'
+  or case
+    when (storage.foldername(name))[1] = 'profiles'
+      and (storage.foldername(name))[2] ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}
+
+drop policy if exists matches_admin_visibility_guard on public.matches;
+create policy matches_admin_visibility_guard
+on public.matches as restrictive
+for select to authenticated
+using (public.can_access_match(id));
+
+drop policy if exists messages_admin_visibility_select_guard on public.messages;
+create policy messages_admin_visibility_select_guard
+on public.messages as restrictive
+for select to authenticated
+using (public.can_access_match(match_id));
+
+drop policy if exists messages_admin_visibility_insert_guard on public.messages;
+create policy messages_admin_visibility_insert_guard
+on public.messages as restrictive
+for insert to authenticated
+with check (public.can_access_match(match_id));
+
+drop policy if exists messages_admin_visibility_update_guard on public.messages;
+create policy messages_admin_visibility_update_guard
+on public.messages as restrictive
+for update to authenticated
+using (public.can_access_match(match_id))
+with check (public.can_access_match(match_id));
+
+create or replace function public.is_admin_user(p_user_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $
+  select exists (
+    select 1 from public.admin_users au where au.user_id = p_user_id
+  );
+$;
+
+revoke all on function public.is_admin_user(uuid) from public, anon;
+grant execute on function public.is_admin_user(uuid) to authenticated;
+
+drop policy if exists profile_views_hide_admin_visitors on public.profile_views;
+create policy profile_views_hide_admin_visitors
+on public.profile_views as restrictive
+for select to authenticated
+using (viewer_id is null or not public.is_admin_user(viewer_id));
+
+comment on table public.admin_profile_visibility is
+  'Permisos privados que habilitan a usuarios elegidos a ver el perfil y conversar con una cuenta administradora.';
+
+      then public.can_view_profile(((storage.foldername(name))[2])::uuid)
+    when (storage.foldername(name))[1] ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}
+
+drop policy if exists matches_admin_visibility_guard on public.matches;
+create policy matches_admin_visibility_guard
+on public.matches as restrictive
+for select to authenticated
+using (public.can_access_match(id));
+
+drop policy if exists messages_admin_visibility_select_guard on public.messages;
+create policy messages_admin_visibility_select_guard
+on public.messages as restrictive
+for select to authenticated
+using (public.can_access_match(match_id));
+
+drop policy if exists messages_admin_visibility_insert_guard on public.messages;
+create policy messages_admin_visibility_insert_guard
+on public.messages as restrictive
+for insert to authenticated
+with check (public.can_access_match(match_id));
+
+drop policy if exists messages_admin_visibility_update_guard on public.messages;
+create policy messages_admin_visibility_update_guard
+on public.messages as restrictive
+for update to authenticated
+using (public.can_access_match(match_id))
+with check (public.can_access_match(match_id));
+
+create or replace function public.is_admin_user(p_user_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $
+  select exists (
+    select 1 from public.admin_users au where au.user_id = p_user_id
+  );
+$;
+
+revoke all on function public.is_admin_user(uuid) from public, anon;
+grant execute on function public.is_admin_user(uuid) to authenticated;
+
+drop policy if exists profile_views_hide_admin_visitors on public.profile_views;
+create policy profile_views_hide_admin_visitors
+on public.profile_views as restrictive
+for select to authenticated
+using (viewer_id is null or not public.is_admin_user(viewer_id));
+
+comment on table public.admin_profile_visibility is
+  'Permisos privados que habilitan a usuarios elegidos a ver el perfil y conversar con una cuenta administradora.';
+
+      then public.can_view_profile(((storage.foldername(name))[1])::uuid)
+    else false
+  end
+);
+
+drop policy if exists matches_admin_visibility_guard on public.matches;
+create policy matches_admin_visibility_guard
+on public.matches as restrictive
+for select to authenticated
+using (public.can_access_match(id));
+
+drop policy if exists messages_admin_visibility_select_guard on public.messages;
+create policy messages_admin_visibility_select_guard
+on public.messages as restrictive
+for select to authenticated
+using (public.can_access_match(match_id));
+
+drop policy if exists messages_admin_visibility_insert_guard on public.messages;
+create policy messages_admin_visibility_insert_guard
+on public.messages as restrictive
+for insert to authenticated
+with check (public.can_access_match(match_id));
+
+drop policy if exists messages_admin_visibility_update_guard on public.messages;
+create policy messages_admin_visibility_update_guard
+on public.messages as restrictive
+for update to authenticated
+using (public.can_access_match(match_id))
+with check (public.can_access_match(match_id));
+
+create or replace function public.is_admin_user(p_user_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $
+  select exists (
+    select 1 from public.admin_users au where au.user_id = p_user_id
+  );
+$;
+
+revoke all on function public.is_admin_user(uuid) from public, anon;
+grant execute on function public.is_admin_user(uuid) to authenticated;
+
+drop policy if exists profile_views_hide_admin_visitors on public.profile_views;
+create policy profile_views_hide_admin_visitors
+on public.profile_views as restrictive
+for select to authenticated
+using (viewer_id is null or not public.is_admin_user(viewer_id));
+
+comment on table public.admin_profile_visibility is
+  'Permisos privados que habilitan a usuarios elegidos a ver el perfil y conversar con una cuenta administradora.';
+
+      then public.can_access_match(((storage.foldername(name))[1])::uuid)
+    else false
+  end
+);
+
 drop policy if exists profiles_admin_visibility_guard on public.profiles;
 create policy profiles_admin_visibility_guard
 on public.profiles as restrictive
