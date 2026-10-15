@@ -198,6 +198,19 @@ body{
 .pass,.block { background:#191919!important;color:#e4c36d!important;border-color:rgba(228,195,109,.28)!important }
 </style>
   <link rel="stylesheet" href="assets/css/premium-refresh.css?v=20261014">
+<style id="emimatch-gender-preferences-discover">
+.gender-preferences{margin:0 0 16px;padding:18px;border:1px solid rgba(228,195,109,.28);border-radius:22px;background:linear-gradient(145deg,#171510,#0d0d0d);box-shadow:0 18px 45px rgba(0,0,0,.28)}
+.gender-preferences h2{margin:0 0 8px;color:#f0d88b;font-size:22px}
+.gender-preferences p{margin:0 0 12px;color:#cfc6b0;font-size:13px;line-height:1.5}
+.gender-preferences .gender-label{display:block;margin:0 0 8px;color:#e7dcc4;font-size:13px}
+.gender-preferences select{width:100%;box-sizing:border-box;margin-bottom:12px;padding:12px;border-radius:12px;border:1px solid rgba(228,195,109,.28);background:#111;color:#f7f3e9}
+.gender-preferences .gender-options{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.gender-preferences .gender-options label{display:flex;align-items:center;gap:8px;padding:11px;border:1px solid rgba(228,195,109,.2);border-radius:12px;color:#f7f3e9;background:#101010;font-size:13px}
+.gender-preferences input{accent-color:#d8b65b}
+.gender-preferences button{width:100%;margin-top:12px;padding:12px;border:1px solid #e4c36d;border-radius:12px;background:linear-gradient(135deg,#b9913d,#f0d88b);color:#17130a;font-weight:bold;cursor:pointer}
+#genderPreferenceStatus{margin:10px 0 0}
+@media(max-width:600px){.gender-preferences .gender-options{grid-template-columns:1fr}}
+</style>
 </head>
 
 <body>
@@ -209,6 +222,25 @@ body{
   <div id="likeQuota" class="status" aria-live="polite">
     Comprobando tus Me gusta...
   </div>
+
+  <section id="genderPreferences" class="gender-preferences" aria-labelledby="genderPreferencesTitle">
+    <h2 id="genderPreferencesTitle">💫 A quién querés conocer</h2>
+    <p>Personalizá tus conexiones. Podés cambiar estas opciones cuando quieras.</p>
+    <label class="gender-label" for="genderIdentity">Cómo te identificás</label>
+    <select id="genderIdentity">
+      <option value="">Elegí una opción</option><option value="woman">Mujer</option><option value="man">Hombre</option>
+      <option value="nonbinary">Persona no binaria</option><option value="another">Otra identidad</option><option value="prefer_not_to_say">Prefiero no decirlo</option>
+    </select>
+    <div class="gender-options">
+      <label><input type="checkbox" name="discoverPreferredGenders" value="women"> Mujeres</label>
+      <label><input type="checkbox" name="discoverPreferredGenders" value="men"> Hombres</label>
+      <label><input type="checkbox" name="discoverPreferredGenders" value="nonbinary"> Personas no binarias</label>
+      <label><input type="checkbox" name="discoverPreferredGenders" value="other"> Otras identidades</label>
+    </div>
+    <button id="saveGenderPreferences" type="button">Guardar preferencias</button>
+    <p id="genderPreferenceStatus" aria-live="polite"></p>
+  </section>
+
 
   <section class="filters">
 
@@ -286,6 +318,8 @@ let blocked = [];
 let swiped = [];
 
 let selected = null;
+let currentGenderIdentity = "";
+let currentPreferredGenders = [];
 
 const $ = id => document.getElementById(id);
 
@@ -344,6 +378,8 @@ async function start() {
 
     user = session.user;
 
+    await loadGenderPreferences();
+    $("saveGenderPreferences").addEventListener("click", saveGenderPreferences);
     await refreshLikeQuota();
     await load();
 
@@ -354,6 +390,50 @@ async function start() {
     $("status").textContent =
       "No se pudo iniciar la sección Descubrir.";
   }
+}
+
+
+/* =========================
+   PREFERENCIAS DE GÉNERO
+========================= */
+
+function normalizeGenderIdentity(value) {
+  return ["woman","man","nonbinary","another","prefer_not_to_say"].includes(value) ? value : "";
+}
+function genderGroup(identity) {
+  if (identity === "woman") return "women";
+  if (identity === "man") return "men";
+  if (identity === "nonbinary") return "nonbinary";
+  return "other";
+}
+async function loadGenderPreferences() {
+  const { data, error } = await client.from("profiles").select("gender_identity,preferred_genders").eq("id", user.id).maybeSingle();
+  if (error) throw error;
+  const metadata = user.user_metadata || {};
+  currentGenderIdentity = normalizeGenderIdentity(data?.gender_identity || metadata.gender_identity);
+  const source = Array.isArray(data?.preferred_genders) && data.preferred_genders.length ? data.preferred_genders : metadata.preferred_genders;
+  currentPreferredGenders = Array.isArray(source) ? [...new Set(source.filter(value => ["women","men","nonbinary","other"].includes(value)))] : [];
+  $("genderIdentity").value = currentGenderIdentity;
+  document.querySelectorAll('input[name="discoverPreferredGenders"]').forEach(input => { input.checked = currentPreferredGenders.includes(input.value); });
+  if (!currentGenderIdentity || currentPreferredGenders.length === 0) $("genderPreferenceStatus").textContent = "Completá tus preferencias para personalizar los perfiles que ves.";
+}
+async function saveGenderPreferences() {
+  const identity = normalizeGenderIdentity($("genderIdentity").value);
+  const preferred = [...document.querySelectorAll('input[name="discoverPreferredGenders"]:checked')].map(input => input.value);
+  const status = $("genderPreferenceStatus");
+  if (!identity || preferred.length === 0) { status.textContent = "Elegí cómo te identificás y al menos una opción de a quién querés conocer."; return; }
+  const button = $("saveGenderPreferences"); button.disabled = true; status.textContent = "Guardando preferencias...";
+  try {
+    const { error } = await client.from("profiles").upsert({id:user.id,gender_identity:identity,preferred_genders:preferred},{onConflict:"id"});
+    if (error) throw error;
+    currentGenderIdentity = identity; currentPreferredGenders = preferred;
+    status.textContent = "Preferencias guardadas. Actualizando tus perfiles…";
+    await load();
+    status.textContent = "Preferencias guardadas correctamente.";
+  } catch (error) {
+    console.error("Error al guardar preferencias de género:", error);
+    status.textContent = "No se pudieron guardar las preferencias. " + (error?.message || "");
+  } finally { button.disabled = false; }
 }
 
 
@@ -439,7 +519,7 @@ async function load() {
   let query = client
     .from("profiles")
     .select(
-      "id,nombre,edad,ciudad,descripcion,foto_url,intereses"
+      "id,nombre,edad,ciudad,descripcion,foto_url,intereses,gender_identity"
     )
     .neq("id", user.id)
     .gte("edad", min)
@@ -477,10 +557,13 @@ async function load() {
   ========================= */
 
   profiles =
-    (data || []).filter(profile =>
-      !blocked.includes(profile.id) &&
-      !swiped.includes(profile.id)
-    );
+    (data || []).filter(profile => {
+      if (blocked.includes(profile.id) || swiped.includes(profile.id)) return false;
+      const identity = normalizeGenderIdentity(profile.gender_identity);
+      // Los perfiles antiguos sin identidad siguen visibles para no excluir usuarios actuales.
+      if (!identity || currentPreferredGenders.length === 0) return true;
+      return currentPreferredGenders.includes(genderGroup(identity));
+    });
 
   index = 0;
 
