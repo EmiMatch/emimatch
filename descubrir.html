@@ -417,6 +417,20 @@ async function loadGenderPreferences() {
   currentGenderIdentity = normalizeGenderIdentity(data?.gender_identity || metadata.gender_identity);
   const source = Array.isArray(preferenceData?.preferred_genders) && preferenceData.preferred_genders.length ? preferenceData.preferred_genders : metadata.preferred_genders;
   currentPreferredGenders = Array.isArray(source) ? [...new Set(source.filter(value => ["women","men","nonbinary","other"].includes(value)))] : [];
+
+  // Al primer ingreso, copiamos las respuestas del registro a las tablas de la app.
+  // Así la identidad del perfil también queda disponible para personalizar los resultados de otras personas.
+  if (!data?.gender_identity && currentGenderIdentity) {
+    const { error: identitySyncError } = await client.from("profiles")
+      .upsert({ id: user.id, gender_identity: currentGenderIdentity }, { onConflict: "id" });
+    if (identitySyncError) throw identitySyncError;
+  }
+  if ((!Array.isArray(preferenceData?.preferred_genders) || preferenceData.preferred_genders.length === 0) && currentPreferredGenders.length > 0) {
+    const { error: preferenceSyncError } = await client.from("user_preferences")
+      .upsert({ user_id: user.id, preferred_genders: currentPreferredGenders }, { onConflict: "user_id" });
+    if (preferenceSyncError) throw preferenceSyncError;
+  }
+
   $("genderIdentity").value = currentGenderIdentity;
   document.querySelectorAll('input[name="discoverPreferredGenders"]').forEach(input => { input.checked = currentPreferredGenders.includes(input.value); });
   if (!currentGenderIdentity || currentPreferredGenders.length === 0) $("genderPreferenceStatus").textContent = "Completá tus preferencias para personalizar los perfiles que ves.";
