@@ -3,6 +3,8 @@ name: EmiMatch - APK Android
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -77,8 +79,8 @@ jobs:
         run: |
           set -euo pipefail
           grep -q 'applicationId "com.emimatch.app"' android/app/build.gradle
-          grep -q 'versionCode 5' android/app/build.gradle
-          grep -q 'versionName "1.1.3"' android/app/build.gradle
+          grep -q 'versionCode 6' android/app/build.gradle
+          grep -q 'versionName "1.1.4"' android/app/build.gradle
           test -s android/app/src/main/AndroidManifest.xml
 
       - name: Preparar firma privada de publicación si está configurada
@@ -169,10 +171,36 @@ jobs:
           fi
           echo "Firma del APK release verificada; certificado SHA-256 presente y no corresponde a Android Debug."
 
+      - name: Comprobar compatibilidad de firma con la versión publicada 1.1.3
+        if: ${{ steps.prepare-signing.outputs.release_ready == 'true' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          APKSIGNER="$ANDROID_HOME/build-tools/36.0.0/apksigner"
+          BASELINE_APK="$RUNNER_TEMP/emimatch-v1.1.3.apk"
+          BASELINE_URL="https://github.com/EmiMatch/emimatch/releases/download/v1.1.3/app-release.apk"
+          curl --fail --location --silent --show-error "$BASELINE_URL" --output "$BASELINE_APK"
+          test -s "$BASELINE_APK"
+          "$APKSIGNER" verify --print-certs "$BASELINE_APK" 2>&1 | tee "$RUNNER_TEMP/emimatch-v1.1.3-signature.txt"
+          "$APKSIGNER" verify --print-certs "android/app/build/outputs/apk/release/app-release.apk" 2>&1 | tee "$RUNNER_TEMP/emimatch-v1.1.4-signature.txt"
+          OLD_CERT="$(sed -n 's/.*Signer #1 certificate SHA-256 digest: *//p' "$RUNNER_TEMP/emimatch-v1.1.3-signature.txt" | head -n 1 | tr '[:upper:]' '[:lower:]')"
+          NEW_CERT="$(sed -n 's/.*Signer #1 certificate SHA-256 digest: *//p' "$RUNNER_TEMP/emimatch-v1.1.4-signature.txt" | head -n 1 | tr '[:upper:]' '[:lower:]')"
+          if [[ -z "$OLD_CERT" || -z "$NEW_CERT" ]]; then
+            echo "::error::No se pudo leer la huella de firma de ambos APK."
+            exit 1
+          fi
+          if [[ "$OLD_CERT" != "$NEW_CERT" ]]; then
+            echo "::error::La firma de v1.1.4 no coincide con el APK publicado v1.1.3. Se detiene la publicación para evitar un conflicto de instalación."
+            echo "Certificado 1.1.3: $OLD_CERT"
+            echo "Certificado 1.1.4: $NEW_CERT"
+            exit 1
+          fi
+          echo "Compatibilidad de firma confirmada: v1.1.3 y v1.1.4 usan el mismo certificado."
+
       - name: Publicar APK Android
         uses: actions/upload-artifact@v4
         with:
-          name: EmiMatch-APK-Android-v1.1.3-debug
+          name: EmiMatch-APK-Android-v1.1.4-debug
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 14
@@ -181,7 +209,7 @@ jobs:
         if: ${{ steps.prepare-signing.outputs.release_ready == 'true' }}
         uses: actions/upload-artifact@v4
         with:
-          name: EmiMatch-APK-Android-v1.1.3-release
+          name: EmiMatch-APK-Android-v1.1.4-release
           path: android/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
           retention-days: 30

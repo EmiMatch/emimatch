@@ -424,6 +424,45 @@ if (exists("notificaciones.html")) {
   }
 }
 
+/* 11. AVISO DE ACTUALIZACIÓN ANDROID */
+
+console.log("");
+console.log("📲 ACTUALIZACIONES ANDROID");
+
+if (exists("version.json") && exists("android/app/build.gradle") && exists("assets/js/app.js") && exists("assets/js/config.js")) {
+  const versionInfo = JSON.parse(read("version.json"));
+  const gradle = read("android/app/build.gradle");
+  const appJs = read("assets/js/app.js");
+  const configJs = read("assets/js/config.js");
+  const buildName = gradle.match(/versionName\s+"([^"]+)"/)?.[1];
+  const buildCode = gradle.match(/versionCode\s+(\d+)/)?.[1];
+  const updaterVersion = appJs.match(/const ANDROID_VERSION\s*=\s*"([^"]+)"/)?.[1];
+  const configVersion = configJs.match(/version:\s*"([^"]+)"/)?.[1];
+
+  if (versionInfo.latestVersion === buildName && updaterVersion === buildName && configVersion === buildName) {
+    ok("La versión publicada, Android y el aviso de actualización coinciden");
+  } else {
+    error("Las versiones de version.json, Android, app.js y config.js no coinciden");
+  }
+
+  if (Number(buildCode) >= 1) ok("versionCode de Android es válido");
+  else error("versionCode de Android no es válido");
+
+  if (appJs.includes("/releases/latest/download/app-release.apk")) {
+    ok("El aviso enlaza directamente al APK de la última versión");
+  } else {
+    error("El aviso no apunta a la descarga directa del APK");
+  }
+
+  if (appJs.includes('link.textContent = "Descargar APK"')) {
+    ok("El botón de actualización identifica claramente la descarga");
+  } else {
+    error("Falta el texto del botón de descarga de APK");
+  }
+} else {
+  error("Faltan archivos necesarios para verificar las actualizaciones Android");
+}
+
 /* RESULTADO */
 
 console.log("");
