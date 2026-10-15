@@ -972,12 +972,15 @@ button.save,.save { background:linear-gradient(135deg,#b9913d,#f0d88b)!important
         $("twitter").value =
           data.twitter || "";
 
-        $("genderIdentity").value = data.gender_identity || "";
+        $("genderIdentity").value = data.gender_identity || user?.user_metadata?.gender_identity || "";
         const { data: preferences, error: preferencesError } = await supabase
           .from("user_preferences").select("preferred_genders").eq("user_id", user.id).maybeSingle();
         if (preferencesError) throw preferencesError;
+        const preferredFromMetadata = user?.user_metadata?.preferred_genders;
+        const preferredValues = Array.isArray(preferences?.preferred_genders) && preferences.preferred_genders.length
+          ? preferences.preferred_genders : preferredFromMetadata;
         document.querySelectorAll('input[name="preferredGenders"]').forEach(input => {
-          input.checked = Array.isArray(preferences?.preferred_genders) && preferences.preferred_genders.includes(input.value);
+          input.checked = Array.isArray(preferredValues) && preferredValues.includes(input.value);
         });
 
 
