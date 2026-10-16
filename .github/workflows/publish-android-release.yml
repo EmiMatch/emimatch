@@ -17,7 +17,7 @@ jobs:
       - name: Descargar APK release firmado del flujo terminado
         uses: actions/download-artifact@v4
         with:
-          name: EmiMatch-APK-Android-v1.1.5-release
+          name: EmiMatch-APK-Android-v1.1.6-release
           path: release
           repository: ${{ github.repository }}
           run-id: ${{ github.event.workflow_run.id }}
@@ -34,12 +34,12 @@ jobs:
       - name: Crear o actualizar GitHub Release público
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.1.5
-          name: EmiMatch v1.1.5
+          tag_name: v1.1.6
+          name: EmiMatch v1.1.6
           body: |
-            **EmiMatch v1.1.5 para Android**
+            **EmiMatch v1.1.6 para Android**
 
-            Descargá `app-release.apk` en tu teléfono Android y abrí el archivo para instalarlo. Esta versión incluye el Centro de ayuda privado para consultas y respuestas, además de la comprobación de versiones y de la descarga integrada del APK desde la aplicación, con progreso visible y confirmación segura de instalación en Android.
+            Descargá `app-release.apk` en tu teléfono Android y abrí el archivo para instalarlo. Esta versión incorpora las preferencias de identidad y de personas que querés conocer, además de la comprobación de versiones y la descarga integrada del APK con progreso visible y confirmación segura de instalación en Android.
             Si Android muestra una advertencia, permití la instalación desde esa fuente solo si confías en el archivo que descargaste.
 
             Web oficial: https://emimatch.github.io/emimatch/
