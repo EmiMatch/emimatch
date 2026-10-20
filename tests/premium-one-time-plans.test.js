@@ -53,6 +53,8 @@ const checks = [
     assert.match(webhook, /supabase\.rpc\(\s*"grant_one_time_premium_period"/);
     assert.ok(webhook.indexOf('if (isOneTimePurchase && status === "approved")') < webhook.indexOf('const { data: existingPayment'));
   }],
+  ["El registro de eventos tolera entregas concurrentes duplicadas", () =>
+    assert.match(webhook, /\.from\("premium_events"\)[\s\S]*?\.upsert\([\s\S]*?onConflict: "provider,provider_event_id", ignoreDuplicates: true/)],
   ["El webhook no infiere ARS si falta la moneda", () =>
     assert.match(webhook, /actualCurrency = typeof payment\?\.currency_id === "string"[\s\S]*?\? payment\.currency_id\.trim\(\)[\s\S]*?: ""/)],
   ["authorized_payment no activa planes de pago único por el flujo recurrente", () => {
