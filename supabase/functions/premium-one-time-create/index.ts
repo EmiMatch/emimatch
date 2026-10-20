@@ -24,6 +24,22 @@ const PRODUCTION_WEBHOOK_URL = "https://kngiadwaesdbmvwivdev.supabase.co/functio
 
 function resolveWebhookUrl(): string {
   if (MERCADOPAGO_TEST_MODE) {
+    // Test purchases must write only to an isolated Supabase project too.
+    // An isolated webhook alone is not enough: otherwise test rows would be
+    // created in production and the isolated webhook could not find them.
+    let supabaseProjectUrl: URL;
+    try {
+      supabaseProjectUrl = new URL(SUPABASE_URL);
+    } catch {
+      throw new Error("El modo de prueba requiere la URL HTTPS de un proyecto Supabase aislado. No se usará producción.");
+    }
+    if (
+      supabaseProjectUrl.protocol !== "https:" ||
+      supabaseProjectUrl.hostname === "kngiadwaesdbmvwivdev.supabase.co"
+    ) {
+      throw new Error("El modo de prueba requiere un proyecto Supabase aislado, distinto de producción.");
+    }
+
     const testWebhookUrl = (Deno.env.get("MERCADOPAGO_TEST_WEBHOOK_URL") ?? "").trim();
     let parsed: URL;
     try {
