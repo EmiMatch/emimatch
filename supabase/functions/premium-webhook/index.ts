@@ -491,6 +491,53 @@ status = "refunded";
 status = "rejected";
 }
 
+// For one-time purchases, the database transaction owns both payment approval
+// and entitlement extension. This prevents concurrent webhook deliveries from
+// extending the same purchase twice.
+if (isOneTimePurchase && status === "approved") {
+  const { data: grantResult, error: grantError } = await supabase.rpc(
+    "grant_one_time_premium_period",
+    {
+      p_subscription_id: localSubscription.id,
+      p_provider_payment_id: providerPaymentId,
+      p_amount: Number(payment?.transaction_amount),
+      p_currency: String(payment?.currency_id ?? "").trim(),
+      p_paid_at: payment?.date_approved ?? null,
+    },
+  );
+
+  if (grantError) {
+    console.error("No se pudo activar el Premium de pago único de forma atómica:", grantError);
+    throw grantError;
+  }
+
+  await saveEvent({
+    eventType: "payment",
+    eventId,
+    userId: localSubscription.user_id,
+    subscriptionId: localSubscription.id,
+    paymentId: grantResult?.payment_id ?? null,
+    metadata: {
+      provider_payment_id: providerPaymentId,
+      mercadopago_status: mpStatus,
+      normalized_status: status,
+      external_reference: externalReference,
+      preapproval_id: providerSubscriptionId,
+      one_time_period_granted: Boolean(grantResult?.granted),
+      duplicate_payment: Boolean(grantResult?.duplicate),
+    },
+  });
+
+  return {
+    processed: true,
+    subscription_id: localSubscription.id,
+    payment_id: grantResult?.payment_id ?? null,
+    status,
+    duplicate_payment: Boolean(grantResult?.duplicate),
+    one_time_period_granted: Boolean(grantResult?.granted),
+  };
+}
+
 const { data: existingPayment, error: findError } =
 await supabase
 .from("premium_payments")
