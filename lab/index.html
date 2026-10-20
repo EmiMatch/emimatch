@@ -87,7 +87,7 @@ async function checkLabUpdate(){
   const latest=await response.text();
   const required=['LAB · DEMO','data-check-update','incomingRequests','data-social-tab="personas"','data-social-tab="solicitudes"','data-social-tab="amigos"','data-social-tab="guardados"','data-accept-friend','data-reject-friend'];
   if(latest.length<10000||required.some(part=>!latest.includes(part)))throw new Error('La versión remota no contiene todas las pantallas de Social');
-  if(!/<script>[\\s\\S]*?<\\/script>/.test(latest))throw new Error('La versión recibida está incompleta');
+  if(!latest.includes('<script>')||!latest.includes('</script>'))throw new Error('La versión recibida está incompleta');
   const version='social-tabs-2026-10-20-v2';
   const updated=latest.replace('</head>','<meta name="emimatch-lab-ui-version" content="'+version+'"></head>');
   // No confiar en localStorage para decidir si actualizar: puede quedar guardado
