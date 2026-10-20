@@ -106,10 +106,10 @@ const checks = [
 
   ["El checkout de Android abre Mercado Pago mediante el puente nativo seguro", () => {
     const updater = read("android/app/src/main/java/com/emimatch/app/EmiMatchUpdater.java");
-    assert.match(membershipPage, /window\\.EmiMatchUpdater\\.openExternalUrl\\(checkoutUrl\\)/);
-    assert.match(updater, /public void openExternalUrl\\(String rawUrl\\)/);
-    assert.match(updater, /"https"\\.equalsIgnoreCase\\(scheme\\)/);
-    assert.match(updater, /mercadopago\\.com\\.ar/);
+    assert.ok(membershipPage.includes("window.EmiMatchUpdater.openExternalUrl(checkoutUrl)"));
+    assert.ok(updater.includes("public void openExternalUrl(String rawUrl)"));
+    assert.ok(updater.includes('"https".equalsIgnoreCase(scheme)'));
+    assert.ok(updater.includes("mercadopago.com.ar"));
   }],
 ];
 
