@@ -1,5 +1,5 @@
 {
   "app": "EmiMatch",
-  "latestVersion": "1.1.8",
-  "releaseNotes": "La pantalla Premium presenta planes de pago único de 1, 3, 6 y 12 meses. Las compras nuevas siguen deshabilitadas hasta completar las pruebas; las cuentas Premium existentes conservan su estado."
+  "latestVersion": "1.1.9",
+  "releaseNotes": "Mejora de Premium en Android: los planes muestran claramente que se puede continuar a Mercado Pago y el checkout se abre en el navegador seguro del dispositivo. La activación sigue dependiendo de la confirmación del pago."
 }
