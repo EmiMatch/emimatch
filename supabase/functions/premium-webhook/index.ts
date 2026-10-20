@@ -443,7 +443,9 @@ payment?.status ?? "",
 ).toLowerCase();
 
 const isOneTimePurchase = localSubscription.purchase_type === "one_time";
-if (isOneTimePurchase) {
+// Only approvals grant Premium, so only approvals require amount/currency validation.
+// Refunds and chargebacks must still reach the revocation path if MP omits currency.
+if (isOneTimePurchase && mpStatus === "approved") {
   const expectedAmount = Number(localSubscription.purchase_amount);
   const actualAmount = Number(payment?.transaction_amount);
   const expectedCurrency = String(localSubscription.purchase_currency ?? "");
