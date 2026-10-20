@@ -54,6 +54,9 @@ const checks = [
   }],
   ["El webhook no infiere ARS si falta la moneda", () =>
     assert.match(webhook, /actualCurrency = typeof payment\?\.currency_id === "string"[\s\S]*?\? payment\.currency_id\.trim\(\)[\s\S]*?: ""/)],
+  ["authorized_payment no activa planes de pago único por el flujo recurrente", () => {
+    assert.match(webhook, /localSubscription\.purchase_type === "one_time"[\s\S]*?one_time_requires_payment_event/);
+  }],
   ["La creación de checkout valida usuario y lista de precios del servidor", () => {
     assert.match(creator, /auth\.getUser\(accessToken\)/);
     assert.match(creator, /month: \{ name: "EmiMatch Premium — 1 mes", amount: 4990, months: 1 \}/);
