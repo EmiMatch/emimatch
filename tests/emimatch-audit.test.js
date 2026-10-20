@@ -367,6 +367,15 @@ for (const page of refreshPages) {
   }
 
   const html = read(page);
+  const standalonePremiumPages = new Set(["membresia/membresia.html", "membresía/membresía.html"]);
+  if (standalonePremiumPages.has(page)) {
+    if (html.includes('class="grid"') && html.includes("--gold:#f5c451")) {
+      ok(`${page}: diseño Premium negro y dorado independiente presente`);
+    } else {
+      error(`${page}: falta el diseño Premium independiente esperado`);
+    }
+    continue;
+  }
   const expectedPath = page.includes("/") ? "../assets/css/premium-refresh.css" : "assets/css/premium-refresh.css";
   if (html.includes(expectedPath)) {
     ok(`${page}: estilo premium enlazado con ruta relativa correcta`);
