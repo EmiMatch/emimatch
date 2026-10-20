@@ -54,7 +54,7 @@ const checks = [
     assert.ok(webhook.indexOf('if (isOneTimePurchase && mpStatus === "approved")') < webhook.indexOf('const { data: existingPayment'));
   }],
   ["El registro de eventos tolera entregas concurrentes duplicadas", () =>
-    assert.match(webhook, /\.from\("premium_events"\)[\s\S]*?\.upsert\([\s\S]*?onConflict: "provider,provider_event_id", ignoreDuplicates: true/)],
+    assert.match(webhook, /\.from\("premium_events"\)[\s\S]*?\.upsert\([\s\S]*?onConflict: "provider,provider_event_id",[\\s\\S]*?ignoreDuplicates: true/)],
   ["El webhook valida importe y moneda para aprobaciones, sin bloquear reembolsos por moneda ausente", () => {
     assert.ok(webhook.includes('if (isOneTimePurchase && mpStatus === "approved") {'));
     assert.ok(webhook.indexOf('if (isOneTimePurchase && mpStatus === "approved") {') < webhook.indexOf('if (status === "refunded" || status === "charged_back") {'));
