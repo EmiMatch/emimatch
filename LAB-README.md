@@ -27,4 +27,4 @@ El workflow `.github/workflows/build-lab-apk.yml` se ejecuta al actualizar esta 
 4. Probar cada módulo y solo después proponer cambios de producción.
 
 ## Validación de la demo interactiva
-La revisión de código del 20 de octubre de 2026 confirma que el HTML de la demo incluye interacciones locales para perfiles, likes, publicaciones, comentarios, guardados, chats de ejemplo, preferencias de perfil y vistas conceptuales de Live y Contenidos. Estas interacciones no persisten después de cerrar la demo y no usan servicios reales.
+La revisión de código del 20 de octubre de 2026 confirma interacciones locales para perfiles, likes, publicaciones, comentarios, guardados, chats de ejemplo, preferencias de perfil y vistas conceptuales de Live y Contenidos. La ampliación de Social incluye pestañas de publicaciones, personas, solicitudes de amistad y guardados; botones simulados de seguir/agregar amigo; selector de privacidad por publicación; y acción de reportar contenido. Todo es temporal y ficticio: no persiste después de cerrar la demo y no usa servicios reales.
