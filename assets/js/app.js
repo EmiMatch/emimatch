@@ -1,6 +1,6 @@
 /* =====================================================
    EmiMatch — Núcleo central de aplicación
-   v1.1.6
+   v1.1.7
 ===================================================== */
 
 (() => {
@@ -35,7 +35,7 @@
   window.EmiMatchApp.logUpdate("Núcleo central cargado correctamente.");
 
   // Aviso de nuevas versiones para la app Android. No interfiere con el sitio web.
-  const ANDROID_VERSION = "1.1.6";
+  const ANDROID_VERSION = "1.1.7";
   const VERSION_INFO_URL = "https://emimatch.github.io/emimatch/version.json";
 
   function compareVersions(current, latest) {
