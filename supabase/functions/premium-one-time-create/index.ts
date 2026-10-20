@@ -142,9 +142,11 @@ Deno.serve(async (request) => {
       throw new Error("No se pudo preparar la compra Premium.");
     }
 
-    const preference = await mpRequest("/checkout/preferences", {
-      method: "POST",
-      body: JSON.stringify({
+    let preference: any;
+    try {
+      preference = await mpRequest("/checkout/preferences", {
+        method: "POST",
+        body: JSON.stringify({
         items: [{
           id: `emimatch-premium-${selectedPlan.months}m`,
           title: selectedPlan.name,
@@ -169,8 +171,16 @@ Deno.serve(async (request) => {
           plan_key: planKey,
         },
         statement_descriptor: "EMIMATCH",
-      }),
-    });
+        }),
+      });
+    } catch (preferenceError) {
+      await supabase.from("premium_subscriptions").update({
+        status: "cancelled",
+        cancelled_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      }).eq("id", localPurchase.id);
+      throw preferenceError;
+    }
 
     const checkoutUrl = MERCADOPAGO_TEST_MODE
       ? preference?.sandbox_init_point
