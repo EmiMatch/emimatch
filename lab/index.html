@@ -81,17 +81,25 @@ async function checkLabUpdate(){
  const btn=document.querySelector('[data-check-update]');
  if(btn){btn.disabled=true;btn.textContent='Buscando…'}
  try{
-  const url='https://raw.githubusercontent.com/EmiMatch/emimatch/lab-desarrollo/lab/index.html?t='+Date.now();
-  const response=await fetch(url,{cache:'no-store',headers:{'Accept':'text/html'}});
+  const url='https://raw.githubusercontent.com/EmiMatch/emimatch/lab-desarrollo/lab/index.html?refresh='+Date.now();
+  const response=await fetch(url,{method:'GET',cache:'no-store',headers:{'Accept':'text/plain, text/html;q=0.9,*/*;q=0.8'}});
   if(!response.ok)throw new Error('No se pudo consultar la versión publicada');
-  let latest=await response.text();
-  if(!latest.includes('LAB · DEMO')||!latest.includes('data-check-update')||!latest.includes('incomingRequests'))throw new Error('La versión remota no pasó la validación de estructura');
-  if(latest.length<10000)throw new Error('La versión recibida está incompleta');
-  if(localStorage.getItem('emimatch_lab_last_remote')===latest){toast('Ya tenés la última versión del demo');if(btn){btn.disabled=false;btn.textContent='↻ Actualizar'}return}
-  localStorage.setItem('emimatch_lab_last_remote',latest);
-  latest=latest.replace('</head>','<meta name="emimatch-lab-remote" content="1"></head>');
-  document.open();document.write(latest);document.close();
- }catch(err){toast('No se pudo actualizar ahora. Revisá tu conexión e intentá otra vez.');if(btn){btn.disabled=false;btn.textContent='↻ Actualizar'}}
+  const latest=await response.text();
+  const required=['LAB · DEMO','data-check-update','incomingRequests','data-social-tab="personas"','data-social-tab="solicitudes"','data-social-tab="amigos"','data-social-tab="guardados"','data-accept-friend','data-reject-friend'];
+  if(latest.length<10000||required.some(part=>!latest.includes(part)))throw new Error('La versión remota no contiene todas las pantallas de Social');
+  if(!/<script>[\\s\\S]*?<\\/script>/.test(latest))throw new Error('La versión recibida está incompleta');
+  const version='social-tabs-2026-10-20-v2';
+  const updated=latest.replace('</head>','<meta name="emimatch-lab-ui-version" content="'+version+'"></head>');
+  // No confiar en localStorage para decidir si actualizar: puede quedar guardado
+  // un HTML nuevo aunque una carga anterior no haya terminado.
+  document.open();
+  document.write(updated);
+  document.close();
+ }catch(err){
+  console.error('EmiMatch Lab update failed:',err);
+  toast('No se pudo actualizar. Revisá tu conexión y volvé a tocar Actualizar.');
+  if(btn){btn.disabled=false;btn.textContent='↻ Actualizar'}
+ }
 }
 document.addEventListener('click',e=>{const b=e.target.closest('[data-check-update]');if(b){e.preventDefault();checkLabUpdate()}});
 go('inicio');
