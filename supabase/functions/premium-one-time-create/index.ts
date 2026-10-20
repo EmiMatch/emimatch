@@ -20,7 +20,29 @@ const MERCADOPAGO_TEST_PAYER_EMAIL =
   "";
 
 const MEMBERSHIP_URL = "https://emimatch.github.io/emimatch/membresia/membresia.html";
-const WEBHOOK_URL = "https://kngiadwaesdbmvwivdev.supabase.co/functions/v1/premium-webhook";
+const PRODUCTION_WEBHOOK_URL = "https://kngiadwaesdbmvwivdev.supabase.co/functions/v1/premium-webhook";
+
+function resolveWebhookUrl(): string {
+  if (MERCADOPAGO_TEST_MODE) {
+    const testWebhookUrl = (Deno.env.get("MERCADOPAGO_TEST_WEBHOOK_URL") ?? "").trim();
+    let parsed: URL;
+    try {
+      parsed = new URL(testWebhookUrl);
+    } catch {
+      throw new Error("El modo de prueba requiere MERCADOPAGO_TEST_WEBHOOK_URL de un entorno aislado. No se usará el webhook de producción.");
+    }
+    if (
+      parsed.protocol !== "https:" ||
+      parsed.hostname === "kngiadwaesdbmvwivdev.supabase.co"
+    ) {
+      throw new Error("El modo de prueba requiere un webhook HTTPS de un proyecto aislado, distinto de producción.");
+    }
+    return parsed.toString();
+  }
+
+  const configuredUrl = (Deno.env.get("MERCADOPAGO_WEBHOOK_URL") ?? "").trim();
+  return configuredUrl || PRODUCTION_WEBHOOK_URL;
+}
 
 const PLANS: Record<string, { name: string; amount: number; months: number }> = {
   month: { name: "EmiMatch Premium — 1 mes", amount: 4990, months: 1 },
@@ -70,7 +92,7 @@ Deno.serve(async (request) => {
       throw new Error("Falta configuración de Supabase o Mercado Pago.");
     }
 
-    const authorization = request.headers.get("Authorization") ?? "";
+    const webhookUrl = resolveWebhookUrl();\n\n    const authorization = request.headers.get("Authorization") ?? "";
     const accessToken = authorization.replace(/^Bearer\s+/i, "").trim();
     if (!accessToken) {
       return jsonResponse({ success: false, error: "Necesitás iniciar sesión en EmiMatch." }, 401);
@@ -157,7 +179,7 @@ Deno.serve(async (request) => {
         }],
         payer: { email: payerEmail },
         external_reference: localPurchase.id,
-        notification_url: WEBHOOK_URL,
+        notification_url: webhookUrl,
         back_urls: {
           success: `${MEMBERSHIP_URL}?premium=success`,
           pending: `${MEMBERSHIP_URL}?premium=pending`,
