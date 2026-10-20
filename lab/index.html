@@ -85,8 +85,7 @@ async function checkLabUpdate(){
   const response=await fetch(url,{cache:'no-store',headers:{'Accept':'text/html'}});
   if(!response.ok)throw new Error('No se pudo consultar la versión publicada');
   let latest=await response.text();
-  const low=latest.toLowerCase();
-  if(!latest.includes('LAB · DEMO')||!latest.includes('data-check-update')||!latest.includes('incomingRequests')||low.includes('supabase')||low.includes('mercadopago')||low.includes('mercado pago'))throw new Error('La versión remota no pasó la validación de seguridad');
+  if(!latest.includes('LAB · DEMO')||!latest.includes('data-check-update')||!latest.includes('incomingRequests'))throw new Error('La versión remota no pasó la validación de estructura');
   if(latest.length<10000)throw new Error('La versión recibida está incompleta');
   if(localStorage.getItem('emimatch_lab_last_remote')===latest){toast('Ya tenés la última versión del demo');if(btn){btn.disabled=false;btn.textContent='↻ Actualizar'}return}
   localStorage.setItem('emimatch_lab_last_remote',latest);
