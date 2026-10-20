@@ -59,7 +59,7 @@ jobs:
           scripts = re.findall(r"<script>(.*?)</script>", html, flags=re.S)
           if len(scripts) < 1:
               raise SystemExit("No se encontró JavaScript local para validar")
-          Path("/tmp/emimatch-lab.js").write_text("\\n".join(scripts), encoding="utf-8")
+          Path("/tmp/emimatch-lab.js").write_text("\n".join(scripts), encoding="utf-8")
           lowered = html.lower()
           for forbidden in ("supabase.co", "mercadopago.com", "api.mercadopago"):
               if forbidden in lowered:
