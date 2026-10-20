@@ -1,0 +1,85 @@
+name: EmiMatch Lab - APK experimental
+
+on:
+  push:
+    branches: [lab-desarrollo]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-lab-apk:
+    name: Compilar APK de demo aislada
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Descargar rama experimental
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Configurar Android SDK
+        uses: android-actions/setup-android@v4
+
+      - name: Instalar SDK requerido
+        run: sdkmanager --install "platform-tools" "platforms;android-36" "build-tools;36.0.0"
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Preparar recursos web de demo
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf www
+          mkdir -p www
+          cp -a ./*.html www/
+          cp -a assets www/
+          cp -a membresia www/
+          if [ -d "membresía" ]; then cp -a "membresía" www/; fi
+          for item in images img icons fonts manifest.json manifest.webmanifest service-worker.js sw.js favicon.ico; do
+            if [ -e "$item" ]; then cp -a "$item" www/; fi
+          done
+          # EmiMatch Lab abre la demo local sin autenticación ni backend de producción.
+          cp lab/index.html www/index.html
+          test -s www/index.html
+
+      - name: Sincronizar Capacitor
+        run: npx cap sync android
+
+      - name: Verificar identidad independiente
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'applicationId "com.emimatch.lab"' android/app/build.gradle
+          grep -q '"appId": "com.emimatch.lab"' capacitor.config.json
+          grep -q '"appName": "EmiMatch Lab"' capacitor.config.json
+          test -s android/app/src/main/AndroidManifest.xml
+
+      - name: Compilar APK experimental
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x android/gradlew
+          cd android
+          ./gradlew --no-daemon clean assembleDebug
+          test -s app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Publicar APK Lab como artefacto temporal
+        uses: actions/upload-artifact@v4
+        with:
+          name: EmiMatch-Lab-APK-Demo
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14
