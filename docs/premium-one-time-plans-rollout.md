@@ -10,11 +10,12 @@ Precios fijados en servidor para evitar que el navegador pueda modificarlos:
 - 6 meses: ARS 19.990
 - 12 meses: ARS 29.990
 
-## Bloqueos de revisión técnica
+## Estado de la revisión técnica
 
-- La validación del pago de pago único ahora rechaza una moneda ausente en la respuesta de Mercado Pago; no la interpreta por defecto como ARS.
-- **Sigue pendiente una garantía atómica de idempotencia.** La comprobación actual de pagos/eventos y la extensión de la suscripción ocurren en varias operaciones. Dos notificaciones concurrentes podrían observar un pago existente aún no aprobado y ambas intentar extender el período. Antes de activar estos planes, la confirmación del pago y la extensión deben moverse a una operación transaccional de base de datos, con pruebas de concurrencia y reintentos.
-- Por este motivo, esta rama continúa siendo una propuesta y no está lista para fusionar ni desplegar.
+- La validación del pago de pago único rechaza una moneda ausente en la respuesta de Mercado Pago; no la interpreta por defecto como ARS.
+- La rama incorpora la RPC `grant_one_time_premium_period`, que valida otra vez importe/moneda en la base de datos y, en una sola transacción, registra el pago aprobado, extiende el período y marca `premium_period_granted_at`. El bloqueo de fila del pago evita que notificaciones concurrentes otorguen dos períodos por la misma compra; el bloqueo de la fila del usuario serializa compras distintas de la misma cuenta.
+- **La protección transaccional está implementada en el código de propuesta, pero aún no está validada en ejecución.** La migración no se aplicó y el webhook actualizado no se desplegó. Hace falta ejecutar pruebas reales en un entorno aislado, incluidas notificaciones concurrentes/repetidas, y verificar el comportamiento de reembolsos y del flujo recurrente antes de considerar la rama lista para fusionar o desplegar.
+- Por ahora, esta rama continúa siendo una propuesta no publicada.
 
 ## Antes de activar
 
