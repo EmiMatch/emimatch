@@ -117,8 +117,8 @@ BEGIN
 
   IF v_payment.user_id IS DISTINCT FROM v_subscription.user_id
      OR v_payment.subscription_id IS DISTINCT FROM v_subscription.id
-     OR v_payment.amount <> p_amount
-     OR upper(btrim(v_payment.currency)) <> upper(btrim(p_currency)) THEN
+     OR v_payment.amount IS DISTINCT FROM p_amount
+     OR upper(btrim(v_payment.currency)) IS DISTINCT FROM upper(btrim(p_currency)) THEN
     RAISE EXCEPTION 'Payment ID is already associated with a different purchase';
   END IF;
 
