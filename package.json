@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "node tests/emimatch-audit.test.js"
+    "test": "node tests/emimatch-audit.test.js && node tests/premium-one-time-plans.test.js"
   },
   "repository": {
     "type": "git",
