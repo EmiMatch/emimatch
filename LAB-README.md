@@ -25,3 +25,6 @@ El workflow `.github/workflows/build-lab-apk.yml` se ejecuta al actualizar esta 
 2. Ajustar la demo según comentarios.
 3. Planificar un backend de pruebas independiente antes de implementar funciones reales.
 4. Probar cada módulo y solo después proponer cambios de producción.
+
+## Validación de la demo interactiva
+La revisión de código del 20 de octubre de 2026 confirma que el HTML de la demo incluye interacciones locales para perfiles, likes, publicaciones, comentarios, guardados, chats de ejemplo, preferencias de perfil y vistas conceptuales de Live y Contenidos. Estas interacciones no persisten después de cerrar la demo y no usan servicios reales.
