@@ -30,6 +30,10 @@ const checks = [
     assert.match(migration, /FROM auth\.users WHERE id = v_subscription\.user_id FOR UPDATE/);
     assert.match(migration, /FROM public\.premium_payments[\s\S]*?FOR UPDATE/);
   }],
+  ["Una misma compra no concede dos períodos con pagos distintos", () => {
+    assert.ok(migration.includes("purchase_already_granted_for_another_payment"));
+    assert.match(migration, /subscription_id = v_subscription\.id[\s\S]*?id <> v_payment\.id[\s\S]*?premium_period_granted_at IS NOT NULL/);
+  }],
   ["El pago solo concede el período una vez", () => {
     assert.match(migration, /premium_period_granted_at IS NOT NULL/);
     assert.match(migration, /SET premium_period_granted_at = now\(\)/);
