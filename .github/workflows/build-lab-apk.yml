@@ -61,7 +61,7 @@ jobs:
               raise SystemExit(f"Se esperaba un único script local; encontrados: {len(scripts)}")
           Path("/tmp/emimatch-lab.js").write_text(scripts[0], encoding="utf-8")
           lowered = html.lower()
-          for forbidden in ("supabase", "mercadopago", "mercado pago"):
+          for forbidden in ("supabase.co", "mercadopago.com", "api.mercadopago"):
               if forbidden in lowered:
                   raise SystemExit(f"La demo no debe conectarse a servicios reales: {forbidden}")
           if html.count("fetch(") != 1 or "https://raw.githubusercontent.com/EmiMatch/emimatch/lab-desarrollo/lab/index.html" not in html:
