@@ -511,8 +511,11 @@ if (isOneTimePurchase && status === "approved") {
     throw grantError;
   }
 
+  const approvalBlocked = Boolean(grantResult?.blocked);
+  const effectiveStatus = approvalBlocked ? "blocked" : status;
+
   await saveEvent({
-    eventType: "payment",
+    eventType: approvalBlocked ? "one_time_payment_approval_blocked" : "payment",
     eventId,
     userId: localSubscription.user_id,
     subscriptionId: localSubscription.id,
@@ -521,10 +524,12 @@ if (isOneTimePurchase && status === "approved") {
       provider_payment_id: providerPaymentId,
       mercadopago_status: mpStatus,
       normalized_status: status,
+      effective_status: effectiveStatus,
       external_reference: externalReference,
       preapproval_id: providerSubscriptionId,
       one_time_period_granted: Boolean(grantResult?.granted),
       duplicate_payment: Boolean(grantResult?.duplicate),
+      approval_block_reason: grantResult?.reason ?? null,
     },
   });
 
@@ -532,9 +537,10 @@ if (isOneTimePurchase && status === "approved") {
     processed: true,
     subscription_id: localSubscription.id,
     payment_id: grantResult?.payment_id ?? null,
-    status,
+    status: effectiveStatus,
     duplicate_payment: Boolean(grantResult?.duplicate),
     one_time_period_granted: Boolean(grantResult?.granted),
+    approval_blocked: approvalBlocked,
   };
 }
 
