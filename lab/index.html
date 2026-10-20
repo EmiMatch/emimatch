@@ -123,7 +123,7 @@ async function checkLabUpdate(){
    if(apiResponse.ok){
     const payload=await apiResponse.json();
     if(payload.content&&payload.encoding==='base64'){
-     const binary=atob(payload.content.replace(/\\s/g,''));
+     const binary=atob(payload.content.replace(/\s/g,''));
      const bytes=Uint8Array.from(binary,ch=>ch.charCodeAt(0));
      latest=new TextDecoder('utf-8').decode(bytes);
     }
