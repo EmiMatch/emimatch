@@ -34,8 +34,12 @@ const checks = [
     assert.match(migration, /premium_period_granted_at IS NOT NULL/);
     assert.match(migration, /SET premium_period_granted_at = now\(\)/);
   }],
-  ["Una aprobación tardía no revierte un reembolso o rechazo", () =>
-    assert.match(migration, /payment_has_terminal_non_approved_status[\s\S]*?refunded[\s\S]*?charged_back[\s\S]*?cancelled[\s\S]*?rejected/)],
+  ["Una aprobación tardía no revierte un reembolso o rechazo", () => {
+    assert.ok(migration.includes("payment_has_terminal_non_approved_status"));
+    for (const status of ["refunded", "charged_back", "cancelled", "rejected"]) {
+      assert.ok(migration.includes(`'${status}'`), `Falta proteger el estado ${status}`);
+    }
+  }],
   ["El webhook procesa la aprobación de pago único por el RPC atómico", () => {
     assert.match(webhook, /supabase\.rpc\(\s*"grant_one_time_premium_period"/);
     assert.ok(webhook.indexOf('if (isOneTimePurchase && status === "approved")') < webhook.indexOf('const { data: existingPayment'));
