@@ -442,6 +442,35 @@ String(
 payment?.status ?? "",
 ).toLowerCase();
 
+const isOneTimePurchase = localSubscription.purchase_type === "one_time";
+if (isOneTimePurchase) {
+  const expectedAmount = Number(localSubscription.purchase_amount);
+  const actualAmount = Number(payment?.transaction_amount);
+  const expectedCurrency = String(localSubscription.purchase_currency ?? "ARS");
+  const actualCurrency = String(payment?.currency_id ?? "ARS");
+  if (
+    !Number.isFinite(expectedAmount) ||
+    !Number.isFinite(actualAmount) ||
+    actualAmount !== expectedAmount ||
+    actualCurrency !== expectedCurrency
+  ) {
+    await saveEvent({
+      eventType: "one_time_payment_amount_mismatch",
+      eventId,
+      userId: localSubscription.user_id,
+      subscriptionId: localSubscription.id,
+      metadata: {
+        provider_payment_id: providerPaymentId,
+        expected_amount: localSubscription.purchase_amount ?? null,
+        actual_amount: payment?.transaction_amount ?? null,
+        expected_currency: expectedCurrency,
+        actual_currency: actualCurrency,
+      },
+    });
+    return { processed: false, reason: "one_time_payment_amount_mismatch" };
+  }
+}
+
 let status = "pending";
 
 if (mpStatus === "approved") {
@@ -472,6 +501,7 @@ providerPaymentId,
 
 if (findError) throw findError;
 
+const wasAlreadyApproved = existingPayment?.status === "approved";
 let paymentRow =
 existingPayment;
 
@@ -544,22 +574,51 @@ updated_at: new Date().toISOString(),
 if (accessError) throw accessError;
 }
 
-if (status === "approved") {
-const startDate =
+if (status === "approved" && !(isOneTimePurchase && wasAlreadyApproved)) {
+let startDate =
 payment?.date_approved
-? new Date(
-payment.date_approved,
-)
+? new Date(payment.date_approved)
 : new Date();
 
-let endDate =
-new Date(startDate);
+if (isOneTimePurchase) {
+  // Si ya hay Premium vigente, el nuevo período comienza al terminarlo.
+  const { data: currentActive, error: activeError } = await supabase
+    .from("premium_subscriptions")
+    .select("current_period_end")
+    .eq("user_id", localSubscription.user_id)
+    .eq("status", "active")
+    .not("current_period_end", "is", null)
+    .order("current_period_end", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (activeError) throw activeError;
+  const activeEnd = currentActive?.current_period_end
+    ? new Date(currentActive.current_period_end)
+    : null;
+  if (activeEnd && !Number.isNaN(activeEnd.getTime()) && activeEnd > startDate) {
+    startDate = activeEnd;
+  }
+}
 
-endDate.setUTCMonth(
-endDate.getUTCMonth() + 1,
-);
+let endDate = new Date(startDate);
+if (isOneTimePurchase) {
+  const months = Number(localSubscription.duration_months);
+  if (![1, 3, 6, 12].includes(months)) {
+    throw new Error("La duración guardada para esta compra Premium no es válida.");
+  }
+  // Suma meses de calendario sin desbordar cuando el mes de destino es más corto.
+  const originalDay = endDate.getUTCDate();
+  endDate.setUTCDate(1);
+  endDate.setUTCMonth(endDate.getUTCMonth() + months);
+  const lastDay = new Date(Date.UTC(
+    endDate.getUTCFullYear(), endDate.getUTCMonth() + 1, 0,
+  )).getUTCDate();
+  endDate.setUTCDate(Math.min(originalDay, lastDay));
+} else {
+  endDate.setUTCMonth(endDate.getUTCMonth() + 1);
+}
 
-if (providerSubscriptionId) {
+if (!isOneTimePurchase && providerSubscriptionId) {
 try {
 const mpSubscription =
 await mercadoPagoGet(
