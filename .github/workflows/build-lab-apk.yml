@@ -38,20 +38,13 @@ jobs:
       - name: Instalar dependencias
         run: npm ci
 
-      - name: Preparar recursos web de demo
+      - name: Preparar únicamente la demo local aislada
         shell: bash
         run: |
           set -euo pipefail
           rm -rf www
           mkdir -p www
-          cp -a ./*.html www/
-          cp -a assets www/
-          cp -a membresia www/
-          if [ -d "membresía" ]; then cp -a "membresía" www/; fi
-          for item in images img icons fonts manifest.json manifest.webmanifest service-worker.js sw.js favicon.ico; do
-            if [ -e "$item" ]; then cp -a "$item" www/; fi
-          done
-          # EmiMatch Lab abre la demo local sin autenticación ni backend de producción.
+          # No copiar páginas ni configuración de producción: Lab usa solo datos ficticios.
           cp lab/index.html www/index.html
           test -s www/index.html
 
