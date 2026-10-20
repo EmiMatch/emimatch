@@ -100,7 +100,7 @@ BEGIN
   ) VALUES (
     v_subscription.user_id, v_subscription.id, 'mercadopago',
     p_provider_payment_id, p_amount, upper(btrim(p_currency)),
-    'approved', coalesce(p_paid_at, now())
+    'pending', coalesce(p_paid_at, now())
   )
   ON CONFLICT DO NOTHING;
 
