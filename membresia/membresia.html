@@ -81,8 +81,8 @@ const SUPABASE_KEY = "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const statusBox = document.getElementById("checkout-status");
 const buttons = Array.from(document.querySelectorAll("[data-plan-key]"));
-// Mantener desactivadas las compras hasta completar las pruebas aisladas y aprobar el despliegue.
-const CHECKOUT_ENABLED = false;
+// Checkout habilitado tras aplicar la migración y desplegar las funciones verificadas.
+const CHECKOUT_ENABLED = true;
 
 async function startOneTimeCheckout(button) {
   if (!CHECKOUT_ENABLED) {
