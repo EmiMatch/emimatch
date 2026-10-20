@@ -248,21 +248,20 @@ subscriptionId?: string | null;
 paymentId?: string | null;
 metadata?: Record<string, unknown>;
 }) {
-const { error } =
-await supabase
+const { error } = await supabase
 .from("premium_events")
 .upsert({
 user_id: params.userId ?? null,
-subscription_id:
-params.subscriptionId ?? null,
-payment_id:
-params.paymentId ?? null,
+subscription_id: params.subscriptionId ?? null,
+payment_id: params.paymentId ?? null,
 event_type: params.eventType,
 provider: "mercadopago",
 provider_event_id: params.eventId,
-metadata:
-params.metadata ?? {},
-}, { onConflict: "provider,provider_event_id", ignoreDuplicates: true });
+metadata: params.metadata ?? {},
+}, {
+onConflict: "provider,provider_event_id",
+ignoreDuplicates: true,
+});
 
 if (error) throw error;
 }
@@ -304,10 +303,22 @@ reason: "subscription_not_found",
 };
 }
 
-const status =
+const providerStatus =
 normalizeSubscriptionStatus(
 mpSubscription?.status,
 );
+
+// Si Mercado Pago cancela la renovación pero ya hay un período pagado
+// vigente, conservar el acceso local hasta el final de ese período.
+const paidThrough = localSubscription.current_period_end
+? new Date(localSubscription.current_period_end)
+: null;
+const preservePaidAccess =
+providerStatus === "cancelled" &&
+paidThrough !== null &&
+!Number.isNaN(paidThrough.getTime()) &&
+paidThrough.getTime() > Date.now();
+const status = preservePaidAccess ? "active" : providerStatus;
 
 const update: Record<
 string,
@@ -320,6 +331,7 @@ status,
 };
 
 if (
+!preservePaidAccess &&
 mpSubscription?.auto_recurring
 ?.start_date
 ) {
@@ -328,6 +340,7 @@ mpSubscription.auto_recurring.start_date;
 }
 
 if (
+!preservePaidAccess &&
 mpSubscription?.auto_recurring
 ?.end_date
 ) {
@@ -335,9 +348,11 @@ update.current_period_end =
 mpSubscription.auto_recurring.end_date;
 }
 
-if (status === "cancelled") {
+if (providerStatus === "cancelled") {
 update.cancelled_at =
 new Date().toISOString();
+} else if (status === "active") {
+update.cancelled_at = null;
 }
 
 const { error } =
@@ -442,45 +457,11 @@ String(
 payment?.status ?? "",
 ).toLowerCase();
 
-const isOneTimePurchase = localSubscription.purchase_type === "one_time";
-// Only approvals grant Premium, so only approvals require amount/currency validation.
-// Refunds and chargebacks must still reach the revocation path if MP omits currency.
-if (isOneTimePurchase && mpStatus === "approved") {
-  const expectedAmount = Number(localSubscription.purchase_amount);
-  const actualAmount = Number(payment?.transaction_amount);
-  const expectedCurrency = String(localSubscription.purchase_currency ?? "");
-  // Fail closed: never infer ARS when Mercado Pago omits the currency field.
-  const actualCurrency = typeof payment?.currency_id === "string"
-    ? payment.currency_id.trim()
-    : "";
-  if (
-    !Number.isFinite(expectedAmount) ||
-    !Number.isFinite(actualAmount) ||
-    actualAmount !== expectedAmount ||
-    actualCurrency !== expectedCurrency
-  ) {
-    await saveEvent({
-      eventType: "one_time_payment_amount_mismatch",
-      eventId,
-      userId: localSubscription.user_id,
-      subscriptionId: localSubscription.id,
-      metadata: {
-        provider_payment_id: providerPaymentId,
-        expected_amount: localSubscription.purchase_amount ?? null,
-        actual_amount: payment?.transaction_amount ?? null,
-        expected_currency: expectedCurrency,
-        actual_currency: actualCurrency,
-      },
-    });
-    return { processed: false, reason: "one_time_payment_amount_mismatch" };
-  }
-}
-
 let status = "pending";
 
 if (mpStatus === "approved") {
 status = "approved";
-} else if (mpStatus === "refunded") {
+} else if (mpStatus === "refunded" || mpStatus === "charged_back") {
 status = "refunded";
 } else if (
 mpStatus === "cancelled" ||
@@ -493,29 +474,56 @@ status = "refunded";
 status = "rejected";
 }
 
-// For one-time purchases, the database transaction owns both payment approval
-// and entitlement extension. This prevents concurrent webhook deliveries from
-// extending the same purchase twice.
-if (isOneTimePurchase && status === "approved") {
+// One-time purchases are handled atomically by the database RPC below.
+// Keep the production recurring-payment validation and entitlement logic intact.
+const isOneTimePurchase = localSubscription.purchase_type === "one_time";
+if (isOneTimePurchase && mpStatus === "approved") {
+  const expectedAmount = Number(localSubscription.purchase_amount);
+  const actualAmount = Number(payment?.transaction_amount);
+  const expectedCurrency = String(localSubscription.purchase_currency ?? "").trim().toUpperCase();
+  const actualCurrency = typeof payment?.currency_id === "string"
+    ? payment.currency_id.trim().toUpperCase()
+    : "";
+  if (
+    !Number.isFinite(expectedAmount) ||
+    !Number.isFinite(actualAmount) ||
+    actualAmount !== expectedAmount ||
+    !expectedCurrency ||
+    actualCurrency !== expectedCurrency
+  ) {
+    await saveEvent({
+      eventType: "one_time_payment_amount_mismatch",
+      eventId,
+      userId: localSubscription.user_id,
+      subscriptionId: localSubscription.id,
+      metadata: {
+        provider_payment_id: providerPaymentId,
+        expected_amount: localSubscription.purchase_amount ?? null,
+        actual_amount: payment?.transaction_amount ?? null,
+        expected_currency: expectedCurrency || null,
+        actual_currency: actualCurrency || null,
+        action: "premium_not_activated",
+      },
+    });
+    return { processed: false, reason: "one_time_payment_amount_mismatch" };
+  }
+
   const { data: grantResult, error: grantError } = await supabase.rpc(
     "grant_one_time_premium_period",
     {
       p_subscription_id: localSubscription.id,
       p_provider_payment_id: providerPaymentId,
-      p_amount: Number(payment?.transaction_amount),
-      p_currency: String(payment?.currency_id ?? "").trim(),
+      p_amount: actualAmount,
+      p_currency: actualCurrency,
       p_paid_at: payment?.date_approved ?? null,
     },
   );
-
   if (grantError) {
     console.error("No se pudo activar el Premium de pago único de forma atómica:", grantError);
     throw grantError;
   }
 
   const approvalBlocked = Boolean(grantResult?.blocked);
-  const effectiveStatus = approvalBlocked ? "blocked" : status;
-
   await saveEvent({
     eventType: approvalBlocked ? "one_time_payment_approval_blocked" : "payment",
     eventId,
@@ -526,7 +534,7 @@ if (isOneTimePurchase && status === "approved") {
       provider_payment_id: providerPaymentId,
       mercadopago_status: mpStatus,
       normalized_status: status,
-      effective_status: effectiveStatus,
+      effective_status: approvalBlocked ? "blocked" : status,
       external_reference: externalReference,
       preapproval_id: providerSubscriptionId,
       one_time_period_granted: Boolean(grantResult?.granted),
@@ -534,12 +542,11 @@ if (isOneTimePurchase && status === "approved") {
       approval_block_reason: grantResult?.reason ?? null,
     },
   });
-
   return {
     processed: true,
     subscription_id: localSubscription.id,
     payment_id: grantResult?.payment_id ?? null,
-    status: effectiveStatus,
+    status: approvalBlocked ? "blocked" : status,
     duplicate_payment: Boolean(grantResult?.duplicate),
     one_time_period_granted: Boolean(grantResult?.granted),
     approval_blocked: approvalBlocked,
@@ -559,9 +566,49 @@ providerPaymentId,
 
 if (findError) throw findError;
 
-const wasAlreadyApproved = existingPayment?.status === "approved";
-let paymentRow =
-existingPayment;
+let paymentRow = existingPayment;
+
+const actualAmount = Number(payment?.transaction_amount);
+const actualCurrency = String(payment?.currency_id ?? "").toUpperCase();
+if (mpStatus === "approved") {
+  const { data: expectedPlan, error: expectedPlanError } = await supabase
+    .from("premium_plans").select("price,currency").eq("id", localSubscription.plan_id).maybeSingle();
+  if (expectedPlanError) throw expectedPlanError;
+  const amountMatches = expectedPlan &&
+    Number.isFinite(actualAmount) &&
+    Math.abs(actualAmount - Number(expectedPlan.price)) < 0.005 &&
+    actualCurrency === String(expectedPlan.currency ?? "").toUpperCase();
+  if (!amountMatches) {
+    const safeAmount = Number.isFinite(actualAmount) ? actualAmount : 0;
+    if (paymentRow) {
+      const { error } = await supabase.from("premium_payments").update({
+        amount: safeAmount, currency: actualCurrency || "ARS", status: "rejected", paid_at: null,
+      }).eq("id", paymentRow.id);
+      if (error) throw error;
+    } else {
+      const { data, error } = await supabase.from("premium_payments").insert({
+        user_id: localSubscription.user_id, subscription_id: localSubscription.id, provider: "mercadopago",
+        provider_payment_id: providerPaymentId, amount: safeAmount, currency: actualCurrency || "ARS",
+        status: "rejected", paid_at: null,
+      }).select("*").single();
+      if (error) throw error;
+      paymentRow = data;
+    }
+    await saveEvent({
+      eventType: "payment_amount_mismatch", eventId, userId: localSubscription.user_id,
+      subscriptionId: localSubscription.id, paymentId: paymentRow?.id ?? null,
+      metadata: {
+        provider_payment_id: providerPaymentId,
+        expected_amount: expectedPlan ? Number(expectedPlan.price) : null,
+        expected_currency: expectedPlan?.currency ?? null,
+        received_amount: Number.isFinite(actualAmount) ? actualAmount : null,
+        received_currency: actualCurrency,
+        action: "premium_not_activated",
+      },
+    });
+    return { processed: true, subscription_id: localSubscription.id, payment_id: paymentRow?.id ?? null, status: "rejected", reason: "amount_or_currency_mismatch" };
+  }
+}
 
 if (!paymentRow) {
 const { data, error } =
@@ -601,6 +648,10 @@ const { error } =
 await supabase
 .from("premium_payments")
 .update({
+amount: Number.isFinite(Number(payment?.transaction_amount))
+  ? Number(payment.transaction_amount)
+  : paymentRow.amount,
+currency: String(payment?.currency_id ?? paymentRow.currency ?? "ARS"),
 status,
 paid_at:
 status === "approved"
@@ -632,51 +683,22 @@ updated_at: new Date().toISOString(),
 if (accessError) throw accessError;
 }
 
-if (status === "approved" && !(isOneTimePurchase && wasAlreadyApproved)) {
-let startDate =
+if (status === "approved") {
+const startDate =
 payment?.date_approved
-? new Date(payment.date_approved)
+? new Date(
+payment.date_approved,
+)
 : new Date();
 
-if (isOneTimePurchase) {
-  // Si ya hay Premium vigente, el nuevo período comienza al terminarlo.
-  const { data: currentActive, error: activeError } = await supabase
-    .from("premium_subscriptions")
-    .select("current_period_end")
-    .eq("user_id", localSubscription.user_id)
-    .eq("status", "active")
-    .not("current_period_end", "is", null)
-    .order("current_period_end", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-  if (activeError) throw activeError;
-  const activeEnd = currentActive?.current_period_end
-    ? new Date(currentActive.current_period_end)
-    : null;
-  if (activeEnd && !Number.isNaN(activeEnd.getTime()) && activeEnd > startDate) {
-    startDate = activeEnd;
-  }
-}
+let endDate =
+new Date(startDate);
 
-let endDate = new Date(startDate);
-if (isOneTimePurchase) {
-  const months = Number(localSubscription.duration_months);
-  if (![1, 3, 6, 12].includes(months)) {
-    throw new Error("La duración guardada para esta compra Premium no es válida.");
-  }
-  // Suma meses de calendario sin desbordar cuando el mes de destino es más corto.
-  const originalDay = endDate.getUTCDate();
-  endDate.setUTCDate(1);
-  endDate.setUTCMonth(endDate.getUTCMonth() + months);
-  const lastDay = new Date(Date.UTC(
-    endDate.getUTCFullYear(), endDate.getUTCMonth() + 1, 0,
-  )).getUTCDate();
-  endDate.setUTCDate(Math.min(originalDay, lastDay));
-} else {
-  endDate.setUTCMonth(endDate.getUTCMonth() + 1);
-}
+endDate.setUTCMonth(
+endDate.getUTCMonth() + 1,
+);
 
-if (!isOneTimePurchase && providerSubscriptionId) {
+if (providerSubscriptionId) {
 try {
 const mpSubscription =
 await mercadoPagoGet(
@@ -792,14 +814,17 @@ reason: "subscription_not_found",
 };
 }
 
-// Los planes de pago único solo se activan mediante el evento payment,
-// que valida importe/moneda y usa el RPC transaccional idempotente.
-// No permitir que authorized_payment conceda por error un mes recurrente.
+// A fixed-duration purchase is only granted by a verified /v1/payments event,
+// never by an authorized_payment notification.
 if (localSubscription.purchase_type === "one_time") {
-  return {
-    processed: false,
-    reason: "one_time_requires_payment_event",
-  };
+  await saveEvent({
+    eventType: "one_time_authorized_payment_ignored",
+    eventId,
+    userId: localSubscription.user_id,
+    subscriptionId: localSubscription.id,
+    metadata: { authorized_payment_id: dataId, action: "await_verified_payment_event" },
+  });
+  return { processed: true, reason: "one_time_requires_payment_event" };
 }
 
 const nestedPayment =
@@ -821,7 +846,7 @@ let status = "pending";
 
 if (paymentStatus === "approved") {
 status = "approved";
-} else if (paymentStatus === "refunded") {
+} else if (paymentStatus === "refunded" || paymentStatus === "charged_back") {
 status = "refunded";
 } else if (
 paymentStatus === "cancelled" ||
@@ -893,6 +918,58 @@ throw error;
 }
 
 paymentRow = data;
+}
+
+const authorizedAmount = Number(authorized?.transaction_amount ?? nestedPayment?.transaction_amount);
+const authorizedCurrency = String(authorized?.currency_id ?? nestedPayment?.currency_id ?? "").toUpperCase();
+
+if (status === "approved") {
+  const { data: expectedPlan, error: expectedPlanError } = await supabase
+    .from("premium_plans").select("price,currency").eq("id", localSubscription.plan_id).maybeSingle();
+  if (expectedPlanError) throw expectedPlanError;
+  const amountMatches = expectedPlan &&
+    Number.isFinite(authorizedAmount) &&
+    Math.abs(authorizedAmount - Number(expectedPlan.price)) < 0.005 &&
+    authorizedCurrency === String(expectedPlan.currency ?? "").toUpperCase();
+  if (!amountMatches) {
+    const safeAmount = Number.isFinite(authorizedAmount) ? authorizedAmount : 0;
+    if (paymentRow) {
+      const { error } = await supabase.from("premium_payments").update({
+        amount: safeAmount, currency: authorizedCurrency || "ARS", status: "rejected", paid_at: null,
+      }).eq("id", paymentRow.id);
+      if (error) throw error;
+    }
+    await saveEvent({
+      eventType: "authorized_payment_amount_mismatch", eventId, userId: localSubscription.user_id,
+      subscriptionId: localSubscription.id, paymentId: paymentRow?.id ?? null,
+      metadata: {
+        authorized_payment_id: dataId, provider_payment_id: providerPaymentId,
+        expected_amount: expectedPlan ? Number(expectedPlan.price) : null,
+        expected_currency: expectedPlan?.currency ?? null,
+        received_amount: Number.isFinite(authorizedAmount) ? authorizedAmount : null,
+        received_currency: authorizedCurrency,
+        action: "premium_not_activated",
+      },
+    });
+    return { processed: true, subscription_id: localSubscription.id, payment_id: paymentRow?.id ?? null, status: "rejected", reason: "amount_or_currency_mismatch" };
+  }
+}
+
+if (paymentRow) {
+  const { error } = await supabase.from("premium_payments").update({
+    amount: Number.isFinite(authorizedAmount) ? authorizedAmount : 0,
+    currency: authorizedCurrency || "ARS",
+    status,
+    paid_at: status === "approved" ? (nestedPayment?.date_approved ?? new Date().toISOString()) : null,
+  }).eq("id", paymentRow.id);
+  if (error) throw error;
+}
+
+if (status === "refunded") {
+  const { error: accessError } = await supabase.from("premium_subscriptions")
+    .update({ status: "past_due", current_period_end: new Date().toISOString(), updated_at: new Date().toISOString() })
+    .eq("id", localSubscription.id);
+  if (accessError) throw accessError;
 }
 
 if (status === "approved") {
@@ -1090,10 +1167,8 @@ error: duplicateError,
 } = await supabase
 .from("premium_events")
 .select("id")
-.eq(
-"provider_event_id",
-eventId,
-)
+.eq("provider", "mercadopago")
+.eq("provider_event_id", eventId)
 .limit(1)
 .maybeSingle();
 

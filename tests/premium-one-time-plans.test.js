@@ -51,10 +51,10 @@ const checks = [
   }],
   ["El webhook procesa la aprobación de pago único por el RPC atómico", () => {
     assert.match(webhook, /supabase\.rpc\(\s*"grant_one_time_premium_period"/);
-    assert.ok(webhook.indexOf('if (isOneTimePurchase && status === "approved")') < webhook.indexOf('const { data: existingPayment'));
+    assert.ok(webhook.indexOf('if (isOneTimePurchase && mpStatus === "approved")') < webhook.indexOf('const { data: existingPayment'));
   }],
   ["El registro de eventos tolera entregas concurrentes duplicadas", () =>
-    assert.match(webhook, /\.from\("premium_events"\)[\s\S]*?\.upsert\([\s\S]*?onConflict: "provider,provider_event_id", ignoreDuplicates: true/)],
+    assert.match(webhook, /\.from\("premium_events"\)[\s\S]*?\.upsert\([\s\S]*?onConflict: "provider,provider_event_id",[\s\S]*?ignoreDuplicates: true/)],
   ["El webhook valida importe y moneda para aprobaciones, sin bloquear reembolsos por moneda ausente", () => {
     assert.ok(webhook.includes('if (isOneTimePurchase && mpStatus === "approved") {'));
     assert.ok(webhook.indexOf('if (isOneTimePurchase && mpStatus === "approved") {') < webhook.indexOf('if (status === "refunded" || status === "charged_back") {'));
@@ -62,6 +62,10 @@ const checks = [
   }],
   ["authorized_payment no activa planes de pago único por el flujo recurrente", () => {
     assert.match(webhook, /localSubscription\.purchase_type === "one_time"[\s\S]*?one_time_requires_payment_event/);
+  }],
+  ["El webhook conserva la protección de producción al cancelar una renovación", () => {
+    assert.match(webhook, /Si Mercado Pago cancela la renovación pero ya hay un período pagado/);
+    assert.match(webhook, /paidThrough\.getTime\(\) > Date\.now\(\)/);
   }],
   ["La creación de checkout valida usuario y lista de precios del servidor", () => {
     assert.match(creator, /auth\.getUser\(accessToken\)/);
