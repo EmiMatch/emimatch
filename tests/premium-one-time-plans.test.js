@@ -65,7 +65,7 @@ const checks = [
   }],
   ["El webhook conserva la protección de producción al cancelar una renovación", () => {
     assert.match(webhook, /Si Mercado Pago cancela la renovación pero ya hay un período pagado/);
-    assert.match(webhook, /paidThrough > now/);
+    assert.match(webhook, /paidThrough\.getTime\(\) > Date\.now\(\)/);
   }],
   ["La creación de checkout valida usuario y lista de precios del servidor", () => {
     assert.match(creator, /auth\.getUser\(accessToken\)/);
