@@ -446,8 +446,11 @@ const isOneTimePurchase = localSubscription.purchase_type === "one_time";
 if (isOneTimePurchase) {
   const expectedAmount = Number(localSubscription.purchase_amount);
   const actualAmount = Number(payment?.transaction_amount);
-  const expectedCurrency = String(localSubscription.purchase_currency ?? "ARS");
-  const actualCurrency = String(payment?.currency_id ?? "ARS");
+  const expectedCurrency = String(localSubscription.purchase_currency ?? "");
+  // Fail closed: never infer ARS when Mercado Pago omits the currency field.
+  const actualCurrency = typeof payment?.currency_id === "string"
+    ? payment.currency_id.trim()
+    : "";
   if (
     !Number.isFinite(expectedAmount) ||
     !Number.isFinite(actualAmount) ||
