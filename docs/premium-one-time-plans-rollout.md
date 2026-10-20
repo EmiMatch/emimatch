@@ -10,6 +10,12 @@ Precios fijados en servidor para evitar que el navegador pueda modificarlos:
 - 6 meses: ARS 19.990
 - 12 meses: ARS 29.990
 
+## Bloqueos de revisión técnica
+
+- La validación del pago de pago único ahora rechaza una moneda ausente en la respuesta de Mercado Pago; no la interpreta por defecto como ARS.
+- **Sigue pendiente una garantía atómica de idempotencia.** La comprobación actual de pagos/eventos y la extensión de la suscripción ocurren en varias operaciones. Dos notificaciones concurrentes podrían observar un pago existente aún no aprobado y ambas intentar extender el período. Antes de activar estos planes, la confirmación del pago y la extensión deben moverse a una operación transaccional de base de datos, con pruebas de concurrencia y reintentos.
+- Por este motivo, esta rama continúa siendo una propuesta y no está lista para fusionar ni desplegar.
+
 ## Antes de activar
 
 No fusionar ni desplegar para usuarios hasta completar la prueba de integración en un entorno de prueba. El HTML de propuesta puede estar en GitHub, pero la compra no queda activa hasta que estén desplegadas la migración, la versión actualizada de premium-webhook y la nueva función.
