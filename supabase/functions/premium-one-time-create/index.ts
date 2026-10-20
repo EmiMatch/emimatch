@@ -49,9 +49,10 @@ function resolveWebhookUrl(): string {
     }
     if (
       parsed.protocol !== "https:" ||
-      parsed.hostname === "kngiadwaesdbmvwivdev.supabase.co"
+      parsed.hostname === "kngiadwaesdbmvwivdev.supabase.co" ||
+      parsed.hostname !== supabaseProjectUrl.hostname
     ) {
-      throw new Error("El modo de prueba requiere un webhook HTTPS de un proyecto aislado, distinto de producción.");
+      throw new Error("El modo de prueba requiere un webhook HTTPS del mismo proyecto Supabase aislado, distinto de producción.");
     }
     return parsed.toString();
   }
