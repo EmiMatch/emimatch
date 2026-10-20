@@ -73,7 +73,7 @@ const checks = [
     assert.match(plansPage, /pago único por 1 mes[\s\S]*?pago único por 3 meses[\s\S]*?pago único por 6 meses[\s\S]*?pago único por 12 meses/)],
   ["La vista previa mantiene deshabilitado el checkout", () => {
     assert.match(plansPage, /const CHECKOUT_ENABLED = false/);
-    assert.match(plansPage, /async function startOneTimeCheckout\\(button\\)[\\s\\S]*?if \\(!CHECKOUT_ENABLED\\) \\{[\\s\\S]*?return;[\\s\\S]*?const response = await fetch/);
+    assert.match(plansPage, /async function startOneTimeCheckout\(button\)[\s\S]*?if \(!CHECKOUT_ENABLED\) \{[\s\S]*?return;[\s\S]*?const response = await fetch/);
   }],
 ];
 
