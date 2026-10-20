@@ -48,7 +48,7 @@ CREATE OR REPLACE FUNCTION private.grant_one_time_premium_period(
 RETURNS jsonb
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = public, pg_temp
+SET search_path = pg_catalog, pg_temp
 AS $function$
 DECLARE
   v_subscription public.premium_subscriptions%ROWTYPE;
