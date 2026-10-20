@@ -46,39 +46,96 @@ dialog{max-width:420px;width:calc(100% - 32px);border:1px solid #6e5420;border-r
   <article class="plan">
     <div class="duration">Plan mensual</div><div class="price">$4.990</div><div class="once">ARS · pago único por 1 mes</div><div class="saving">&nbsp;</div>
     <ul><li>Me gusta ilimitados</li><li>Acceso Premium durante 1 mes</li><li>Sin renovación automática</li></ul>
-    <button type="button" data-plan="1 mes — $4.990">Elegir 1 mes</button>
+    <button type="button" data-plan-key="month" data-plan="1 mes — $4.990">Elegir 1 mes</button>
   </article>
   <article class="plan">
     <div class="duration">Plan trimestral</div><div class="price">$11.990</div><div class="once">ARS · pago único por 3 meses</div><div class="saving">Ahorro frente a 3 planes mensuales</div>
     <ul><li>Me gusta ilimitados</li><li>Acceso Premium durante 3 meses</li><li>Sin renovación automática</li></ul>
-    <button type="button" data-plan="3 meses — $11.990">Elegir 3 meses</button>
+    <button type="button" data-plan-key="quarter" data-plan="3 meses — $11.990">Elegir 3 meses</button>
   </article>
   <article class="plan featured">
     <span class="ribbon">MÁS ELEGIDO</span><div class="duration">Plan semestral</div><div class="price">$19.990</div><div class="once">ARS · pago único por 6 meses</div><div class="saving">Mejor precio por mes</div>
     <ul><li>Me gusta ilimitados</li><li>Acceso Premium durante 6 meses</li><li>Sin renovación automática</li></ul>
-    <button type="button" data-plan="6 meses — $19.990">Elegir 6 meses</button>
+    <button type="button" data-plan-key="half_year" data-plan="6 meses — $19.990">Elegir 6 meses</button>
   </article>
   <article class="plan">
     <div class="duration">Plan anual</div><div class="price">$29.990</div><div class="once">ARS · pago único por 12 meses</div><div class="saving">Máximo ahorro</div>
     <ul><li>Me gusta ilimitados</li><li>Acceso Premium durante 12 meses</li><li>Sin renovación automática</li></ul>
-    <button type="button" data-plan="12 meses — $29.990">Elegir 12 meses</button>
+    <button type="button" data-plan-key="year" data-plan="12 meses — $29.990">Elegir 12 meses</button>
   </article>
 </section>
 <section class="details">
   <article class="detail"><span class="tag">Incluido en la propuesta</span><h2>💛 Conectá sin límites</h2><p>Los me gusta ilimitados son el beneficio Premium principal que ya forma parte de EmiMatch. La activación y la vigencia de cada nuevo plan deberán conectarse y probarse antes de publicarlo.</p></article>
   <article class="detail"><span class="tag">En evaluación</span><h2>✨ Más ventajas Premium</h2><p>Insignia Premium, visitas anónimas, impulso del perfil, burbuja especial en el chat y deshacer likes. Estos beneficios son ideas para una etapa posterior, no funciones activas todavía.</p></article>
 </section>
-<div class="notice"><strong>Vista previa de diseño:</strong> los botones muestran una demostración. Todavía no procesan pagos ni activan una membresía. Esta propuesta se prepara por separado para no alterar la pantalla ni el cobro actuales.</div>
+<div class="notice" id="checkout-status" role="status" aria-live="polite"><strong>Propuesta en revisión:</strong> los planes y el flujo de compra única están separados del checkout actual. La compra solo podrá probarse cuando se aplique la migración y se despliegue la nueva función de Supabase en el entorno de prueba.</div>
 <footer>EmiMatch · Conocé personas. Conectá de verdad. 🫰</footer>
 </main>
 <dialog id="preview"><h2>EmiMatch Premium</h2><p id="selected"></p><p>Esta es una vista previa: el pago aún no está conectado. No se realizó ningún cobro ni cambio en tu cuenta.</p><button id="close" type="button">Entendido</button></dialog>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const modal=document.getElementById('preview');
-document.querySelectorAll('[data-plan]').forEach(button=>button.addEventListener('click',()=>{
- document.getElementById('selected').textContent='Plan seleccionado: '+button.dataset.plan;
- if(typeof modal.showModal==='function') modal.showModal(); else alert('Vista previa solamente. El pago todavía no está conectado.');
-}));
-document.getElementById('close').addEventListener('click',()=>modal.close());
+"use strict";
+const SUPABASE_URL = "https://kngiadwaesdbmvwivdev.supabase.co";
+const SUPABASE_KEY = "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const statusBox = document.getElementById("checkout-status");
+const buttons = Array.from(document.querySelectorAll("[data-plan-key]"));
+
+async function startOneTimeCheckout(button) {
+  if (buttons.some(item => item.disabled)) return;
+  buttons.forEach(item => { item.disabled = true; });
+  statusBox.textContent = "Comprobando tu sesión de EmiMatch...";
+  try {
+    const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
+    if (sessionError) throw sessionError;
+    const session = sessionData?.session;
+    if (!session) {
+      statusBox.textContent = "Iniciá sesión en EmiMatch y volvé a elegir tu plan Premium.";
+      return;
+    }
+
+    statusBox.textContent = "Preparando el pago único de Mercado Pago...";
+    const response = await fetch(`${SUPABASE_URL}/functions/v1/premium-one-time-create`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+        apikey: SUPABASE_KEY,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ plan_key: button.dataset.planKey })
+    });
+    const raw = await response.text();
+    let data = null;
+    try { data = raw ? JSON.parse(raw) : null; } catch (_) { data = null; }
+    if (!response.ok || !data?.success) {
+      throw new Error(data?.error || raw || `No se pudo preparar el pago (HTTP ${response.status}).`);
+    }
+    if (data.already_active === true) {
+      statusBox.textContent = data.message || "Tu cuenta de administrador ya tiene Premium permanente.";
+      return;
+    }
+    const checkoutUrl = data.checkout_url;
+    if (typeof checkoutUrl !== "string" || !checkoutUrl.startsWith("https://")) {
+      throw new Error("Mercado Pago no devolvió un enlace de pago seguro. No se realizó ningún cobro.");
+    }
+    if (data.checkout_mode !== "test" && data.checkout_mode !== "production") {
+      throw new Error("No se pudo confirmar el entorno del pago. Por seguridad, no se abrió.");
+    }
+    statusBox.textContent = data.checkout_mode === "test"
+      ? "Abriendo el entorno de prueba de Mercado Pago..."
+      : "Abriendo Mercado Pago. El pago solo se realizará si lo confirmás allí.";
+    window.location.href = checkoutUrl;
+  } catch (error) {
+    console.error("EmiMatch Premium one-time checkout:", error);
+    statusBox.textContent = error?.message || "No se pudo preparar el pago. Intentá nuevamente.";
+  } finally {
+    buttons.forEach(item => { item.disabled = false; });
+  }
+}
+buttons.forEach(button => button.addEventListener("click", () => startOneTimeCheckout(button)));
+const modal = document.getElementById("preview");
+const closeButton = document.getElementById("close");
+if (modal && closeButton) closeButton.addEventListener("click", () => modal.close());
 </script>
 </body>
 </html>
