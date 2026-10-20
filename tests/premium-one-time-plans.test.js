@@ -8,6 +8,7 @@ const migration = read("supabase/migrations/20261020013000_premium_one_time_plan
 const webhook = read("supabase/functions/premium-webhook/index.ts");
 const creator = read("supabase/functions/premium-one-time-create/index.ts");
 const plansPage = read("membresia/planes-premium-propuesta.html");
+const membershipPage = read("membresia/membresia.html");
 
 const checks = [
   ["La activación atómica vive en el esquema privado", () =>
@@ -74,6 +75,11 @@ const checks = [
   ["La vista previa mantiene deshabilitado el checkout", () => {
     assert.match(plansPage, /const CHECKOUT_ENABLED = false/);
     assert.match(plansPage, /async function startOneTimeCheckout\(button\)[\s\S]*?if \(!CHECKOUT_ENABLED\) \{[\s\S]*?return;[\s\S]*?const response = await fetch/);
+  }],
+  ["La membresía actual enlaza la vista de nuevos planes sin alterar su checkout mensual", () => {
+    assert.match(membershipPage, /href="planes-premium-propuesta\.html"/);
+    assert.match(membershipPage, /id="premiumButton"/);
+    assert.match(membershipPage, /functions\/v1\/premium-create/);
   }],
 ];
 
