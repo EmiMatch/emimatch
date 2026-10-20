@@ -93,7 +93,64 @@ jobs:
           ./gradlew --no-daemon clean assembleDebug
           test -s app/build/outputs/apk/debug/app-debug.apk
 
-      - name: Publicar APK Lab como artefacto temporal
+      - name: Preparar firma persistente para actualizaciones de EmiMatch Lab
+        id: lab-signing
+        shell: bash
+        env:
+          EMIMATCH_KEYSTORE_BASE64: ${{ secrets.EMIMATCH_KEYSTORE_BASE64 }}
+          EMIMATCH_KEYSTORE_PASSWORD: ${{ secrets.EMIMATCH_KEYSTORE_PASSWORD }}
+          EMIMATCH_KEY_ALIAS_OVERRIDE: ${{ secrets.EMIMATCH_KEY_ALIAS }}
+          EMIMATCH_KEY_PASSWORD_SECRET: ${{ secrets.EMIMATCH_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          echo "release_ready=false" >> "$GITHUB_OUTPUT"
+          if [[ -z "${EMIMATCH_KEYSTORE_BASE64:-}" || -z "${EMIMATCH_KEYSTORE_PASSWORD:-}" ]]; then
+            echo "No se configuró la firma persistente; se conserva el APK debug de diagnóstico."
+            exit 0
+          fi
+          printf '%s' "$EMIMATCH_KEYSTORE_BASE64" | tr -d '[:space:]' | base64 --decode > "$RUNNER_TEMP/emimatch-lab-release.jks"
+          keytool -list -v -keystore "$RUNNER_TEMP/emimatch-lab-release.jks" -storepass "$EMIMATCH_KEYSTORE_PASSWORD" > "$RUNNER_TEMP/lab-keytool-list.txt"
+          if [[ -n "${EMIMATCH_KEY_ALIAS_OVERRIDE:-}" ]]; then
+            KEY_ALIAS="$EMIMATCH_KEY_ALIAS_OVERRIDE"
+          else
+            mapfile -t KEY_ALIASES < <(awk -F': ' '/^Alias name: / { alias=$2 } /^Entry type: PrivateKeyEntry/ { if (alias != "") print alias; alias="" }' "$RUNNER_TEMP/lab-keytool-list.txt")
+            if [[ "${#KEY_ALIASES[@]}" -ne 1 ]]; then
+              echo "::error::No se pudo elegir un único alias para firmar EmiMatch Lab."
+              exit 1
+            fi
+            KEY_ALIAS="${KEY_ALIASES[0]}"
+          fi
+          keytool -list -keystore "$RUNNER_TEMP/emimatch-lab-release.jks" -storepass "$EMIMATCH_KEYSTORE_PASSWORD" -alias "$KEY_ALIAS" >/dev/null
+          echo "release_ready=true" >> "$GITHUB_OUTPUT"
+          echo "EMIMATCH_KEY_ALIAS=$KEY_ALIAS" >> "$GITHUB_OUTPUT"
+
+      - name: Compilar APK Lab firmado para futuras actualizaciones
+        if: ${{ steps.lab-signing.outputs.release_ready == 'true' }}
+        shell: bash
+        env:
+          EMIMATCH_KEYSTORE_PATH: ${{ runner.temp }}/emimatch-lab-release.jks
+          EMIMATCH_KEYSTORE_PASSWORD: ${{ secrets.EMIMATCH_KEYSTORE_PASSWORD }}
+          EMIMATCH_KEY_ALIAS: ${{ steps.lab-signing.outputs.EMIMATCH_KEY_ALIAS }}
+          EMIMATCH_KEY_PASSWORD_SECRET: ${{ secrets.EMIMATCH_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          export EMIMATCH_KEY_PASSWORD="${EMIMATCH_KEY_PASSWORD_SECRET:-$EMIMATCH_KEYSTORE_PASSWORD}"
+          chmod +x android/gradlew
+          cd android
+          ./gradlew --no-daemon assembleRelease
+          test -s app/build/outputs/apk/release/app-release.apk
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
+
+      - name: Publicar APK Lab firmado
+        if: ${{ steps.lab-signing.outputs.release_ready == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: EmiMatch-Lab-APK-Actualizable
+          path: android/app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Publicar APK Lab debug de diagnóstico
         uses: actions/upload-artifact@v4
         with:
           name: EmiMatch-Lab-APK-Demo
