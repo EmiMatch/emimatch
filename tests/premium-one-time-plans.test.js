@@ -97,9 +97,9 @@ const checks = [
     assert.doesNotMatch(membershipPage, /Membresía mensual|\$10\.000 ARS/);
     assert.match(membershipPage, /id="premium-account-status"/);
   }],
-  ["La pantalla Premium principal mantiene deshabilitadas las compras y conserva el estado de cuentas Premium", () => {
-    assert.match(membershipPage, /const CHECKOUT_ENABLED = false/);
-    assert.match(membershipPage, /if \(!CHECKOUT_ENABLED\)/);
+  ["La pantalla Premium principal habilita el checkout desplegado y conserva el estado de cuentas Premium", () => {
+    assert.match(membershipPage, /const CHECKOUT_ENABLED = true/);
+    assert.match(membershipPage, /premium-one-time-create/);
     assert.match(membershipPage, /get_premium_status/);
     assert.doesNotMatch(membershipPage, /functions\/v1\/premium-create/);
   }],
