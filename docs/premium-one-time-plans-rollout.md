@@ -12,7 +12,7 @@ Precios fijados en servidor para evitar que el navegador pueda modificarlos:
 
 ## Estado de la revisión técnica
 
-- La validación del pago de pago único rechaza una moneda ausente en la respuesta de Mercado Pago; no la interpreta por defecto como ARS.
+- La validación de importe y moneda estricta se aplica a pagos aprobados antes de conceder Premium; si Mercado Pago omite la moneda en un reembolso/contracargo, el evento aún debe recorrer la ruta de revocación y quedar registrado. No se infiere ARS para aprobar pagos.
 - La rama incorpora la RPC `grant_one_time_premium_period`: el endpoint público es `SECURITY INVOKER`, solo el rol de servidor puede ejecutarlo y la implementación privilegiada vive en el esquema no expuesto `private`. En una sola transacción, vuelve a validar importe/moneda, registra el pago aprobado, extiende el período y marca `premium_period_granted_at`. El bloqueo de fila del pago evita duplicar períodos por notificaciones concurrentes; el bloqueo de la fila del usuario serializa compras distintas de la misma cuenta. También rechaza de forma controlada una aprobación atrasada si el registro del pago ya está marcado como reembolsado, contracargado, cancelado o rechazado.
 - **La protección transaccional está implementada en el código de propuesta, pero aún no está validada en ejecución.** La migración no se aplicó y el webhook actualizado no se desplegó. Hace falta ejecutar pruebas reales en un entorno aislado, incluidas notificaciones concurrentes/repetidas, y verificar el comportamiento de reembolsos y del flujo recurrente antes de considerar la rama lista para fusionar o desplegar.
 - Por ahora, esta rama continúa siendo una propuesta no publicada.
