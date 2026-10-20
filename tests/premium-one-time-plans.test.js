@@ -34,6 +34,10 @@ const checks = [
     assert.ok(migration.includes("purchase_already_granted_for_another_payment"));
     assert.match(migration, /subscription_id = v_subscription\.id[\s\S]*?id <> v_payment\.id[\s\S]*?premium_period_granted_at IS NOT NULL/);
   }],
+  ["Un pago bloqueado no queda registrado como aprobado", () => {
+    assert.match(migration, /p_provider_payment_id, p_amount, upper\(btrim\(p_currency\)\),\s*'pending'/);
+    assert.match(migration, /UPDATE public\.premium_payments\s+SET status = 'approved'/);
+  }],
   ["El pago solo concede el período una vez", () => {
     assert.match(migration, /premium_period_granted_at IS NOT NULL/);
     assert.match(migration, /SET premium_period_granted_at = now\(\)/);
