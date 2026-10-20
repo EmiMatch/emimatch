@@ -92,7 +92,9 @@ Deno.serve(async (request) => {
       throw new Error("Falta configuración de Supabase o Mercado Pago.");
     }
 
-    const webhookUrl = resolveWebhookUrl();\n\n    const authorization = request.headers.get("Authorization") ?? "";
+    const webhookUrl = resolveWebhookUrl();
+
+    const authorization = request.headers.get("Authorization") ?? "";
     const accessToken = authorization.replace(/^Bearer\s+/i, "").trim();
     if (!accessToken) {
       return jsonResponse({ success: false, error: "Necesitás iniciar sesión en EmiMatch." }, 401);
