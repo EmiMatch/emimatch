@@ -251,7 +251,7 @@ metadata?: Record<string, unknown>;
 const { error } =
 await supabase
 .from("premium_events")
-.insert({
+.upsert({
 user_id: params.userId ?? null,
 subscription_id:
 params.subscriptionId ?? null,
@@ -262,7 +262,7 @@ provider: "mercadopago",
 provider_event_id: params.eventId,
 metadata:
 params.metadata ?? {},
-});
+}, { onConflict: "provider,provider_event_id", ignoreDuplicates: true });
 
 if (error) throw error;
 }
