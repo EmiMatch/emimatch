@@ -88,10 +88,16 @@ const checks = [
     assert.match(plansPage, /const CHECKOUT_ENABLED = false/);
     assert.match(plansPage, /async function startOneTimeCheckout\(button\)[\s\S]*?if \(!CHECKOUT_ENABLED\) \{[\s\S]*?return;[\s\S]*?const response = await fetch/);
   }],
-  ["La membresía actual enlaza la vista de nuevos planes sin alterar su checkout mensual", () => {
-    assert.match(membershipPage, /href="planes-premium-propuesta\.html"/);
-    assert.match(membershipPage, /id="premiumButton"/);
-    assert.match(membershipPage, /functions\/v1\/premium-create/);
+  ["La pantalla Premium principal presenta solo los cuatro planes de pago único", () => {
+    assert.match(membershipPage, /pago único por 1 mes[\s\S]*?pago único por 3 meses[\s\S]*?pago único por 6 meses[\s\S]*?pago único por 12 meses/);
+    assert.doesNotMatch(membershipPage, /Membresía mensual|\$10\.000 ARS/);
+    assert.match(membershipPage, /id="premium-account-status"/);
+  }],
+  ["La pantalla Premium principal mantiene deshabilitadas las compras y conserva el estado de cuentas Premium", () => {
+    assert.match(membershipPage, /const CHECKOUT_ENABLED = false/);
+    assert.match(membershipPage, /if \(!CHECKOUT_ENABLED\)/);
+    assert.match(membershipPage, /get_premium_status/);
+    assert.doesNotMatch(membershipPage, /functions\/v1\/premium-create/);
   }],
 ];
 
