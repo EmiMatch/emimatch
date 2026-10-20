@@ -88,7 +88,8 @@ async function checkLabUpdate(){
   const low=latest.toLowerCase();
   if(!latest.includes('LAB · DEMO')||!latest.includes('data-check-update')||!latest.includes('incomingRequests')||low.includes('supabase')||low.includes('mercadopago')||low.includes('mercado pago'))throw new Error('La versión remota no pasó la validación de seguridad');
   if(latest.length<10000)throw new Error('La versión recibida está incompleta');
-  if(latest.includes('name="emimatch-lab-remote"')){toast('Ya estás usando la versión disponible');return}
+  if(localStorage.getItem('emimatch_lab_last_remote')===latest){toast('Ya tenés la última versión del demo');if(btn){btn.disabled=false;btn.textContent='↻ Actualizar'}return}
+  localStorage.setItem('emimatch_lab_last_remote',latest);
   latest=latest.replace('</head>','<meta name="emimatch-lab-remote" content="1"></head>');
   document.open();document.write(latest);document.close();
  }catch(err){toast('No se pudo actualizar ahora. Revisá tu conexión e intentá otra vez.');if(btn){btn.disabled=false;btn.textContent='↻ Actualizar'}}
