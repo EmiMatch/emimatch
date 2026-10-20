@@ -181,9 +181,9 @@ jobs:
           BASELINE_URL="https://github.com/EmiMatch/emimatch/releases/download/v1.1.6/app-release.apk"
           curl --fail --location --silent --show-error "$BASELINE_URL" --output "$BASELINE_APK"
           test -s "$BASELINE_APK"
-          "$APKSIGNER" verify --print-certs "$BASELINE_APK" 2>&1 | tee "$RUNNER_TEMP/emimatch-v1.1.6-signature.txt"
+          "$APKSIGNER" verify --print-certs "$BASELINE_APK" 2>&1 | tee "$RUNNER_TEMP/emimatch-baseline-v1.1.6-signature.txt"
           "$APKSIGNER" verify --print-certs "android/app/build/outputs/apk/release/app-release.apk" 2>&1 | tee "$RUNNER_TEMP/emimatch-v1.1.6-signature.txt"
-          OLD_CERT="$(sed -n 's/.*Signer #1 certificate SHA-256 digest: *//p' "$RUNNER_TEMP/emimatch-v1.1.6-signature.txt" | head -n 1 | tr '[:upper:]' '[:lower:]')"
+          OLD_CERT="$(sed -n 's/.*Signer #1 certificate SHA-256 digest: *//p' "$RUNNER_TEMP/emimatch-baseline-v1.1.6-signature.txt" | head -n 1 | tr '[:upper:]' '[:lower:]')"
           NEW_CERT="$(sed -n 's/.*Signer #1 certificate SHA-256 digest: *//p' "$RUNNER_TEMP/emimatch-v1.1.6-signature.txt" | head -n 1 | tr '[:upper:]' '[:lower:]')"
           if [[ -z "$OLD_CERT" || -z "$NEW_CERT" ]]; then
             echo "::error::No se pudo leer la huella de firma de ambos APK."
