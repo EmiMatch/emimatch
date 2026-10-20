@@ -6,6 +6,7 @@ def emimatchReleaseKeyAlias = System.getenv("EMIMATCH_KEY_ALIAS")
 def emimatchReleaseKeyPassword = System.getenv("EMIMATCH_KEY_PASSWORD")
 
 android {
+    // Experimental Lab build; kept separate from the production EmiMatch application.
     namespace = "com.emimatch.app"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
