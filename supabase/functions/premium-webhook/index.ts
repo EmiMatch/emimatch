@@ -790,6 +790,16 @@ reason: "subscription_not_found",
 };
 }
 
+// Los planes de pago único solo se activan mediante el evento payment,
+// que valida importe/moneda y usa el RPC transaccional idempotente.
+// No permitir que authorized_payment conceda por error un mes recurrente.
+if (localSubscription.purchase_type === "one_time") {
+  return {
+    processed: false,
+    reason: "one_time_requires_payment_event",
+  };
+}
+
 const nestedPayment =
 authorized?.payment;
 
