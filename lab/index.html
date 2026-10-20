@@ -11,7 +11,7 @@
 @media(max-width:390px){main{padding:14px}.top{padding:14px}.hero h1{font-size:26px}.chapter{padding:11px;min-height:150px}.chapter h3{font-size:14px}.stats{gap:5px}.stat{padding:8px}.quick{gap:5px}.btn{padding:9px 10px}}
 </style></head>
 <body><div class="app">
-<header class="top"><div class="mark">🫰</div><div><div class="brand">EmiMatch</div><div class="sub">Conexiones que empiezan de verdad</div></div><span class="lab">LAB · DEMO</span></header>
+<header class="top"><div class="mark">🫰</div><div><div class="brand">EmiMatch</div><div class="sub">Conexiones que empiezan de verdad</div></div><button class="close" data-check-update aria-label="Buscar actualizaciones" style="margin-left:auto;white-space:nowrap">↻ Actualizar</button><span class="lab">LAB · DEMO</span></header>
 <main id="screen" aria-live="polite"></main>
 <nav class="bottom" aria-label="Navegación principal"><button data-screen="inicio" class="active"><span class="ico">⌂</span>Inicio</button><button data-screen="citas"><span class="ico">♡</span>Citas</button><button data-screen="social"><span class="ico">◉</span>Social</button><button data-screen="mensajes"><span class="ico">▤</span>Mensajes</button><button data-screen="perfil"><span class="ico">♙</span>Perfil</button></nav></div>
 <div id="overlay"></div>
@@ -76,5 +76,23 @@ document.addEventListener('click',e=>{
  const toastButton=e.target.closest('[data-toast]');if(toastButton){toast(toastButton.dataset.toast);return}
 });
 document.addEventListener('submit',e=>{const form=e.target.closest('form[data-action]');if(!form)return;e.preventDefault();const action=form.dataset.action;if(action==='add-comment'){const text=form.querySelector('[name=comment]')?.value.trim();if(!text)return;const id=form.dataset.postId;(state.comments[id]||(state.comments[id]=[])).push(text);overlay.innerHTML='';go('social');toast('Comentario agregado a la demo');}else if(action==='send-message'){const text=form.querySelector('[name=message]')?.value.trim();if(!text)return;const id=form.dataset.chatId;(state.messages[id]||(state.messages[id]=[])).push({mine:true,text});state.activeChat=id;go('mensajes');toast('Mensaje guardado solo en la demo');}});
+
+async function checkLabUpdate(){
+ const btn=document.querySelector('[data-check-update]');
+ if(btn){btn.disabled=true;btn.textContent='Buscando…'}
+ try{
+  const url='https://raw.githubusercontent.com/EmiMatch/emimatch/lab-desarrollo/lab/index.html?t='+Date.now();
+  const response=await fetch(url,{cache:'no-store',headers:{'Accept':'text/html'}});
+  if(!response.ok)throw new Error('No se pudo consultar la versión publicada');
+  let latest=await response.text();
+  const low=latest.toLowerCase();
+  if(!latest.includes('LAB · DEMO')||!latest.includes('data-check-update')||!latest.includes('incomingRequests')||low.includes('supabase')||low.includes('mercadopago')||low.includes('mercado pago'))throw new Error('La versión remota no pasó la validación de seguridad');
+  if(latest.length<10000)throw new Error('La versión recibida está incompleta');
+  if(latest.includes('name="emimatch-lab-remote"')){toast('Ya estás usando la versión disponible');return}
+  latest=latest.replace('</head>','<meta name="emimatch-lab-remote" content="1"></head>');
+  document.open();document.write(latest);document.close();
+ }catch(err){toast('No se pudo actualizar ahora. Revisá tu conexión e intentá otra vez.');if(btn){btn.disabled=false;btn.textContent='↻ Actualizar'}}
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-check-update]');if(b){e.preventDefault();checkLabUpdate()}});
 go('inicio');
 </script></body></html>
