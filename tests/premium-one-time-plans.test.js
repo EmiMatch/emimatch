@@ -72,6 +72,10 @@ const checks = [
     assert.match(creator, /parsed\.hostname === "kngiadwaesdbmvwivdev\.supabase\.co"/);
     assert.match(creator, /notification_url: webhookUrl/);
   }],
+  ["El modo de prueba también bloquea escrituras en el proyecto Supabase de producción", () => {
+    assert.match(creator, /Test purchases must write only to an isolated Supabase project too/);
+    assert.match(creator, /supabaseProjectUrl\\.hostname === "kngiadwaesdbmvwivdev\\.supabase\\.co"/);
+  }],
   ["La pantalla aclara que los planes son de pago único", () =>
     assert.match(plansPage, /pago único por 1 mes[\s\S]*?pago único por 3 meses[\s\S]*?pago único por 6 meses[\s\S]*?pago único por 12 meses/)],
   ["La vista previa mantiene deshabilitado el checkout", () => {
