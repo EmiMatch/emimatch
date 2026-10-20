@@ -1,5 +1,5 @@
 {
   "app": "EmiMatch",
-  "latestVersion": "1.1.7",
-  "releaseNotes": "Planes Premium de pago único en vista previa; se mantiene el Premium mensual existente. La compra única aún no está habilitada."
+  "latestVersion": "1.1.8",
+  "releaseNotes": "La pantalla Premium presenta planes de pago único de 1, 3, 6 y 12 meses. Las compras nuevas siguen deshabilitadas hasta completar las pruebas; las cuentas Premium existentes conservan su estado."
 }
