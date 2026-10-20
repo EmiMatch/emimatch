@@ -1,756 +1,166 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>EmiMatch Premium</title>
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    :root {
-      --bg: #070914;
-      --bg-soft: #101329;
-      --card: rgba(18, 20, 43, 0.88);
-      --card-soft: rgba(255, 255, 255, 0.045);
-      --gold: #e8c96b;
-      --gold-light: #f5df8c;
-      --gold-dark: #9b7425;
-      --purple: #8067d8;
-      --purple-light: #a995ff;
-      --text: #f8f7fb;
-      --muted: #aaa9bd;
-      --line: rgba(255,255,255,0.09);
-    }
-
-    html {
-      min-height: 100%;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      padding: 24px 16px;
-      font-family:
-        Inter,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Arial,
-        sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(
-          circle at 50% -10%,
-          rgba(128, 103, 216, 0.34),
-          transparent 38%
-        ),
-        radial-gradient(
-          circle at 100% 100%,
-          rgba(232, 201, 107, 0.10),
-          transparent 32%
-        ),
-        linear-gradient(
-          145deg,
-          #090a18 0%,
-          #0d1024 48%,
-          #070914 100%
-        );
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow-x: hidden;
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
-      width: 260px;
-      height: 260px;
-      top: -100px;
-      left: -100px;
-      border-radius: 50%;
-      background: rgba(128, 103, 216, 0.12);
-      filter: blur(50px);
-      pointer-events: none;
-    }
-
-    body::after {
-      content: "";
-      position: fixed;
-      width: 220px;
-      height: 220px;
-      right: -100px;
-      bottom: -80px;
-      border-radius: 50%;
-      background: rgba(232, 201, 107, 0.08);
-      filter: blur(50px);
-      pointer-events: none;
-    }
-
-    .container {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      max-width: 520px;
-    }
-
-    .card {
-      position: relative;
-      overflow: hidden;
-      width: 100%;
-      padding: 34px 26px 28px;
-      text-align: center;
-
-      background:
-        linear-gradient(
-          145deg,
-          rgba(27, 29, 58, 0.94),
-          rgba(12, 14, 31, 0.96)
-        );
-
-      border: 1px solid rgba(232, 201, 107, 0.22);
-      border-radius: 30px;
-
-      box-shadow:
-        0 30px 80px rgba(0, 0, 0, 0.52),
-        inset 0 1px 0 rgba(255,255,255,0.06);
-    }
-
-    .card::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 15%;
-      right: 15%;
-      height: 1px;
-      background:
-        linear-gradient(
-          90deg,
-          transparent,
-          rgba(232,201,107,0.75),
-          transparent
-        );
-    }
-
-    .premium-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 7px 13px;
-      margin-bottom: 20px;
-
-      border: 1px solid rgba(232,201,107,0.22);
-      border-radius: 999px;
-
-      background: rgba(232,201,107,0.07);
-      color: var(--gold-light);
-
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.7px;
-      text-transform: uppercase;
-    }
-
-    .icon {
-      width: 82px;
-      height: 82px;
-      margin: 0 auto 20px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      border-radius: 26px;
-
-      background:
-        linear-gradient(
-          145deg,
-          #f2d97c,
-          #b98d32
-        );
-
-      box-shadow:
-        0 15px 35px rgba(232, 201, 107, 0.20),
-        inset 0 1px 0 rgba(255,255,255,0.45);
-
-      font-size: 40px;
-      line-height: 1;
-    }
-
-    h1 {
-      margin: 0;
-
-      font-size: clamp(29px, 8vw, 36px);
-      line-height: 1.1;
-      font-weight: 800;
-      letter-spacing: -0.8px;
-
-      background:
-        linear-gradient(
-          90deg,
-          #ffffff 10%,
-          #f5df8c 50%,
-          #ffffff 90%
-        );
-
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    .subtitle {
-      max-width: 390px;
-      margin: 13px auto 25px;
-
-      color: var(--muted);
-      font-size: 15px;
-      line-height: 1.6;
-    }
-
-    .price-box {
-      position: relative;
-
-      margin: 22px 0 26px;
-      padding: 22px 16px;
-
-      border: 1px solid rgba(232,201,107,0.18);
-      border-radius: 22px;
-
-      background:
-        linear-gradient(
-          145deg,
-          rgba(232,201,107,0.075),
-          rgba(128,103,216,0.07)
-        );
-    }
-
-    .price-caption {
-      margin-bottom: 5px;
-
-      color: #9f9db1;
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .price {
-      margin: 0;
-
-      color: var(--gold-light);
-      font-size: clamp(34px, 9vw, 42px);
-      font-weight: 800;
-      letter-spacing: -1px;
-    }
-
-    .price span {
-      color: #aaa7ba;
-      font-size: 15px;
-      font-weight: 500;
-      letter-spacing: 0;
-    }
-
-    .benefits {
-      margin: 0 0 26px;
-      padding: 0;
-
-      list-style: none;
-      text-align: left;
-    }
-
-    .benefits li {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-
-      min-height: 51px;
-      padding: 11px 13px;
-
-      color: #e9e7f0;
-      font-size: 14px;
-      line-height: 1.4;
-
-      border-bottom: 1px solid var(--line);
-    }
-
-    .benefits li:first-child {
-      border-top: 1px solid var(--line);
-      border-radius: 12px 12px 0 0;
-    }
-
-    .benefits li:last-child {
-      border-radius: 0 0 12px 12px;
-    }
-
-    .benefits li::before {
-      content: "✓";
-
-      flex: 0 0 25px;
-
-      width: 25px;
-      height: 25px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      border-radius: 50%;
-
-      background: rgba(232,201,107,0.10);
-      color: var(--gold-light);
-
-      font-size: 13px;
-      font-weight: 900;
-    }
-
-    button {
-      width: 100%;
-      min-height: 55px;
-
-      border: 0;
-      border-radius: 17px;
-
-      padding: 16px 18px;
-
-      color: #17131d;
-
-      background:
-        linear-gradient(
-          135deg,
-          #f7df86,
-          #d5ad4e 55%,
-          #b8892e
-        );
-
-      box-shadow:
-        0 12px 28px rgba(232,201,107,0.17),
-        inset 0 1px 0 rgba(255,255,255,0.48);
-
-      font-size: 16px;
-      font-weight: 800;
-
-      cursor: pointer;
-
-      transition:
-        transform 0.18s ease,
-        box-shadow 0.18s ease,
-        filter 0.18s ease;
-    }
-
-    button:hover {
-      transform: translateY(-2px);
-      filter: brightness(1.04);
-
-      box-shadow:
-        0 16px 34px rgba(232,201,107,0.23),
-        inset 0 1px 0 rgba(255,255,255,0.5);
-    }
-
-    button:active {
-      transform: translateY(0);
-    }
-
-    button:disabled {
-      opacity: 0.65;
-      cursor: wait;
-      transform: none;
-      filter: none;
-    }
-
-    .status {
-      min-height: 24px;
-
-      margin-top: 17px;
-      padding: 0 4px;
-
-      color: #b9b7c9;
-      font-size: 13px;
-      line-height: 1.5;
-
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-    .secure {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 7px;
-
-      margin-top: 12px;
-
-      color: #88879b;
-      font-size: 11px;
-    }
-
-    .back {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-
-      margin-top: 21px;
-      padding: 8px 12px;
-
-      color: #9e9caf;
-      text-decoration: none;
-
-      font-size: 13px;
-      font-weight: 600;
-
-      border-radius: 10px;
-
-      transition:
-        color 0.18s ease,
-        background 0.18s ease;
-    }
-
-    .back:hover {
-      color: #ffffff;
-      background: rgba(255,255,255,0.05);
-    }
-
-    @media (max-width: 480px) {
-      body {
-        padding: 14px;
-        align-items: flex-start;
-      }
-
-      .container {
-        margin: auto 0;
-      }
-
-      .card {
-        padding: 28px 18px 23px;
-        border-radius: 26px;
-      }
-
-      .premium-label {
-        margin-bottom: 17px;
-      }
-
-      .icon {
-        width: 74px;
-        height: 74px;
-        margin-bottom: 17px;
-        border-radius: 23px;
-        font-size: 36px;
-      }
-
-      .subtitle {
-        font-size: 14px;
-        margin-bottom: 21px;
-      }
-
-      .price-box {
-        padding: 19px 12px;
-        margin: 18px 0 22px;
-      }
-
-      .benefits li {
-        padding: 10px 9px;
-        font-size: 13px;
-      }
-    }
-  </style>
-  <style id="emimatch-romantic-polish">
-    body { color:#fff6f2 !important;background:radial-gradient(ellipse at 50% 5%,rgba(195,104,135,.27),transparent 43%),linear-gradient(145deg,#110c17,#2a1928 52%,#100b16) !important; }
-    .container { max-width:780px !important; }
-    .card,.price-box,.benefits,.secure,.status { background:linear-gradient(145deg,rgba(49,29,46,.96),rgba(25,16,29,.98)) !important;border:1px solid rgba(240,217,173,.24) !important;box-shadow:0 24px 65px rgba(0,0,0,.24) !important;border-radius:26px !important; }
-    .premium-label { color:#f0d9ad !important;border-color:rgba(240,217,173,.35) !important;background:rgba(232,160,173,.1) !important; }
-    .icon { background:linear-gradient(145deg,#bd6e86,#e8a0ad 60%,#f0d9ad) !important;color:#281522 !important; }
-    .price { color:#f0d9ad !important;font-family:Georgia,"Times New Roman",serif !important; }
-    button,.back { border-radius:15px !important; }
-    button.primary,.subscribe,.pay-button { background:linear-gradient(115deg,#bd6e86,#e8a0ad 60%,#f0d9ad) !important;color:#281522 !important;border-color:rgba(255,239,220,.45) !important; }
-
-  </style>
-  <link rel="stylesheet" href="../assets/css/premium-refresh.css?v=20261014">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#090909">
+<title>EmiMatch Premium — Planes de pago único</title>
+<style>
+:root{color-scheme:dark;--bg:#090909;--panel:#141414;--panel2:#1b1914;--gold:#f5c451;--gold2:#dcae36;--muted:#aaa49a;--line:#353027;--white:#faf8f2}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 50% -20%,#3b2b0c 0,transparent 52%),var(--bg);color:var(--white);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.5}
+.wrap{width:min(1080px,100% - 32px);margin:auto;padding:28px 0 56px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:46px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.04em}.mark{display:grid;place-items:center;width:42px;height:42px;border:1px solid #8c6b24;border-radius:14px;color:var(--gold);font-size:23px;background:#17130a}
+.pill{font-size:12px;border:1px solid #66501f;border-radius:999px;padding:6px 11px;color:var(--gold);letter-spacing:.08em;text-transform:uppercase}
+.hero{text-align:center;max-width:740px;margin:0 auto 34px}.eyebrow{color:var(--gold);font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:800}.hero h1{font-size:clamp(36px,7vw,64px);line-height:1.03;letter-spacing:-.045em;margin:14px 0}.hero h1 span{color:var(--gold)}.hero p{color:var(--muted);font-size:17px;margin:0 auto;max-width:570px}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;align-items:stretch}
+.plan{position:relative;display:flex;flex-direction:column;background:linear-gradient(160deg,#1a1916,#111);border:1px solid var(--line);border-radius:20px;padding:22px 18px;min-height:310px;box-shadow:0 16px 38px #0004}
+.plan.featured{border-color:var(--gold);background:linear-gradient(155deg,#2a210f,#15130f 70%);transform:translateY(-7px)}
+.ribbon{position:absolute;top:-12px;left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--gold);color:#171107;font-size:11px;font-weight:900;padding:5px 11px;border-radius:999px}
+.duration{color:var(--muted);font-weight:650;font-size:14px}.price{font-size:clamp(27px,3vw,35px);font-weight:850;letter-spacing:-.04em;margin:10px 0 2px}.price small{font-size:14px;color:var(--muted);font-weight:500;letter-spacing:0}.once{font-size:12px;color:var(--muted);margin-bottom:17px}
+.saving{color:var(--gold);font-size:12px;min-height:19px;margin-bottom:12px}
+ul{padding:0;margin:0 0 20px;list-style:none;display:grid;gap:9px;font-size:13px;color:#e2ded5}li:before{content:"✓";color:var(--gold);font-weight:900;margin-right:8px}
+button{margin-top:auto;width:100%;border:1px solid #8b6b28;background:transparent;color:var(--gold);font-weight:800;border-radius:12px;padding:12px 10px;font-size:14px;cursor:pointer;transition:background .18s,transform .18s}
+button:hover{background:#30240c;transform:translateY(-1px)}.featured button{background:var(--gold);color:#171107;border-color:var(--gold)}.featured button:hover{background:#ffda78}
+.details{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:32px}.detail{border:1px solid var(--line);border-radius:18px;padding:20px;background:#111}.detail h2{font-size:17px;margin:0 0 9px}.detail p{margin:0;color:var(--muted);font-size:14px}.detail .tag{display:inline-block;color:var(--gold);font-size:11px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
+.notice{border:1px solid #5a4720;background:#171208;color:#d8c99e;border-radius:12px;padding:13px 15px;font-size:12px;margin-top:20px}
+.account-status{margin-top:14px;color:#f0d9ad;text-align:center;font-size:13px;line-height:1.5}.back-link{display:inline-flex;margin-top:20px;padding:9px 13px;border:1px solid #66501f;border-radius:12px;color:var(--gold);font-size:13px;font-weight:750;text-decoration:none}.back-link:hover{background:#30240c}
+footer{text-align:center;color:#777064;font-size:12px;margin-top:28px}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.plan.featured{transform:none}}
+@media(max-width:520px){.wrap{width:min(100% - 24px,460px);padding-top:18px}.top{margin-bottom:34px}.pill{font-size:10px}.grid{grid-template-columns:1fr;gap:13px}.plan{min-height:auto;padding:20px}.price{font-size:34px}.details{grid-template-columns:1fr}.hero p{font-size:15px}}
+</style>
 </head>
-
 <body>
+<main class="wrap">
+<header class="top">
+  <div class="brand"><span class="mark" aria-hidden="true">🫰</span><span>EMIMATCH</span></div>
+  <span class="pill">Planes Premium</span>
+</header>
+<section class="hero">
+  <div class="eyebrow">Una conexión más especial</div>
+  <h1>Elegí tu <span>EmiMatch Premium</span></h1>
+  <p>Más libertad para conectar. Elegí cuánto tiempo querés disfrutar de Premium y pagá una sola vez por el período elegido.</p>
+</section>
+<section class="grid" aria-label="Planes Premium">
+  <article class="plan">
+    <div class="duration">Plan de 1 mes</div><div class="price">$4.990</div><div class="once">ARS · pago único por 1 mes</div><div class="saving">&nbsp;</div>
+    <ul><li>Me gusta ilimitados</li><li>Acceso Premium durante 1 mes</li><li>Sin renovación automática</li></ul>
+    <button type="button" data-plan-key="month" data-plan="1 mes — $4.990">Elegir 1 mes</button>
+  </article>
+  <article class="plan">
+    <div class="duration">Plan de 3 meses</div><div class="price">$11.990</div><div class="once">ARS · pago único por 3 meses</div><div class="saving">Ahorro frente a tres períodos de 1 mes</div>
+    <ul><li>Me gusta ilimitados</li><li>Acceso Premium durante 3 meses</li><li>Sin renovación automática</li></ul>
+    <button type="button" data-plan-key="quarter" data-plan="3 meses — $11.990">Elegir 3 meses</button>
+  </article>
+  <article class="plan featured">
+<div class="duration">Plan de 6 meses</div><div class="price">$19.990</div><div class="once">ARS · pago único por 6 meses</div><div class="saving">Mejor precio por mes</div>
+    <ul><li>Me gusta ilimitados</li><li>Acceso Premium durante 6 meses</li><li>Sin renovación automática</li></ul>
+    <button type="button" data-plan-key="half_year" data-plan="6 meses — $19.990">Elegir 6 meses</button>
+  </article>
+  <article class="plan">
+    <div class="duration">Plan de 12 meses</div><div class="price">$29.990</div><div class="once">ARS · pago único por 12 meses</div><div class="saving">Máximo ahorro</div>
+    <ul><li>Me gusta ilimitados</li><li>Acceso Premium durante 12 meses</li><li>Sin renovación automática</li></ul>
+    <button type="button" data-plan-key="year" data-plan="12 meses — $29.990">Elegir 12 meses</button>
+  </article>
+</section>
+<section class="details">
+  <article class="detail"><span class="tag">Incluido en la propuesta</span><h2>💛 Conectá sin límites</h2><p>Los me gusta ilimitados son el beneficio Premium principal que ya forma parte de EmiMatch. La activación y la vigencia de cada nuevo plan deberán conectarse y probarse antes de publicarlo.</p></article>
+  <article class="detail"><span class="tag">En evaluación</span><h2>✨ Más ventajas Premium</h2><p>Insignia Premium, visitas anónimas, impulso del perfil, burbuja especial en el chat y deshacer likes. Estos beneficios son ideas para una etapa posterior, no funciones activas todavía.</p></article>
+</section>
+<div class="notice" id="checkout-status" role="status" aria-live="polite"><strong>Vista previa sin compras:</strong> estos planes todavía no están habilitados para pagar. No se abrirá Mercado Pago ni se realizará ningún cobro hasta completar y verificar las pruebas en un entorno aislado.</div>
+<p class="account-status" id="premium-account-status" role="status" aria-live="polite"></p>
+<a class="back-link" href="../index.html">← Volver a EmiMatch</a>
+<footer>EmiMatch · Conocé personas. Conectá de verdad. 🫰</footer>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+"use strict";
+const SUPABASE_URL = "https://kngiadwaesdbmvwivdev.supabase.co";
+const SUPABASE_KEY = "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const statusBox = document.getElementById("checkout-status");
+const buttons = Array.from(document.querySelectorAll("[data-plan-key]"));
+// Mantener desactivadas las compras hasta completar las pruebas aisladas y aprobar el despliegue.
+const CHECKOUT_ENABLED = false;
 
-  <main class="container">
-    <section class="card">
-
-      <div class="premium-label">
-        🫰 Experiencia Premium
-      </div>
-
-      <div class="icon">🫰</div>
-
-      <h1>EmiMatch Premium</h1>
-
-      <p class="subtitle">
-        Más posibilidades para conectar, conversar y conocer personas.
-      </p>
-
-      <div class="price-box">
-
-        <div class="price-caption">
-          Membresía mensual
-        </div>
-
-        <div class="price">
-          $10.000 ARS
-          <span>/ mes</span>
-        </div>
-
-      </div>
-
-      <ul class="benefits">
-        <li>Mensajes ilimitados, sin el límite diario de la cuenta gratuita</li>
-        <li>Me gusta ilimitados, sin el límite diario de la cuenta gratuita</li>
-        <li>Ver quién te dio Me gusta y elegir si también querés conectar</li>
-        <li>Acceso a una experiencia de conexión más completa</li>
-        <li>La membresía se activa cuando Mercado Pago confirma el pago</li>
-      </ul>
-
-      <button id="premiumButton">
-        Obtener Premium
-      </button>
-
-      <a class="back" href="planes-premium-propuesta.html" aria-label="Ver propuesta de planes Premium de pago único">
-        Ver planes de pago único · 1, 3, 6 o 12 meses
-      </a>
-
-      <div id="premiumStatus" class="status"></div>
-
-      <div class="secure">
-        🔒 Pago procesado de forma segura
-      </div>
-
-      <a class="back" href="../index.html">
-        ← Volver a EmiMatch
-      </a>
-
-    </section>
-  </main>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <script>
-    "use strict";
-
-    const button = document.getElementById("premiumButton");
-    const status = document.getElementById("premiumStatus");
-
-    const SUPABASE_URL =
-      "https://kngiadwaesdbmvwivdev.supabase.co";
-
-    const SUPABASE_KEY =
-      "sb_publishable_TSCAMZ4gmB0mHF10DULT3Q_y25xBw1m";
-
-    const supabaseClient =
-      window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-      );
-
-    async function iniciarPremium() {
-      button.disabled = true;
-
-      status.textContent =
-        "Comprobando tu cuenta...";
-
-      try {
-        const {
-          data: sessionData,
-          error: sessionError
-        } = await supabaseClient.auth.getSession();
-
-        if (sessionError) {
-          throw sessionError;
-        }
-
-        const session =
-          sessionData?.session;
-
-        if (!session) {
-          status.textContent =
-            "Necesitás iniciar sesión en EmiMatch para continuar.";
-
-          button.disabled = false;
-          return;
-        }
-
-        status.textContent =
-          "Preparando tu suscripción Premium...";
-
-        const response =
-          await fetch(
-            `${SUPABASE_URL}/functions/v1/premium-create`,
-            {
-              method: "POST",
-              headers: {
-                "Authorization":
-                  `Bearer ${session.access_token}`,
-
-                "apikey":
-                  SUPABASE_KEY,
-
-                "Content-Type":
-                  "application/json"
-              },
-
-              body: JSON.stringify({})
-            }
-          );
-
-        /*
-         * CAMBIO ÚNICO:
-         * Leemos primero el cuerpo como texto para poder
-         * mostrar exactamente qué devuelve premium-create.
-         */
-
-        const responseText =
-          await response.text();
-
-        let data = null;
-
-        if (responseText.trim()) {
-          try {
-            data =
-              JSON.parse(responseText);
-          } catch (_) {
-            data = null;
-          }
-        }
-
-        /*
-         * Error HTTP real
-         */
-
-        if (!response.ok) {
-          throw new Error(
-            data?.error ||
-            responseText ||
-            `Error HTTP ${response.status}`
-          );
-        }
-
-        /*
-         * HTTP 200 pero respuesta inesperada.
-         * Mostramos el contenido real recibido.
-         */
-
-        if (!data?.success) {
-          const details =
-            data
-              ? JSON.stringify(data, null, 2)
-              : (
-                  responseText ||
-                  "Respuesta vacía."
-                );
-
-          status.textContent =
-            `Respuesta inesperada (HTTP ${response.status}):\n${details}`;
-
-          console.error(
-            "Respuesta inesperada de premium-create:",
-            {
-              status: response.status,
-              statusText: response.statusText,
-              headers:
-                Object.fromEntries(
-                  response.headers.entries()
-                ),
-              body: responseText,
-              data: data
-            }
-          );
-
-          return;
-        }
-
-        if (data.already_active === true) {
-          status.textContent =
-            "Tu cuenta ya tiene EmiMatch Premium activo. ¡Disfrutalo!";
-          button.textContent = "Premium activo";
-          return;
-        }
-
-        /*
-         * El servidor selecciona el enlace según el modo
-         * configurado y validado con el token de Mercado Pago.
-         */
-        const checkoutUrl = data.checkout_url;
-        if (!checkoutUrl) {
-          status.textContent =
-            data.checkout_mode === "test"
-              ? "No se abrió el pago: Mercado Pago no devolvió un enlace de prueba. No se realizó ningún cobro."
-              : "No se pudo preparar el checkout de Mercado Pago. No se realizó ningún cobro.";
-          return;
-        }
-        if (data.checkout_mode !== "test" && data.checkout_mode !== "production") {
-          throw new Error("Mercado Pago no confirmó el entorno del checkout. Por seguridad, no se abrió.");
-        }
-        status.textContent =
-          data.checkout_mode === "test"
-            ? "Abriendo el entorno de prueba de Mercado Pago..."
-            : "Abriendo el checkout de Mercado Pago. El pago solo se realizará si lo confirmás allí.";
-        window.location.href = checkoutUrl;
-        return;
-
-      } catch (error) {
-
-        console.error(
-          "Error Premium:",
-          error
-        );
-
-        status.textContent =
-          error?.message ||
-          "No se pudo preparar Premium. Intentá nuevamente.";
-
-      } finally {
-
-        button.disabled = false;
-
-      }
+async function startOneTimeCheckout(button) {
+  if (!CHECKOUT_ENABLED) {
+    statusBox.textContent = "Vista previa: las compras están deshabilitadas mientras se completan las pruebas de seguridad. No se abrió Mercado Pago ni se realizó ningún cobro.";
+    return;
+  }
+  if (buttons.some(item => item.disabled)) return;
+  buttons.forEach(item => { item.disabled = true; });
+  statusBox.textContent = "Comprobando tu sesión de EmiMatch...";
+  try {
+    const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
+    if (sessionError) throw sessionError;
+    const session = sessionData?.session;
+    if (!session) {
+      statusBox.textContent = "Iniciá sesión en EmiMatch y volvé a elegir tu plan Premium.";
+      return;
     }
 
-    // Mostrar el beneficio automáticamente si la cuenta ya tiene Premium.
-    // No modifica el flujo de compra para usuarios gratuitos.
-    async function mostrarPremiumActivo() {
-      try {
-        const { data: sessionData, error: sessionError } =
-          await supabaseClient.auth.getSession();
-
-        if (sessionError || !sessionData?.session) {
-          return;
-        }
-
-        const { data, error } =
-          await supabaseClient.rpc("get_premium_status");
-
-        if (error) {
-          console.warn("No se pudo consultar el estado Premium:", error);
-          return;
-        }
-
-        if (data?.is_premium === true) {
-          status.textContent = data.is_admin === true
-            ? "Tu cuenta de administrador tiene Premium permanente sin costo."
-            : "Tu cuenta ya tiene EmiMatch Premium activo. ¡Disfrutalo!";
-          button.textContent = "Premium activo";
-          button.disabled = true;
-        }
-      } catch (error) {
-        console.warn("No se pudo consultar el estado Premium:", error);
-      }
+    statusBox.textContent = "Preparando el pago único de Mercado Pago...";
+    const response = await fetch(`${SUPABASE_URL}/functions/v1/premium-one-time-create`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+        apikey: SUPABASE_KEY,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ plan_key: button.dataset.planKey })
+    });
+    const raw = await response.text();
+    let data = null;
+    try { data = raw ? JSON.parse(raw) : null; } catch (_) { data = null; }
+    if (!response.ok || !data?.success) {
+      throw new Error(data?.error || raw || `No se pudo preparar el pago (HTTP ${response.status}).`);
     }
+    if (data.already_active === true) {
+      statusBox.textContent = data.message || "Tu cuenta de administrador ya tiene Premium permanente.";
+      return;
+    }
+    const checkoutUrl = data.checkout_url;
+    if (typeof checkoutUrl !== "string" || !checkoutUrl.startsWith("https://")) {
+      throw new Error("Mercado Pago no devolvió un enlace de pago seguro. No se realizó ningún cobro.");
+    }
+    if (data.checkout_mode !== "test" && data.checkout_mode !== "production") {
+      throw new Error("No se pudo confirmar el entorno del pago. Por seguridad, no se abrió.");
+    }
+    statusBox.textContent = data.checkout_mode === "test"
+      ? "Abriendo el entorno de prueba de Mercado Pago..."
+      : "Abriendo Mercado Pago. El pago solo se realizará si lo confirmás allí.";
+    window.location.href = checkoutUrl;
+  } catch (error) {
+    console.error("EmiMatch Premium one-time checkout:", error);
+    statusBox.textContent = error?.message || "No se pudo preparar el pago. Intentá nuevamente.";
+  } finally {
+    buttons.forEach(item => { item.disabled = false; });
+  }
+}
+buttons.forEach(button => button.addEventListener("click", () => startOneTimeCheckout(button)));
 
-    button.addEventListener(
-      "click",
-      iniciarPremium
-    );
-
-    void mostrarPremiumActivo();
-
-  </script>
-
+async function showExistingPremiumStatus() {
+  const accountStatus = document.getElementById("premium-account-status");
+  try {
+    const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
+    if (sessionError || !sessionData?.session) return;
+    const { data, error } = await supabaseClient.rpc("get_premium_status");
+    if (error) {
+      console.warn("No se pudo consultar el estado Premium:", error);
+      return;
+    }
+    if (data?.is_premium === true) {
+      accountStatus.textContent = data.is_admin === true
+        ? "Tu cuenta de administrador tiene Premium permanente sin costo."
+        : "Tu cuenta ya tiene EmiMatch Premium activo. ¡Disfrutalo!";
+    }
+  } catch (error) {
+    console.warn("No se pudo consultar el estado Premium:", error);
+  }
+}
+void showExistingPremiumStatus();
+</script>
 </body>
 </html>
