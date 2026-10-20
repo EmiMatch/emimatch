@@ -68,7 +68,7 @@ footer{text-align:center;color:#777064;font-size:12px;margin-top:28px}
   <article class="detail"><span class="tag">Incluido en la propuesta</span><h2>💛 Conectá sin límites</h2><p>Los me gusta ilimitados son el beneficio Premium principal que ya forma parte de EmiMatch. La activación y la vigencia de cada nuevo plan deberán conectarse y probarse antes de publicarlo.</p></article>
   <article class="detail"><span class="tag">En evaluación</span><h2>✨ Más ventajas Premium</h2><p>Insignia Premium, visitas anónimas, impulso del perfil, burbuja especial en el chat y deshacer likes. Estos beneficios son ideas para una etapa posterior, no funciones activas todavía.</p></article>
 </section>
-<div class="notice" id="checkout-status" role="status" aria-live="polite"><strong>Vista previa sin compras:</strong> estos planes todavía no están habilitados para pagar. No se abrirá Mercado Pago ni se realizará ningún cobro hasta completar y verificar las pruebas en un entorno aislado.</div>
+<div class="notice" id="checkout-status" role="status" aria-live="polite">Elegí un plan para continuar a Mercado Pago. EmiMatch activará Premium únicamente cuando el pago quede confirmado.</div>
 <p class="account-status" id="premium-account-status" role="status" aria-live="polite"></p>
 <a class="back-link" href="../index.html">← Volver a EmiMatch</a>
 <footer>EmiMatch · Conocé personas. Conectá de verdad. 🫰</footer>
@@ -131,7 +131,12 @@ async function startOneTimeCheckout(button) {
     statusBox.textContent = data.checkout_mode === "test"
       ? "Abriendo el entorno de prueba de Mercado Pago..."
       : "Abriendo Mercado Pago. El pago solo se realizará si lo confirmás allí.";
-    window.location.href = checkoutUrl;
+    if (window.Capacitor?.getPlatform?.() === "android" &&
+        window.EmiMatchUpdater && typeof window.EmiMatchUpdater.openExternalUrl === "function") {
+      window.EmiMatchUpdater.openExternalUrl(checkoutUrl);
+    } else {
+      window.location.href = checkoutUrl;
+    }
   } catch (error) {
     console.error("EmiMatch Premium one-time checkout:", error);
     statusBox.textContent = error?.message || "No se pudo preparar el pago. Intentá nuevamente.";
