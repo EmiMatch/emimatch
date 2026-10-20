@@ -13,7 +13,7 @@ Precios fijados en servidor para evitar que el navegador pueda modificarlos:
 ## Estado de la revisión técnica
 
 - La validación del pago de pago único rechaza una moneda ausente en la respuesta de Mercado Pago; no la interpreta por defecto como ARS.
-- La rama incorpora la RPC `grant_one_time_premium_period`, que valida otra vez importe/moneda en la base de datos y, en una sola transacción, registra el pago aprobado, extiende el período y marca `premium_period_granted_at`. El bloqueo de fila del pago evita que notificaciones concurrentes otorguen dos períodos por la misma compra; el bloqueo de la fila del usuario serializa compras distintas de la misma cuenta.
+- La rama incorpora la RPC `grant_one_time_premium_period`: el endpoint público es `SECURITY INVOKER`, solo el rol de servidor puede ejecutarlo y la implementación privilegiada vive en el esquema no expuesto `private`. En una sola transacción, vuelve a validar importe/moneda, registra el pago aprobado, extiende el período y marca `premium_period_granted_at`. El bloqueo de fila del pago evita duplicar períodos por notificaciones concurrentes; el bloqueo de la fila del usuario serializa compras distintas de la misma cuenta.
 - **La protección transaccional está implementada en el código de propuesta, pero aún no está validada en ejecución.** La migración no se aplicó y el webhook actualizado no se desplegó. Hace falta ejecutar pruebas reales en un entorno aislado, incluidas notificaciones concurrentes/repetidas, y verificar el comportamiento de reembolsos y del flujo recurrente antes de considerar la rama lista para fusionar o desplegar.
 - Por ahora, esta rama continúa siendo una propuesta no publicada.
 
@@ -44,7 +44,9 @@ No fusionar ni desplegar para usuarios hasta completar la prueba de integración
 - Pago pendiente/rechazado: no activa Premium.
 - Pago aprobado con importe o moneda incorrectos: no activa Premium y registra un evento de discrepancia.
 - Pago aprobado con importe correcto: activa el plazo seleccionado.
-- Notificación repetida del mismo pago: no suma meses otra vez.
+- Notificación repetida y dos notificaciones simultáneas del mismo pago: no suman meses otra vez.
+- Dos compras distintas procesadas simultáneamente para la misma cuenta: los períodos quedan encadenados, sin superposición ni pérdida de meses.
+- Un usuario sin rol de servidor intenta invocar la RPC: recibe denegación de permisos.
 - Compra posterior mientras existe Premium activo: comienza al finalizar el período activo.
 - Reembolso/contracargo: conserva el tratamiento de revocación ya existente.
 - Suscripción mensual anterior: conserva su vencimiento y su renovación actuales.
