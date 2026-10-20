@@ -15,3 +15,8 @@ entrypoint = "./functions/premium-create/index.ts"
 enabled = true
 verify_jwt = false
 entrypoint = "./functions/premium-webhook/index.ts"
+
+[functions.premium-one-time-create]
+enabled = true
+verify_jwt = true
+entrypoint = "./functions/premium-one-time-create/index.ts"
