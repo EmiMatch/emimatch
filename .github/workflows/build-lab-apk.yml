@@ -48,6 +48,28 @@ jobs:
           cp lab/index.html www/index.html
           test -s www/index.html
 
+      - name: Validar JavaScript y aislamiento de la demo
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          html = Path("lab/index.html").read_text(encoding="utf-8")
+          scripts = re.findall(r"<script>(.*?)</script>", html, flags=re.S)
+          if len(scripts) != 1:
+              raise SystemExit(f"Se esperaba un único script local; encontrados: {len(scripts)}")
+          Path("/tmp/emimatch-lab.js").write_text(scripts[0], encoding="utf-8")
+          lowered = html.lower()
+          for forbidden in ("supabase", "mercadopago", "fetch("):
+              if forbidden in lowered:
+                  raise SystemExit(f"La demo no debe conectarse a servicios reales: {forbidden}")
+          for required in ("incomingRequests", "data-accept-friend", "data-reject-friend", "data-remove-friend"):
+              if required not in html:
+                  raise SystemExit(f"Falta una función de Social esperada: {required}")
+          PY
+          node --check /tmp/emimatch-lab.js
+
       - name: Sincronizar Capacitor
         run: npx cap sync android
 
