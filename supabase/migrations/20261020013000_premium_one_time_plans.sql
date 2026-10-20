@@ -146,6 +146,26 @@ BEGIN
     );
   END IF;
 
+  -- A single checkout/purchase can grant only one period, even if a second
+  -- distinct Mercado Pago payment ID is reported for that same purchase.
+  IF EXISTS (
+    SELECT 1
+      FROM public.premium_payments
+     WHERE subscription_id = v_subscription.id
+       AND id <> v_payment.id
+       AND premium_period_granted_at IS NOT NULL
+  ) THEN
+    RETURN jsonb_build_object(
+      'granted', false,
+      'duplicate', false,
+      'blocked', true,
+      'reason', 'purchase_already_granted_for_another_payment',
+      'payment_id', v_payment.id,
+      'subscription_id', v_subscription.id,
+      'current_period_end', v_subscription.current_period_end
+    );
+  END IF;
+
   UPDATE public.premium_payments
      SET status = 'approved',
          paid_at = coalesce(p_paid_at, v_payment.paid_at, now())
