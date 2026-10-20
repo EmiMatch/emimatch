@@ -122,6 +122,20 @@ BEGIN
     RAISE EXCEPTION 'Payment ID is already associated with a different purchase';
   END IF;
 
+  -- A late approval notification must never restore a purchase already
+  -- marked refunded, charged back, cancelled, or rejected.
+  IF lower(coalesce(v_payment.status, '')) IN ('refunded', 'charged_back', 'cancelled', 'rejected') THEN
+    RETURN jsonb_build_object(
+      'granted', false,
+      'duplicate', false,
+      'blocked', true,
+      'reason', 'payment_has_terminal_non_approved_status',
+      'payment_id', v_payment.id,
+      'subscription_id', v_subscription.id,
+      'current_period_end', v_subscription.current_period_end
+    );
+  END IF;
+
   IF v_payment.premium_period_granted_at IS NOT NULL THEN
     RETURN jsonb_build_object(
       'granted', false,
