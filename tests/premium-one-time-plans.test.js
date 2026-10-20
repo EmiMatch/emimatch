@@ -61,6 +61,11 @@ const checks = [
     assert.match(creator, /half_year: \{ name: "EmiMatch Premium — 6 meses", amount: 19990, months: 6 \}/);
     assert.match(creator, /year: \{ name: "EmiMatch Premium — 12 meses", amount: 29990, months: 12 \}/);
   }],
+  ["El modo de prueba exige webhook aislado y no puede notificar a producción", () => {
+    assert.match(creator, /MERCADOPAGO_TEST_WEBHOOK_URL/);
+    assert.match(creator, /parsed\.hostname === "kngiadwaesdbmvwivdev\.supabase\.co"/);
+    assert.match(creator, /notification_url: webhookUrl/);
+  }],
   ["La pantalla aclara que los planes son de pago único", () =>
     assert.match(plansPage, /pago único por 1 mes[\s\S]*?pago único por 3 meses[\s\S]*?pago único por 6 meses[\s\S]*?pago único por 12 meses/)],
 ];
