@@ -34,7 +34,11 @@ ALTER TABLE public.premium_payments
 COMMENT ON COLUMN public.premium_payments.premium_period_granted_at IS
   'Set in the same transaction that grants a one-time Premium period; prevents duplicate extensions.';
 
-CREATE OR REPLACE FUNCTION public.grant_one_time_premium_period(
+-- Keep the privileged implementation in a non-exposed schema.
+CREATE SCHEMA IF NOT EXISTS private;
+GRANT USAGE ON SCHEMA private TO service_role;
+
+CREATE OR REPLACE FUNCTION private.grant_one_time_premium_period(
   p_subscription_id uuid,
   p_provider_payment_id text,
   p_amount numeric,
@@ -170,6 +174,28 @@ BEGIN
     'current_period_end', v_end
   );
 END;
+$function$;
+
+REVOKE ALL ON FUNCTION private.grant_one_time_premium_period(uuid, text, numeric, text, timestamptz) FROM PUBLIC;
+REVOKE ALL ON FUNCTION private.grant_one_time_premium_period(uuid, text, numeric, text, timestamptz) FROM anon, authenticated;
+GRANT EXECUTE ON FUNCTION private.grant_one_time_premium_period(uuid, text, numeric, text, timestamptz) TO service_role;
+
+-- Public RPC endpoint is invoker-only and executable solely by the server role.
+CREATE OR REPLACE FUNCTION public.grant_one_time_premium_period(
+  p_subscription_id uuid,
+  p_provider_payment_id text,
+  p_amount numeric,
+  p_currency text,
+  p_paid_at timestamptz DEFAULT NULL
+)
+RETURNS jsonb
+LANGUAGE sql
+SECURITY INVOKER
+SET search_path = public, pg_temp
+AS $function$
+  SELECT private.grant_one_time_premium_period(
+    p_subscription_id, p_provider_payment_id, p_amount, p_currency, p_paid_at
+  );
 $function$;
 
 REVOKE ALL ON FUNCTION public.grant_one_time_premium_period(uuid, text, numeric, text, timestamptz) FROM PUBLIC;
