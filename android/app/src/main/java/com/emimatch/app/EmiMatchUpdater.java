@@ -45,6 +45,48 @@ public final class EmiMatchUpdater {
     }
 
     @JavascriptInterface
+    public void openExternalUrl(String rawUrl) {
+        if (rawUrl == null || rawUrl.length() > 4096) {
+            reportError("No se pudo abrir el enlace seguro de pago.");
+            return;
+        }
+        final Uri uri;
+        try {
+            uri = Uri.parse(rawUrl);
+        } catch (Exception exception) {
+            reportError("El enlace de pago no es válido.");
+            return;
+        }
+
+        String scheme = uri.getScheme();
+        String host = uri.getHost();
+        boolean secure = "https".equalsIgnoreCase(scheme) && host != null;
+        boolean trustedHost = secure && (
+                host.equalsIgnoreCase("mercadopago.com") ||
+                host.endsWith(".mercadopago.com") ||
+                host.equalsIgnoreCase("mercadopago.com.ar") ||
+                host.endsWith(".mercadopago.com.ar") ||
+                host.equalsIgnoreCase("mercadolibre.com") ||
+                host.endsWith(".mercadolibre.com") ||
+                host.equalsIgnoreCase("mercadolibre.com.ar") ||
+                host.endsWith(".mercadolibre.com.ar")
+        );
+        if (!trustedHost) {
+            reportError("Por seguridad, solo se pueden abrir enlaces oficiales de Mercado Pago.");
+            return;
+        }
+
+        activity.runOnUiThread(() -> {
+            try {
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                activity.startActivity(intent);
+            } catch (Exception exception) {
+                reportError("No se pudo abrir Mercado Pago. Verificá que tengas un navegador instalado.");
+            }
+        });
+    }
+
+    @JavascriptInterface
     public void downloadAndInstall() {
         activity.runOnUiThread(this::startDownload);
     }

@@ -35,7 +35,7 @@
   window.EmiMatchApp.logUpdate("Núcleo central cargado correctamente.");
 
   // Aviso de nuevas versiones para la app Android. No interfiere con el sitio web.
-  const ANDROID_VERSION = "1.1.8";
+  const ANDROID_VERSION = "1.1.9";
   const VERSION_INFO_URL = "https://emimatch.github.io/emimatch/version.json";
 
   function compareVersions(current, latest) {

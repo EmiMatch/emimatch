@@ -103,6 +103,14 @@ const checks = [
     assert.match(membershipPage, /get_premium_status/);
     assert.doesNotMatch(membershipPage, /functions\/v1\/premium-create/);
   }],
+
+  ["El checkout de Android abre Mercado Pago mediante el puente nativo seguro", () => {
+    const updater = read("android/app/src/main/java/com/emimatch/app/EmiMatchUpdater.java");
+    assert.ok(membershipPage.includes("window.EmiMatchUpdater.openExternalUrl(checkoutUrl)"));
+    assert.ok(updater.includes("public void openExternalUrl(String rawUrl)"));
+    assert.ok(updater.includes('"https".equalsIgnoreCase(scheme)'));
+    assert.ok(updater.includes("mercadopago.com.ar"));
+  }],
 ];
 
 let failed = 0;
