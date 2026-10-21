@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="EmiMatch">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff0a6"/>
+      <stop offset=".45" stop-color="#f5c451"/>
+      <stop offset="1" stop-color="#a96b12"/>
+    </linearGradient>
+    <radialGradient id="bg" cx="30%" cy="20%" r="90%">
+      <stop offset="0" stop-color="#171717"/>
+      <stop offset="1" stop-color="#030303"/>
+    </radialGradient>
+  </defs>
+  <rect x="12" y="12" width="488" height="488" rx="112" fill="url(#bg)" stroke="url(#gold)" stroke-width="8"/>
+  <circle cx="256" cy="236" r="158" fill="none" stroke="url(#gold)" stroke-width="9"/>
+  <path d="M256 174 C238 151 198 161 198 193 C198 222 231 242 256 262 C281 242 314 222 314 193 C314 161 274 151 256 174Z" fill="url(#gold)"/>
+  <g fill="none" stroke="url(#gold)" stroke-width="17" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M211 337 C194 322 194 300 208 283 L244 239 C255 226 273 225 284 237 C295 248 293 265 282 277 L254 309"/>
+    <path d="M254 309 L300 260 C311 248 329 249 339 260 C350 271 348 288 337 299 L290 348"/>
+    <path d="M290 348 L316 321 C327 310 344 311 354 322 C365 333 363 350 352 361 L326 388 C306 408 274 412 250 397 L221 379 C207 370 205 352 216 341"/>
+    <path d="M284 277 L316 244 C327 233 344 234 354 245 C365 256 363 273 352 284"/>
+  </g>
+  <path d="M150 442 H362" stroke="url(#gold)" stroke-width="7" stroke-linecap="round"/>
+</svg>
