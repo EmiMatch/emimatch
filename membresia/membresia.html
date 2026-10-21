@@ -15,6 +15,7 @@ body{margin:0;background:radial-gradient(ellipse at 50% -20%,#3b2b0c 0,transpare
 .pill{font-size:12px;border:1px solid #66501f;border-radius:999px;padding:6px 11px;color:var(--gold);letter-spacing:.08em;text-transform:uppercase}
 .hero{text-align:center;max-width:740px;margin:0 auto 34px}.eyebrow{color:var(--gold);font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:800}.hero h1{font-size:clamp(36px,7vw,64px);line-height:1.03;letter-spacing:-.045em;margin:14px 0}.hero h1 span{color:var(--gold)}.hero p{color:var(--muted);font-size:17px;margin:0 auto;max-width:570px}
 .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;align-items:stretch}
+.grid[hidden]{display:none!important}
 .plan{position:relative;display:flex;flex-direction:column;background:linear-gradient(160deg,#1a1916,#111);border:1px solid var(--line);border-radius:20px;padding:22px 18px;min-height:310px;box-shadow:0 16px 38px #0004}
 .plan.featured{border-color:var(--gold);background:linear-gradient(155deg,#2a210f,#15130f 70%);transform:translateY(-7px)}
 .ribbon{position:absolute;top:-12px;left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--gold);color:#171107;font-size:11px;font-weight:900;padding:5px 11px;border-radius:999px}
@@ -84,6 +85,35 @@ const buttons = Array.from(document.querySelectorAll("[data-plan-key]"));
 // Checkout habilitado tras aplicar la migración y desplegar las funciones verificadas.
 const CHECKOUT_ENABLED = true;
 
+function renderPremiumActive(data) {
+  const accountStatus = document.getElementById("premium-account-status");
+  const grid = document.querySelector(".grid");
+  const isAdmin = data?.is_admin === true || data?.admin_premium === true;
+  const expiry = data?.current_period_end
+    ? new Date(data.current_period_end).toLocaleDateString("es-AR", { day: "2-digit", month: "long", year: "numeric" })
+    : null;
+
+  if (grid) grid.hidden = true;
+  buttons.forEach(item => { item.disabled = true; });
+  const heading = document.querySelector(".hero h1");
+  const intro = document.querySelector(".hero p");
+  if (heading) heading.innerHTML = 'Tu <span>EmiMatch Premium</span> está activo';
+  if (intro) intro.textContent = isAdmin
+    ? "Tu cuenta de administrador tiene Premium permanente sin costo."
+    : "Ya tenés Premium activo. No necesitás comprarlo otra vez.";
+
+  accountStatus.textContent = isAdmin
+    ? "Tu cuenta de administrador tiene Premium permanente sin costo."
+    : expiry
+      ? `Tu EmiMatch Premium está activo hasta el ${expiry}.`
+      : "Tu cuenta ya tiene EmiMatch Premium activo.";
+  statusBox.textContent = isAdmin
+    ? "Premium permanente de administrador."
+    : expiry
+      ? `Premium activo hasta el ${expiry}. No se realizará ningún cobro adicional.`
+      : "Premium activo. No se realizará ningún cobro adicional.";
+}
+
 async function startOneTimeCheckout(button) {
   if (!CHECKOUT_ENABLED) {
     statusBox.textContent = "Vista previa: las compras están deshabilitadas mientras se completan las pruebas de seguridad. No se abrió Mercado Pago ni se realizó ningún cobro.";
@@ -118,7 +148,7 @@ async function startOneTimeCheckout(button) {
       throw new Error(data?.error || raw || `No se pudo preparar el pago (HTTP ${response.status}).`);
     }
     if (data.already_active === true) {
-      statusBox.textContent = data.message || "Tu cuenta de administrador ya tiene Premium permanente.";
+      renderPremiumActive(data);
       return;
     }
     const checkoutUrl = data.checkout_url;
@@ -157,9 +187,7 @@ async function showExistingPremiumStatus() {
       return;
     }
     if (data?.is_premium === true) {
-      accountStatus.textContent = data.is_admin === true
-        ? "Tu cuenta de administrador tiene Premium permanente sin costo."
-        : "Tu cuenta ya tiene EmiMatch Premium activo. ¡Disfrutalo!";
+      renderPremiumActive(data);
     }
   } catch (error) {
     console.warn("No se pudo consultar el estado Premium:", error);
