@@ -146,6 +146,37 @@ Deno.serve(async (request) => {
       return jsonResponse({ success: false, error: "Elegí uno de los planes Premium disponibles." }, 400);
     }
 
+    // Block repeat purchases while this account has a valid Premium period.
+    // This is enforced server-side so it cannot be bypassed by calling the endpoint directly.
+    const now = Date.now();
+    const { data: activeSubscriptions, error: activeSubscriptionsError } = await supabase
+      .from("premium_subscriptions")
+      .select("id, current_period_start, current_period_end")
+      .eq("user_id", user.id)
+      .eq("status", "active")
+      .order("created_at", { ascending: false })
+      .limit(50);
+    if (activeSubscriptionsError) {
+      throw new Error("No se pudo comprobar si tu cuenta ya tiene Premium.");
+    }
+    const activePremium = (activeSubscriptions ?? []).find((subscription: any) => {
+      const startsAt = subscription.current_period_start ? Date.parse(subscription.current_period_start) : null;
+      const endsAt = subscription.current_period_end ? Date.parse(subscription.current_period_end) : null;
+      return (startsAt === null || (Number.isFinite(startsAt) && startsAt <= now))
+        && (endsAt === null || (Number.isFinite(endsAt) && endsAt > now));
+    });
+    if (activePremium) {
+      return jsonResponse({
+        success: true,
+        already_active: true,
+        status: "active",
+        subscription_id: activePremium.id,
+        current_period_start: activePremium.current_period_start,
+        current_period_end: activePremium.current_period_end,
+        message: "Tu cuenta ya tiene EmiMatch Premium activo. No necesitás comprarlo otra vez.",
+      });
+    }
+
     const userEmail = user.email?.trim() ?? "";
     if (!userEmail) {
       return jsonResponse({ success: false, error: "La cuenta no tiene un correo electrónico válido." }, 400);
@@ -153,7 +184,7 @@ Deno.serve(async (request) => {
 
     const { data: plan, error: planError } = await supabase
       .from("premium_plans").select("id").eq("name", "EmiMatch Premium")
-      .eq("active", true).order("created_at", { ascending: false }).limit(1).maybeSingle();
+      .order("created_at", { ascending: false }).limit(1).maybeSingle();
     if (planError) throw new Error("No se pudo consultar el plan Premium.");
     if (!plan) return jsonResponse({ success: false, error: "No existe un plan Premium activo." }, 404);
 
