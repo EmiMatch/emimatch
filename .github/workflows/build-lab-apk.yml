@@ -64,7 +64,7 @@ jobs:
           for forbidden in ("supabase.co", "mercadopago.com", "api.mercadopago"):
               if forbidden in lowered:
                   raise SystemExit(f"La demo no debe conectarse a servicios reales: {forbidden}")
-          for required in ("incomingRequests", "data-tab", "data-action", "accept-", "reject-", "remove-", "save-", "personas", "solicitudes", "amigos", "guardados", "EmiMatch Social"):
+          for required in ("data-tab", "data-action", "accept-", "reject-", "save-", "personas", "solicitudes", "amigos", "guardados", "EmiMatch Social", "compose", "notifications", "privacy-post-", "report-post-", "block-person-", "follow-", "friend-"):
               if required not in html:
                   raise SystemExit(f"Falta una función interactiva esperada en la demo: {required}")
           PY
