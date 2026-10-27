@@ -1,0 +1,124 @@
+name: EmiMatch - AAB para Google Play
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-aab:
+    name: Compilar AAB firmado para Play Console
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Configurar Android SDK
+        uses: android-actions/setup-android@v4
+
+      - name: Instalar SDK requerido
+        run: sdkmanager --install "platform-tools" "platforms;android-36" "build-tools;36.0.0"
+
+      - name: Instalar dependencias y ejecutar auditoría
+        run: |
+          npm ci
+          npm test
+
+      - name: Preparar archivos web para Android
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf www
+          mkdir -p www
+          cp -a ./*.html www/
+          cp -a assets www/
+          cp -a membresia www/
+          if [ -d "membresía" ]; then cp -a "membresía" www/; fi
+          for item in images img icons fonts manifest.json manifest.webmanifest service-worker.js sw.js favicon.ico; do
+            if [ -e "$item" ]; then cp -a "$item" www/; fi
+          done
+          test -s www/index.html
+          test -s www/assets/js/app.js
+          test -s www/assets/js/components.js
+          test -s www/assets/js/config.js
+          test -s www/membresia/membresia.html
+          test -s "www/membresía/membresía.html"
+
+      - name: Sincronizar Capacitor
+        run: npx cap sync android
+
+      - name: Validar identidad y versión de EmiMatch
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'applicationId "com.emimatch.app"' android/app/build.gradle
+          grep -q 'versionCode 11' android/app/build.gradle
+          grep -q 'versionName "1.1.9"' android/app/build.gradle
+          test -s android/app/src/main/AndroidManifest.xml
+
+      - name: Preparar clave de publicación
+        id: signing
+        shell: bash
+        env:
+          KEYSTORE_BASE64: ${{ secrets.EMIMATCH_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.EMIMATCH_KEYSTORE_PASSWORD }}
+          KEY_ALIAS_SECRET: ${{ secrets.EMIMATCH_KEY_ALIAS }}
+          KEY_PASSWORD_SECRET: ${{ secrets.EMIMATCH_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${KEYSTORE_BASE64:-}" || -z "${KEYSTORE_PASSWORD:-}" ]]; then
+            echo "::error::Faltan los secretos de la clave de publicación. No se generará un AAB sin firma válida."
+            exit 1
+          fi
+          printf '%s' "$KEYSTORE_BASE64" | tr -d '[:space:]' | base64 --decode > "$RUNNER_TEMP/emimatch-release.jks"
+          keytool -list -keystore "$RUNNER_TEMP/emimatch-release.jks" -storepass "$KEYSTORE_PASSWORD" >/dev/null
+          if [[ -n "${KEY_ALIAS_SECRET:-}" ]]; then
+            KEY_ALIAS="$KEY_ALIAS_SECRET"
+          else
+            keytool -list -v -keystore "$RUNNER_TEMP/emimatch-release.jks" -storepass "$KEYSTORE_PASSWORD" > "$RUNNER_TEMP/keylist.txt" 2>/dev/null
+            mapfile -t KEY_ALIASES < <(awk -F': ' '/^Alias name: / { alias=$2 } /^Entry type: PrivateKeyEntry/ { if (alias != "") print alias; alias="" }' "$RUNNER_TEMP/keylist.txt")
+            if [[ "${#KEY_ALIASES[@]}" -ne 1 ]]; then
+              echo "::error::No se pudo detectar un único alias de firma."
+              exit 1
+            fi
+            KEY_ALIAS="${KEY_ALIASES[0]}"
+          fi
+          keytool -list -keystore "$RUNNER_TEMP/emimatch-release.jks" -storepass "$KEYSTORE_PASSWORD" -alias "$KEY_ALIAS" >/dev/null
+          echo "EMIMATCH_KEY_ALIAS=$KEY_ALIAS" >> "$GITHUB_OUTPUT"
+
+      - name: Compilar AAB de publicación firmado
+        shell: bash
+        env:
+          EMIMATCH_KEYSTORE_PATH: ${{ runner.temp }}/emimatch-release.jks
+          EMIMATCH_KEYSTORE_PASSWORD: ${{ secrets.EMIMATCH_KEYSTORE_PASSWORD }}
+          EMIMATCH_KEY_ALIAS: ${{ steps.signing.outputs.EMIMATCH_KEY_ALIAS }}
+          EMIMATCH_KEY_PASSWORD_SECRET: ${{ secrets.EMIMATCH_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          export EMIMATCH_KEY_PASSWORD="${EMIMATCH_KEY_PASSWORD_SECRET:-$EMIMATCH_KEYSTORE_PASSWORD}"
+          chmod +x android/gradlew
+          cd android
+          ./gradlew --no-daemon clean bundleRelease
+          test -s app/build/outputs/bundle/release/app-release.aab
+
+      - name: Guardar AAB como artefacto privado de la ejecución
+        uses: actions/upload-artifact@v4
+        with:
+          name: EmiMatch-AAB-Play-v1.1.9
+          path: android/app/build/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
+          retention-days: 14
