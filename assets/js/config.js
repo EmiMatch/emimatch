@@ -4,7 +4,7 @@
 
 window.EMIMATCH_CONFIG = Object.freeze({
   appName: "EmiMatch",
-  version: "1.2.0",
+  version: "1.2.1",
 
   supabaseUrl:
     "https://kngiadwaesdbmvwivdev.supabase.co",
