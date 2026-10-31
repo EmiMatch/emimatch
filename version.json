@@ -1,5 +1,5 @@
 {
   "app": "EmiMatch",
-  "latestVersion": "1.1.9",
-  "releaseNotes": "Mejora de Premium en Android: los planes muestran claramente que se puede continuar a Mercado Pago y el checkout se abre en el navegador seguro del dispositivo. La activación sigue dependiendo de la confirmación del pago."
+  "latestVersion": "1.2.0",
+  "releaseNotes": "Versión de prueba cerrada Alpha 1.2.0. Incluye actualización de versión Android y ajustes de compatibilidad para la distribución mediante Google Play."
 }
