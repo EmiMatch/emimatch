@@ -2,6 +2,9 @@ name: EmiMatch - AAB para Google Play
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - play-alpha-v1.2.0
 
 permissions:
   contents: read
