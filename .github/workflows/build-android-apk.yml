@@ -79,8 +79,8 @@ jobs:
         run: |
           set -euo pipefail
           grep -q 'applicationId "com.emimatch.app"' android/app/build.gradle
-          grep -q 'versionCode 11' android/app/build.gradle
-          grep -q 'versionName "1.1.9"' android/app/build.gradle
+          grep -q 'versionCode 14' android/app/build.gradle
+          grep -q 'versionName "1.2.1"' android/app/build.gradle
           test -s android/app/src/main/AndroidManifest.xml
 
       - name: Preparar firma privada de publicación si está configurada
@@ -154,6 +154,31 @@ jobs:
           ./gradlew --no-daemon assembleRelease
           test -s app/build/outputs/apk/release/app-release.apk
 
+      - name: Compilar AAB firmado para Google Play
+        if: ${{ steps.prepare-signing.outputs.release_ready == 'true' }}
+        shell: bash
+        env:
+          EMIMATCH_KEYSTORE_PATH: ${{ runner.temp }}/emimatch-release.jks
+          EMIMATCH_KEYSTORE_PASSWORD: ${{ secrets.EMIMATCH_KEYSTORE_PASSWORD }}
+          EMIMATCH_KEY_ALIAS: ${{ steps.prepare-signing.outputs.EMIMATCH_KEY_ALIAS }}
+          EMIMATCH_KEY_PASSWORD_SECRET: ${{ secrets.EMIMATCH_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          export EMIMATCH_KEY_PASSWORD="${EMIMATCH_KEY_PASSWORD_SECRET:-$EMIMATCH_KEYSTORE_PASSWORD}"
+          chmod +x android/gradlew
+          cd android
+          ./gradlew --no-daemon bundleRelease
+          test -s app/build/outputs/bundle/release/app-release.aab
+
+      - name: Publicar AAB firmado para Google Play
+        if: ${{ steps.prepare-signing.outputs.release_ready == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: EmiMatch-AAB-Play-v1.2.1-code14
+          path: android/app/build/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
+          retention-days: 14
+
       - name: Verificar firma del APK release
         if: ${{ steps.prepare-signing.outputs.release_ready == 'true' }}
         shell: bash
@@ -182,7 +207,7 @@ jobs:
           curl --fail --location --silent --show-error "$BASELINE_URL" --output "$BASELINE_APK"
           test -s "$BASELINE_APK"
           "$APKSIGNER" verify --print-certs "$BASELINE_APK" 2>&1 | tee "$RUNNER_TEMP/emimatch-baseline-v1.1.6-signature.txt"
-          "$APKSIGNER" verify --print-certs "android/app/build/outputs/apk/release/app-release.apk" 2>&1 | tee "$RUNNER_TEMP/emimatch-v1.1.9-signature.txt"
+          "$APKSIGNER" verify --print-certs "android/app/build/outputs/apk/release/app-release.apk" 2>&1 | tee "$RUNNER_TEMP/emimatch-v1.2.1-signature.txt"
           OLD_CERT="$(sed -n 's/.*Signer #1 certificate SHA-256 digest: *//p' "$RUNNER_TEMP/emimatch-baseline-v1.1.6-signature.txt" | head -n 1 | tr '[:upper:]' '[:lower:]')"
           NEW_CERT="$(sed -n 's/.*Signer #1 certificate SHA-256 digest: *//p' "$RUNNER_TEMP/emimatch-v1.1.9-signature.txt" | head -n 1 | tr '[:upper:]' '[:lower:]')"
           if [[ -z "$OLD_CERT" || -z "$NEW_CERT" ]]; then
@@ -195,12 +220,12 @@ jobs:
             echo "Certificado candidato 1.1.9: $NEW_CERT"
             exit 1
           fi
-          echo "Compatibilidad de firma confirmada: v1.1.6 y v1.1.9 usan el mismo certificado."
+          echo "Compatibilidad de firma confirmada: v1.1.6 y v1.2.1 usan el mismo certificado."
 
       - name: Publicar APK Android
         uses: actions/upload-artifact@v4
         with:
-          name: EmiMatch-APK-Android-v1.1.9-debug
+          name: EmiMatch-APK-Android-v1.2.1-code14-debug
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 14
@@ -209,7 +234,7 @@ jobs:
         if: ${{ steps.prepare-signing.outputs.release_ready == 'true' }}
         uses: actions/upload-artifact@v4
         with:
-          name: EmiMatch-APK-Android-v1.1.9-release
+          name: EmiMatch-APK-Android-v1.2.1-code14-release
           path: android/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
           retention-days: 30
