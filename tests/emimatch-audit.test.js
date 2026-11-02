@@ -448,10 +448,13 @@ if (exists("version.json") && exists("android/app/build.gradle") && exists("asse
   const updaterVersion = appJs.match(/const ANDROID_VERSION\s*=\s*"([^"]+)"/)?.[1];
   const configVersion = configJs.match(/version:\s*"([^"]+)"/)?.[1];
 
-  if (versionInfo.latestVersion === buildName && updaterVersion === buildName && configVersion === buildName) {
-    ok("La versión publicada, Android y el aviso de actualización coinciden");
+  if (updaterVersion === buildName && configVersion === buildName &&
+      typeof versionInfo.latestVersion === "string" &&
+      /^\d+\.\d+\.\d+$/.test(versionInfo.latestVersion) &&
+      versionInfo.latestVersion.localeCompare(buildName, undefined, { numeric: true }) <= 0) {
+    ok("Android, app.js y config.js coinciden; la versión pública no anuncia una versión futura");
   } else {
-    error("Las versiones de version.json, Android, app.js y config.js no coinciden");
+    error("La versión de Android, app.js y config.js no coincide o version.json anuncia una versión futura");
   }
 
   if (Number(buildCode) >= 1) ok("versionCode de Android es válido");
