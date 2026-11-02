@@ -154,6 +154,31 @@ jobs:
           ./gradlew --no-daemon assembleRelease
           test -s app/build/outputs/apk/release/app-release.apk
 
+      - name: Compilar AAB firmado para Google Play
+        if: ${{ steps.prepare-signing.outputs.release_ready == 'true' }}
+        shell: bash
+        env:
+          EMIMATCH_KEYSTORE_PATH: ${{ runner.temp }}/emimatch-release.jks
+          EMIMATCH_KEYSTORE_PASSWORD: ${{ secrets.EMIMATCH_KEYSTORE_PASSWORD }}
+          EMIMATCH_KEY_ALIAS: ${{ steps.prepare-signing.outputs.EMIMATCH_KEY_ALIAS }}
+          EMIMATCH_KEY_PASSWORD_SECRET: ${{ secrets.EMIMATCH_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          export EMIMATCH_KEY_PASSWORD="${EMIMATCH_KEY_PASSWORD_SECRET:-$EMIMATCH_KEYSTORE_PASSWORD}"
+          chmod +x android/gradlew
+          cd android
+          ./gradlew --no-daemon bundleRelease
+          test -s app/build/outputs/bundle/release/app-release.aab
+
+      - name: Publicar AAB firmado para Google Play
+        if: ${{ steps.prepare-signing.outputs.release_ready == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: EmiMatch-AAB-Play-v1.2.1-code14
+          path: android/app/build/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
+          retention-days: 14
+
       - name: Verificar firma del APK release
         if: ${{ steps.prepare-signing.outputs.release_ready == 'true' }}
         shell: bash
