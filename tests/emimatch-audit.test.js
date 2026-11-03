@@ -444,10 +444,10 @@ if (exists("version.json") && exists("android/app/build.gradle") && exists("asse
   const appJs = read("assets/js/app.js");
   const configJs = read("assets/js/config.js");
   const manifest = read("android/app/src/main/AndroidManifest.xml");
-  const buildName = gradle.match(/versionName\\s+"([^"]+)"/)?.[1];
-  const buildCode = gradle.match(/versionCode\\s+(\\d+)/)?.[1];
-  const updaterVersion = appJs.match(/const ANDROID_VERSION\\s*=\\s*"([^"]+)"/)?.[1];
-  const configVersion = configJs.match(/version:\\s*"([^"]+)"/)?.[1];
+  const buildName = gradle.match(/versionName\s+"([^"]+)"/)?.[1];
+  const buildCode = gradle.match(/versionCode\s+(\\d+)/)?.[1];
+  const updaterVersion = appJs.match(/const ANDROID_VERSION\s*=\s*"([^"]+)"/)?.[1];
+  const configVersion = configJs.match(/version:\s*"([^"]+)"/)?.[1];
   const updaterJavaPath = "android/app/src/main/java/com/emimatch/app/EmiMatchUpdater.java";
   const updaterJava = exists(updaterJavaPath) ? read(updaterJavaPath) : "";
 
