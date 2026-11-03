@@ -59,7 +59,7 @@ public final class EmiMatchUpdater {
             return;
         }
 
-        activity.runOnUiThread(() -> openUri(uri, false));
+        activity.runOnUiThread(() -> openUri(uri));
     }
 
     @JavascriptInterface
@@ -82,7 +82,7 @@ public final class EmiMatchUpdater {
         });
     }
 
-    private void openUri(Uri uri, boolean unused) {
+    private void openUri(Uri uri) {
         try {
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
             activity.startActivity(intent);
