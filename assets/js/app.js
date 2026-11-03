@@ -35,7 +35,7 @@
   window.EmiMatchApp.logUpdate("Núcleo central cargado correctamente.");
 
   // Aviso de nuevas versiones para la app Android. No interfiere con el sitio web.
-  const ANDROID_VERSION = "1.2.1";
+  const ANDROID_VERSION = "1.2.2";
   const VERSION_INFO_URL = "https://emimatch.github.io/emimatch/version.json";
 
   function compareVersions(current, latest) {
@@ -50,27 +50,6 @@
     return 0;
   }
 
-  let updateMessageElement = null;
-  let updateProgressBar = null;
-  let updateButton = null;
-
-  // El puente nativo descarga el APK dentro de la app y luego invoca el instalador de Android.
-  window.EmiMatchUpdateProgress = function (percent, message) {
-    if (!updateMessageElement) return;
-    updateMessageElement.textContent = String(message || "");
-    if (percent >= 0 && updateProgressBar) {
-      updateProgressBar.style.width = Math.max(0, Math.min(100, percent)) + "%";
-      updateProgressBar.parentElement.hidden = false;
-    }
-    if (percent < 0 && updateButton) {
-      updateButton.disabled = false;
-      updateButton.textContent = "Reintentar";
-    } else if (percent >= 0 && updateButton) {
-      updateButton.disabled = true;
-      updateButton.textContent = percent >= 100 ? "Preparando instalación…" : "Descargando…";
-    }
-  };
-
   function showUpdateNotice(latestVersion, releaseNotes) {
     if (document.getElementById("emimatch-update-notice")) return;
 
@@ -82,10 +61,8 @@
       #emimatch-update-notice .em-update-actions{display:flex;gap:10px;align-items:center}
       #emimatch-update-notice button{padding:10px 14px;border:1px solid #555;border-radius:10px;background:transparent;color:#fff;font:inherit}
       #emimatch-update-notice button.em-update-primary{background:#e4c477;color:#17130a;border-color:#e4c477;font-weight:700}
-      #emimatch-update-notice .em-update-progress{height:6px;border-radius:999px;background:#383838;overflow:hidden;margin:10px 0 14px}
-      #emimatch-update-notice .em-update-progress[hidden]{display:none}
-      #emimatch-update-notice .em-update-progress span{display:block;height:100%;width:0;background:#e4c477;transition:width .2s}
     `;
+
     const notice = document.createElement("section");
     notice.id = "emimatch-update-notice";
     notice.setAttribute("role", "status");
@@ -96,41 +73,29 @@
     const message = document.createElement("p");
     message.textContent = "Ya está disponible EmiMatch " + latestVersion + ". " +
       (releaseNotes ? String(releaseNotes) + " " : "") +
-      "La descarga se realizará dentro de la aplicación.";
-    const progressContainer = document.createElement("div");
-    progressContainer.className = "em-update-progress";
-    progressContainer.hidden = true;
-    const progressBar = document.createElement("span");
-    progressContainer.appendChild(progressBar);
+      "Actualizá desde Google Play para mantener la instalación segura.";
 
     const actions = document.createElement("div");
     actions.className = "em-update-actions";
     const update = document.createElement("button");
     update.type = "button";
     update.className = "em-update-primary";
-    update.textContent = "Actualizar ahora";
+    update.textContent = "Actualizar en Google Play";
     const close = document.createElement("button");
     close.type = "button";
     close.textContent = "Más tarde";
     close.addEventListener("click", () => notice.remove());
     update.addEventListener("click", () => {
       if (window.EmiMatchUpdater &&
-          typeof window.EmiMatchUpdater.downloadAndInstall === "function") {
-        update.disabled = true;
-        update.textContent = "Preparando…";
-        message.textContent = "Preparando la descarga segura del APK…";
-        window.EmiMatchUpdater.downloadAndInstall();
+          typeof window.EmiMatchUpdater.openPlayStore === "function") {
+        window.EmiMatchUpdater.openPlayStore();
       } else {
-        message.textContent = "Esta instalación no tiene habilitada la actualización integrada. Volvé a abrir EmiMatch y probá nuevamente.";
-        update.disabled = false;
+        window.open("https://play.google.com/store/apps/details?id=com.emimatch.app", "_blank", "noopener");
       }
     });
 
-    updateMessageElement = message;
-    updateProgressBar = progressBar;
-    updateButton = update;
     actions.append(update, close);
-    notice.append(title, message, progressContainer, actions);
+    notice.append(title, message, actions);
     document.head.appendChild(style);
     document.body.appendChild(notice);
   }
