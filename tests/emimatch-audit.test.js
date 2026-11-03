@@ -433,7 +433,7 @@ if (exists("notificaciones.html")) {
   }
 }
 
-/* 11. AVISO DE ACTUALIZACIÓN ANDROID */
+/* 11. ACTUALIZACIONES ANDROID MEDIANTE GOOGLE PLAY */
 
 console.log("");
 console.log("📲 ACTUALIZACIONES ANDROID");
@@ -443,50 +443,46 @@ if (exists("version.json") && exists("android/app/build.gradle") && exists("asse
   const gradle = read("android/app/build.gradle");
   const appJs = read("assets/js/app.js");
   const configJs = read("assets/js/config.js");
-  const buildName = gradle.match(/versionName\s+"([^"]+)"/)?.[1];
-  const buildCode = gradle.match(/versionCode\s+(\d+)/)?.[1];
-  const updaterVersion = appJs.match(/const ANDROID_VERSION\s*=\s*"([^"]+)"/)?.[1];
-  const configVersion = configJs.match(/version:\s*"([^"]+)"/)?.[1];
+  const manifest = read("android/app/src/main/AndroidManifest.xml");
+  const buildName = gradle.match(/versionName\\s+"([^"]+)"/)?.[1];
+  const buildCode = gradle.match(/versionCode\\s+(\\d+)/)?.[1];
+  const updaterVersion = appJs.match(/const ANDROID_VERSION\\s*=\\s*"([^"]+)"/)?.[1];
+  const configVersion = configJs.match(/version:\\s*"([^"]+)"/)?.[1];
+  const updaterJavaPath = "android/app/src/main/java/com/emimatch/app/EmiMatchUpdater.java";
+  const updaterJava = exists(updaterJavaPath) ? read(updaterJavaPath) : "";
 
   if (updaterVersion === buildName && configVersion === buildName &&
-      typeof versionInfo.latestVersion === "string" &&
-      /^\d+\.\d+\.\d+$/.test(versionInfo.latestVersion) &&
-      versionInfo.latestVersion.localeCompare(buildName, undefined, { numeric: true }) <= 0) {
-    ok("Android, app.js y config.js coinciden; la versión pública no anuncia una versión futura");
+      versionInfo.latestVersion === buildName) {
+    ok("Android, app.js, config.js y version.json coinciden");
   } else {
-    error("La versión de Android, app.js y config.js no coincide o version.json anuncia una versión futura");
+    error("Las versiones de Android, app.js, config.js y version.json no coinciden");
   }
 
-  if (Number(buildCode) >= 1) ok("versionCode de Android es válido");
-  else error("versionCode de Android no es válido");
+  if (Number(buildCode) === 15) ok("versionCode 15 preparado para Google Play");
+  else error("versionCode debe ser 15 para esta compilación");
 
-  const updaterJavaPath = "android/app/src/main/java/com/emimatch/app/EmiMatchUpdater.java";
-  if (exists(updaterJavaPath)) {
-    const updaterJava = read(updaterJavaPath);
-    if (updaterJava.includes("DownloadManager") &&
-        updaterJava.includes("window.EmiMatchUpdateProgress") &&
-        updaterJava.includes("Intent.ACTION_VIEW") &&
-        updaterJava.includes("/releases/latest/download/app-release.apk")) {
-      ok("El actualizador nativo descarga el APK y abre el instalador de Android");
-    } else {
-      error("El actualizador nativo no contiene las comprobaciones esperadas");
-    }
+  if (!manifest.includes("android.permission.REQUEST_INSTALL_PACKAGES")) {
+    ok("El manifiesto no declara REQUEST_INSTALL_PACKAGES");
   } else {
-    error("Falta EmiMatchUpdater.java");
+    error("El manifiesto todavía declara REQUEST_INSTALL_PACKAGES");
   }
 
-  if (appJs.includes("window.EmiMatchUpdater.downloadAndInstall()") &&
-      appJs.includes('update.textContent = "Actualizar ahora"')) {
-    ok("El botón inicia la actualización integrada y muestra el progreso");
+  if (updaterJava.includes("openPlayStore") &&
+      updaterJava.includes("market://details?id=com.emimatch.app") &&
+      updaterJava.includes("https://play.google.com/store/apps/details?id=com.emimatch.app") &&
+      !updaterJava.includes("DownloadManager") &&
+      !updaterJava.includes("ACTION_INSTALL_PACKAGE")) {
+    ok("El puente nativo dirige las actualizaciones a Google Play y no instala APK externos");
   } else {
-    error("El botón de actualización no usa el actualizador integrado");
+    error("El puente nativo no cumple el flujo de actualización mediante Google Play");
   }
 
-  const manifest = read("android/app/src/main/AndroidManifest.xml");
-  if (manifest.includes("android.permission.REQUEST_INSTALL_PACKAGES")) {
-    ok("Android declara el permiso necesario para solicitar la instalación");
+  if (appJs.includes("window.EmiMatchUpdater.openPlayStore()") &&
+      appJs.includes("Actualizar en Google Play") &&
+      !appJs.includes("downloadAndInstall")) {
+    ok("El aviso de actualización abre Google Play");
   } else {
-    error("Falta el permiso de instalación de APK");
+    error("El aviso de actualización no utiliza Google Play");
   }
 } else {
   error("Faltan archivos necesarios para verificar las actualizaciones Android");
