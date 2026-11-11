@@ -1,5 +1,5 @@
 {
   "app": "EmiMatch",
-  "latestVersion": "1.1.9",
-  "releaseNotes": "Mejora de Premium en Android: los planes muestran claramente que se puede continuar a Mercado Pago y el checkout se abre en el navegador seguro del dispositivo. La activación sigue dependiendo de la confirmación del pago."
+  "latestVersion": "1.2.2",
+  "releaseNotes": "Actualización de cumplimiento para Google Play. Las actualizaciones de EmiMatch se realizan exclusivamente desde Google Play."
 }

@@ -1,6 +1,8 @@
 name: EmiMatch - AAB para Google Play
 
 on:
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -66,8 +68,8 @@ jobs:
         run: |
           set -euo pipefail
           grep -q 'applicationId "com.emimatch.app"' android/app/build.gradle
-          grep -q 'versionCode 11' android/app/build.gradle
-          grep -q 'versionName "1.1.9"' android/app/build.gradle
+          grep -q 'versionCode 15' android/app/build.gradle
+          grep -q 'versionName "1.2.2"' android/app/build.gradle
           test -s android/app/src/main/AndroidManifest.xml
 
       - name: Preparar clave de publicación
@@ -118,7 +120,7 @@ jobs:
       - name: Guardar AAB como artefacto privado de la ejecución
         uses: actions/upload-artifact@v4
         with:
-          name: EmiMatch-AAB-Play-v1.1.9
+          name: EmiMatch-AAB-Play-v1.2.2-code15
           path: android/app/build/outputs/bundle/release/app-release.aab
           if-no-files-found: error
           retention-days: 14
