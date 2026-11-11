@@ -555,6 +555,14 @@
         </button>
 
         <button
+          id="visibilityButton"
+          class="btn-secondary"
+          type="button"
+        >
+          🕶️ Modo invisible
+        </button>
+
+        <button
           id="logoutButton"
           class="btn-danger"
           type="button"
@@ -1041,6 +1049,9 @@
 
     const logoutButton =
       document.getElementById("logoutButton");
+
+    const visibilityButton =
+      document.getElementById("visibilityButton");
 
     const goLoginButton =
       document.getElementById("goLoginButton");
@@ -1632,6 +1643,18 @@
 
         }
 
+      }
+    );
+
+
+    /* ==========================================
+       MODO INVISIBLE
+       ========================================== */
+
+    visibilityButton.addEventListener(
+      "click",
+      function () {
+        window.location.href = "./admin-invisible.html";
       }
     );
 

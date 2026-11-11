@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EmiMatch · Modo invisible</title>
+<link rel="stylesheet" href="assets/css/premium-refresh.css?v=20261014">
+<style>
+:root{color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at top,#242016 0%,#0d0d0d 55%);color:#f7f3e9;font-family:Arial,Helvetica,sans-serif;min-height:100vh}
+main{width:min(900px,94%);margin:0 auto;padding:26px 0 60px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+h1{font-size:clamp(25px,5vw,34px);margin:0;color:#f0d88b}
+p{line-height:1.6;color:#c7c0ad}
+.panel,.person{background:linear-gradient(145deg,#171510,#0d0d0d);border:1px solid rgba(228,195,109,.22);border-radius:20px;padding:20px;margin:14px 0;box-shadow:0 16px 35px #0005}
+input{width:100%;padding:13px 14px;border-radius:12px;border:1px solid #4c4228;background:#111;color:#fff;margin:8px 0 14px;font-size:16px}
+button,.link{border:1px solid rgba(228,195,109,.35);border-radius:12px;padding:12px 15px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block}
+.primary{background:linear-gradient(135deg,#b9913d,#f0d88b);color:#17130a}
+.secondary{background:#191919;color:#f0d88b}
+.person{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.person-name{font-size:17px;font-weight:700}
+.meta{font-size:13px;color:#aaa18d;margin-top:5px}
+.state{font-size:13px;color:#e4c36d;margin-top:6px}
+#status{padding:12px 14px;border-radius:12px;display:none;white-space:pre-wrap}
+#status.show{display:block;background:#211d13;border:1px solid #66562a}
+#status.error{color:#ffb4b4;border-color:#793838;background:#281515}
+#status.ok{color:#c7f7d4;border-color:#356e45;background:#122219}
+#list{margin-top:10px}
+@media(max-width:520px){.person button{width:100%}.panel{padding:16px}}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div><h1>🕶️ Modo invisible</h1><p>Elegí quién puede ver tu perfil administrativo y abrir una conversación privada con vos.</p></div>
+  <a class="link secondary" href="admin.html">← Volver al panel</a>
+</header>
+<div id="status" role="status" aria-live="polite"></div>
+<section class="panel">
+  <strong>Privacidad por usuario</strong>
+  <p>Tu perfil no aparecerá en Descubrir para usuarios no autorizados. Al habilitar a una persona, EmiMatch le permite ver tu perfil y crea el acceso al chat. Si la deshabilitás, el perfil y la conversación dejan de estar disponibles para esa persona; los mensajes no se borran.</p>
+  <label for="search">Buscar por nombre o ciudad</label>
+  <input id="search" type="search" placeholder="Ej.: Ana, Córdoba…">
+  <div id="list" aria-live="polite">Cargando usuarios…</div>
+</section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/config.js"></script>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+let client=null, currentUser=null, people=[], allowed=new Set(), busy=false;
+function escapeHtml(value){return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function status(message,type=""){const el=$("status");el.textContent=message;el.className="show "+type;}
+async function start(){
+  try{
+    if(!window.EMIMATCH_CONFIG)throw new Error("No se pudo cargar la configuración de EmiMatch.");
+    client=window.supabase.createClient(EMIMATCH_CONFIG.supabaseUrl,EMIMATCH_CONFIG.supabaseKey||EMIMATCH_CONFIG.supabaseAnonKey);
+    const {data:sessionData,error:sessionError}=await client.auth.getSession();
+    if(sessionError)throw sessionError;
+    currentUser=sessionData?.session?.user;
+    if(!currentUser){window.location.href="index.html";return;}
+    const {data:admin,error:adminError}=await client.from("admin_users").select("user_id").eq("user_id",currentUser.id).maybeSingle();
+    if(adminError)throw adminError;
+    if(!admin){document.querySelector("main").innerHTML="<section class='panel'><h1>Acceso denegado</h1><p>Esta sección es exclusiva para administradores.</p><a class='link secondary' href='index.html'>Volver a EmiMatch</a></section>";return;}
+    await loadPeople();
+  }catch(error){console.error(error);status("No se pudo abrir el modo invisible: "+(error?.message||"error desconocido"),"error");$("list").textContent="No se pudieron cargar los usuarios.";}
+}
+async function loadPeople(){
+  $("list").textContent="Cargando usuarios…";
+  const [profileResult,visibilityResult]=await Promise.all([
+    client.from("profiles").select("id,nombre,edad,ciudad").neq("id",currentUser.id).order("nombre",{ascending:true}).limit(500),
+    client.from("admin_profile_visibility").select("visible_to_user_id").eq("admin_user_id",currentUser.id)
+  ]);
+  if(profileResult.error)throw profileResult.error;
+  if(visibilityResult.error)throw visibilityResult.error;
+  people=(profileResult.data||[]).filter(p=>p.id!==currentUser.id);
+  allowed=new Set((visibilityResult.data||[]).map(v=>v.visible_to_user_id));
+  render();
+}
+function render(){
+  const term=$("search").value.trim().toLocaleLowerCase("es");
+  const filtered=people.filter(p=>(String(p.nombre||"")+" "+String(p.ciudad||"")).toLocaleLowerCase("es").includes(term));
+  if(!filtered.length){$("list").innerHTML="<div class='person'>No se encontraron usuarios con esa búsqueda.</div>";return;}
+  $("list").innerHTML=filtered.map(p=>{
+    const active=allowed.has(p.id);
+    return "<article class='person'><div><div class='person-name'>"+escapeHtml(p.nombre||"Usuario")+(p.edad?", "+escapeHtml(p.edad):"")+"</div><div class='meta'>"+escapeHtml(p.ciudad||"Ciudad no indicada")+"</div><div class='state'>"+(active?"✓ Puede ver tu perfil y conversar con vos":"Perfil oculto para esta persona")+"</div></div><button class='"+(active?"secondary":"primary")+"' type='button' data-user='"+escapeHtml(p.id)+"' data-visible='"+(!active)+"' "+(busy?"disabled":"")+">"+(active?"Revocar acceso":"Habilitar acceso")+"</button></article>";
+  }).join("");
+}
+$("search").addEventListener("input",render);
+$("list").addEventListener("click",async event=>{
+  const button=event.target.closest("button[data-user]");
+  if(!button||busy)return;
+  const userId=button.dataset.user, visible=button.dataset.visible==="true";
+  const person=people.find(p=>p.id===userId);
+  const promptText=visible?"¿Habilitar a "+(person?.nombre||"este usuario")+" para ver tu perfil y conversar con vos?":"¿Revocar el acceso de "+(person?.nombre||"este usuario")+"? No se borrarán los mensajes.";
+  if(!window.confirm(promptText))return;
+  busy=true;render();status(visible?"Habilitando acceso…":"Revocando acceso…");
+  try{
+    const {error}=await client.rpc("admin_set_profile_visibility",{p_user_id:userId,p_visible:visible});
+    if(error)throw error;
+    if(visible)allowed.add(userId);else allowed.delete(userId);
+    status(visible?"Acceso habilitado. El usuario podrá verte y conversar con vos.":"Acceso revocado. El perfil y el chat quedan ocultos para ese usuario; los mensajes se conservan.","ok");
+  }catch(error){console.error(error);status("No se pudo cambiar el acceso: "+(error?.message||"error desconocido"),"error");}
+  finally{busy=false;render();}
+});
+start();
+</script>
+</body>
+</html>
