@@ -1640,7 +1640,7 @@ function mostrarMensaje(mensaje) {
       ? (original.content || (original.message_type === "image" ? "📷 Foto" : original.message_type === "audio" ? "🎙️ Audio" : original.message_type === "file" ? "📎 Archivo" : "Mensaje"))
       : "Contenido no disponible";
     quote.append(author, quoteText);
-    div.insertBefore(quote, contenido);
+    div.appendChild(quote);
   }
 
   div.appendChild(contenido);
