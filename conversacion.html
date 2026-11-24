@@ -866,6 +866,169 @@
   .online-dot.is-visible { display:block !important; }
   .status.is-online { color:#8bd9a4 !important; opacity:1 !important; }
 </style>
+
+  <style id="emimatch-media-tools-refresh-20261123">
+    :root {
+      --em-media-purple: #7c5cff;
+      --em-media-lavender: #c9baff;
+      --em-media-soft: #f1edff;
+      --em-media-ink: #29223d;
+    }
+    .composer .attach-photo,
+    .composer .record-audio,
+    .composer .emoji-toggle {
+      width: 44px !important;
+      height: 44px !important;
+      min-width: 44px !important;
+      border-radius: 15px !important;
+      border: 1px solid rgba(164,143,255,.42) !important;
+      background: linear-gradient(145deg,#29213f,#1c1929) !important;
+      color: #d8ccff !important;
+      box-shadow: 0 4px 13px rgba(124,92,255,.13) !important;
+      font-size: 21px !important;
+      transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease !important;
+    }
+    .composer .attach-photo:active,
+    .composer .record-audio:active,
+    .composer .emoji-toggle:active {
+      transform: scale(.94);
+      box-shadow: 0 2px 8px rgba(124,92,255,.2) !important;
+    }
+    .composer .record-audio.is-recording {
+      background: linear-gradient(145deg,#b93e68,#8f2854) !important;
+      border-color: #f09ab8 !important;
+      color: #fff !important;
+      box-shadow: 0 0 0 4px rgba(224,93,143,.13) !important;
+      animation: em-record-pulse 1.35s ease-in-out infinite;
+    }
+    .em-audio-message-card {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      width: min(100%,340px);
+      padding: 12px;
+      border: 1px solid rgba(164,143,255,.28);
+      border-radius: 17px;
+      background: linear-gradient(145deg,rgba(124,92,255,.10),rgba(201,186,255,.055));
+      box-shadow: 0 5px 16px rgba(0,0,0,.12);
+    }
+    .audio-message-label {
+      margin: 0 !important;
+      color: #cbbcff !important;
+      font-size: 12px !important;
+      font-weight: 750;
+      letter-spacing: .02em;
+    }
+    .chat-audio-player,
+    .em-audio-preview {
+      display: block;
+      width: 100% !important;
+      max-width: 100%;
+      min-height: 42px;
+      accent-color: var(--em-media-purple);
+    }
+    .em-audio-loading {
+      padding: 9px 10px;
+      border-radius: 11px;
+      background: rgba(201,186,255,.09);
+      color: #c8bfdc;
+      font-size: 12px;
+    }
+    .em-audio-timer {
+      display: inline-flex;
+      width: fit-content;
+      padding: 7px 11px;
+      border: 1px solid rgba(164,143,255,.25);
+      border-radius: 999px;
+      background: rgba(124,92,255,.10);
+      color: #d5caff !important;
+      font-size: 12px !important;
+    }
+    .em-file-card {
+      display: flex !important;
+      align-items: center;
+      gap: 11px !important;
+      width: min(100%,360px);
+      max-width: 100% !important;
+      padding: 12px !important;
+      border: 1px solid rgba(164,143,255,.28) !important;
+      border-radius: 16px !important;
+      background: linear-gradient(145deg,rgba(124,92,255,.12),rgba(201,186,255,.055)) !important;
+      color: #f5f0ff !important;
+      box-shadow: 0 5px 16px rgba(0,0,0,.12);
+    }
+    .em-file-icon {
+      display: grid;
+      place-items: center;
+      flex: 0 0 43px;
+      width: 43px;
+      height: 47px;
+      border: 1px solid rgba(201,186,255,.3);
+      border-radius: 12px;
+      background: rgba(201,186,255,.12);
+      font-size: 23px;
+    }
+    .em-file-details { min-width: 0; flex: 1; }
+    .em-file-name {
+      color: inherit;
+      font-size: 13px;
+      font-weight: 750;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+    .em-file-meta,.em-file-status {
+      display: block;
+      margin-top: 4px;
+      color: #c6bddb;
+      font-size: 11px;
+      line-height: 1.35;
+    }
+    .em-file-download {
+      flex: 0 0 40px;
+      width: 40px;
+      height: 40px;
+      border: 1px solid rgba(201,186,255,.35);
+      border-radius: 12px;
+      background: linear-gradient(145deg,#8b70ff,#6f50eb);
+      color: white;
+      font-size: 21px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .em-file-download:disabled { opacity: .45; cursor: wait; }
+    .chat-photo-wrap { max-width: min(72vw,340px) !important; }
+    .chat-photo {
+      border: 1px solid rgba(201,186,255,.25);
+      border-radius: 17px !important;
+      box-shadow: 0 6px 20px rgba(0,0,0,.2);
+    }
+    .em-photo-dialog {
+      border: 1px solid rgba(164,143,255,.34) !important;
+      box-shadow: 0 24px 70px rgba(0,0,0,.45),0 0 0 1px rgba(124,92,255,.08) !important;
+    }
+    .em-photo-dialog h2 { color: #d8ccff !important; }
+    .em-photo-send {
+      background: linear-gradient(135deg,#8b70ff,#6f50eb) !important;
+      color: #fff !important;
+    }
+    .em-photo-preview { border: 1px solid rgba(164,143,255,.22); }
+    @keyframes em-record-pulse {
+      0%,100% { box-shadow: 0 0 0 3px rgba(224,93,143,.10) !important; }
+      50% { box-shadow: 0 0 0 7px rgba(224,93,143,.19) !important; }
+    }
+    @media (max-width: 380px) {
+      .composer .attach-photo,.composer .record-audio,.composer .emoji-toggle {
+        width: 39px !important; height: 39px !important; min-width: 39px !important;
+        border-radius: 13px !important;
+      }
+      .em-file-card { gap: 8px !important; padding: 10px !important; }
+      .em-file-icon { flex-basis: 38px; width: 38px; height: 42px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .composer .record-audio.is-recording { animation: none !important; }
+    }
+  </style>
+
 </head>
 
 <body>
@@ -2188,14 +2351,16 @@ function formatearTamanoArchivo(bytes) {
 
 function renderizarArchivoMensaje(mensaje, contenedor) {
   const card = document.createElement("div");
-  card.style.cssText = "display:flex;align-items:center;gap:10px;max-width:100%;padding:12px;border:1px solid rgba(100,116,139,.22);border-radius:14px;background:rgba(255,255,255,.78);";
-  const icon = document.createElement("span"); icon.textContent = mensaje.media_mime === "application/pdf" ? "📕" : "📄"; icon.style.fontSize = "26px";
-  const details = document.createElement("div"); details.style.cssText = "min-width:0;flex:1;";
-  const name = document.createElement("div"); name.textContent = mensaje.media_name || "Archivo adjunto"; name.style.cssText = "font-weight:700;overflow-wrap:anywhere;";
-  const size = document.createElement("small"); size.textContent = formatearTamanoArchivo(Number(mensaje.media_size)) + " · Archivo privado"; size.style.cssText = "display:block;opacity:.7;margin-top:3px;";
-  const status = document.createElement("small"); status.textContent = "Preparando descarga..."; status.style.cssText = "display:block;opacity:.75;margin-top:4px;";
+  card.className = "em-file-card";
+  const extension = String(mensaje.media_name || "").split(".").pop().toLowerCase();
+  const iconByType = { pdf:"📕", doc:"📝", docx:"📝", xls:"📊", xlsx:"📊", ppt:"📽️", pptx:"📽️", csv:"📊", txt:"📃" };
+  const icon = document.createElement("span"); icon.className = "em-file-icon"; icon.textContent = iconByType[extension] || "📄";
+  const details = document.createElement("div"); details.className = "em-file-details";
+  const name = document.createElement("div"); name.className = "em-file-name"; name.textContent = mensaje.media_name || "Archivo adjunto";
+  const size = document.createElement("small"); size.className = "em-file-meta"; size.textContent = (extension ? extension.toUpperCase() + " · " : "") + formatearTamanoArchivo(Number(mensaje.media_size)) + " · Archivo privado";
+  const status = document.createElement("small"); status.className = "em-file-status"; status.textContent = "Preparando descarga...";
   details.append(name, size, status);
-  const download = document.createElement("button"); download.type = "button"; download.textContent = "↓"; download.title = "Descargar archivo"; download.setAttribute("aria-label", "Descargar archivo"); download.style.cssText = "flex-shrink:0;border:0;border-radius:10px;padding:9px 12px;background:#dce6fb;color:#123b91;font-size:20px;font-weight:800;"; download.disabled = true;
+  const download = document.createElement("button"); download.className = "em-file-download"; download.type = "button"; download.textContent = "↓"; download.title = "Descargar archivo"; download.setAttribute("aria-label", "Descargar archivo"); download.disabled = true;
   download.addEventListener("click", async () => {
     download.disabled = true;
     try {
@@ -2211,10 +2376,21 @@ function renderizarArchivoMensaje(mensaje, contenedor) {
 
 
 function renderizarAudioMensaje(mensaje, contenedor) {
-  const label=document.createElement("div");label.className="audio-message-label";label.textContent="🎙️ Mensaje de voz";
-  const loading=document.createElement("div");loading.className="chat-photo-loading";loading.textContent="Preparando audio…";
-  const player=document.createElement("audio");player.className="chat-audio-player";player.controls=true;player.preload="none";player.style.display="none";
-  contenedor.append(label,loading,player);
+  const card = document.createElement("div");
+  card.className = "em-audio-message-card";
+  const label = document.createElement("div");
+  label.className = "audio-message-label";
+  label.textContent = "🎙️ Mensaje de voz";
+  const loading = document.createElement("div");
+  loading.className = "em-audio-loading";
+  loading.textContent = "Preparando audio…";
+  const player = document.createElement("audio");
+  player.className = "chat-audio-player";
+  player.controls = true;
+  player.preload = "none";
+  player.style.display = "none";
+  card.append(label, loading, player);
+  contenedor.appendChild(card);
   supabaseClient.storage.from(CHAT_AUDIO_BUCKET).createSignedUrl(mensaje.media_path,600).then(({data,error})=>{
     if(error||!data?.signedUrl){loading.textContent="Audio privado no disponible.";return;}
     player.src=data.signedUrl;player.style.display="block";loading.remove();
