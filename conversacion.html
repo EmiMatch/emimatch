@@ -857,6 +857,15 @@
   .message-action.reply-message-btn { color:#b28a2d; font-size:11px; font-weight:700; }
   .mine .message-action.reply-message-btn { color:#725719; }
 </style>
+<style id="emimatch-activity-ui">
+  .activity-settings-btn { border:1px solid rgba(228,195,109,.25); background:rgba(255,255,255,.06); color:#f5f1e7; border-radius:18px; padding:7px 9px; font-size:11px; white-space:nowrap; cursor:pointer; }
+  #activityPanel { padding:12px 14px; background:#171718; border-bottom:1px solid rgba(228,195,109,.22); color:#f5f1e7; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  #activityPanel[hidden] { display:none !important; }
+  #activityPanel label { display:block; color:#c9b77e; font-size:11px; margin-bottom:5px; }
+  #activityPanel select { width:100%; min-width:0; border:1px solid rgba(228,195,109,.3); border-radius:10px; background:#252526; color:#f5f1e7; padding:9px 7px; font-size:12px; }
+  .online-dot.is-visible { display:block !important; }
+  .status.is-online { color:#8bd9a4 !important; opacity:1 !important; }
+</style>
 </head>
 
 <body>
@@ -910,6 +919,7 @@
       </div>
     </div>
 
+    <button id="activitySettingsBtn" class="activity-settings-btn" type="button" aria-expanded="false">Mi actividad</button>
     <button
       id="btnDenunciar"
       class="report-btn"
@@ -930,6 +940,23 @@
 
   </header>
 
+  <section id="activityPanel" hidden>
+    <div><label for="activityStatusSelect">Mi disponibilidad</label>
+      <select id="activityStatusSelect">
+        <option value="available">🟢 Disponible</option>
+        <option value="busy">🔴 Ocupado</option>
+        <option value="away">🟡 Ausente</option>
+        <option value="invisible">⚫ Invisible</option>
+        <option value="later">🌙 Me conectaré más tarde</option>
+      </select>
+    </div>
+    <div><label for="activityVisibilitySelect">Quién ve mi actividad</label>
+      <select id="activityVisibilitySelect">
+        <option value="matches">Mis matches</option>
+        <option value="nobody">Nadie</option>
+      </select>
+    </div>
+  </section>
   <main
     id="messages"
     class="messages"
@@ -1026,6 +1053,9 @@ let usuarioDestino = null;
 let matchActual = null;
 let bloqueado = false;
 let canalMensajes = null;
+let canalActividad = null;
+let preferenciasActividad = { activity_status: "available", activity_visibility: "matches" };
+let presenciaDestino = null;
 let mensajeEnRespuesta = null;
 const mensajesPorId = new Map();
 
@@ -1071,6 +1101,10 @@ const btnGrabarAudio = document.getElementById("btnGrabarAudio");
 
 const typingDiv =
   document.getElementById("typing");
+const activitySettingsBtn = document.getElementById("activitySettingsBtn");
+const activityPanel = document.getElementById("activityPanel");
+const activityStatusSelect = document.getElementById("activityStatusSelect");
+const activityVisibilitySelect = document.getElementById("activityVisibilitySelect");
 
 async function iniciar() {
 
@@ -1131,6 +1165,9 @@ async function iniciar() {
     await cargarMensajes();
 
     activarRealtimeMensajes();
+    await cargarPreferenciasActividad();
+    activarControlesActividad();
+    activarPresenciaActividad();
     activarInputMensaje();
 
   } catch (error) {
@@ -1148,6 +1185,86 @@ async function iniciar() {
   }
 }
 
+
+async function cargarPreferenciasActividad() {
+  const { data, error } = await supabaseClient.from("profiles")
+    .select("activity_status,activity_visibility").eq("id", usuarioActual.id).maybeSingle();
+  if (error) throw error;
+  preferenciasActividad = {
+    activity_status: data?.activity_status || "available",
+    activity_visibility: data?.activity_visibility || "matches"
+  };
+  activityStatusSelect.value = preferenciasActividad.activity_status;
+  activityVisibilitySelect.value = preferenciasActividad.activity_visibility;
+}
+function activarControlesActividad() {
+  activitySettingsBtn.addEventListener("click", () => {
+    activityPanel.hidden = !activityPanel.hidden;
+    activitySettingsBtn.setAttribute("aria-expanded", String(!activityPanel.hidden));
+  });
+  const guardar = async () => {
+    const next = {
+      activity_status: activityStatusSelect.value,
+      activity_visibility: activityVisibilitySelect.value
+    };
+    activityStatusSelect.disabled = true;
+    activityVisibilitySelect.disabled = true;
+    const { error } = await supabaseClient.from("profiles").update(next).eq("id", usuarioActual.id);
+    activityStatusSelect.disabled = false;
+    activityVisibilitySelect.disabled = false;
+    if (error) {
+      alert("No se pudo guardar tu disponibilidad. Probá nuevamente.");
+      activityStatusSelect.value = preferenciasActividad.activity_status;
+      activityVisibilitySelect.value = preferenciasActividad.activity_visibility;
+      return;
+    }
+    preferenciasActividad = next;
+    actualizarMiPresencia();
+  };
+  activityStatusSelect.addEventListener("change", guardar);
+  activityVisibilitySelect.addEventListener("change", guardar);
+}
+async function actualizarMiPresencia() {
+  if (!canalActividad) return;
+  const oculto = preferenciasActividad.activity_visibility === "nobody" || preferenciasActividad.activity_status === "invisible";
+  if (oculto) {
+    await canalActividad.untrack();
+    return;
+  }
+  await canalActividad.track({
+    user_id: usuarioActual.id,
+    activity_status: preferenciasActividad.activity_status,
+    activity_visibility: preferenciasActividad.activity_visibility,
+    online_at: new Date().toISOString()
+  });
+}
+function actualizarPresenciaDestino() {
+  if (!canalActividad) return;
+  const state = canalActividad.presenceState();
+  const entries = Object.values(state || {}).flat();
+  presenciaDestino = entries.find(p => p && p.user_id === destinoId) || null;
+  actualizarEstadoUsuario();
+}
+function activarPresenciaActividad() {
+  if (!matchActual || bloqueado) return;
+  canalActividad = supabaseClient.channel("emimatch-presence-" + matchActual.id, {
+    config: { presence: { key: usuarioActual.id } }
+  });
+  canalActividad
+    .on("presence", { event: "sync" }, actualizarPresenciaDestino)
+    .on("presence", { event: "join" }, actualizarPresenciaDestino)
+    .on("presence", { event: "leave" }, actualizarPresenciaDestino)
+    .subscribe(async status => {
+      if (status === "SUBSCRIBED") {
+        await actualizarMiPresencia();
+        actualizarPresenciaDestino();
+      }
+    });
+}
+window.addEventListener("pagehide", () => {
+  if (canalActividad) canalActividad.untrack();
+});
+
 async function cargarUsuario() {
 
   const {
@@ -1156,7 +1273,7 @@ async function cargarUsuario() {
   } =
     await supabaseClient
       .from("profiles")
-      .select("id,nombre,foto_url")
+      .select("id,nombre,foto_url,activity_status,activity_visibility")
       .eq("id", destinoId)
       .maybeSingle();
 
@@ -1216,11 +1333,15 @@ function actualizarEstadoUsuario() {
     return;
   }
 
-  estado.textContent =
-    "💬 Conversación";
-
-  onlineDot.style.display =
-    "none";
+  const visible = presenciaDestino && presenciaDestino.activity_visibility !== "nobody" && presenciaDestino.activity_status !== "invisible";
+  onlineDot.classList.toggle("is-visible", !!visible);
+  estado.classList.toggle("is-online", !!visible);
+  if (!visible) {
+    estado.textContent = "Desconectado";
+  } else {
+    const labels = { available: "En línea · Disponible", busy: "En línea · Ocupado", away: "En línea · Ausente", later: "En línea · Se conectará más tarde" };
+    estado.textContent = labels[presenciaDestino.activity_status] || "En línea";
+  }
 }
 
 async function cargarMatch() {
