@@ -1248,7 +1248,7 @@ function actualizarPresenciaDestino() {
 function activarPresenciaActividad() {
   if (!matchActual || bloqueado) return;
   canalActividad = supabaseClient.channel("emimatch-presence-" + matchActual.id, {
-    config: { presence: { key: usuarioActual.id } }
+    config: { private: true, presence: { key: usuarioActual.id } }
   });
   canalActividad
     .on("presence", { event: "sync" }, actualizarPresenciaDestino)
