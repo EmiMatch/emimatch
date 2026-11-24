@@ -840,6 +840,23 @@
     }
   </style>
 
+<style id="emimatch-chat-replies">
+  #messages .checks.read { color:#34b7f1 !important; }
+  #replyPreview { padding:10px 14px; background:#171717; border-top:1px solid rgba(228,195,109,.22); color:#f5f1e7; }
+  #replyPreview[hidden] { display:none !important; }
+  .reply-preview-inner { display:flex; align-items:center; gap:10px; }
+  .reply-preview-copy { min-width:0; flex:1; border-left:3px solid #e4c36d; padding-left:9px; }
+  .reply-preview-label { color:#e4c36d; font-size:11px; font-weight:800; }
+  .reply-preview-text { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#ddd6c8; font-size:12px; margin-top:2px; }
+  .reply-preview-close { border:0; border-radius:50%; width:32px; height:32px; background:#292929; color:#fff; font-size:18px; cursor:pointer; }
+  .reply-quote { border-left:3px solid #b28a2d; background:rgba(0,0,0,.07); border-radius:8px; padding:7px 9px; margin-bottom:7px; }
+  .mine .reply-quote { background:rgba(0,0,0,.09); border-left-color:#765b1d; }
+  .reply-quote-author { font-size:11px; font-weight:800; margin-bottom:2px; opacity:.9; }
+  .reply-quote-text { font-size:12px; opacity:.82; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .message-actions { display:flex; justify-content:flex-end; margin-top:3px; }
+  .message-action.reply-message-btn { color:#b28a2d; font-size:11px; font-weight:700; }
+  .mine .message-action.reply-message-btn { color:#725719; }
+</style>
 </head>
 
 <body>
@@ -940,6 +957,15 @@
   <div id="emojiPicker" class="emoji-picker" hidden aria-label="Elegir emoji">
     <button type="button" data-emoji="😀">😀</button><button type="button" data-emoji="😂">😂</button><button type="button" data-emoji="🥰">🥰</button><button type="button" data-emoji="😍">😍</button><button type="button" data-emoji="😘">😘</button><button type="button" data-emoji="❤️">❤️</button><button type="button" data-emoji="👍">👍</button><button type="button" data-emoji="🔥">🔥</button><button type="button" data-emoji="😉">😉</button><button type="button" data-emoji="😮">😮</button>
   </div>
+  <div id="replyPreview" hidden aria-live="polite">
+    <div class="reply-preview-inner">
+      <div class="reply-preview-copy">
+        <div class="reply-preview-label">Respondiendo a un mensaje</div>
+        <div id="replyPreviewText" class="reply-preview-text"></div>
+      </div>
+      <button id="cancelReply" class="reply-preview-close" type="button" aria-label="Cancelar respuesta">×</button>
+    </div>
+  </div>
   <div class="composer">
 
     <button id="btnEmoji" class="emoji-toggle attach-photo" type="button" aria-label="Elegir emoji" title="Emojis" disabled>☺</button>
@@ -1000,6 +1026,8 @@ let usuarioDestino = null;
 let matchActual = null;
 let bloqueado = false;
 let canalMensajes = null;
+let mensajeEnRespuesta = null;
+const mensajesPorId = new Map();
 
 const params =
   new URLSearchParams(
@@ -1011,6 +1039,9 @@ const destinoId =
 
 const messagesDiv =
   document.getElementById("messages");
+const replyPreview = document.getElementById("replyPreview");
+const replyPreviewText = document.getElementById("replyPreviewText");
+const cancelReplyButton = document.getElementById("cancelReply");
 
 const inputMensaje =
   document.getElementById("inputMensaje");
@@ -1383,7 +1414,7 @@ async function cargarMensajes() {
     await supabaseClient
       .from("messages")
       .select(
-        "id,match_id,sender_id,content,created_at,read_at,message_type,media_path,media_mime,media_name,media_size,is_view_once,opened_at"
+        "id,match_id,sender_id,content,created_at,read_at,reply_to_message_id,message_type,media_path,media_mime,media_name,media_size,is_view_once,opened_at"
       )
       .eq(
         "match_id",
@@ -1399,6 +1430,9 @@ async function cargarMensajes() {
   if (error) {
     throw error;
   }
+
+  mensajesPorId.clear();
+  (data || []).forEach(m => mensajesPorId.set(m.id, m));
 
   messagesDiv.innerHTML =
     "";
@@ -1486,11 +1520,27 @@ async function cargarReaccionesMensaje(mensajeId, row) {
   });
 }
 
+function seleccionarMensajeParaResponder(mensaje) {
+  if (bloqueado || !mensaje?.id) return;
+  mensajeEnRespuesta = mensaje;
+  const preview = mensaje.content || (mensaje.message_type === "image" ? "📷 Foto" : mensaje.message_type === "audio" ? "🎙️ Audio" : mensaje.message_type === "file" ? "📎 Archivo" : "Mensaje");
+  replyPreviewText.textContent = preview;
+  replyPreview.hidden = false;
+  inputMensaje.focus();
+}
+function limpiarRespuesta() {
+  mensajeEnRespuesta = null;
+  if (replyPreview) replyPreview.hidden = true;
+  if (replyPreviewText) replyPreviewText.textContent = "";
+}
+if (cancelReplyButton) cancelReplyButton.addEventListener("click", limpiarRespuesta);
+
 function mostrarMensaje(mensaje) {
 
   if (!mensaje?.id) {
     return;
   }
+  mensajesPorId.set(mensaje.id, mensaje);
 
   const existente =
     messagesDiv.querySelector(
@@ -1575,6 +1625,24 @@ function mostrarMensaje(mensaje) {
     hora.appendChild(checks);
   }
 
+  if (mensaje.reply_to_message_id) {
+    const original = mensajesPorId.get(mensaje.reply_to_message_id);
+    const quote = document.createElement("div");
+    quote.className = "reply-quote";
+    const author = document.createElement("div");
+    author.className = "reply-quote-author";
+    author.textContent = original
+      ? (original.sender_id === usuarioActual.id ? "Vos" : (usuarioDestino?.nombre || "Este usuario"))
+      : "Mensaje original";
+    const quoteText = document.createElement("div");
+    quoteText.className = "reply-quote-text";
+    quoteText.textContent = original
+      ? (original.content || (original.message_type === "image" ? "📷 Foto" : original.message_type === "audio" ? "🎙️ Audio" : original.message_type === "file" ? "📎 Archivo" : "Mensaje"))
+      : "Contenido no disponible";
+    quote.append(author, quoteText);
+    div.insertBefore(quote, contenido);
+  }
+
   div.appendChild(contenido);
   div.appendChild(hora);
 
@@ -1583,6 +1651,16 @@ function mostrarMensaje(mensaje) {
   reactionRow.setAttribute("aria-label", "Reacciones al mensaje");
   div.appendChild(reactionRow);
   cargarReaccionesMensaje(mensaje.id, reactionRow);
+
+  const actions = document.createElement("div");
+  actions.className = "message-actions";
+  const replyButton = document.createElement("button");
+  replyButton.type = "button";
+  replyButton.className = "message-action reply-message-btn";
+  replyButton.textContent = "↩ Responder";
+  replyButton.addEventListener("click", () => seleccionarMensajeParaResponder(mensaje));
+  actions.appendChild(replyButton);
+  div.appendChild(actions);
 
   messagesDiv.appendChild(div);
 }
@@ -1813,7 +1891,7 @@ async function enviarFotoSeleccionada(archivo, overlay, objectUrl, botonEnviarFo
         is_view_once: verUnaVez,
         opened_at: null
       })
-      .select("id,match_id,sender_id,content,created_at,message_type,media_path,media_mime,media_name,media_size,is_view_once,opened_at")
+      .select("id,match_id,sender_id,content,created_at,reply_to_message_id,message_type,media_path,media_mime,media_name,media_size,is_view_once,opened_at")
       .single();
 
     if (error) throw error;
@@ -1967,7 +2045,7 @@ async function enviarArchivoSeleccionado(archivo) {
     const up = await supabaseClient.storage.from(CHAT_FILES_BUCKET).upload(path, archivo, { cacheControl: "3600", contentType: archivo.type, upsert: false });
     if (up.error) throw up.error;
     uploaded = true;
-    const result = await supabaseClient.from("messages").insert({ match_id: matchActual.id, sender_id: usuarioActual.id, content: "📎 " + nombre, message_type: "file", media_path: path, media_mime: archivo.type, media_name: nombre, media_size: archivo.size }).select("id,match_id,sender_id,content,created_at,message_type,media_path,media_mime,media_name,media_size,is_view_once,opened_at").single();
+    const result = await supabaseClient.from("messages").insert({ match_id: matchActual.id, sender_id: usuarioActual.id, content: "📎 " + nombre, message_type: "file", media_path: path, media_mime: archivo.type, media_name: nombre, media_size: archivo.size }).select("id,match_id,sender_id,content,created_at,reply_to_message_id,message_type,media_path,media_mime,media_name,media_size,is_view_once,opened_at").single();
     if (result.error) throw result.error;
     mostrarMensaje(result.data); bajarAlFinal();
   } catch (error) {
@@ -2185,7 +2263,7 @@ async function enviarAudioGrabado(blob,mime,extension,overlay,url,send,cancel){
     const uid=crypto.randomUUID?crypto.randomUUID():Date.now()+"-"+Math.random().toString(16).slice(2);
     path=matchActual.id+"/"+usuarioActual.id+"/"+uid+"."+extension;
     const up=await supabaseClient.storage.from(CHAT_AUDIO_BUCKET).upload(path,blob,{cacheControl:"3600",contentType:mime,upsert:false});if(up.error)throw up.error;uploaded=true;
-    const res=await supabaseClient.from("messages").insert({match_id:matchActual.id,sender_id:usuarioActual.id,content:"🎙️ Mensaje de voz",message_type:"audio",media_path:path,media_mime:mime,media_name:"mensaje-de-voz."+extension,media_size:blob.size}).select("id,match_id,sender_id,content,created_at,message_type,media_path,media_mime,media_name,media_size,is_view_once,opened_at").single();
+    const res=await supabaseClient.from("messages").insert({match_id:matchActual.id,sender_id:usuarioActual.id,content:"🎙️ Mensaje de voz",message_type:"audio",media_path:path,media_mime:mime,media_name:"mensaje-de-voz."+extension,media_size:blob.size}).select("id,match_id,sender_id,content,created_at,reply_to_message_id,message_type,media_path,media_mime,media_name,media_size,is_view_once,opened_at").single();
     if(res.error)throw res.error;mostrarMensaje(res.data);bajarAlFinal();URL.revokeObjectURL(url);overlay.remove();
   }catch(error){
     console.error("Error enviando audio:",error);
@@ -2278,10 +2356,12 @@ async function enviarMensaje() {
             usuarioActual.id,
 
           content:
-            contenido
+            contenido,
+          reply_to_message_id:
+            mensajeEnRespuesta?.id || null
         })
         .select(
-          "id,match_id,sender_id,content,created_at,message_type,media_path,media_mime,media_name,media_size,is_view_once,opened_at"
+          "id,match_id,sender_id,content,created_at,reply_to_message_id,message_type,media_path,media_mime,media_name,media_size,is_view_once,opened_at"
         )
         .single();
 
@@ -2292,6 +2372,7 @@ async function enviarMensaje() {
     mostrarMensaje(
       data
     );
+    limpiarRespuesta();
 
     inputMensaje.value =
       "";
