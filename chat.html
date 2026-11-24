@@ -461,6 +461,29 @@ body{
   @media(max-width:420px) { .messages-page { padding-left:9px !important;padding-right:9px !important; } }
 </style>
   <link rel="stylesheet" href="assets/css/premium-refresh.css?v=20261014">
+<style id="emimatch-inbox-violet-lavender">
+:root{--bg:#100a19;--surface:#21132f;--surface2:#2b1940;--gold:#f0d27a;--text:#fffaff;--muted:#cbb8df;--border:rgba(194,135,255,.24);--pink:#b65cff}
+body{background:radial-gradient(ellipse at 50% -8%,rgba(156,77,255,.28),transparent 43%),radial-gradient(ellipse at 100% 45%,rgba(100,49,155,.12),transparent 40%),linear-gradient(155deg,#0e0916,#1a1026 55%,#0c0813)!important;color:#fffaff!important}
+.messages-page{max-width:680px!important;padding:18px 14px 110px!important}
+.messages-header{background:linear-gradient(125deg,rgba(42,24,62,.96),rgba(25,15,39,.96))!important;border:1px solid rgba(190,132,255,.24)!important;border-radius:22px!important;padding:15px 13px!important;box-shadow:0 10px 32px rgba(0,0,0,.25),inset 0 1px rgba(255,255,255,.05)!important}
+.back,.header-icon{background:linear-gradient(145deg,rgba(166,91,255,.24),rgba(99,53,153,.18))!important;color:#f5eaff!important;border:1px solid rgba(198,151,255,.32)!important}
+.header-text h1{color:#fffaff!important;letter-spacing:-.35px}.header-text p{color:#cbb8df!important}
+.actions{gap:10px!important;margin:14px 0 16px!important}
+.action-btn{min-height:46px!important;border-radius:16px!important;background:linear-gradient(145deg,#2a1a3b,#21142f)!important;color:#eadcff!important;border:1px solid rgba(190,132,255,.38)!important;box-shadow:0 5px 16px rgba(0,0,0,.16)!important}
+.action-btn.primary{background:linear-gradient(120deg,#7540ad,#a968e8 62%,#d0a7ff)!important;color:#fff!important;border:1px solid rgba(231,207,255,.38)!important}
+.status,.empty-state{background:linear-gradient(145deg,rgba(40,25,57,.97),rgba(27,17,41,.97))!important;border:1px solid rgba(190,132,255,.24)!important;color:#d9c7eb!important;border-radius:22px!important}
+.conversations{gap:11px!important}
+.conversation{background:linear-gradient(115deg,rgba(43,27,62,.98),rgba(29,18,44,.98))!important;border:1px solid rgba(181,125,239,.25)!important;border-radius:23px!important;padding:13px!important;box-shadow:0 7px 20px rgba(0,0,0,.19),inset 0 1px rgba(255,255,255,.035)!important;transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease!important}
+.conversation:hover{border-color:rgba(206,161,255,.65)!important;box-shadow:0 8px 24px rgba(115,57,170,.18)!important}
+.avatar{width:60px!important;height:60px!important;border:2px solid #bd83f5!important;background:#35234a!important;box-shadow:0 0 0 3px rgba(169,105,232,.12)!important}
+.name{color:#fffaff!important;font-size:16px!important}.time{color:#c4addb!important;font-size:12px!important}.preview{color:#cdbbdf!important;font-size:13px!important}.preview.unread{color:#fffaff!important}.you{color:#d1b4f0!important}
+.unread-count{background:linear-gradient(145deg,#9b4be0,#c17aff)!important;color:#fff!important;box-shadow:0 0 15px rgba(174,98,242,.3)!important}
+.online-dot{width:14px!important;height:14px!important;right:1px!important;bottom:2px!important;border:3px solid #2b1940!important;box-shadow:0 0 0 1px rgba(255,255,255,.15)!important;display:none}
+.online-dot.is-visible{display:block!important}.online-dot[data-state="available"]{background:#25df83!important;box-shadow:0 0 10px rgba(37,223,131,.55)!important}.online-dot[data-state="busy"]{background:#ff5b70!important}.online-dot[data-state="away"],.online-dot[data-state="later"]{background:#ffc45c!important}
+.conversation-actions{color:#d9c2f1!important}.conversation-menu-button{color:#e4d0f8!important}.spinner{border-top-color:#c18aff!important}
+.discover-btn{background:linear-gradient(120deg,#7540ad,#a968e8 62%,#d0a7ff)!important;color:#fff!important}
+@media(max-width:420px){.messages-page{padding-left:10px!important;padding-right:10px!important}.conversation{padding:12px!important}.avatar{width:56px!important;height:56px!important}}
+</style>
 </head>
 
 <body>
@@ -586,6 +609,7 @@ body{
 let client = null;
 let currentUser = null;
 let realtimeChannel = null;
+let inboxPresenceChannels = [];
 
 const statusEl =
   document.getElementById("status");
@@ -1464,6 +1488,81 @@ function filterHiddenConversations(conversations) {
 
 
 /* =========================================================
+   PRESENCIA DE MATCHES — INDICADORES EN LA BANDEJA
+   Observa el estado publicado por la conversación existente.
+   No modifica ni publica la presencia del usuario actual.
+   ========================================================= */
+function limpiarCanalesPresenciaBandeja() {
+  inboxPresenceChannels.forEach(channel => {
+    try { client.removeChannel(channel); } catch (error) {
+      console.warn("No se pudo cerrar un canal de actividad:", error);
+    }
+  });
+  inboxPresenceChannels = [];
+}
+
+function actualizarPuntoActividad(otherUserId, presenceState) {
+  const card = Array.from(conversationsEl.querySelectorAll(".conversation"))
+    .find(element => element.dataset.userId === otherUserId);
+  if (!card) return;
+  const dot = card.querySelector(".online-dot");
+  if (!dot) return;
+
+  const entries = Object.values(presenceState || {}).flat();
+  const presence = entries.find(item => item && item.user_id === otherUserId);
+  const status = presence?.activity_status || "available";
+  const visibility = presence?.activity_visibility || "matches";
+  const visible = Boolean(presence) && visibility !== "nobody" && status !== "invisible";
+
+  dot.classList.toggle("is-visible", visible);
+  if (visible) {
+    dot.dataset.state = status;
+    const labels = {
+      available: "En línea · Disponible",
+      busy: "En línea · Ocupado",
+      away: "En línea · Ausente",
+      later: "En línea · Se conectará más tarde"
+    };
+    dot.title = labels[status] || "En línea";
+    dot.setAttribute("aria-label", dot.title);
+  } else {
+    dot.removeAttribute("data-state");
+    dot.removeAttribute("title");
+    dot.removeAttribute("aria-label");
+  }
+}
+
+function suscribirPresenciaDeConversaciones(conversations) {
+  limpiarCanalesPresenciaBandeja();
+  if (!client || !currentUser) return;
+
+  (conversations || []).forEach(item => {
+    const matchId = item.match?.id;
+    const otherUserId = item.otherUserId;
+    if (!matchId || !otherUserId) return;
+
+    // Reutiliza el canal privado por match que usa conversacion.html.
+    const channel = client.channel("emimatch-presence-" + matchId, {
+      config: { private: true, presence: { key: currentUser.id } }
+    });
+    const refresh = () => actualizarPuntoActividad(otherUserId, channel.presenceState());
+
+    channel
+      .on("presence", { event: "sync" }, refresh)
+      .on("presence", { event: "join" }, refresh)
+      .on("presence", { event: "leave" }, refresh)
+      .subscribe(status => {
+        if (status === "SUBSCRIBED") refresh();
+        if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
+          console.warn("No se pudo consultar la actividad del match:", matchId, status);
+        }
+      });
+
+    inboxPresenceChannels.push(channel);
+  });
+}
+
+/* =========================================================
    ABRIR CONVERSACIÓN
    ========================================================= */
 
@@ -1507,9 +1606,11 @@ async function loadConversations(){
     const conversations =
       await buildConversations();
 
-    renderConversations(
-      filterHiddenConversations(conversations)
-    );
+    const visibleConversations =
+      filterHiddenConversations(conversations);
+
+    renderConversations(visibleConversations);
+    suscribirPresenciaDeConversaciones(visibleConversations);
 
   }catch(error){
 
