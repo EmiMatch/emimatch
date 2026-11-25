@@ -1029,6 +1029,33 @@
     }
   </style>
 
+
+  <style id="emimatch-chat-date-separators">
+    .date-divider {
+      align-self: center;
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      margin: 7px 0 3px;
+      pointer-events: none;
+    }
+    .date-divider span {
+      display: inline-block;
+      padding: 6px 13px;
+      border: 1px solid rgba(228,195,109,.30);
+      border-radius: 999px;
+      background: linear-gradient(135deg,#1d1b16,#29251a);
+      color: #e4c36d;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .075em;
+      line-height: 1.2;
+      text-align: center;
+      text-transform: uppercase;
+      box-shadow: 0 3px 12px rgba(0,0,0,.22);
+    }
+  </style>
+
 </head>
 
 <body>
@@ -1819,6 +1846,36 @@ function limpiarRespuesta() {
 }
 if (cancelReplyButton) cancelReplyButton.addEventListener("click", limpiarRespuesta);
 
+function obtenerClaveDiaChat(fecha) {
+  return [
+    fecha.getFullYear(),
+    String(fecha.getMonth() + 1).padStart(2, "0"),
+    String(fecha.getDate()).padStart(2, "0")
+  ].join("-");
+}
+
+function obtenerEtiquetaDiaChat(fecha) {
+  const ahora = new Date();
+  const fechaHoy = Date.UTC(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
+  const fechaMensaje = Date.UTC(fecha.getFullYear(), fecha.getMonth(), fecha.getDate());
+  const diferenciaDias = Math.round((fechaHoy - fechaMensaje) / 86400000);
+
+  if (diferenciaDias === 0) return "HOY";
+
+  const fechaLarga = fecha.toLocaleDateString("es-AR", {
+    day: "numeric",
+    month: "long"
+  }).toLocaleUpperCase("es-AR");
+
+  if (diferenciaDias === 1) return "AYER · " + fechaLarga;
+
+  return fecha.toLocaleDateString("es-AR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long"
+  }).toLocaleUpperCase("es-AR");
+}
+
 function mostrarMensaje(mensaje) {
 
   if (!mensaje?.id) {
@@ -1901,6 +1958,9 @@ function mostrarMensaje(mensaje) {
       }
     );
 
+  const claveDia = obtenerClaveDiaChat(fecha);
+  div.dataset.dateKey = claveDia;
+
   if (mio) {
     const checks = document.createElement("span");
     checks.className = "checks" + (mensaje.read_at ? " read" : "");
@@ -1945,6 +2005,20 @@ function mostrarMensaje(mensaje) {
   replyButton.addEventListener("click", () => seleccionarMensajeParaResponder(mensaje));
   actions.appendChild(replyButton);
   div.appendChild(actions);
+
+  const mensajesRenderizados = messagesDiv.querySelectorAll(".message");
+  const ultimoMensajeRenderizado = mensajesRenderizados[mensajesRenderizados.length - 1];
+
+  if (!ultimoMensajeRenderizado || ultimoMensajeRenderizado.dataset.dateKey !== claveDia) {
+    const separadorDia = document.createElement("div");
+    separadorDia.className = "date-divider";
+
+    const etiquetaDia = document.createElement("span");
+    etiquetaDia.textContent = obtenerEtiquetaDiaChat(fecha);
+
+    separadorDia.appendChild(etiquetaDia);
+    messagesDiv.appendChild(separadorDia);
+  }
 
   messagesDiv.appendChild(div);
 }
