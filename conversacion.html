@@ -1056,6 +1056,64 @@
     }
   </style>
 
+  <style id="emimatch-emoji-picker-popover-20261125">
+    .composer { position:relative !important; }
+    #emojiPicker.emoji-picker {
+      position:absolute !important;
+      left:10px !important;
+      bottom:calc(100% + 9px) !important;
+      width:min(340px,calc(100vw - 24px)) !important;
+      max-height:min(44dvh,360px) !important;
+      overflow:auto !important;
+      display:block !important;
+      padding:0 !important;
+      border:1px solid rgba(228,195,109,.34) !important;
+      border-radius:20px !important;
+      background:linear-gradient(145deg,#171718,#101011) !important;
+      box-shadow:0 18px 50px rgba(0,0,0,.52),0 0 0 1px rgba(228,195,109,.06) !important;
+      z-index:1000 !important;
+    }
+    #emojiPicker[hidden] { display:none !important; }
+    #emojiPicker .emoji-picker-header {
+      position:sticky;top:0;display:flex;align-items:center;justify-content:space-between;
+      padding:11px 13px;background:#171718;border-bottom:1px solid rgba(228,195,109,.18);
+      color:#e4c36d;font-size:11px;font-weight:800;letter-spacing:.12em;z-index:1;
+    }
+    #emojiPicker .emoji-picker-header button {
+      width:27px;height:27px;border:1px solid rgba(228,195,109,.22);border-radius:50%;
+      background:#252526;color:#e4c36d;font-size:20px;line-height:1;cursor:pointer;
+    }
+    #emojiPicker .emoji-picker-grid {
+      display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px;padding:10px;
+    }
+    #emojiPicker .emoji-picker-grid button {
+      display:grid;place-items:center;min-width:0;min-height:41px;padding:0;
+      border:1px solid rgba(255,255,255,.045);border-radius:12px;
+      background:#222223;color:#fff;font-size:23px;cursor:pointer;
+      transition:background .14s ease,border-color .14s ease,transform .14s ease;
+    }
+    #emojiPicker .emoji-picker-grid button:hover,
+    #emojiPicker .emoji-picker-grid button:focus-visible {
+      background:#332b1b;border-color:rgba(228,195,109,.48);outline:none;
+    }
+    #emojiPicker .emoji-picker-grid button:active { transform:scale(.92); }
+    .composer #btnEmoji {
+      border-radius:50% !important;
+      background:linear-gradient(145deg,#292416,#171512) !important;
+      color:#e4c36d !important;
+      border:1px solid rgba(228,195,109,.48) !important;
+      box-shadow:0 4px 14px rgba(228,195,109,.13) !important;
+    }
+    .reaction-row { display:none !important; }
+    @media(max-width:380px) {
+      #emojiPicker.emoji-picker { left:6px !important;width:min(320px,calc(100vw - 16px)) !important; }
+      #emojiPicker .emoji-picker-grid { grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;padding:8px; }
+      #emojiPicker .emoji-picker-grid button { min-height:38px;font-size:21px; }
+    }
+    @media(prefers-reduced-motion:reduce) {
+      #emojiPicker .emoji-picker-grid button { transition:none; }
+    }
+  </style>
 </head>
 
 <body>
@@ -1171,9 +1229,6 @@
 
   <input id="inputArchivo" type="file" accept=".pdf,.txt,.csv,.doc,.docx,.xls,.xlsx,.ppt,.pptx" hidden>
 
-  <div id="emojiPicker" class="emoji-picker" hidden aria-label="Elegir emoji">
-    <button type="button" data-emoji="😀">😀</button><button type="button" data-emoji="😂">😂</button><button type="button" data-emoji="🥰">🥰</button><button type="button" data-emoji="😍">😍</button><button type="button" data-emoji="😘">😘</button><button type="button" data-emoji="❤️">❤️</button><button type="button" data-emoji="👍">👍</button><button type="button" data-emoji="🔥">🔥</button><button type="button" data-emoji="😉">😉</button><button type="button" data-emoji="😮">😮</button>
-  </div>
   <div id="replyPreview" hidden aria-live="polite">
     <div class="reply-preview-inner">
       <div class="reply-preview-copy">
@@ -1185,7 +1240,16 @@
   </div>
   <div class="composer">
 
-    <button id="btnEmoji" class="emoji-toggle attach-photo" type="button" aria-label="Elegir emoji" title="Emojis" disabled>☺</button>
+    <div id="emojiPicker" class="emoji-picker" hidden role="dialog" aria-label="Elegir emoji">
+      <div class="emoji-picker-header">
+        <span>EMOJIS</span>
+        <button id="btnCerrarEmoji" type="button" aria-label="Cerrar selector de emojis">×</button>
+      </div>
+      <div class="emoji-picker-grid">
+        <button type="button" data-emoji="😀" aria-label="Insertar 😀">😀</button><button type="button" data-emoji="😃" aria-label="Insertar 😃">😃</button><button type="button" data-emoji="😄" aria-label="Insertar 😄">😄</button><button type="button" data-emoji="😁" aria-label="Insertar 😁">😁</button><button type="button" data-emoji="😆" aria-label="Insertar 😆">😆</button><button type="button" data-emoji="😅" aria-label="Insertar 😅">😅</button><button type="button" data-emoji="😂" aria-label="Insertar 😂">😂</button><button type="button" data-emoji="🤣" aria-label="Insertar 🤣">🤣</button><button type="button" data-emoji="🥰" aria-label="Insertar 🥰">🥰</button><button type="button" data-emoji="😍" aria-label="Insertar 😍">😍</button><button type="button" data-emoji="😘" aria-label="Insertar 😘">😘</button><button type="button" data-emoji="😉" aria-label="Insertar 😉">😉</button><button type="button" data-emoji="😊" aria-label="Insertar 😊">😊</button><button type="button" data-emoji="😎" aria-label="Insertar 😎">😎</button><button type="button" data-emoji="🤩" aria-label="Insertar 🤩">🤩</button><button type="button" data-emoji="🥳" aria-label="Insertar 🥳">🥳</button><button type="button" data-emoji="😢" aria-label="Insertar 😢">😢</button><button type="button" data-emoji="😭" aria-label="Insertar 😭">😭</button><button type="button" data-emoji="😮" aria-label="Insertar 😮">😮</button><button type="button" data-emoji="😴" aria-label="Insertar 😴">😴</button><button type="button" data-emoji="❤️" aria-label="Insertar ❤️">❤️</button><button type="button" data-emoji="🧡" aria-label="Insertar 🧡">🧡</button><button type="button" data-emoji="💛" aria-label="Insertar 💛">💛</button><button type="button" data-emoji="💚" aria-label="Insertar 💚">💚</button><button type="button" data-emoji="💙" aria-label="Insertar 💙">💙</button><button type="button" data-emoji="💜" aria-label="Insertar 💜">💜</button><button type="button" data-emoji="🖤" aria-label="Insertar 🖤">🖤</button><button type="button" data-emoji="💋" aria-label="Insertar 💋">💋</button><button type="button" data-emoji="👍" aria-label="Insertar 👍">👍</button><button type="button" data-emoji="👏" aria-label="Insertar 👏">👏</button><button type="button" data-emoji="🙏" aria-label="Insertar 🙏">🙏</button><button type="button" data-emoji="🔥" aria-label="Insertar 🔥">🔥</button><button type="button" data-emoji="🎉" aria-label="Insertar 🎉">🎉</button><button type="button" data-emoji="🌹" aria-label="Insertar 🌹">🌹</button><button type="button" data-emoji="💪" aria-label="Insertar 💪">💪</button><button type="button" data-emoji="🤗" aria-label="Insertar 🤗">🤗</button>
+      </div>
+    </div>
+    <button id="btnEmoji" class="emoji-toggle attach-photo" type="button" aria-label="Abrir selector de emojis" title="Emojis" aria-expanded="false" aria-controls="emojiPicker" disabled>😊</button>
     <button
       id="btnAdjuntarFoto"
       class="attach-photo"
@@ -1990,12 +2054,6 @@ function mostrarMensaje(mensaje) {
   div.appendChild(contenido);
   div.appendChild(hora);
 
-  const reactionRow = document.createElement("div");
-  reactionRow.className = "reaction-row";
-  reactionRow.setAttribute("aria-label", "Reacciones al mensaje");
-  div.appendChild(reactionRow);
-  cargarReaccionesMensaje(mensaje.id, reactionRow);
-
   const actions = document.createElement("div");
   actions.className = "message-actions";
   const replyButton = document.createElement("button");
@@ -2511,9 +2569,24 @@ function activarInputMensaje() {
   btnGrabarAudio.addEventListener("click", manejarBotonAudio);
 
   btnDenunciar.addEventListener("click", denunciarUsuario);
+  const btnCerrarEmoji = document.getElementById("btnCerrarEmoji");
+  const cerrarSelectorEmoji = () => {
+    emojiPicker.hidden = true;
+    btnEmoji.setAttribute("aria-expanded", "false");
+  };
   btnEmoji.addEventListener("click", () => {
     if (bloqueado) return;
     emojiPicker.hidden = !emojiPicker.hidden;
+    btnEmoji.setAttribute("aria-expanded", String(!emojiPicker.hidden));
+  });
+  btnCerrarEmoji.addEventListener("click", cerrarSelectorEmoji);
+  document.addEventListener("click", event => {
+    if (!emojiPicker.hidden && !emojiPicker.contains(event.target) && event.target !== btnEmoji) {
+      cerrarSelectorEmoji();
+    }
+  });
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && !emojiPicker.hidden) cerrarSelectorEmoji();
   });
   emojiPicker.addEventListener("click", event => {
     const button = event.target.closest("[data-emoji]");
@@ -2522,6 +2595,7 @@ function activarInputMensaje() {
     const start = inputMensaje.selectionStart ?? inputMensaje.value.length;
     const end = inputMensaje.selectionEnd ?? start;
     inputMensaje.setRangeText(emoji, start, end, "end");
+    cerrarSelectorEmoji();
     inputMensaje.focus();
     ajustarAlturaInput();
     actualizarEstadoBotonEnviar();
